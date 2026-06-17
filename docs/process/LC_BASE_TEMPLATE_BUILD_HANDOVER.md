@@ -111,11 +111,11 @@ bun run build         # (once build exists) succeeds
 
 ```
 SETUP
-[ ] 1  repo init + README
-[ ] 2  Vite + React + TS
-[ ] 3  Bun runtime/test
-[ ] 4  Prettier (+ .vscode format-on-save)
-[ ] 5  ESLint + jsx-a11y
+[x] 1  repo init + README
+[x] 2  Vite + React + TS
+[x] 3  Bun runtime/test
+[x] 4  Prettier (+ .vscode format-on-save)
+[x] 5  ESLint + jsx-a11y
 [ ] 6  Stylelint
 [ ] 7  Husky + lint-staged (pre-commit)
 [ ] 8  Tailwind v4 (@layer order)
