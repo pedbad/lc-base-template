@@ -116,7 +116,7 @@ SETUP
 [x] 3  Bun runtime/test
 [x] 4  Prettier (+ .vscode format-on-save)
 [x] 5  ESLint + jsx-a11y
-[ ] 6  Stylelint
+[x] 6  Stylelint
 [ ] 7  Husky + lint-staged (pre-commit)
 [ ] 8  Tailwind v4 (@layer order)
 [ ] 9  shadcn + Lucide
