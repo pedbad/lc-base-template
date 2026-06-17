@@ -23,7 +23,7 @@ and `eslint.config.js`. The `README` (later) will link here rather than restate 
 | **Prettier**                 | Code formatter (layout)                  | 4     |
 | **ESLint** + **jsx-a11y**    | Linter (correctness + accessibility)     | 5     |
 | **eslint-config-prettier**   | Stops ESLint and Prettier fighting       | 5     |
-| _Stylelint_                  | _CSS linting (planned)_                  | _6_   |
+| **Stylelint**                | CSS linting                              | 6     |
 | _husky · lint-staged_        | _Pre-commit guard (planned)_             | _7_   |
 | _Tailwind · shadcn · Lucide_ | _Styling · components · icons (planned)_ | _8–9_ |
 
@@ -133,4 +133,25 @@ Layer 1 is the carrot; layers 2–3 are the stick.
 
 ---
 
-_Append a new section here as each tool lands (Stylelint, husky, Tailwind, …)._
+### Stylelint — CSS linting _(Step 6)_
+
+- **What:** lints CSS files (`src/**/*.css`) for errors and bad patterns —
+  ESLint's role, but for stylesheets.
+- **Why:** the foundation for **guard f** (no raw hex/px in components — use
+  tokens) and **guard g** (every rule inside `@layer`, zero `!important`), the
+  template's CSS bulletproofing. Linting from the first stylesheet means no
+  retrofit later.
+- **How it helps:** `bun run lint:css` (joins the pre-commit hook + CI later).
+- **No Prettier truce needed:** Stylelint 16+ dropped stylistic rules, so it
+  never fights Prettier over CSS layout (the old `stylelint-config-prettier` is
+  deprecated — one less dependency).
+- **Tailwind (Step 8):** `config-standard` will flag Tailwind's CSS at-rules
+  (`@theme`, `@utility`, `@apply`, …) as unknown; we extend the config then.
+  **Distinction:** Tailwind utility _classes_ (`class="bg-slate-500 p-4"`) live
+  in `.tsx` markup, **not** in `.css` — Stylelint never sees them, so they need
+  no config. Only the at-rule directives inside stylesheets do.
+- **Rejected:** waiting until Tailwind to add Stylelint — leaves CSS unlinted.
+
+---
+
+_Append a new section here as each tool lands (husky, Tailwind, …)._
