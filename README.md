@@ -24,12 +24,12 @@ ship a static LTR-language course from a menu of ready exercise types.
 
 Verified toolchain (macOS, 2026-06-16):
 
-| Tool | Minimum | Tested |
-|------|---------|--------|
-| [Bun](https://bun.sh) | ≥ 1.3 | 1.3.14 |
-| [Node.js](https://nodejs.org) | ≥ 22.12 (LTS) | 22.19.0 |
-| [Git](https://git-scm.com) | ≥ 2.40 | 2.50.1 |
-| [GitHub CLI](https://cli.github.com) `gh` | ≥ 2.0 | 2.94.0 |
+| Tool                                      | Minimum       | Tested  |
+| ----------------------------------------- | ------------- | ------- |
+| [Bun](https://bun.sh)                     | ≥ 1.3         | 1.3.14  |
+| [Node.js](https://nodejs.org)             | ≥ 22.12 (LTS) | 22.19.0 |
+| [Git](https://git-scm.com)                | ≥ 2.40        | 2.50.1  |
+| [GitHub CLI](https://cli.github.com) `gh` | ≥ 2.0         | 2.94.0  |
 
 **Bun** is the package manager, runtime, and test runner. **Node** is only a tooling fallback.
 
@@ -40,6 +40,7 @@ git clone <repo-url>
 cd lc-base-template
 bun install
 ```
+
 _(More steps added as the template grows.)_
 
 ## License

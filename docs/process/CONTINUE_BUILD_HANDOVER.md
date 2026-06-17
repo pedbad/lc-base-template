@@ -9,11 +9,11 @@
 
 Repo live + public: https://github.com/pedbad/lc-base-template (`main`).
 
-| Step | Done | Commit |
-|------|------|--------|
-| 1 repo init + README (badges, prereqs) | ✅ pushed | `b090ae3` |
-| 2 Vite + React + TS scaffold (dev verified) | ✅ pushed | `7567d62` |
-| 3 Bun test runner + smoke test | ✅ (this session) | _next_ |
+| Step                                        | Done              | Commit    |
+| ------------------------------------------- | ----------------- | --------- |
+| 1 repo init + README (badges, prereqs)      | ✅ pushed         | `b090ae3` |
+| 2 Vite + React + TS scaffold (dev verified) | ✅ pushed         | `7567d62` |
+| 3 Bun test runner + smoke test              | ✅ (this session) | _next_    |
 
 **Installed:** Bun 1.3.14 · React 19.2 · react-dom 19.2 · Vite 8 · TypeScript 6 ·
 ESLint 10 · @types/bun. Lockfile `bun.lock` committed.
@@ -48,6 +48,7 @@ git 2.50.1 · gh 2.94.0 (authed: pedbad).
 ## NEXT — Step 4: Prettier (+ format-on-save)
 
 From the handover sequence:
+
 - `bun add -d prettier` + `.prettierrc` + `.vscode/settings.json` (format-on-save).
 - **Gotcha:** `.gitignore` ignores `.vscode/*` (except `extensions.json`). To ship
   `.vscode/settings.json` to clones, either `git add -f .vscode/settings.json` or

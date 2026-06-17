@@ -1,0 +1,12 @@
+# Files Prettier should never touch.
+# (Prettier already skips node_modules by default; listed here for clarity.)
+
+# Generated / build output
+node_modules
+dist
+dist-ssr
+coverage
+
+# Lockfile — owned by Bun, not Prettier. Reformatting it would corrupt it.
+bun.lock
+bun.lockb

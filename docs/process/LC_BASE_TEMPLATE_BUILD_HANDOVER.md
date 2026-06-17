@@ -70,27 +70,27 @@ and ASK before Step 2. Maintain the running task checklist (below) and tick item
 
 Each is its own step + commit. Stop and test after every one.
 
-| # | Step | Key terminal | Verify |
-|---|------|--------------|--------|
-| 1 | New repo + README | `mkdir lc-base-template && cd $_ && git init && bun init -y` (then write README) | `git log` shows 1 commit; README renders |
-| 2 | Vite + React + TS | `bun create vite@latest . --template react-ts` | `bun run dev` → React page at localhost |
-| 3 | Bun as runtime/test | confirm `bun install`, add `bun test` smoke | `bun test` green (1 trivial test) |
-| 4 | Prettier | `bun add -d prettier` + `.prettierrc` + `.vscode/settings.json` | `bun run format` no diff churn |
-| 5 | ESLint + jsx-a11y | `bun add -d eslint @typescript-eslint/* eslint-plugin-jsx-a11y` | `bun run lint` green |
-| 6 | Stylelint | `bun add -d stylelint stylelint-config-standard` | `bun run lint:css` green |
-| 7 | Husky + lint-staged | `bun add -d husky lint-staged && bunx husky init` | bad commit blocked locally |
-| 8 | Tailwind v4 | `bun add tailwindcss @tailwindcss/vite` + `@layer` setup | utility class renders |
-| 9 | shadcn + Lucide | `bunx shadcn@latest init` → add Button; `bun add lucide-react` | Button + icon render |
-| 10 | Token files | `palette.css` / `tokens.css` (Slate + light/dark), fully layered | swatch page shows tokens |
-| 11 | Zod + `course.config.ts` | `bun add zod` + schema + validate at load | bad config → error |
-| 12 | LO schema + example LO JSON | Zod LO schema + 1 example LO (4 accordions) | example LO validates |
-| 13 | Registry + 1 exercise | `lazyRegistry` + port first exercise cluster | exercise renders from config |
-| 14 | Static pre-render | build scans `lo-config/` → one `.html` per LO | `dist/` has real per-LO files |
-| 15 | Debug sandbox | sandbox entry (debug-flag-gated) | palette/fonts/preview visible |
-| 16 | Exercise showcase | port showcase, isolated fixtures | all ported types render |
-| 17+ | Guards a–h | one guard per step + failing fixture + green | each guard blocks then passes |
-| … | Remaining 12 exercises | cluster-by-cluster, debt cleared | showcase grows |
-| n | 5 docs + CI + LICENSE | CONTRIBUTING/DESIGNER/STRUCTURE/AGENTS + GH Actions | CI runs all guards |
+| #   | Step                        | Key terminal                                                                     | Verify                                   |
+| --- | --------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------- |
+| 1   | New repo + README           | `mkdir lc-base-template && cd $_ && git init && bun init -y` (then write README) | `git log` shows 1 commit; README renders |
+| 2   | Vite + React + TS           | `bun create vite@latest . --template react-ts`                                   | `bun run dev` → React page at localhost  |
+| 3   | Bun as runtime/test         | confirm `bun install`, add `bun test` smoke                                      | `bun test` green (1 trivial test)        |
+| 4   | Prettier                    | `bun add -d prettier` + `.prettierrc` + `.vscode/settings.json`                  | `bun run format` no diff churn           |
+| 5   | ESLint + jsx-a11y           | `bun add -d eslint @typescript-eslint/* eslint-plugin-jsx-a11y`                  | `bun run lint` green                     |
+| 6   | Stylelint                   | `bun add -d stylelint stylelint-config-standard`                                 | `bun run lint:css` green                 |
+| 7   | Husky + lint-staged         | `bun add -d husky lint-staged && bunx husky init`                                | bad commit blocked locally               |
+| 8   | Tailwind v4                 | `bun add tailwindcss @tailwindcss/vite` + `@layer` setup                         | utility class renders                    |
+| 9   | shadcn + Lucide             | `bunx shadcn@latest init` → add Button; `bun add lucide-react`                   | Button + icon render                     |
+| 10  | Token files                 | `palette.css` / `tokens.css` (Slate + light/dark), fully layered                 | swatch page shows tokens                 |
+| 11  | Zod + `course.config.ts`    | `bun add zod` + schema + validate at load                                        | bad config → error                       |
+| 12  | LO schema + example LO JSON | Zod LO schema + 1 example LO (4 accordions)                                      | example LO validates                     |
+| 13  | Registry + 1 exercise       | `lazyRegistry` + port first exercise cluster                                     | exercise renders from config             |
+| 14  | Static pre-render           | build scans `lo-config/` → one `.html` per LO                                    | `dist/` has real per-LO files            |
+| 15  | Debug sandbox               | sandbox entry (debug-flag-gated)                                                 | palette/fonts/preview visible            |
+| 16  | Exercise showcase           | port showcase, isolated fixtures                                                 | all ported types render                  |
+| 17+ | Guards a–h                  | one guard per step + failing fixture + green                                     | each guard blocks then passes            |
+| …   | Remaining 12 exercises      | cluster-by-cluster, debt cleared                                                 | showcase grows                           |
+| n   | 5 docs + CI + LICENSE       | CONTRIBUTING/DESIGNER/STRUCTURE/AGENTS + GH Actions                              | CI runs all guards                       |
 
 ---
 

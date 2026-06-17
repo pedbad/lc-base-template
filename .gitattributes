@@ -1,0 +1,13 @@
+# Git attributes — LC Base Template
+# ---------------------------------------------------------------------------
+# Normalize line endings repo-wide so the codebase stays LF-only, no matter
+# which OS a contributor is on. Pairs with Prettier's `endOfLine: "lf"`:
+# Prettier *checks* for LF, git *enforces* it on checkout/commit. Without this,
+# a Windows clone (default CRLF) could reintroduce noisy line-ending diffs.
+#
+# `text=auto` lets git auto-detect text vs binary files.
+* text=auto eol=lf
+
+# Bun's lockfile is machine-generated — collapse it in diffs / PR reviews to
+# cut noise, and mark it generated so GitHub's language stats ignore it.
+bun.lock -diff linguist-generated=true
