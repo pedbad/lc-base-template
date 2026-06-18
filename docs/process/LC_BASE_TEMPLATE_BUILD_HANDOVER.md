@@ -121,7 +121,7 @@ SETUP
 [x] 8  Tailwind v4 (@layer order)
 [x] 9  shadcn + Lucide
 THEME
-[ ] 10 Token files (Slate, light+dark, layered)
+[x] 10 Token files (Slate, light+dark, layered) — 3 switchable primary presets + src/styles/README.md
 [ ] 11 course.config.ts (Zod)
 [ ] 12 ui-strings.ts (Zod, two-layer)
 CONTENT ENGINE

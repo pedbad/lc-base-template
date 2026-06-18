@@ -15,18 +15,19 @@ and `eslint.config.js`. The `README` (later) will link here rather than restate 
 
 ## Toolchain at a glance
 
-| Tool                        | Role                                    | Step |
-| --------------------------- | --------------------------------------- | ---- |
-| **Bun**                     | Package manager · runtime · test runner | 1, 3 |
-| **Vite**                    | Dev server · production bundler         | 2    |
-| **TypeScript**              | Language · type safety                  | 2    |
-| **Prettier**                | Code formatter (layout)                 | 4    |
-| **ESLint** + **jsx-a11y**   | Linter (correctness + accessibility)    | 5    |
-| **eslint-config-prettier**  | Stops ESLint and Prettier fighting      | 5    |
-| **Stylelint**               | CSS linting                             | 6    |
-| **husky** + **lint-staged** | Pre-commit guard (format/lint staged)   | 7    |
-| **Tailwind CSS** (v4)       | Utility-first styling · theme engine    | 8    |
-| **shadcn/ui** + **Lucide**  | Components (19) · icons                 | 9    |
+| Tool                        | Role                                         | Step |
+| --------------------------- | -------------------------------------------- | ---- |
+| **Bun**                     | Package manager · runtime · test runner      | 1, 3 |
+| **Vite**                    | Dev server · production bundler              | 2    |
+| **TypeScript**              | Language · type safety                       | 2    |
+| **Prettier**                | Code formatter (layout)                      | 4    |
+| **ESLint** + **jsx-a11y**   | Linter (correctness + accessibility)         | 5    |
+| **eslint-config-prettier**  | Stops ESLint and Prettier fighting           | 5    |
+| **Stylelint**               | CSS linting                                  | 6    |
+| **husky** + **lint-staged** | Pre-commit guard (format/lint staged)        | 7    |
+| **Tailwind CSS** (v4)       | Utility-first styling · theme engine         | 8    |
+| **shadcn/ui** + **Lucide**  | Components (19) · icons                      | 9    |
+| **Cambridge Slate tokens**  | Theme: primitive→semantic→component CSS vars | 10   |
 
 ---
 
@@ -270,4 +271,38 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 
 ---
 
-_Append a new section here as each tool lands (Zod, tokens, …)._
+### Cambridge Slate tokens — theme system _(Step 10)_
+
+- **What:** the colour theme as a 3-layer CSS-variable chain (spec §7.1):
+  `palette.css` (primitives, raw brand hex) → `tokens.css` (semantic roles) →
+  Tailwind colour utilities (via the `@theme inline` bridge in `index.css`).
+  Full guide for devs: **`src/styles/README.md`**.
+- **Why:** one edit point. Change a value in `palette.css` and every shadcn
+  component reskins — no find-replace, no per-component colour. Sets up
+  **guard f** (no raw hex/px in components) and **guard g** (every rule layered,
+  zero `!important`).
+- **Brand source:** official University of Cambridge guidelines (colour +
+  typography) — **not** french-lo-1's teal (a per-course locale fossil,
+  deliberately not ported). Cambridge Slate greyscale (Slate 4 = text, not pure
+  black) + Cambridge Blue family + secondary accents for data viz / states.
+- **Reconcile, not bulldoze:** shadcn's `init` (Step 9) had merged placeholder
+  oklch vars + an `@theme inline` map into `index.css`. Step 10 **kept** the map
+  (it skins all 19 components), **moved** the values out into `palette.css` /
+  `tokens.css` swapped to Cambridge brand, and **stripped** the leftover
+  Vite-demo CSS (`#root` width, demo `h1/h2/p/code`, `--text/--bg/--accent`,
+  `prefers-color-scheme` block).
+- **Switchable primary presets:** three `tokens-variant-*.css` files ship
+  (A Cambridge Blue, B Dark Blue [default], C Warm Blue) — identical except
+  `--primary`/`--ring`. Switch by copying one over `tokens.css` (see README).
+  Default = **B**: the only candidate both AAA-accessible **and** a strong CTA on
+  white (button-vs-page 12.5:1; A=1.43, C=2.35). Dark mode flips B's primary to
+  Cambridge Blue (dark-blue would vanish on the Slate-4 base).
+- **Light + dark:** `:root` + `.dark`; the Slate ramp inverts. `color-mix` lifts
+  dark surfaces (card/popover/muted/sidebar) off the Slate-4 base.
+- **Verified (Step 10, headless — preview MCP mis-targets from a french-lo-1
+  session):** `format` / `lint` / `lint:css` / `test` / `build` all exit 0; the
+  build ships the reskinned components.
+
+---
+
+_Append a new section here as each tool lands (Zod, …)._

@@ -1,0 +1,106 @@
+/* ==========================================================================
+   Layer 2 — Semantic tokens — VARIANT C: Cambridge Warm Blue primary
+   ==========================================================================
+   ALTERNATIVE to the active src/styles/tokens.css (which is VARIANT B).
+   To make this the base-template theme: replace the contents of tokens.css
+   with this file (or rename this file to tokens.css). Only ONE tokens file is
+   imported by index.css at a time. palette.css is SHARED — never edit it here.
+
+   Primary = Cambridge Warm Blue (#00BDB6) + Slate-4 text.
+     Light: primary-text contrast 6.3:1 ✓   Dark: 6.3:1 ✓
+   Trade-off: saturated teal, more presence than Variant A; button-vs-page
+     shape contrast 2.35:1 (still under WCAG 1.4.11's 3:1, but far more visible
+     than Variant A). White text is brand-disallowed here — must use Slate-4.
+   ========================================================================== */
+
+@layer base {
+  :root {
+    --radius: 0.625rem;
+
+    /* Surfaces */
+    --background: var(--white);
+    --foreground: var(--slate-4);
+    --card: var(--white);
+    --card-foreground: var(--slate-4);
+    --popover: var(--white);
+    --popover-foreground: var(--slate-4);
+
+    /* Primary action — VARIANT C: Cambridge Warm Blue + Slate-4 text */
+    --primary: var(--cam-warm-blue);
+    --primary-foreground: var(--slate-4);
+
+    /* Secondary + muted surfaces — Slate 1 */
+    --secondary: var(--slate-1);
+    --secondary-foreground: var(--slate-4);
+    --muted: var(--slate-1);
+    --muted-foreground: var(--slate-3);
+
+    /* Brand accent — Cambridge Blue (the prominent colour) */
+    --accent: var(--cam-blue);
+    --accent-foreground: var(--slate-4);
+
+    /* Destructive — Cambridge Dark Crest */
+    --destructive: var(--cam-dark-crest);
+    --destructive-foreground: var(--white);
+
+    /* Lines + form fields + focus */
+    --border: var(--slate-2);
+    --input: var(--slate-2);
+    --ring: var(--cam-warm-blue);
+
+    /* Data viz — Cambridge secondary families */
+    --chart-1: var(--cam-crest);
+    --chart-2: var(--cam-indigo);
+    --chart-3: var(--cam-green);
+    --chart-4: var(--cam-cherry);
+    --chart-5: var(--cam-purple);
+
+    /* Sidebar (neutral surface, brand-blue actions) */
+    --sidebar: var(--slate-1);
+    --sidebar-foreground: var(--slate-4);
+    --sidebar-primary: var(--cam-warm-blue);
+    --sidebar-primary-foreground: var(--slate-4);
+    --sidebar-accent: var(--cam-light-blue);
+    --sidebar-accent-foreground: var(--slate-4);
+    --sidebar-border: var(--slate-2);
+    --sidebar-ring: var(--cam-warm-blue);
+  }
+
+  .dark {
+    /* Surfaces — ramp inverts (Slate 4 base, Slate 1 text) */
+    --background: var(--slate-4);
+    --foreground: var(--slate-1);
+    --card: color-mix(in oklab, var(--slate-4) 86%, var(--white));
+    --card-foreground: var(--slate-1);
+    --popover: color-mix(in oklab, var(--slate-4) 86%, var(--white));
+    --popover-foreground: var(--slate-1);
+
+    /* Primary — Warm Blue + Slate-4 text (works on dark base) */
+    --primary: var(--cam-warm-blue);
+    --primary-foreground: var(--slate-4);
+    --secondary: color-mix(in oklab, var(--slate-4) 80%, var(--white));
+    --secondary-foreground: var(--slate-1);
+    --muted: color-mix(in oklab, var(--slate-4) 80%, var(--white));
+    --muted-foreground: var(--slate-2);
+    --accent: var(--cam-blue);
+    --accent-foreground: var(--slate-4);
+    --destructive: var(--cam-dark-crest);
+    --destructive-foreground: var(--white);
+    --border: color-mix(in oklab, var(--white) 12%, transparent);
+    --input: color-mix(in oklab, var(--white) 16%, transparent);
+    --ring: var(--cam-warm-blue);
+    --chart-1: var(--cam-crest);
+    --chart-2: var(--cam-indigo);
+    --chart-3: var(--cam-green);
+    --chart-4: var(--cam-cherry);
+    --chart-5: var(--cam-purple);
+    --sidebar: color-mix(in oklab, var(--slate-4) 86%, var(--white));
+    --sidebar-foreground: var(--slate-1);
+    --sidebar-primary: var(--cam-warm-blue);
+    --sidebar-primary-foreground: var(--slate-4);
+    --sidebar-accent: color-mix(in oklab, var(--slate-4) 75%, var(--white));
+    --sidebar-accent-foreground: var(--slate-1);
+    --sidebar-border: color-mix(in oklab, var(--white) 12%, transparent);
+    --sidebar-ring: var(--cam-warm-blue);
+  }
+}
