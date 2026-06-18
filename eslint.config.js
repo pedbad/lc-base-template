@@ -45,6 +45,20 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  // shadcn/ui primitives are vendored copy-in source. Relax two rules that
+  // produce false positives on them (the rest of jsx-a11y — guard h — stays ON):
+  //   react-refresh/only-export-components — ui files intentionally export
+  //     variant helpers (badgeVariants) and hooks (useSidebar) beside the
+  //     component; harmless, and the rule is an HMR-only dev concern.
+  //   jsx-a11y/label-has-associated-control — the Label primitive renders a
+  //     <label> the *consumer* associates with a control at the usage site.
+  {
+    files: ['src/components/ui/**'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+      'jsx-a11y/label-has-associated-control': 'off',
+    },
+  },
   // MUST stay last: turns off ESLint rules that conflict with Prettier.
   eslintConfigPrettier,
 ]);

@@ -55,7 +55,4 @@ function Button({
   );
 }
 
-// buttonVariants is a styling helper, not a component — react-refresh's
-// "only export components" rule doesn't apply to shadcn ui primitives.
-// eslint-disable-next-line react-refresh/only-export-components
 export { Button, buttonVariants };

@@ -26,7 +26,7 @@ and `eslint.config.js`. The `README` (later) will link here rather than restate 
 | **Stylelint**               | CSS linting                             | 6    |
 | **husky** + **lint-staged** | Pre-commit guard (format/lint staged)   | 7    |
 | **Tailwind CSS** (v4)       | Utility-first styling · theme engine    | 8    |
-| _shadcn · Lucide_           | _Components · icons (planned)_          | _9_  |
+| **shadcn/ui** + **Lucide**  | Components (19) · icons                 | 9    |
 
 ---
 
@@ -239,21 +239,34 @@ Layer 1 is the carrot; layers 2–3 are the stick.
   `@base-ui/react`, `class-variance-authority`, `clsx`, `tailwind-merge`, `tw-animate-css`,
   `@fontsource-variable/geist`. **Step 10 replaces these placeholder tokens** with the
   Cambridge Slate system — the merge is a starting point, not the final theme.
-- **Config adaptations required (3):**
+- **Full component set — all 19 ported from french-lo-1** (the template is also a
+  self-contained app + landing page, so the app-shell pieces are kept): accordion, alert,
+  badge, button, card, dialog, input, label, navigation-menu, select, separator, sheet,
+  sidebar, skeleton, switch, table, tabs, textarea, tooltip. **Bulk-add gotcha:** `add`
+  prompts to overwrite an existing `button.tsx` (pulled in as a transitive dep) and an EOF
+  aborts the whole queue — pass `--overwrite` to force-yes. **To add more later:**
+  `bunx shadcn@latest add <name>` (pulls the Base-UI / nova version, auto-skinned by our
+  tokens). Note: wrap the app in `TooltipProvider` before using tooltips.
+- **Config adaptations required (4):**
   1. **`@/*` alias** (shadcn's Vite guide requires it _before_ init): `paths` in
      `tsconfig.json` + `tsconfig.app.json`, and `resolve.alias` in `vite.config.ts`
      (`path.resolve(import.meta.dirname, './src')`, plus `@types/node`). **No `baseUrl`** —
      it's deprecated in TS 6; TS 5.4+ resolves `paths` relative to the tsconfig file.
-  2. **ESLint:** `button.tsx` exports `buttonVariants` (a cva helper) next to the component,
-     tripping `react-refresh/only-export-components`. Fixed with an inline
-     `eslint-disable-next-line` in `button.tsx` (keeps the hook-protected `eslint.config.js`
-     untouched). A `src/components/ui/**` override is the alternative if more ui files appear.
-  3. **Stylelint:** shadcn's oklch vars used unitless lightness/hue (`0.985`, `0`); a one-time
+  2. **ESLint — `src/components/ui/**` override:** vendored files export variant helpers
+(`badgeVariants`) or hooks (`useSidebar`) beside the component, tripping
+`react-refresh/only-export-components`; the `Label`primitive trips`jsx-a11y/label-has-associated-control`(the _consumer_ associates the control). A
+scoped override turns **only those two rules** off for`ui/\*\*`(the rest of guard h
+stays on).`eslint.config.js` is locked by the config-protection hook, so it was
+     hand-pasted, not tool-edited.
+  3. **ESLint — `use-mobile.ts` fixed at source:** shadcn's sidebar hook called `setState`
+     synchronously in an effect (`react-hooks` cascading-render rule). Rewritten with a lazy
+     initial read instead of disabling the rule — config-protection prefers source fixes.
+  4. **Stylelint:** shadcn's oklch vars used unitless lightness/hue (`0.985`, `0`); a one-time
      `stylelint --fix` normalised them to `98.5%`/`0deg` (config-standard's `lightness-notation`
      / `hue-degree-notation`). The pre-commit hook auto-fixes this going forward.
 - **Verified (Step 9, headless — preview MCP mis-targets from a french-lo-1-rooted session):**
-  `bun run build` ships the Button (`data-slot`, 4× `.inline-flex` in CSS) and the Lucide
-  Rocket (exact icon path in JS); `lint`/`lint:css`/`test`/`build` all exit 0.
+  all 19 components added; `bun run build` ships the Button (`data-slot`, `.inline-flex`) and
+  the Lucide Rocket (exact icon path in JS); `lint`/`lint:css`/`test`/`build` all exit 0.
 
 ---
 
