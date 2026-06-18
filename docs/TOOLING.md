@@ -15,17 +15,18 @@ and `eslint.config.js`. The `README` (later) will link here rather than restate 
 
 ## Toolchain at a glance
 
-| Tool                         | Role                                     | Step  |
-| ---------------------------- | ---------------------------------------- | ----- |
-| **Bun**                      | Package manager · runtime · test runner  | 1, 3  |
-| **Vite**                     | Dev server · production bundler          | 2     |
-| **TypeScript**               | Language · type safety                   | 2     |
-| **Prettier**                 | Code formatter (layout)                  | 4     |
-| **ESLint** + **jsx-a11y**    | Linter (correctness + accessibility)     | 5     |
-| **eslint-config-prettier**   | Stops ESLint and Prettier fighting       | 5     |
-| **Stylelint**                | CSS linting                              | 6     |
-| **husky** + **lint-staged**  | Pre-commit guard (format/lint staged)    | 7     |
-| _Tailwind · shadcn · Lucide_ | _Styling · components · icons (planned)_ | _8–9_ |
+| Tool                        | Role                                    | Step |
+| --------------------------- | --------------------------------------- | ---- |
+| **Bun**                     | Package manager · runtime · test runner | 1, 3 |
+| **Vite**                    | Dev server · production bundler         | 2    |
+| **TypeScript**              | Language · type safety                  | 2    |
+| **Prettier**                | Code formatter (layout)                 | 4    |
+| **ESLint** + **jsx-a11y**   | Linter (correctness + accessibility)    | 5    |
+| **eslint-config-prettier**  | Stops ESLint and Prettier fighting      | 5    |
+| **Stylelint**               | CSS linting                             | 6    |
+| **husky** + **lint-staged** | Pre-commit guard (format/lint staged)   | 7    |
+| **Tailwind CSS** (v4)       | Utility-first styling · theme engine    | 8    |
+| _shadcn · Lucide_           | _Components · icons (planned)_          | _9_  |
 
 ---
 
@@ -145,11 +146,11 @@ Layer 1 is the carrot; layers 2–3 are the stick.
 - **No Prettier truce needed:** Stylelint 16+ dropped stylistic rules, so it
   never fights Prettier over CSS layout (the old `stylelint-config-prettier` is
   deprecated — one less dependency).
-- **Tailwind (Step 8):** `config-standard` will flag Tailwind's CSS at-rules
-  (`@theme`, `@utility`, `@apply`, …) as unknown; we extend the config then.
-  **Distinction:** Tailwind utility _classes_ (`class="bg-slate-500 p-4"`) live
-  in `.tsx` markup, **not** in `.css` — Stylelint never sees them, so they need
-  no config. Only the at-rule directives inside stylesheets do.
+- **Tailwind (done in Step 8):** `config-standard` flagged Tailwind's CSS at-rules
+  (`@theme`, `@utility`, `@apply`, …) as unknown; resolved via an at-rule allowlist
+  (see the Tailwind section below). **Distinction:** Tailwind utility _classes_
+  (`class="bg-slate-500 p-4"`) live in `.tsx` markup, **not** in `.css` — Stylelint
+  never sees them, so they need no config. Only the at-rule directives in stylesheets do.
 - **Rejected:** waiting until Tailwind to add Stylelint — leaves CSS unlinted.
 
 ---
@@ -184,4 +185,33 @@ Layer 1 is the carrot; layers 2–3 are the stick.
 
 ---
 
-_Append a new section here as each tool lands (Tailwind, shadcn, …)._
+### Tailwind CSS v4 — utility-first styling _(Step 8)_
+
+- **What:** a utility-first CSS framework. Instead of authoring bespoke class rules,
+  you compose pre-built utilities in markup (`<div class="p-4 rounded-lg shadow">`).
+- **Why:** a consistent spacing/color/type scale out of the box, and — crucial here —
+  v4's **`@theme` token system** is the backbone of the theming steps (10–11: Slate
+  palette, light/dark, design tokens). Step 8 only installs the engine; tokens come later.
+- **v4 is a big shift from v3** (three things to know):
+  1. **CSS-first config** — no `tailwind.config.js` by default; configure in CSS via
+     `@theme { … }`. Fewer JS config files.
+  2. **One import** — `@import 'tailwindcss';` (in `src/index.css`) replaces v3's three
+     `@tailwind base/components/utilities` directives.
+  3. **First-party Vite plugin** — `@tailwindcss/vite` (faster than the v3 PostCSS path);
+     wired in `vite.config.ts` as `plugins: [react(), tailwindcss()]`.
+- **How it helps:** utilities are generated **on demand** by scanning source files, so the
+  output CSS only contains classes actually used. Verified Step 8: a probe element
+  (`bg-purple-600 rounded-lg text-2xl …`) produced exactly those rules in the built CSS.
+- **Stylelint adaptation (Option A — chosen):** `config-standard` rejected the v4 at-rules
+  and forced `@import url(...)`. Fixed in `stylelint.config.mjs` with **no new dependency**:
+  an `at-rule-no-unknown` allowlist (`theme`, `utility`, `apply`, `variant`,
+  `custom-variant`, `source`, `reference`, `config`, `plugin`, `tailwind`) plus
+  `import-notation: 'string'` (Tailwind requires the string form). **Rejected Option B**
+  (`stylelint-config-tailwindcss`) — its Stylelint-17 peer support can lag (same class of
+  warning that already affects `jsx-a11y`); a small stable allowlist is lower-risk.
+- **Note:** no `tailwind.config.js`, no `postcss.config.js` — intentional. v4 needs neither
+  for this setup; theme customization is CSS-first (`@theme`, Step 10).
+
+---
+
+_Append a new section here as each tool lands (shadcn, Lucide, …)._

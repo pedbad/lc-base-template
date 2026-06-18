@@ -118,7 +118,7 @@ SETUP
 [x] 5  ESLint + jsx-a11y
 [x] 6  Stylelint
 [x] 7  Husky + lint-staged (pre-commit)
-[ ] 8  Tailwind v4 (@layer order)
+[x] 8  Tailwind v4 (@layer order)
 [ ] 9  shadcn + Lucide
 THEME
 [ ] 10 Token files (Slate, light+dark, layered)

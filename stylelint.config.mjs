@@ -9,8 +9,9 @@
 //   guard g (css-layer-discipline) — every rule inside @layer; zero !important.
 //
 // Tailwind v4 (Step 8) adds CSS at-rules (@theme, @utility, @apply, …) that
-// `config-standard` flags as "unknown at-rule". We extend this config THEN
-// (e.g. stylelint-config-tailwindcss or an at-rule allowlist) — not now.
+// `config-standard` flags as "unknown at-rule". We allow them via an at-rule
+// allowlist below (Option A — no extra dependency, vs the community
+// stylelint-config-tailwindcss whose Stylelint-17 peer support can lag).
 //
 // Distinction: Tailwind utility *classes* (class="bg-slate-500 p-4") live in
 // .tsx markup, not in .css — Stylelint never sees them, so they need no config.
@@ -19,4 +20,28 @@
 /** @type {import('stylelint').Config} */
 export default {
   extends: ['stylelint-config-standard'],
+  rules: {
+    // Tailwind v4 requires string import notation (`@import 'tailwindcss'`).
+    // config-standard defaults to `url(...)`, which Tailwind rejects — flip it.
+    // (String notation is also the modern CSS default.)
+    'import-notation': 'string',
+    // Allow Tailwind v4's CSS-first at-rules; everything else stays validated.
+    'at-rule-no-unknown': [
+      true,
+      {
+        ignoreAtRules: [
+          'theme',
+          'source',
+          'utility',
+          'variant',
+          'custom-variant',
+          'apply',
+          'reference',
+          'config',
+          'plugin',
+          'tailwind',
+        ],
+      },
+    ],
+  },
 };
