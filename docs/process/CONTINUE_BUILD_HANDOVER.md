@@ -5,32 +5,47 @@
 
 ---
 
-## Status (as of Step 6 — pushed)
+## Status (as of Step 8 — pushed)
 
 Repo live + public: https://github.com/pedbad/lc-base-template (`main`).
-Everything below is committed AND pushed (`HEAD == origin/main`, clean tree).
+Everything below is committed AND pushed (`HEAD == origin/main == a3b2ec0`, clean tree).
 
-| Step                                             | Done | Commit    |
-| ------------------------------------------------ | ---- | --------- |
-| 1 repo init + README                             | ✅   | `b090ae3` |
-| 2 Vite + React + TS scaffold                     | ✅   | `7567d62` |
-| 3 Bun test runner + smoke test                   | ✅   | `c7d93fe` |
-| _docs: spec + handovers_                         | ✅   | `f7335ac` |
-| 4 Prettier (+ format-on-save, .gitattributes LF) | ✅   | `38ac7c2` |
-| 5 ESLint + jsx-a11y + eslint-config-prettier     | ✅   | `86e9afc` |
-| _docs: TOOLING.md + tick steps 1–5_              | ✅   | `dbb392b` |
-| 6 Stylelint + config-standard                    | ✅   | `266a570` |
+| Step                                             | Done | Commit              |
+| ------------------------------------------------ | ---- | ------------------- |
+| 1 repo init + README                             | ✅   | `b090ae3`           |
+| 2 Vite + React + TS scaffold                     | ✅   | `7567d62`           |
+| 3 Bun test runner + smoke test                   | ✅   | `c7d93fe`           |
+| _docs: spec + handovers_                         | ✅   | `f7335ac`           |
+| 4 Prettier (+ format-on-save, .gitattributes LF) | ✅   | `38ac7c2`           |
+| 5 ESLint + jsx-a11y + eslint-config-prettier     | ✅   | `86e9afc`           |
+| _docs: TOOLING.md + tick steps 1–5_              | ✅   | `dbb392b`           |
+| 6 Stylelint + config-standard                    | ✅   | `266a570`           |
+| 7 husky + lint-staged (pre-commit gate)          | ✅   | `fff566e`           |
+| _docs: CONTRIBUTING.md stub (+ list fix)_        | ✅   | `89fad86` `799b77a` |
+| 8 Tailwind CSS v4 + Vite plugin                  | ✅   | `a3b2ec0`           |
 
 **Toolchain (all linting clean):** Bun 1.3.14 · React 19.2 · Vite 8 · TypeScript 6 ·
 ESLint 10 + jsx-a11y 6.10 + eslint-config-prettier 10 · Prettier 3.8 ·
-Stylelint 17 + config-standard 40. Lockfile `bun.lock` committed.
+Stylelint 17 + config-standard 40 · **husky 9 + lint-staged 17** ·
+**Tailwind CSS 4.3 + @tailwindcss/vite 4.3**. Lockfile `bun.lock` committed.
 
 **Scripts available:** `dev` `build` `preview` `test` `lint` `format` `format:check`
-`lint:css`.
+`lint:css` (+ `prepare` runs husky on `bun install`).
+
+**Pre-commit gate (Step 7):** `.husky/pre-commit` runs `bunx lint-staged` →
+Prettier/ESLint on staged JS/TS, Prettier/Stylelint on CSS, Prettier on
+JSON/MD/config. Unfixable lint error blocks the commit (verified). Config in
+`lint-staged.config.mjs`. Tests stay in CI, not pre-commit.
+
+**Tailwind (Step 8):** v4 CSS-first — `@import 'tailwindcss'` in `src/index.css`,
+plugin in `vite.config.ts`. NO `tailwind.config.js` / `postcss.config.js` (intentional).
+Stylelint adapted via at-rule allowlist + `import-notation:'string'` (Option A, no new
+dep). Theme tokens (`@theme`) come at Step 10.
 
 **Docs written so far:** `docs/specs/2026-06-15-lc-base-template-design.md` (contract),
 `docs/process/LC_BASE_TEMPLATE_BUILD_HANDOVER.md` (baby-step sequence + checklist;
-steps 1–5 ticked — TICK STEP 6 next session), `docs/process/FUTURE_PROJECTS.md`,
+steps 1–8 ticked), `CONTRIBUTING.md` (root — new-dev stub, grows per step),
+`docs/process/FUTURE_PROJECTS.md`,
 `docs/TOOLING.md` (living tooling-rationale log — append a section per new tool).
 
 ---
@@ -64,6 +79,15 @@ steps 1–5 ticked — TICK STEP 6 next session), `docs/process/FUTURE_PROJECTS.
   with `cd /Users/ped/Sites/lc-base-template &&` OR use
   `git -C /Users/ped/Sites/lc-base-template`. A push once silently no-op'd against
   french-lo-1 because of this — always verify the repo.
+- **Preview MCP binds to the PRIMARY root (french-lo-1), NOT lc-base-template.**
+  `preview_start` launched french-lo-1's dev server (returned name `"french-lo-1"`),
+  so screenshots are impossible from this session. Two ways round it: (1) verify
+  headlessly — `bun run build` then grep `dist/assets/*.css` for the expected output
+  (proved Tailwind utilities generate in Step 8); (2) for real visual work (Steps 9–11:
+  shadcn/Lucide/theme), **open a session ROOTED on `/Users/ped/Sites/lc-base-template`**
+  (Desktop: new chat → pick that folder) so preview targets the right repo. This is the
+  3rd cwd-binding gotcha (git push, terminal cwd, preview) — all stem from french-lo-1
+  being the session primary.
 - **Config-protection hook:** the ECC `config-protection` PreToolUse hook BLOCKS the
   Edit/Write tools on certain config files. `eslint.config.js` WAS blocked (had to hand
   the file to the user to paste manually). `prettier.config.mjs` / `stylelint.config.mjs`
@@ -87,29 +111,32 @@ steps 1–5 ticked — TICK STEP 6 next session), `docs/process/FUTURE_PROJECTS.
 
 ---
 
-## NEXT — Step 7: husky + lint-staged (pre-commit hook)
+## NEXT — Step 9: shadcn + Lucide
 
-The "stick" that enforces everything added in Steps 4–6. From the handover sequence:
+Component layer on top of Tailwind v4 (installed Step 8). From the checklist:
 
-- `bun add -d husky lint-staged && bunx husky init`
-- husky self-installs via the `prepare` script on `bun install` (zero-touch — spec §3).
-- lint-staged config: run `prettier --write`, `eslint --fix`, `stylelint --fix` over
-  **staged files only** (fast). Wire into `.husky/pre-commit`.
-- **Verify:** stage a deliberately mis-formatted / lint-failing file → commit is BLOCKED
-  locally; fix → commit passes. (Bypassable with `--no-verify`; CI is the real wall, later.)
-- Tick checklist Step 6 AND Step 7; add a husky/lint-staged section to `docs/TOOLING.md`.
+- **shadcn/ui** — copy-in (not a dependency) accessible component primitives built on
+  Tailwind + Radix. `bunx shadcn@latest init`, then add components as needed.
+- **Lucide** — the icon set (`lucide-react`).
+- Adapt as needed: shadcn init may want path aliases / `components.json`; confirm it
+  fits the v4 CSS-first setup (no `tailwind.config.js`). Verify with a sample component.
+- Tick checklist Step 9; add a shadcn/Lucide section to `docs/TOOLING.md`.
 
-Then per checklist: Tailwind v4 (Step 8 — adapt Stylelint for `@theme` / `@utility` /
-`@apply` at-rules) → shadcn + Lucide → tokens → Zod configs → content engine → guards →
-docs/CI.
+**Do Step 9 in a session ROOTED on `/Users/ped/Sites/lc-base-template`** — components are
+visual; live preview/screenshots only work when lc-base-template is the session PRIMARY
+(see ENVIRONMENT NOTES → preview gotcha).
+
+Then per checklist: tokens (Step 10 — `@theme`) → `course.config.ts` (Zod) → content
+engine → guards → docs/CI.
 
 ---
 
 ## Paste-in prompt for the fresh session
 
 ```
-Continue building lc-base-template, baby-step style. Steps 1–6 are DONE and pushed
-(repo+README, Vite+React+TS, Bun test runner, Prettier, ESLint+jsx-a11y, Stylelint).
+Continue building lc-base-template, baby-step style. Steps 1–8 are DONE and pushed
+(repo+README, Vite+React+TS, Bun test runner, Prettier, ESLint+jsx-a11y, Stylelint,
+husky+lint-staged pre-commit gate, Tailwind CSS v4 + Vite plugin).
 Read the contract first:
   docs/specs/2026-06-15-lc-base-template-design.md      (24 decisions)
   docs/process/LC_BASE_TEMPLATE_BUILD_HANDOVER.md       (baby-step sequence + checklist)
@@ -121,10 +148,12 @@ every command (I'm a beginner); wait for my "ok" before each step; one commit pe
 step (Conventional Commits, NO Co-Authored-By); document each tool in its config header +
 docs/TOOLING.md.
 
-ENVIRONMENT: I'm on Claude Desktop — YOU run the Bash commands, not me. cwd resets to
-french/french-lo-1 each turn, so prefix every git/bun call with
-`cd /Users/ped/Sites/lc-base-template &&` (or use `git -C`). The ECC config-protection
-hook may block edits to lint config files — if so, hand me the file to paste.
+ENVIRONMENT: I'm on Claude Desktop — YOU run the Bash commands. If this session is rooted
+on lc-base-template, cwd + preview target the right repo. If NOT (rooted on french-lo-1),
+cwd resets each turn — prefix every git/bun call with
+`cd /Users/ped/Sites/lc-base-template &&` (or use `git -C`), and preview will mis-target.
+The ECC config-protection hook may block edits to lint config files — if so, hand me the
+file to paste.
 
-Begin by proposing Step 7 (husky + lint-staged pre-commit hook). Do not start until I say ok.
+Begin by proposing Step 9 (shadcn + Lucide). Do not start until I say ok.
 ```
