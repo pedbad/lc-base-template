@@ -117,7 +117,7 @@ SETUP
 [x] 4  Prettier (+ .vscode format-on-save)
 [x] 5  ESLint + jsx-a11y
 [x] 6  Stylelint
-[ ] 7  Husky + lint-staged (pre-commit)
+[x] 7  Husky + lint-staged (pre-commit)
 [ ] 8  Tailwind v4 (@layer order)
 [ ] 9  shadcn + Lucide
 THEME

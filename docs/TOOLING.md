@@ -24,7 +24,7 @@ and `eslint.config.js`. The `README` (later) will link here rather than restate 
 | **ESLint** + **jsx-a11y**    | Linter (correctness + accessibility)     | 5     |
 | **eslint-config-prettier**   | Stops ESLint and Prettier fighting       | 5     |
 | **Stylelint**                | CSS linting                              | 6     |
-| _husky · lint-staged_        | _Pre-commit guard (planned)_             | _7_   |
+| **husky** + **lint-staged**  | Pre-commit guard (format/lint staged)    | 7     |
 | _Tailwind · shadcn · Lucide_ | _Styling · components · icons (planned)_ | _8–9_ |
 
 ---
@@ -154,4 +154,34 @@ Layer 1 is the carrot; layers 2–3 are the stick.
 
 ---
 
-_Append a new section here as each tool lands (husky, Tailwind, …)._
+### husky + lint-staged — pre-commit guard _(Step 7)_
+
+- **What:** **husky** manages git hooks (it owns the `.husky/` directory; git runs
+  the scripts there on git events). **lint-staged** runs commands against **only the
+  files staged** for the current commit. Together: `.husky/pre-commit` runs
+  `bunx lint-staged`, which formats/lints just the staged files before the commit lands.
+- **Why:** Steps 4–6 added Prettier, ESLint, and Stylelint, but nothing _enforced_
+  them — a badly-formatted or lint-failing file committed fine. This is **enforcement
+  layer 2** (the "stick"): an unfixable problem blocks the commit locally.
+- **How it helps:** husky self-installs via the `"prepare": "husky"` script on every
+  `bun install` — **zero-touch** (spec #8): clone the template and the guard is just
+  _there_, no manual `git config`. lint-staged keeps it fast by never scanning the
+  whole repo. Config lives in `lint-staged.config.mjs` (commented, per-tool globs).
+- **Glob scoping:** each tool only sees files it understands — ESLint on `js/jsx/ts/tsx`,
+  Stylelint on `css`, Prettier on everything formattable (incl. `mjs/cjs` config files).
+  `--fix`/`--write` mutate files and lint-staged re-stages the result automatically.
+- **Auto-fix vs block:** formatting issues are silently auto-fixed (commit succeeds with
+  the cleaned file); a problem with no autofix (e.g. `no-unused-vars`) **fails the commit**.
+  Verified Step 7: a staged file with an unused var was blocked
+  (`husky - pre-commit script failed (code 1)`) and never entered history.
+- **pre-commit = lint-staged only (no tests):** kept fast and focused on format/lint.
+  The full `bun test` suite runs in **CI** (Step 31), not on every commit — the standard
+  split: pre-commit = cheap fast checks, CI = full validation.
+- **Bypass reality:** `git commit --no-verify` skips the hook. That's expected — the
+  hook is a fast local helper, **CI is the unbypassable wall** (enforcement layer 3).
+- **Rejected:** running the whole test suite or `eslint .` (whole repo) on pre-commit —
+  too slow; defeats the point of a fast local gate.
+
+---
+
+_Append a new section here as each tool lands (Tailwind, shadcn, …)._
