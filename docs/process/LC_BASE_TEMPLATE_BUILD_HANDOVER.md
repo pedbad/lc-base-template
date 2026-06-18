@@ -122,6 +122,7 @@ SETUP
 [x] 9  shadcn + Lucide
 THEME
 [x] 10 Token files (Slate, light+dark, layered) — 3 switchable primary presets + src/styles/README.md
+[ ] 10b Typography (Open Sans default + Feijoa display, git-ignored; font tokens in palette.css)
 [ ] 11 course.config.ts (Zod)
 [ ] 12 ui-strings.ts (Zod, two-layer)
 CONTENT ENGINE
