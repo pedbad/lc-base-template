@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import path from 'node:path';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
@@ -9,4 +10,10 @@ export default defineConfig({
   // Faster than the v3 PostCSS path; no postcss.config / tailwind.config needed
   // (v4 is CSS-first — theme tokens live in CSS via @theme, added at Step 10).
   plugins: [react(), tailwindcss()],
+  // `@` → ./src so shadcn component imports resolve (e.g. `@/components/ui/button`).
+  resolve: {
+    alias: {
+      '@': path.resolve(import.meta.dirname, './src'),
+    },
+  },
 });

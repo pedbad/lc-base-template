@@ -214,4 +214,47 @@ Layer 1 is the carrot; layers 2–3 are the stick.
 
 ---
 
-_Append a new section here as each tool lands (shadcn, Lucide, …)._
+### shadcn/ui + Lucide — component layer _(Step 9)_
+
+- **What (shadcn/ui):** NOT a dependency. A CLI (`bunx shadcn@latest`) **copies component
+  source into the repo** (`src/components/ui/*`) — you own and edit the code. Built on a
+  headless primitive library + Tailwind, so accessibility (focus, ARIA, keyboard) comes
+  for free without a runtime UI package to version-pin.
+- **What (Lucide):** the icon set (`lucide-react`) — tree-shakeable SVG icons as React
+  components (`<Rocket />`). shadcn's components reference it as their default icon library.
+- **Why:** spec §3 names shadcn + Lucide. Gives accessible primitives (Button, Dialog, …)
+  without hand-rolling a11y, plus a consistent icon system. a11y is CI-gated (spec §5h).
+- **Install command we landed on:** `bunx shadcn@latest init -t vite -b base -p nova -y`
+  - `-t vite` — Vite template (default is Next; must override).
+  - `-b base` — base-color **system** = **Base UI** primitives (the other option, `radix`,
+    pulls Radix). shadcn 4.11 changed `-b` from a hue name (`slate`) to a system enum.
+  - `-p nova` — preset; **nova = Lucide icons + Geist font**. Presets: nova/vega/maia/lyra/
+    mira/luma/sera/rhea. (`-d` defaults to `--template=next --preset=base-nova`, which is
+    where the `base`+`nova` combination is documented.)
+  - `-y` — non-interactive. Without the right `-t`/`-b`/`-p` it still prompts and hangs.
+- **What init created/changed:** `components.json` (config; `iconLibrary: lucide`, aliases),
+  `src/lib/utils.ts` (the `cn()` clsx + tailwind-merge helper), `src/components/ui/button.tsx`,
+  and it **merged tokens into `src/index.css`** (`@theme inline`, `:root`/`.dark` oklch vars,
+  `@layer base`, plus `@import` of `tw-animate-css`, `shadcn/tailwind.css`, Geist). Deps added:
+  `@base-ui/react`, `class-variance-authority`, `clsx`, `tailwind-merge`, `tw-animate-css`,
+  `@fontsource-variable/geist`. **Step 10 replaces these placeholder tokens** with the
+  Cambridge Slate system — the merge is a starting point, not the final theme.
+- **Config adaptations required (3):**
+  1. **`@/*` alias** (shadcn's Vite guide requires it _before_ init): `paths` in
+     `tsconfig.json` + `tsconfig.app.json`, and `resolve.alias` in `vite.config.ts`
+     (`path.resolve(import.meta.dirname, './src')`, plus `@types/node`). **No `baseUrl`** —
+     it's deprecated in TS 6; TS 5.4+ resolves `paths` relative to the tsconfig file.
+  2. **ESLint:** `button.tsx` exports `buttonVariants` (a cva helper) next to the component,
+     tripping `react-refresh/only-export-components`. Fixed with an inline
+     `eslint-disable-next-line` in `button.tsx` (keeps the hook-protected `eslint.config.js`
+     untouched). A `src/components/ui/**` override is the alternative if more ui files appear.
+  3. **Stylelint:** shadcn's oklch vars used unitless lightness/hue (`0.985`, `0`); a one-time
+     `stylelint --fix` normalised them to `98.5%`/`0deg` (config-standard's `lightness-notation`
+     / `hue-degree-notation`). The pre-commit hook auto-fixes this going forward.
+- **Verified (Step 9, headless — preview MCP mis-targets from a french-lo-1-rooted session):**
+  `bun run build` ships the Button (`data-slot`, 4× `.inline-flex` in CSS) and the Lucide
+  Rocket (exact icon path in JS); `lint`/`lint:css`/`test`/`build` all exit 0.
+
+---
+
+_Append a new section here as each tool lands (Zod, tokens, …)._

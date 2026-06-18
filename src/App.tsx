@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Rocket } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import reactLogo from './assets/react.svg';
 import viteLogo from './assets/vite.svg';
 import heroImg from './assets/hero.png';
@@ -24,6 +26,10 @@ function App() {
         <button type="button" className="counter" onClick={() => setCount((count) => count + 1)}>
           Count is {count}
         </button>
+        {/* Step 9 smoke check: shadcn Button + Lucide icon render. */}
+        <Button>
+          <Rocket /> shadcn + Lucide
+        </Button>
       </section>
 
       <div className="ticks"></div>

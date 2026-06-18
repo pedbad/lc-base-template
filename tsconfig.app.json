@@ -15,6 +15,12 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Path alias — lets shadcn imports like `@/components/ui/button` resolve to src/.
+       No baseUrl: TS 5.4+ resolves `paths` relative to this file (baseUrl is deprecated in TS 6). */
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
     /* Linting */
     "noUnusedLocals": true,
     "noUnusedParameters": true,

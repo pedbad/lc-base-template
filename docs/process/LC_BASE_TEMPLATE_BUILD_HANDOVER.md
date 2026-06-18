@@ -119,7 +119,7 @@ SETUP
 [x] 6  Stylelint
 [x] 7  Husky + lint-staged (pre-commit)
 [x] 8  Tailwind v4 (@layer order)
-[ ] 9  shadcn + Lucide
+[x] 9  shadcn + Lucide
 THEME
 [ ] 10 Token files (Slate, light+dark, layered)
 [ ] 11 course.config.ts (Zod)
