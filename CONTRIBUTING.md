@@ -48,9 +48,9 @@ strongest (full rationale in [`docs/TOOLING.md`](docs/TOOLING.md#enforcement-lay
 
 1. **Editor** — format-on-save via `.vscode/settings.json` (convenience).
 2. **Pre-commit hook** — husky runs `lint-staged` on **staged files only**: Prettier
-   - ESLint on JS/TS, Prettier + Stylelint on CSS, Prettier on JSON/MD/config.
-     Auto-fixable issues are fixed and re-staged silently; an unfixable problem
-     (e.g. an unused variable) **blocks the commit**.
+   and ESLint on JS/TS, Prettier and Stylelint on CSS, Prettier on JSON/MD/config.
+   Auto-fixable issues are fixed and re-staged silently; an unfixable problem
+   (e.g. an unused variable) **blocks the commit**.
 3. **CI** — re-runs the checks (later step). The unbypassable wall.
 
 You can bypass the local hook with `git commit --no-verify`, but CI will still catch
