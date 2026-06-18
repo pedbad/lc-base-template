@@ -1,0 +1,40 @@
+/* ==========================================================================
+   Layer 1 — Primitive tokens (raw brand values)
+   ==========================================================================
+   The ONLY place real colour literals live. Everything downstream
+   (tokens.css → components) references these by name, never the hex.
+   Source of truth: official University of Cambridge brand guidelines
+     colour:     https://www.cam.ac.uk/brand-resources/guidelines/colour
+     typography: https://www.cam.ac.uk/brand-resources/guidelines/typography
+
+   Re-skin a clone by editing values HERE only — the semantic + component
+   layers and all 19 shadcn components update automatically (spec §7.1).
+
+   Primitives are constant across light/dark; light/dark lives in tokens.css.
+   ========================================================================== */
+
+@layer base {
+  :root {
+    /* Greyscale — Cambridge Slate (use Slate 4 for text, never pure black) */
+    --white: #fff;
+    --slate-1: #eceef1; /* lightest surface           */
+    --slate-2: #b5bdc8; /* lines / borders / muted     */
+    --slate-3: #546072; /* secondary text / muted-fg   */
+    --slate-4: #232830; /* primary text                */
+
+    /* Core — Cambridge Blue family
+       Cambridge Blue = the prominent brand colour; Dark Blue = accent only */
+    --cam-blue: #8ee8d8; /* Cambridge Blue        */
+    --cam-light-blue: #d1f9f1; /* Cambridge Light Blue  */
+    --cam-warm-blue: #00bdb6; /* Cambridge Warm Blue   */
+    --cam-dark-blue: #133844; /* Cambridge Dark Blue   */
+
+    /* Secondary accents (used alongside core, never alone) — data viz / states */
+    --cam-crest: #fd8153;
+    --cam-cherry: #cd3572;
+    --cam-purple: #a368df;
+    --cam-indigo: #5366e0;
+    --cam-green: #4db78c;
+    --cam-dark-crest: #dd3025; /* destructive / error */
+  }
+}

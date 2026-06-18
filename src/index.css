@@ -1,157 +1,20 @@
 /* Tailwind v4 — pulls in base styles + generates utilities on demand.
-   Must stay at the top: CSS requires @import before other rules.
-   Theme tokens (@theme) are added at Step 10; this is just the engine. */
+   @imports must stay at the top: CSS requires them before other rules. */
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 @import '@fontsource-variable/geist';
 
+/* Cambridge token chain (spec §7.1): primitives → semantic roles.
+   Component-level tokens layer on top in later steps. */
+@import './styles/palette.css';
+@import './styles/tokens.css';
+
 @custom-variant dark (&:is(.dark *));
 
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: oklch(92.2% 0 0deg);
-  --code-bg: #f4f3ec;
-  --accent: oklch(97% 0 0deg);
-  --accent-bg: rgb(170 59 255 / 10%);
-  --accent-border: rgb(170 59 255 / 50%);
-  --social-bg: rgb(244 243 236 / 50%);
-  --shadow: rgb(0 0 0 / 10%) 0 10px 15px -3px, rgb(0 0 0 / 5%) 0 4px 6px -2px;
-  --sans: system-ui, 'Segoe UI', roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', roboto, sans-serif;
-  --mono: ui-monospace, consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizelegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (width <= 1024px) {
-    font-size: 16px;
-  }
-
-  --background: oklch(100% 0 0deg);
-  --foreground: oklch(14.5% 0 0deg);
-  --card: oklch(100% 0 0deg);
-  --card-foreground: oklch(14.5% 0 0deg);
-  --popover: oklch(100% 0 0deg);
-  --popover-foreground: oklch(14.5% 0 0deg);
-  --primary: oklch(20.5% 0 0deg);
-  --primary-foreground: oklch(98.5% 0 0deg);
-  --secondary: oklch(97% 0 0deg);
-  --secondary-foreground: oklch(20.5% 0 0deg);
-  --muted: oklch(97% 0 0deg);
-  --muted-foreground: oklch(55.6% 0 0deg);
-  --accent-foreground: oklch(20.5% 0 0deg);
-  --destructive: oklch(57.7% 0.245 27.325deg);
-  --input: oklch(92.2% 0 0deg);
-  --ring: oklch(70.8% 0 0deg);
-  --chart-1: oklch(87% 0 0deg);
-  --chart-2: oklch(55.6% 0 0deg);
-  --chart-3: oklch(43.9% 0 0deg);
-  --chart-4: oklch(37.1% 0 0deg);
-  --chart-5: oklch(26.9% 0 0deg);
-  --radius: 0.625rem;
-  --sidebar: oklch(98.5% 0 0deg);
-  --sidebar-foreground: oklch(14.5% 0 0deg);
-  --sidebar-primary: oklch(20.5% 0 0deg);
-  --sidebar-primary-foreground: oklch(98.5% 0 0deg);
-  --sidebar-accent: oklch(97% 0 0deg);
-  --sidebar-accent-foreground: oklch(20.5% 0 0deg);
-  --sidebar-border: oklch(92.2% 0 0deg);
-  --sidebar-ring: oklch(70.8% 0 0deg);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgb(192 132 252 / 15%);
-    --accent-border: rgb(192 132 252 / 50%);
-    --social-bg: rgb(47 48 58 / 50%);
-    --shadow: rgb(0 0 0 / 40%) 0 10px 15px -3px, rgb(0 0 0 / 25%) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-
-  @media (width <= 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-
-  @media (width <= 1024px) {
-    font-size: 20px;
-  }
-}
-
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
-}
-
+/* Bridge the semantic role tokens (tokens.css) to Tailwind colour utilities.
+   This is what skins every shadcn component (bg-primary, text-foreground, …) —
+   it maps Tailwind's --color-* to our --* roles. Keep intact; swap values upstream. */
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: 'Geist Variable', sans-serif;
@@ -193,40 +56,6 @@ code {
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
-}
-
-.dark {
-  --background: oklch(14.5% 0 0deg);
-  --foreground: oklch(98.5% 0 0deg);
-  --card: oklch(20.5% 0 0deg);
-  --card-foreground: oklch(98.5% 0 0deg);
-  --popover: oklch(20.5% 0 0deg);
-  --popover-foreground: oklch(98.5% 0 0deg);
-  --primary: oklch(92.2% 0 0deg);
-  --primary-foreground: oklch(20.5% 0 0deg);
-  --secondary: oklch(26.9% 0 0deg);
-  --secondary-foreground: oklch(98.5% 0 0deg);
-  --muted: oklch(26.9% 0 0deg);
-  --muted-foreground: oklch(70.8% 0 0deg);
-  --accent: oklch(26.9% 0 0deg);
-  --accent-foreground: oklch(98.5% 0 0deg);
-  --destructive: oklch(70.4% 0.191 22.216deg);
-  --border: oklch(100% 0 0deg / 10%);
-  --input: oklch(100% 0 0deg / 15%);
-  --ring: oklch(55.6% 0 0deg);
-  --chart-1: oklch(87% 0 0deg);
-  --chart-2: oklch(55.6% 0 0deg);
-  --chart-3: oklch(43.9% 0 0deg);
-  --chart-4: oklch(37.1% 0 0deg);
-  --chart-5: oklch(26.9% 0 0deg);
-  --sidebar: oklch(20.5% 0 0deg);
-  --sidebar-foreground: oklch(98.5% 0 0deg);
-  --sidebar-primary: oklch(48.8% 0.243 264.376deg);
-  --sidebar-primary-foreground: oklch(98.5% 0 0deg);
-  --sidebar-accent: oklch(26.9% 0 0deg);
-  --sidebar-accent-foreground: oklch(98.5% 0 0deg);
-  --sidebar-border: oklch(100% 0 0deg / 10%);
-  --sidebar-ring: oklch(55.6% 0 0deg);
 }
 
 @layer base {
