@@ -72,7 +72,7 @@ All three behind the debug flag (`VITE_INCLUDE_DEBUG=true`); production builds e
 
 1. **Debug sandbox — the design control panel.** Renders the live theme across all three token layers (primitives, semantic roles, component tokens), light + dark: palette swatches, font ramp (Open Sans now / Feijoa when present), SVG/icon set, spacing tokens, **plus a live component preview** (real buttons + exercises rendered with the exact tokens). Where the designer's handoff is confirmed visually. Also renders `CONTRIBUTING.md` as HTML (single source — no hand-copied duplicate).
 2. **Exercise showcase.** Full catalog of all 13 exercise types in isolated fixtures. The menu a dev browses + the place a new exercise component is verified.
-3. **Example LO.** One complete, realistic, **Zod-valid** Learning Object: intro + grammar block + vocab block + an exercise section of **4 accordions** (4 exercise types, NOT all 13 — that's the showcase's job). The "copy me to start" artifact.
+3. **Example LO.** One complete, realistic, **Zod-valid** Learning Object: intro + grammar block + vocab block + an exercise section of **4 accordions** (4 exercise types, NOT all 13 — that's the showcase's job). The "copy me to start" artifact. Ships as a **folder** (`lo-config/lo-01-…/`): a thin `lo.json` manifest + one config file per block/exercise; media mirrors under `public/` by the same ordinal+type names (folder-per-LO — see §6/§15).
 
 ---
 
@@ -105,10 +105,18 @@ Eight checks. Each maps to a real bug that already hurt the prior project. All r
 **Template approach:**
 
 - Slug-only routing (rule #26, no `?lo=` resolver).
-- Build **auto-discovers** LOs by scanning `lo-config/*.json`.
+- Build **auto-discovers** LOs by scanning `lo-config/*/lo.json` (folder-per-LO; see below).
 - Build emits **one real, content-full `.html` per LO slug**.
 - No mod_rewrite needed; works on dumb static hosting; best SEO; no manual folders.
-- The old devops shell hack becomes a build step the template owns. Drop a JSON → get a page. Can't forget, can't drift.
+- The old devops shell hack becomes a build step the template owns. Drop an LO folder → get a page. Can't forget, can't drift.
+
+**Content structure — folder-per-LO** _(refined 2026-06-19; replaces the original monolithic per-LO JSON of french-lo-1)_:
+
+- Each LO is a **folder** under `lo-config/` containing a thin **`lo.json` manifest** (LO meta + the _ordered_ list of block/exercise refs, e.g. `["01-grammar", "02-vocab"]`, `["01-select", "02-inline-choice", …]`) plus **one config file per block/exercise**.
+- A config file is small and self-contained — it declares its `type` (resolved to the one shared engine via `lazyRegistry`) and its content + optional per-exercise `labels` override.
+- **Components stay shared** — there is one `SelectExercise` engine for _all_ select exercises; only the per-instance content is split out. Config (in `lo-config/`) and media (in `public/`, fetched via `resolveAsset()`/`%BASE_URL%`) both follow the same `<ordinal>-<type>` render-mirror names (§15); guard **b** keeps the two in sync.
+- The build reads each `lo.json`, stitches the referenced parts, **Zod-validates each part _and_ the assembled LO**, then pre-renders the page.
+- **Why:** smaller files, far fewer merge conflicts (authors edit separate files), config sits beside its render-mirror assets, and reorder-by-rename is guard-checked. One-time cost = a loader that globs + stitches + validates (the right place to pay it: this is a template).
 
 ---
 
@@ -206,7 +214,7 @@ ClozeTyping bugs from french-lo-1 (missing audio icon, unstyled check button, sh
 3. Apply designer's theme — edit primitive tokens in `palette.css`; confirm in sandbox. Drop licensed Feijoa in `public/fonts/feijoa/` if a Cambridge deploy (else Open Sans renders).
 4. Translate `ui-strings.ts` — Check/Next/etc → target language (Zod fails build on missing key).
 
-**Per-LO loop (the repeatable part):** 5. Copy the example LO JSON → rename to `lo-NN-slug.json`. 6. Edit content — intro, grammar, vocab, pronunciation, dialogue/monologue, exercises. 7. Add assets — images to `media/images/lo-NN/<NN-type>/`, audio to `audio/lo-NN/<NN-type>/` (render-mirror naming, §15). 8. Pick exercises from the showcase menu; paste the config shape, fill content. 9. `bun run dev` → preview. Build auto-discovers the new JSON → pre-renders its page. 10. Commit → guards fire (pre-commit + CI). Red = CONTRIBUTING.md gives the fix.
+**Per-LO loop (the repeatable part):** 5. Copy the example LO **folder** → rename to `lo-NN-slug/` (its `lo.json` manifest + per-block/exercise config files come with it). 6. Edit content — intro, grammar, vocab, pronunciation, dialogue/monologue, exercises. 7. Add assets — images to `media/images/lo-NN/<NN-type>/`, audio to `audio/lo-NN/<NN-type>/` (render-mirror naming, §15). 8. Pick exercises from the showcase menu; paste the config shape, fill content. 9. `bun run dev` → preview. Build auto-discovers the new JSON → pre-renders its page. 10. Commit → guards fire (pre-commit + CI). Red = CONTRIBUTING.md gives the fix.
 
 **Deploy:** 11. `bun run build` → static HTML per LO → push to lcdev/lcitc with the env base path.
 
@@ -235,14 +243,19 @@ Sandbox "Docs" hub = pages rendering `DESIGNER.md` (designer), `CONTRIBUTING.md`
 File structure mirrors the rendered page so maintenance is "look at the page → go straight to the file."
 
 - **Scheme:** `<ordinal>-<type>` — ordinal = position on page, type = what it is. `01-grammar/`, `03-line-match/`.
-- **Scope: section-scoped (decision B).** Content blocks form one sequence; exercises restart their own:
+- **Scope: section-scoped (decision B).** Content blocks form one sequence; exercises restart their own. **Config (folder-per-LO) and media use the identical `<ordinal>-<type>` names:**
   ```
-  lo-config/lo-01-salutations.json
-  public/media/images/lo-01/02-vocabulary/
+  lo-config/lo-01-salutations/          ← the LO folder (config)
+    lo.json                             ← manifest: meta + ordered block/exercise refs
+    blocks/01-grammar/block.json
+    blocks/02-vocabulary/block.json
+    exercises/01-select/exercise.json
+    exercises/02-fill-gaps/exercise.json
+  public/media/images/lo-01/02-vocabulary/   ← media mirrors the same names (served via %BASE_URL%)
   public/audio/lo-01/01-grammar/
   public/audio/lo-01/03-pronunciation/
   public/audio/lo-01/04-dialogue/
-  …exercise section restarts: audio/lo-01/exercises/01-select/  02-fill-gaps/ …
+  …exercise section restarts: public/audio/lo-01/exercises/01-select/  02-fill-gaps/ …
   ```
 - **Applies to all block types** with assets: grammar, vocabulary, pronunciation, dialogue, monologue, exercises.
 - **Enforced (guard b):** each folder name must match that block's index + type in the LO config, per section. Reorder without rename → guard fails. The file↔page mirror is an invariant, not a hope.
