@@ -368,6 +368,15 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   returns clean, typed data or throws a precise `ZodError`. First use:
   `src/config/course.config.ts` — the single source of course identity (title,
   language, deploy `basePath`, landing copy, logo/favicon, LO order).
+- **Second use — `src/config/ui-strings.ts` (Step 12, spec §9, two-layer):** the
+  exercise chrome words ("Check", "Next", "Correct!", audio controls), seeded in
+  English from french-lo-1's real strings. _Layer 1_ — global `uiStrings`: a
+  `strictObject` with **all keys required** (a missing key fails the build → no
+  half-translated chrome ships; a typo key is rejected, not stripped). _Layer 2_ —
+  `UiStringsOverrideSchema` (`.partial()`, still strict): the LO JSON's optional
+  per-exercise `labels` block, validated later. `resolveLabel(key, overrides)`
+  resolves override-wins with the global default always present. Not a runtime i18n
+  framework — one language, set once.
 - **Why (spec decision #2 + §8 — _the_ reason this template is TS+Zod):**
   french-lo-1 broke repeatedly on silent config drift — key typos
   (`instructionsText` vs `informationText`), missing fields, wrong shapes — only
