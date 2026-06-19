@@ -15,19 +15,20 @@ and `eslint.config.js`. The `README` (later) will link here rather than restate 
 
 ## Toolchain at a glance
 
-| Tool                        | Role                                         | Step |
-| --------------------------- | -------------------------------------------- | ---- |
-| **Bun**                     | Package manager · runtime · test runner      | 1, 3 |
-| **Vite**                    | Dev server · production bundler              | 2    |
-| **TypeScript**              | Language · type safety                       | 2    |
-| **Prettier**                | Code formatter (layout)                      | 4    |
-| **ESLint** + **jsx-a11y**   | Linter (correctness + accessibility)         | 5    |
-| **eslint-config-prettier**  | Stops ESLint and Prettier fighting           | 5    |
-| **Stylelint**               | CSS linting                                  | 6    |
-| **husky** + **lint-staged** | Pre-commit guard (format/lint staged)        | 7    |
-| **Tailwind CSS** (v4)       | Utility-first styling · theme engine         | 8    |
-| **shadcn/ui** + **Lucide**  | Components (19) · icons                      | 9    |
-| **Cambridge Slate tokens**  | Theme: primitive→semantic→component CSS vars | 10   |
+| Tool                        | Role                                           | Step |
+| --------------------------- | ---------------------------------------------- | ---- |
+| **Bun**                     | Package manager · runtime · test runner        | 1, 3 |
+| **Vite**                    | Dev server · production bundler                | 2    |
+| **TypeScript**              | Language · type safety                         | 2    |
+| **Prettier**                | Code formatter (layout)                        | 4    |
+| **ESLint** + **jsx-a11y**   | Linter (correctness + accessibility)           | 5    |
+| **eslint-config-prettier**  | Stops ESLint and Prettier fighting             | 5    |
+| **Stylelint**               | CSS linting                                    | 6    |
+| **husky** + **lint-staged** | Pre-commit guard (format/lint staged)          | 7    |
+| **Tailwind CSS** (v4)       | Utility-first styling · theme engine           | 8    |
+| **shadcn/ui** + **Lucide**  | Components (19) · icons                        | 9    |
+| **Cambridge Slate tokens**  | Theme: primitive→semantic→component CSS vars   | 10   |
+| **Cambridge typography**    | Open Sans (body) + Feijoa (display) + baseline | 10b  |
 
 ---
 
@@ -302,6 +303,60 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 - **Verified (Step 10, headless — preview MCP mis-targets from a french-lo-1
   session):** `format` / `lint` / `lint:css` / `test` / `build` all exit 0; the
   build ships the reskinned components.
+
+---
+
+### Cambridge typography — Open Sans + Feijoa _(Step 10b)_
+
+- **What:** the two official Cambridge typefaces wired through the same token chain
+  as the colours, plus the global type baseline (size + leading). Full dev guide:
+  **`src/styles/README.md` → Fonts**.
+- **Why:** shadcn's `init` (Step 9) pulled **Geist** — generic, not the brand.
+  Cambridge's guidelines specify **Feijoa** for display (headings/titles) and
+  **Open Sans** for body. Step 10b swaps Geist out.
+- **The two fonts (deliberately different delivery):**
+  - **Open Sans** — body. **Free** (Apache-2.0, via Google Fonts). Shipped as the
+    npm package `@fontsource-variable/open-sans` (variable build → one file covers
+    Regular/SemiBold/Bold). Self-hosted by Vite (no Google-CDN call → privacy +
+    no render-blocking third party). **Committed.**
+  - **Feijoa** — display. **Commercial** (Klim Type Foundry) — spec §12 /
+    decision #18: **never committed.** Declared via `@font-face` pointing at
+    git-ignored `public/fonts/feijoa/`; dropped in per Cambridge deploy only.
+    `font-display: swap` + Open Sans fallback → fresh clones render correctly with
+    no invisible-text flash and no missing-glyph boxes.
+- **Token wiring (same one-edit-point philosophy as colour):**
+  - `palette.css` (Layer 1, **shared** — NOT per-preset, so switching `--primary`
+    presets never touches fonts): `--font-display: 'Feijoa','Open Sans','Arial',sans-serif`
+    and `--font-body: 'Open Sans','Arial',sans-serif`. Arial = Cambridge's specified
+    system fallback.
+  - `index.css` `@theme inline`: `--font-sans: var(--font-body)` and
+    `--font-heading: var(--font-display)`. **These two lines re-skin the type of
+    all 19 shadcn components** — the structure is kept intact, only the values swap.
+- **Type baseline — researched decisions (the _why_, for future devs):**
+  - **Set on `<html>`, not `<body>`** — `rem` units anchor to `<html>`, and
+    `line-height` set here inherits globally (including React portals / shadow DOM,
+    which can skip a value set on `<body>`).
+  - **`font-size: 100%`, not `16px`** — resolves to 16px (Cambridge min, spec §7.2)
+    but **scales with the user's browser font preference**. A hardcoded `16px` would
+    override a vision-impaired user who raised their default — an accessibility fail.
+  - **`line-height: 1.4` UNITLESS, not `140%` / `1.4em`** — the "140% trap": a
+    percentage/em line-height computes a **fixed px** at `<html>` and freezes that
+    value for every child, clipping large headings. A **unitless** value passes the
+    _multiplier_ down, so each element scales leading by its own font-size.
+  - **`line-height: 1.4` duplicated on `<body>`** — WebKit/Safari edge case where
+    some elements skip the `<html>` value; the duplicate forces inheritance.
+  - **iOS rotate-zoom (`-webkit-text-size-adjust: 100%`) is NOT repeated by us** —
+    Tailwind v4 Preflight already sets it on `<html>` (verified in
+    `node_modules/tailwindcss/preflight.css`). Repeating it would trip Stylelint's
+    `property-no-vendor-prefix` for zero benefit.
+- **Rejected:** Google Fonts `<link>` CDN (privacy + render-blocking + offline-fragile;
+  self-hosting via fontsource is the zero-touch, spec-#8 path). Hardcoded `16px`
+  baseline (accessibility regression, above). Committing Feijoa (licence breach, §12).
+- **Verified (Step 10b, headless — preview MCP mis-targets from a french-lo-1 session):**
+  `format` / `lint` / `lint:css` / `test` / `build` all exit 0. Built CSS ships 10 Open
+  Sans `@font-face` (latin + subsets), 3 Feijoa `@font-face` → `/fonts/feijoa/` with
+  `swap`, the `--font-display`/`--font-body` tokens, `--font-sans:var(--font-body)`, and
+  `line-height:1.4` on both `<html>` and `<body>`. Zero `geist` references remain.
 
 ---
 

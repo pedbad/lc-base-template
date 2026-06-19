@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Feijoa = Cambridge display font, COMMERCIAL (Klim) — spec §12 / decision #18.
+# Font files must NEVER be committed. Dropped in per Cambridge deploy only;
+# Open Sans renders as the fallback until then. Keep the dir but ignore its fonts.
+public/fonts/feijoa/*
+!public/fonts/feijoa/README.md
+
 # Editor directories and files
 # Most .vscode/* is personal, but two files are shared so every clone gets the
 # same out-of-the-box editor behaviour (format-on-save + recommended extensions).

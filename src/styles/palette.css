@@ -36,5 +36,14 @@
     --cam-indigo: #5366e0;
     --cam-green: #4db78c;
     --cam-dark-crest: #dd3025; /* destructive / error */
+
+    /* Typography — official Cambridge brand (spec §7.2).
+       These live in Layer 1 (shared) — NOT in the per-preset token files — so
+       switching --primary presets (a/b/c) never touches the fonts.
+         --font-display: Feijoa (commercial, git-ignored) → falls back to Open Sans.
+         --font-body:    Open Sans (free, the public default).
+       Arial is Cambridge's specified system fallback when brand fonts are absent. */
+    --font-display: 'Feijoa', 'Open Sans', 'Arial', sans-serif;
+    --font-body: 'Open Sans', 'Arial', sans-serif;
   }
 }

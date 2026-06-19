@@ -41,6 +41,23 @@ cd lc-base-template
 bun install
 ```
 
+### Fonts (Cambridge developers)
+
+Body text (**Open Sans**) works out of the box — no action needed.
+
+**Feijoa** (headings) is commercial and not committed to this repo. If you hold a
+Cambridge/Klim licence, copy your font files into **`public/fonts/feijoa/`**:
+
+| File                                | weight | style  |
+| ----------------------------------- | ------ | ------ |
+| `Feijoa-Medium-Cambridge.otf`       | 500    | normal |
+| `Feijoa-MediumItalic-Cambridge.otf` | 500    | italic |
+| `Feijoa-Bold-Cambridge.otf`         | 700    | normal |
+
+These are git-ignored — they will **not** be committed or pushed. Until added,
+headings fall back to Open Sans. Full details (incl. optional `.woff2`
+optimisation): [`public/fonts/feijoa/README.md`](public/fonts/feijoa/README.md).
+
 _(More steps added as the template grows.)_
 
 ## License

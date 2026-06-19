@@ -64,5 +64,44 @@ bun run dev
 
 ## Fonts
 
-Colour tokens only, for now. Typography (Open Sans default + Feijoa display,
-git-ignored) lands in the next step and will add font tokens to `palette.css`.
+Two official Cambridge typefaces, wired through the **same token chain** as the
+colours (edit one place, everything follows). Full rationale + the type-baseline
+decisions live in `docs/TOOLING.md → Cambridge typography`.
+
+| Font          | Role             | Licence           | In repo? | Delivery                              |
+| ------------- | ---------------- | ----------------- | -------- | ------------------------------------- |
+| **Open Sans** | body / UI text   | Free (Apache-2.0) | ✅ yes   | npm `@fontsource-variable/open-sans`  |
+| **Feijoa**    | display/headings | Commercial (Klim) | ❌ never | `@font-face` → `public/fonts/feijoa/` |
+
+### The two font tokens (in `palette.css`, Layer 1 — shared across presets)
+
+```css
+--font-display: 'Feijoa', 'Open Sans', 'Arial', sans-serif; /* headings */
+--font-body: 'Open Sans', 'Arial', sans-serif; /* body */
+```
+
+These live in `palette.css` (not the per-preset `tokens-variant-*` files) on purpose:
+switching the `--primary` preset must never change the fonts. `index.css`'s
+`@theme inline` maps Tailwind's `--font-sans → --font-body` and
+`--font-heading → --font-display`, which re-skins the type of **all 19 components**.
+
+### Feijoa is never committed
+
+Feijoa is commercial (spec §12 / decision #18). `public/fonts/feijoa/*` is
+git-ignored. Until the licensed files are dropped in (per Cambridge deploy),
+headings **fall back to Open Sans** automatically (`font-display: swap` → no
+flash, no missing-glyph boxes). To enable real Feijoa, see
+`public/fonts/feijoa/README.md` for the exact filenames the `@font-face` rules expect.
+
+### Type baseline (size + leading)
+
+Set on `<html>` in `index.css`: `font-size: 100%` (= 16px but scales with the
+user's browser preference — Cambridge min 16px, spec §7.2) and **unitless**
+`line-height: 1.4` (140% leading; unitless so children scale, not freeze). See
+the TOOLING.md section for why each choice is made the way it is.
+
+### Re-font a clone (change the typefaces)
+
+Edit the two tokens in **`palette.css` only**, and swap the npm font package /
+`@font-face` files. Components and headings follow automatically — never set
+`font-family` on individual components.

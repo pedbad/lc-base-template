@@ -3,12 +3,46 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
-@import '@fontsource-variable/geist';
+
+/* Open Sans = official Cambridge body font (free, Apache-2.0 via Google Fonts).
+   Variable build → one file covers Regular/SemiBold/Bold. It is ALSO the live
+   fallback for Feijoa (display), which is commercial and never committed —
+   so a fresh clone renders correct Cambridge body type out of the box. */
+@import '@fontsource-variable/open-sans';
 
 /* Cambridge token chain (spec §7.1): primitives → semantic roles.
    Component-level tokens layer on top in later steps. */
 @import './styles/palette.css';
 @import './styles/tokens.css';
+
+/* Feijoa = official Cambridge display font (headings/titles). COMMERCIAL (Klim) —
+   spec §12 / decision #18: the font files are NEVER committed. public/fonts/feijoa/
+   is git-ignored and populated per Cambridge deploy only. Until then these files are
+   absent, so `font-display: swap` + the Open Sans fallback in --font-display mean
+   headings render in Open Sans on any fresh clone (no FOIT, no missing-glyph boxes). */
+@font-face {
+  font-family: Feijoa;
+  src: url('/fonts/feijoa/Feijoa-Medium-Cambridge.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Feijoa;
+  src: url('/fonts/feijoa/Feijoa-MediumItalic-Cambridge.otf') format('opentype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Feijoa;
+  src: url('/fonts/feijoa/Feijoa-Bold-Cambridge.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 @custom-variant dark (&:is(.dark *));
 
@@ -16,8 +50,11 @@
    This is what skins every shadcn component (bg-primary, text-foreground, …) —
    it maps Tailwind's --color-* to our --* roles. Keep intact; swap values upstream. */
 @theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: 'Geist Variable', sans-serif;
+  /* Point Tailwind's font utilities at the Cambridge type tokens (palette.css).
+     font-sans → body (Open Sans), font-heading → display (Feijoa→Open Sans).
+     These two lines are what re-skin ALL 19 shadcn components' type. */
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-display);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -65,9 +102,28 @@
 
   body {
     @apply bg-background text-foreground;
+
+    /* WebKit safety: line-height is also declared here so it inherits past a
+       Safari edge case where some elements skip the value set on <html>. */
+    line-height: 1.4;
   }
 
   html {
     @apply font-sans;
+
+    /* Type baseline lives on <html>, NOT <body>: rem units anchor to <html>,
+       and line-height set here inherits globally (incl. portals/shadow DOM). */
+    font-size: 100%; /* = 16px default, but SCALES with the user's browser font
+                        preference → accessible, and meets Cambridge min 16px (spec §7.2).
+                        100% is deliberate over a hardcoded 16px so we don't override
+                        a vision-impaired user who bumped their default size. */
+    line-height: 1.4; /* 140% leading. UNITLESS on purpose: a percentage/em value
+                         (140% / 1.4em) computes a fixed px at <html> and freezes it
+                         for every child, clipping large headings. Unitless passes the
+                         multiplier down so each element scales by its own font-size. */
+
+    /* NB: iOS rotate-zoom is handled by `-webkit-text-size-adjust: 100%`, which
+       Tailwind v4 Preflight already sets on <html>. We deliberately do NOT repeat
+       it here (Stylelint property-no-vendor-prefix), to avoid a redundant prefix. */
   }
 }
