@@ -29,6 +29,7 @@ and `eslint.config.js`. The `README` (later) will link here rather than restate 
 | **shadcn/ui** + **Lucide**  | Components (19) · icons                        | 9    |
 | **Cambridge Slate tokens**  | Theme: primitive→semantic→component CSS vars   | 10   |
 | **Cambridge typography**    | Open Sans (body) + Feijoa (display) + baseline | 10b  |
+| **Zod**                     | Runtime config validation (fail-fast at load)  | 11   |
 
 ---
 
@@ -360,4 +361,39 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 
 ---
 
-_Append a new section here as each tool lands (Zod, …)._
+### Zod — runtime config validation _(Step 11)_
+
+- **What:** a schema library. You declare the _shape_ a config must have
+  (`CourseConfigSchema`); `schema.parse(raw)` checks real data against it and either
+  returns clean, typed data or throws a precise `ZodError`. First use:
+  `src/config/course.config.ts` — the single source of course identity (title,
+  language, deploy `basePath`, landing copy, logo/favicon, LO order).
+- **Why (spec decision #2 + §8 — _the_ reason this template is TS+Zod):**
+  french-lo-1 broke repeatedly on silent config drift — key typos
+  (`instructionsText` vs `informationText`), missing fields, wrong shapes — only
+  discovered at runtime in the browser, sometimes in production. Zod moves that
+  failure to **load time** with a message naming the exact field. Config drift fails
+  fast and loud. It is also the foundation of guard **a** (every `lo-config/*.json`
+  validates) landing in a later step.
+- **Validate-at-load mechanism:** `parse()` runs at the top level of the module, so it
+  fires the instant anything imports `courseConfig`. The type is `z.infer`'d from the
+  schema — schema and TS type can never drift apart (one source of truth).
+- **Runtime dep, not dev:** the check runs when the app/pre-render loads, so Zod ships
+  in `dependencies`, not `devDependencies`.
+- **How it's proven now:** `tsc -b` checks _shapes_ and `vite build` _bundles_ but
+  neither _executes_ the runtime `.parse()`. `bun test` does — importing `courseConfig`
+  in `course.config.test.ts` runs the parse, so a bad value throws a `ZodError` and
+  fails the suite (and therefore pre-commit + CI). The static pre-render (Step 14) will
+  additionally execute it at build time.
+- **Field rules of note:** required identity fields use `.min(1)` (a blank `""` is
+  rejected, not silently shipped); truly optional copy (`subheading`) uses
+  `.optional()` — _omit the key_ rather than store an ambiguous `""`. Accented/umlaut
+  text needs no special handling (`z.string()` is full Unicode); answer-checking
+  `.normalize("NFC")` is deferred to the exercise layer, not config.
+- **Rejected:** hand-rolled validation / `as` type assertions (no runtime safety —
+  exactly the drift that hurt french-lo-1); allowing `""` for required fields
+  (ambiguous: mistake or intent?).
+
+---
+
+_Append a new section here as each tool lands._

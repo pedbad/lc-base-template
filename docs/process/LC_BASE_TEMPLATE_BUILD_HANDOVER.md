@@ -123,7 +123,7 @@ SETUP
 THEME
 [x] 10 Token files (Slate, light+dark, layered) — 3 switchable primary presets + src/styles/README.md
 [x] 10b Typography (Open Sans default + Feijoa display, git-ignored; font tokens in palette.css) — baseline on <html> (100% / unitless 1.4); @theme inline rewired off Geist
-[ ] 11 course.config.ts (Zod)
+[x] 11 course.config.ts (Zod) — src/config/, schema+infer type, validate-at-load, proven via bun test
 [ ] 12 ui-strings.ts (Zod, two-layer)
 CONTENT ENGINE
 [ ] 13 LO Zod schema + example LO (4 accordions)
