@@ -405,4 +405,35 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 
 ---
 
+### LO schema — folder-per-LO contract _(Step 13a, spec §6/§9/§15)_
+
+- **What:** `src/config/lo-schema.ts` — three Zod schemas describing a Learning
+  Object **folder** (`lo-config/lo-NN-slug/`): `LoManifestSchema` (the `lo.json`
+  manifest — `title`, optional `description`, plus two **ordered** ref lists
+  `blocks` + `exercises`), and `BlockConfigSchema` / `ExerciseConfigSchema` (each
+  part's `block.json` / `exercise.json` — a `type`, an optional Layer-2 `labels`
+  override, and a `content` payload).
+- **Why two ref lists, not one:** render-mirror naming is **section-scoped**
+  (decision B, §15) — content blocks form one `01-…` sequence, exercises restart
+  their own — so the manifest mirrors that with separate arrays.
+- **`labels` reuse:** the part envelope imports `UiStringsOverrideSchema` from Step
+  12, so a typo override key (`chekc`) is rejected here exactly as in ui-strings —
+  one definition of the chrome contract, no drift between config layers.
+- **Deliberately loose now:** `content` is `z.looseObject({})` — an open object.
+  Exact per-exercise-type content shapes are **deferred** (spec §19) and land
+  cluster-by-cluster from Step 14, when `type` resolves to an engine via
+  `lazyRegistry`. Refs are validated structurally (`z.string().min(1)`); the
+  folder↔config render-mirror _match_ is guard **b**'s job (Steps 19–26), not pulled
+  into the schema.
+- **No slug field:** the folder name is the single source of truth; the URL slug
+  strips the `lo-NN-` ordinal prefix (`lo-01-salutations` → `/salutations.html`) in
+  the build's auto-discovery (Step 15). The schema neither stores nor derives it.
+- **Schema-only module (no load-time `parse`):** unlike `course.config.ts` /
+  `ui-strings.ts`, this file holds _no concrete data_ yet — the example LO is Step
+  13b and the loader that parts-and-assembles + validates is Step 13c. Proven now by
+  `lo-schema.test.ts` (manifest meta/defaults/blank-ref guards; envelope
+  type-required, loose-content, and `labels` typo/partial guards) via `bun test`.
+
+---
+
 _Append a new section here as each tool lands._
