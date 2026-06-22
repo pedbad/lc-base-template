@@ -127,7 +127,10 @@ THEME
 [x] 12 ui-strings.ts (Zod, two-layer) — global strictObject (all keys req) + partial override + resolveLabel; 15 keys (A+B), English; proven via bun test
 CONTENT ENGINE
 [ ] 13 LO schema + example LO FOLDER (folder-per-LO) — [x] 13a schemas (LoManifest + Block/ExerciseConfig shared envelope, labels→UiStringsOverrideSchema, loose content, src/config/lo-schema.ts, proven via bun test) · [ ] 13b example lo-01/ (manifest + 4 accordions) · [ ] 13c loader/stitcher (validates parts + assembled LO)
-[ ] 14 lazyRegistry + first exercise cluster
+[ ] 14 Exercise engines (RESEQUENCED — see docs/specs/2026-06-19-exercise-engines-design.md)
+    [x] Phase A foundation — exercise-types, options schema+enum, scoring/shuffle/reveal utils (src/exercises/lib/, bun test)
+    [ ] Phase B — port 12 engines one-by-one (tsx + content schema + options + labels + registry + showcase fixture)
+    [ ] Phase C — example LO (13b/13c) + static pre-render (15) from proven engines
 [ ] 15 Static pre-render (auto-discover lo-config/*/lo.json)
 DEV ARTIFACTS
 [ ] 16 Debug sandbox (palette/fonts/SVG/preview)

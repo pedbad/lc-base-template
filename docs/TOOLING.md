@@ -436,4 +436,22 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 
 ---
 
+### Exercise foundation — shared utils + options _(Phase A, spec 2026-06-19)_
+
+- **What:** the React-free foundation under the 12 exercise engines:
+  `src/config/exercise-types.ts` (the 12 canonical kebab `type` keys), the
+  `options` block + `type` enum added to `lo-schema.ts`, and three pure utilities
+  in `src/exercises/lib/` — `scoring.ts` (blank-grading helpers), `shuffle.ts`
+  (immutable seeded shuffle + sampleN), `reveal.ts` (`canRevealAnswers` gate).
+- **Why first:** the example LO referenced engines that did not exist; we build the
+  engines first, and these pure pieces are what the first engine (`select`)
+  consumes immediately — so nothing here is speculative.
+- **Behavior locked here (spec §5):** Reset is implicit (always on); `shuffle`
+  default off and re-applied on reset; Show-answers reveals only after a Check with
+  ≥1 wrong (`allowShowAnswers:false` suppresses it).
+- **Proven via `bun test`** — each util and the schema changes have a colocated
+  `.test.ts`.
+
+---
+
 _Append a new section here as each tool lands._
