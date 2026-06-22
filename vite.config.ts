@@ -16,4 +16,16 @@ export default defineConfig({
       '@': path.resolve(import.meta.dirname, './src'),
     },
   },
+  // Multi-page build: the course (index.html) plus the debug-only exercise
+  // showcase (exercise-showcase.html). Each becomes its own entry; the dev server
+  // serves both, so the showcase opens at /exercise-showcase.html.
+  // (Later step: gate the showcase behind a debug flag / strip it from prod builds.)
+  build: {
+    rollupOptions: {
+      input: {
+        main: path.resolve(import.meta.dirname, 'index.html'),
+        showcase: path.resolve(import.meta.dirname, 'exercise-showcase.html'),
+      },
+    },
+  },
 });
