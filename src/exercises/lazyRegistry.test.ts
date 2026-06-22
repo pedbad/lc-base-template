@@ -1,12 +1,13 @@
 import { test, expect } from 'bun:test';
 import { EXERCISE_REGISTRY, getExercise } from './lazyRegistry';
 
-// The registry starts empty and fills one engine at a time (Phase B).
-test('lazyRegistry: starts empty', () => {
-  expect(Object.keys(EXERCISE_REGISTRY)).toHaveLength(0);
+// The registry fills one engine at a time (Phase B). `select` (#1) is registered.
+test('lazyRegistry: registers the select engine', () => {
+  expect(getExercise('select')).toBeDefined();
+  expect(Object.keys(EXERCISE_REGISTRY)).toContain('select');
 });
 
-// An unregistered type resolves to undefined (callers handle it explicitly).
-test('lazyRegistry: getExercise returns undefined for an unregistered type', () => {
-  expect(getExercise('select')).toBeUndefined();
+// A type whose engine is not ported yet resolves to undefined (callers handle it).
+test('lazyRegistry: getExercise returns undefined for an unported type', () => {
+  expect(getExercise('dictation')).toBeUndefined();
 });

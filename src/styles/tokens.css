@@ -45,6 +45,10 @@
     --destructive: var(--cam-dark-crest);
     --destructive-foreground: var(--white);
 
+    /* Success — Cambridge Green (correct-answer feedback for exercise engines) */
+    --success: var(--cam-green);
+    --success-foreground: var(--white);
+
     /* Lines + form fields + focus */
     --border: var(--slate-2);
     --input: var(--slate-2);
@@ -88,6 +92,8 @@
     --accent-foreground: var(--slate-4);
     --destructive: var(--cam-dark-crest);
     --destructive-foreground: var(--white);
+    --success: var(--cam-green);
+    --success-foreground: var(--white);
     --border: color-mix(in oklab, var(--white) 12%, transparent);
     --input: color-mix(in oklab, var(--white) 16%, transparent);
     --ring: var(--cam-blue);

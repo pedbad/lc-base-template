@@ -454,4 +454,37 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 
 ---
 
+### `select` engine — port #1 of 12 _(Phase B, spec 2026-06-19 §2/§8)_
+
+- **What:** the first interactive exercise engine. The learner fills dropdown
+  blanks `[a|*b|c]` in a sentence (`*` marks the correct option); blank-grading
+  scoring family (§7). Lives in `src/exercises/select/` —
+  `select-schema.ts` (per-type `content` Zod contract), `prepareItems.ts` (pure
+  shuffle/sample layer), `SelectExercise.tsx` (the engine). Registered in
+  `lazyRegistry.ts`; two showcase fixtures (`select-rows`, `select-inline`) prove
+  both `layoutMode`s.
+- **Shared helpers ported alongside** (`src/exercises/lib/`, "ported once" §8):
+  `html.ts` (`decodeHtmlEntities`) and `parsing.ts` (`parseSentence` +
+  `parseChoiceBlank`). `parseInputBlank` is deferred to engine #4 (`inline-gap`).
+- **Behavior wired from Phase A** (no new abstraction): `prepareSelectItems`
+  drives `options.shuffle`/`sampleSize`; `getInitialScoringState`/`commitCheck`
+  drive scoring; `canRevealAnswers` gates Show-answers; `resolveLabel` supplies
+  ALL chrome text (the inline fixture overrides it to Spanish).
+- **Scoped to the current foundation (YAGNI, documented in the file header):**
+  audio (no audio subsystem yet — revisit at `dictation` #6), rich-HTML content
+  (no DOMPurify), the third inline-choices variant, and passage accents are
+  **not** ported. Per-item `audio` is accepted by the schema but not rendered, so
+  fixtures/LOs can carry refs without a later schema break.
+- **Engine-local decisions:** per-blank metadata is a render-local value (not a
+  ref) so the grading handlers close over it — avoids react-hooks/refs; the RNG
+  seed is derived from `useId` (pure, distinct per instance) and bumped on reset.
+- **Design token added:** `--success` (→ Cambridge green `--cam-green`) +
+  `--success-foreground`, bridged to `text-success`/`bg-success`. Every
+  blank-grading engine needs a "correct" colour; added once at the token layer
+  (tokens.css + index.css), not hardcoded per engine.
+- **Verified:** `format · lint · lint:css · bun test · build` all green, plus the
+  engine seen + tested live in the showcase before commit.
+
+---
+
 _Append a new section here as each tool lands._

@@ -33,8 +33,7 @@ export type ExerciseComponent = LazyExoticComponent<ComponentType<ExerciseCompon
  * unregistered `type` resolves to `undefined`, which callers handle explicitly.
  */
 export const EXERCISE_REGISTRY: Partial<Record<ExerciseType, ExerciseComponent>> = {
-  // Engines register here as they are ported (Phase B). Example, once `select` lands:
-  //   select: lazy(() => import('./select/SelectExercise')),
+  select: lazy(() => import('./select/SelectExercise')),
 };
 
 /** Resolve an engine by type, or `undefined` if not yet registered. */
