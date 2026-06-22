@@ -1,5 +1,9 @@
 /**
- * prepareItems.ts — the pure ordering layer for the select engine (spec §5.2, §6).
+ * prepareChoiceItems.ts — the pure ordering layer shared by the choice-blank
+ * engines (select, inline-choice; spec §5.2, §6). Promoted from the select
+ * engine's prepareItems.ts and made generic over the item shape, since every
+ * choice engine carries `[a|*b|c]` blanks inside a `text` field.
+ *
  * Immutable: returns NEW arrays/objects, never mutates input. RNG is injected so
  * tests are deterministic and Reset can produce a genuinely fresh order.
  *
@@ -14,12 +18,16 @@
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §5.2, §6.
  */
 import { shuffle } from '@/exercises/lib/shuffle';
-import type { SelectItem } from './select-schema';
 
 /** Resolved subset of ExerciseOptions this layer cares about. */
-export interface PrepareSelectOptions {
+export interface PrepareChoiceOptions {
   shuffle: boolean;
   sampleSize?: number;
+}
+
+/** The minimum an item must carry: the sentence text with its `[a|*b|c]` blanks. */
+interface ChoiceItemLike {
+  text: string;
 }
 
 /**
@@ -37,15 +45,17 @@ export function shuffleItemChoices(text: string, rng: () => number): string {
 }
 
 /**
- * Produce the items to render from the authored items + behavior options.
+ * Produce the items to render from the authored items + behavior options. Generic
+ * over the item type `T` (any shape with a `text` field), so each choice engine
+ * keeps its own content type while sharing this ordering logic.
  * @param rng injectable RNG (defaults to Math.random); pass a seeded one for tests
  *   and Reset.
  */
-export function prepareSelectItems(
-  items: readonly SelectItem[],
-  options: PrepareSelectOptions,
+export function prepareChoiceItems<T extends ChoiceItemLike>(
+  items: readonly T[],
+  options: PrepareChoiceOptions,
   rng: () => number = Math.random,
-): SelectItem[] {
+): T[] {
   const withShuffledChoices = options.shuffle
     ? items.map((item) => ({ ...item, text: shuffleItemChoices(item.text, rng) }))
     : items.map((item) => ({ ...item }));

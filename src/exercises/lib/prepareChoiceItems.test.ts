@@ -1,14 +1,19 @@
 /**
- * Tests for prepareSelectItems / shuffleItemChoices — the pure ordering layer for
- * the select engine's `options.shuffle` + `options.sampleSize` (spec §5.2, §6).
- * RNG is injected (mulberry32) so order is deterministic and assertable.
+ * Tests for prepareChoiceItems / shuffleItemChoices — the pure ordering layer
+ * shared by the choice-blank engines' `options.shuffle` + `options.sampleSize`
+ * (spec §5.2, §6). RNG is injected (mulberry32) so order is deterministic and
+ * assertable. Uses a minimal local `{ text }` item type — the layer is generic
+ * and does not depend on any one engine's content schema.
  */
 import { describe, expect, test } from 'bun:test';
 import { mulberry32 } from '@/exercises/lib/shuffle';
-import { prepareSelectItems, shuffleItemChoices } from './prepareItems';
-import type { SelectItem } from './select-schema';
+import { prepareChoiceItems, shuffleItemChoices } from './prepareChoiceItems';
 
-const ITEMS: SelectItem[] = [
+interface TextItem {
+  text: string;
+}
+
+const ITEMS: TextItem[] = [
   { text: 'Yo [soy|*es|eres] aquí.' },
   { text: 'Tú [*tienes|tiene|tengo] razón.' },
   { text: 'Ella [come|*comes|comen].' },
@@ -45,24 +50,24 @@ describe('shuffleItemChoices', () => {
   });
 });
 
-describe('prepareSelectItems', () => {
+describe('prepareChoiceItems', () => {
   test('shuffle off: returns the authored order, content unchanged', () => {
-    const out = prepareSelectItems(ITEMS, { shuffle: false }, mulberry32(1));
+    const out = prepareChoiceItems(ITEMS, { shuffle: false }, mulberry32(1));
     expect(out).toEqual(ITEMS);
   });
 
   test('shuffle off + sampleSize: takes the first N in authored order', () => {
-    const out = prepareSelectItems(ITEMS, { shuffle: false, sampleSize: 2 }, mulberry32(1));
+    const out = prepareChoiceItems(ITEMS, { shuffle: false, sampleSize: 2 }, mulberry32(1));
     expect(out).toEqual([ITEMS[0], ITEMS[1]]);
   });
 
   test('sampleSize larger than length returns all items', () => {
-    const out = prepareSelectItems(ITEMS, { shuffle: false, sampleSize: 99 }, mulberry32(1));
+    const out = prepareChoiceItems(ITEMS, { shuffle: false, sampleSize: 99 }, mulberry32(1));
     expect(out).toHaveLength(ITEMS.length);
   });
 
   test('shuffle on: same count, same overall option pool preserved', () => {
-    const out = prepareSelectItems(ITEMS, { shuffle: true }, mulberry32(7));
+    const out = prepareChoiceItems(ITEMS, { shuffle: true }, mulberry32(7));
     expect(out).toHaveLength(ITEMS.length);
     const poolBefore = ITEMS.flatMap((i) => optionSet(i.text)).sort();
     const poolAfter = out.flatMap((i) => optionSet(i.text)).sort();
@@ -70,14 +75,14 @@ describe('prepareSelectItems', () => {
   });
 
   test('shuffle on is deterministic for a given seed', () => {
-    const a = prepareSelectItems(ITEMS, { shuffle: true }, mulberry32(42));
-    const b = prepareSelectItems(ITEMS, { shuffle: true }, mulberry32(42));
+    const a = prepareChoiceItems(ITEMS, { shuffle: true }, mulberry32(42));
+    const b = prepareChoiceItems(ITEMS, { shuffle: true }, mulberry32(42));
     expect(a).toEqual(b);
   });
 
   test('does not mutate the input items or array', () => {
     const snapshot = JSON.parse(JSON.stringify(ITEMS));
-    prepareSelectItems(ITEMS, { shuffle: true, sampleSize: 2 }, mulberry32(3));
+    prepareChoiceItems(ITEMS, { shuffle: true, sampleSize: 2 }, mulberry32(3));
     expect(ITEMS).toEqual(snapshot);
   });
 });

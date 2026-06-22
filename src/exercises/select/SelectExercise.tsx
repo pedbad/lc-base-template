@@ -7,9 +7,12 @@
  * current foundation:
  *   - layoutMode 'rows' (one sentence per row) and 'inline-passage' (sentences flow
  *     as a passage with inline dropdowns) — the two modes the showcase proves (§3).
- *   - shared behavior wired from Phase A helpers: prepareSelectItems (shuffle/sample,
+ *   - shared behavior wired from Phase A/B helpers: prepareChoiceItems (shuffle/sample,
  *     §5.2/§6), scoring (getInitialScoringState/commitCheck, §7), canRevealAnswers
  *     (show-answers gate, §5.3). Reset is always present and re-shuffles when on.
+ *   - shared shell pieces: ExerciseFooter (Check/Reset/Show-answers row) and
+ *     ResultSlot (far-right tick/cross). The status line (n/total · "Correct!")
+ *     stays local — it's engine-specific copy, not shared chrome.
  *   - all chrome text via resolveLabel(key, config.labels) (ui-strings §9).
  *
  * Render shape: the items are walked ONCE during render to build per-blank metadata
@@ -19,13 +22,11 @@
  *
  * Deliberately NOT ported yet (YAGNI; see select-schema.ts): the audio subsystem,
  * rich-HTML content (no DOMPurify), the third inline-choices variant, passage
- * accents. The footer is inlined — a shared ExerciseFooter shell is extracted only
- * once engine #2 shows the same shape (spec §8).
+ * accents.
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5, §7, §8.
  */
 import { Fragment, useId, useReducer, type ReactNode } from 'react';
-import { CheckIcon, XIcon } from 'lucide-react';
 
 import {
   Select,
@@ -34,7 +35,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
 import { ExerciseOptionsSchema, type ExerciseOptions } from '@/config/lo-schema';
 import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
@@ -47,8 +47,10 @@ import {
   type ChoiceSegment,
   type TextSegment,
 } from '@/exercises/lib/parsing';
+import { prepareChoiceItems, type PrepareChoiceOptions } from '@/exercises/lib/prepareChoiceItems';
+import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
+import { ResultSlot } from '@/exercises/lib/ResultSlot';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
-import { prepareSelectItems, type PrepareSelectOptions } from './prepareItems';
 import { SelectExerciseConfigSchema, type SelectItem as SelectItemContent } from './select-schema';
 
 /** Trigger placeholder. Engine-specific UI text, not shared chrome — kept local. */
@@ -73,12 +75,12 @@ const reducer = (state: SelectState, patch: SelectPatch): SelectState => ({
 
 const buildState = (
   items: readonly SelectItemContent[],
-  options: PrepareSelectOptions,
+  options: PrepareChoiceOptions,
   seed: number,
 ): SelectState => ({
   ...getInitialScoringState(),
   values: {},
-  preparedItems: prepareSelectItems(items, options, mulberry32(seed)),
+  preparedItems: prepareChoiceItems(items, options, mulberry32(seed)),
   seed,
 });
 
@@ -171,17 +173,7 @@ export default function SelectExercise({ config }: ExerciseComponentProps) {
     const hasResult = state.hasChecked && attempted && fullyChecked;
     const isCorrect = hasResult && results.every((r) => r === true);
 
-    return (
-      <span aria-hidden className="flex items-center justify-center">
-        {hasResult ? (
-          isCorrect ? (
-            <CheckIcon className="size-5 text-success" />
-          ) : (
-            <XIcon className="size-5 text-destructive" />
-          )
-        ) : null}
-      </span>
-    );
+    return <ResultSlot hasResult={hasResult} isCorrect={isCorrect} />;
   };
 
   // Walk the items once: parseSentence fills `blanksMeta` (winner/options per blank)
@@ -284,21 +276,15 @@ export default function SelectExercise({ config }: ExerciseComponentProps) {
         </p>
       ) : null}
 
-      <div className="flex flex-wrap items-center gap-2 border-t border-border/60 pt-4">
-        <Button onClick={handleCheck} disabled={!hasSelections}>
-          {resolveLabel('check', labels)}
-        </Button>
-        {hasSelections || state.hasChecked ? (
-          <Button variant="outline" onClick={handleReset}>
-            {resolveLabel('reset', labels)}
-          </Button>
-        ) : null}
-        {canReveal ? (
-          <Button variant="ghost" onClick={handleShowAnswers}>
-            {resolveLabel('showAnswer', labels)}
-          </Button>
-        ) : null}
-      </div>
+      <ExerciseFooter
+        onCheck={handleCheck}
+        checkDisabled={!hasSelections}
+        onReset={handleReset}
+        showReset={hasSelections || state.hasChecked}
+        onShowAnswers={handleShowAnswers}
+        showAnswers={canReveal}
+        labels={labels}
+      />
 
       {parsed.data.content.footnote ? (
         <p className="text-sm text-muted-foreground">{parsed.data.content.footnote}</p>
