@@ -26,7 +26,8 @@
  * cluster-by-cluster from step 14, where `type` resolves to an engine via
  * `lazyRegistry`. Ordinal+type ref naming (`01-grammar`) is validated structurally
  * here (non-empty string); the folder↔config render-mirror match is guard b's job
- * (steps 19–26), not pulled forward into the schema.
+ * (steps 19–26), not pulled forward into the schema. `type` is now a Zod enum of the
+ * 12 canonical keys (`exercise-types.ts`).
  *
  * SLUG: not a field. The folder name (`lo-01-salutations`) is the single source of
  * truth; the URL slug strips the `lo-NN-` ordinal prefix (`/salutations.html`) in
@@ -36,29 +37,46 @@
  */
 import { z } from 'zod';
 import { UiStringsOverrideSchema } from './ui-strings';
+import { EXERCISE_TYPE_KEYS } from './exercise-types';
 
 /**
- * Shared envelope for any LO part (a content block or an exercise). Today blocks
- * and exercises are structurally identical: a `type`, an optional per-instance
- * `labels` override (Layer 2, spec §9), and a `content` payload. They are exported
- * as two named schemas so call sites stay honest about which kind they validate and
- * so each can diverge later (exercises gain a per-`type` discriminated union).
+ * Shared behavior switches for ANY exercise (spec §5/§6). One shape for all 12
+ * engines; every field optional; VALUES are set per instance, so two exercises of
+ * the same `type` can behave differently (one shuffled, one not). Reset and the
+ * show-after-wrong-check reveal are implicit (always on), so they are not fields.
  */
-const partEnvelope = {
-  /** Resolved to the one shared engine via `lazyRegistry` (step 14). Blank rejected. */
-  type: z.string().min(1),
-  /** Optional Layer-2 chrome override; typo keys rejected (reuses step 12's schema). */
-  labels: UiStringsOverrideSchema.optional(),
-  /** Open object now; tightened to a per-type shape later (spec §19). */
-  content: z.looseObject({}),
-} as const;
+export const ExerciseOptionsSchema = z.object({
+  /** Randomize presented choices (default off; author opts in). Reset re-shuffles when on. */
+  shuffle: z.boolean().default(false),
+  /** Show a random N of M choices; omit = show all. Positive integer. */
+  sampleSize: z.number().int().positive().optional(),
+  /** false removes the Show-answers control entirely (e.g. a pure game). */
+  allowShowAnswers: z.boolean().default(true),
+});
+export type ExerciseOptions = z.infer<typeof ExerciseOptionsSchema>;
 
-/** Validates one content block's `block.json` (grammar, vocabulary, …). */
-export const BlockConfigSchema = z.object(partEnvelope);
+/**
+ * Validates one content block's `block.json` (grammar, vocabulary, …). Block `type`
+ * is a free string — block kinds are not in the exercise registry.
+ */
+export const BlockConfigSchema = z.object({
+  type: z.string().min(1),
+  labels: UiStringsOverrideSchema.optional(),
+  content: z.looseObject({}),
+});
 export type BlockConfig = z.infer<typeof BlockConfigSchema>;
 
-/** Validates one exercise's `exercise.json`. */
-export const ExerciseConfigSchema = z.object(partEnvelope);
+/**
+ * Validates one exercise's `exercise.json`. `type` MUST be one of the 12 canonical
+ * keys (an unknown key fails the build); `options` is the shared behavior block;
+ * `content` stays loose here (per-type shape lands when that engine is ported).
+ */
+export const ExerciseConfigSchema = z.object({
+  type: z.enum(EXERCISE_TYPE_KEYS),
+  labels: UiStringsOverrideSchema.optional(),
+  content: z.looseObject({}),
+  options: ExerciseOptionsSchema.optional(),
+});
 export type ExerciseConfig = z.infer<typeof ExerciseConfigSchema>;
 
 /**
