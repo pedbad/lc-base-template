@@ -459,21 +459,23 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 - **What:** the first interactive exercise engine. The learner fills dropdown
   blanks `[a|*b|c]` in a sentence (`*` marks the correct option); blank-grading
   scoring family (§7). Lives in `src/exercises/select/` —
-  `select-schema.ts` (per-type `content` Zod contract), `prepareItems.ts` (pure
-  shuffle/sample layer), `SelectExercise.tsx` (the engine). Registered in
-  `lazyRegistry.ts`; two showcase fixtures (`select-rows`, `select-inline`) prove
-  both `layoutMode`s.
+  `select-schema.ts` (per-type `content` Zod contract) and `SelectExercise.tsx`
+  (the engine). The pure shuffle/sample layer started here as `prepareItems.ts` and
+  was promoted to the shared shell (`lib/prepareChoiceItems.ts`) when engine #2
+  landed (see "shared exercise shell" below). Registered in `lazyRegistry.ts`; two
+  showcase fixtures (`select-rows`, `select-inline`) prove both `layoutMode`s.
 - **Shared helpers ported alongside** (`src/exercises/lib/`, "ported once" §8):
   `html.ts` (`decodeHtmlEntities`) and `parsing.ts` (`parseSentence` +
   `parseChoiceBlank`). `parseInputBlank` is deferred to engine #4 (`inline-gap`).
-- **Behavior wired from Phase A** (no new abstraction): `prepareSelectItems`
+- **Behavior wired from Phase A** (no new abstraction): `prepareChoiceItems`
   drives `options.shuffle`/`sampleSize`; `getInitialScoringState`/`commitCheck`
   drive scoring; `canRevealAnswers` gates Show-answers; `resolveLabel` supplies
   ALL chrome text (the inline fixture overrides it to Spanish).
 - **Scoped to the current foundation (YAGNI, documented in the file header):**
   audio (no audio subsystem yet — revisit at `dictation` #6), rich-HTML content
-  (no DOMPurify), the third inline-choices variant, and passage accents are
-  **not** ported. Per-item `audio` is accepted by the schema but not rendered, so
+  (no DOMPurify), the inline-radio-choices variant of french's SelectExercise
+  (delivered instead as its own engine #2, `inline-choice`, below), and passage
+  accents are **not** ported. Per-item `audio` is accepted but not rendered, so
   fixtures/LOs can carry refs without a later schema break.
 - **Engine-local decisions:** per-blank metadata is a render-local value (not a
   ref) so the grading handlers close over it — avoids react-hooks/refs; the RNG
@@ -482,6 +484,56 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   `--success-foreground`, bridged to `text-success`/`bg-success`. Every
   blank-grading engine needs a "correct" colour; added once at the token layer
   (tokens.css + index.css), not hardcoded per engine.
+- **Verified:** `format · lint · lint:css · bun test · build` all green, plus the
+  engine seen + tested live in the showcase before commit.
+
+---
+
+### Shared exercise shell — extracted at engine #2 _(Phase B, spec 2026-06-19 §5/§7/§8)_
+
+- **What:** the reusable pieces lifted out of `select` once a second engine needed
+  them, all in `src/exercises/lib/`: `prepareChoiceItems.ts` (the shuffle/sample
+  layer, now generic over `<T extends { text: string }>`), `ExerciseFooter.tsx`
+  (the Check/Reset/Show-answers button row, all text via `resolveLabel`), and
+  `ResultSlot.tsx` (the far-right tick/cross; the verdict is computed by each
+  engine and passed in).
+- **Why now, not upfront (YAGNI):** the select engine deliberately inlined its
+  footer and ordering layer while it was the only engine. Engine #2
+  (`inline-choice`) renders the identical footer, result slot, and row layout, so
+  the duplication became real — that's the trigger to extract, not speculation.
+- **Pure refactor:** the extraction was behavior-identical — `select` rendered and
+  scored exactly as before (full test suite + build green across the change).
+- **Engine-specific stays put:** the status line (`n/total` · "Correct!") is local
+  copy, not shared chrome, so it lives in each engine, not in the footer.
+
+---
+
+### `inline-choice` engine — port #2 of 12 _(Phase B, spec 2026-06-19 §2/§8)_
+
+- **What:** the second interactive engine. The learner picks from an **inline
+  radio-pill group** for each blank `[a|*b|c]` embedded in a sentence; same
+  blank-grading scoring family as `select` (§7) — only the per-blank renderer
+  differs (pills vs dropdown). Lives in `src/exercises/inline-choice/` —
+  `inline-choice-schema.ts` (per-type `content` contract) and
+  `InlineChoiceExercise.tsx` (the engine). Registered in `lazyRegistry.ts`; one
+  showcase fixture (`inline-choice`).
+- **Shares the shell:** consumes `prepareChoiceItems`, `ExerciseFooter`, and
+  `ResultSlot`, and mirrors select's reducer / `buildState` / `seedFromId` pattern
+  and its no-jiggle `grid-cols-[minmax(0,1fr)_2.5rem]` row.
+- **Accessible radio group (ported + typed from french-lo-1):** each blank is a
+  `role="radiogroup"` of `role="radio"` buttons with `aria-checked`, roving
+  `tabIndex` (the selected pill, or the first when none is chosen, is the tab
+  stop), and arrow-key navigation (Left/Right/Up/Down wrap, Home/End jump,
+  Space/Enter re-commit) — no `any`.
+- **Tokens, not new ones:** pill states map onto existing design tokens —
+  selected → `--primary`, correct → `--success`, incorrect → `--destructive`,
+  hover/idle → `--muted`/`--border`, focus → `--ring`. No new `--ex-*` tokens.
+- **Trimmed vs french (YAGNI):** no `layoutMode` (blanks always flow inline), no
+  `ProgressDots` (the shared status line carries the count), no audio/rich-HTML/
+  DOMPurify. Per-item `audio` is accepted by the schema but not rendered (mirrors
+  select), so fixtures can carry refs without a later schema break.
+- **TDD:** `inline-choice-schema.test.ts` was written failing first, then the
+  schema made it green.
 - **Verified:** `format · lint · lint:css · bun test · build` all green, plus the
   engine seen + tested live in the showcase before commit.
 

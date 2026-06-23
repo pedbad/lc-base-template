@@ -67,4 +67,22 @@ export const SHOWCASE_FIXTURES: ShowcaseFixture[] = [
       labels: { check: 'Comprobar', reset: 'Reiniciar', showAnswer: 'Ver respuestas' },
     },
   },
+  {
+    id: 'inline-choice',
+    title: 'inline-choice — radio pills (shuffled)',
+    type: 'inline-choice',
+    config: {
+      type: 'inline-choice',
+      content: {
+        items: [
+          { text: 'Nosotros [*somos|sois|son] estudiantes.' },
+          { text: 'Vosotros [somos|*sois|son] de México.' },
+          { text: 'Ellas [somos|sois|*son] muy simpáticas.' },
+        ],
+        footnote: 'Elige la forma correcta del verbo «ser».',
+      },
+      // shuffle on: pill order randomizes and Reset re-shuffles (spec §5.2).
+      options: { shuffle: true },
+    },
+  },
 ];

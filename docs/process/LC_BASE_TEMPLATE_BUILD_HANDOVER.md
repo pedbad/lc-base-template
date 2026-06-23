@@ -131,8 +131,10 @@ CONTENT ENGINE
     [x] Phase A foundation — exercise-types, options schema+enum, scoring/shuffle/reveal utils (src/exercises/lib/, bun test)
     [ ] Phase B — port 12 engines one-by-one (tsx + content schema + options + labels + registry + showcase fixture)
         [x] shared lib: html.ts (decodeHtmlEntities) + parsing.ts (parseSentence, parseChoiceBlank) — bun test
-        [x] #1 select — schema + prepareItems + SelectExercise.tsx + 2 fixtures (rows + inline); --success token added
-        [ ] #2 inline-choice → #3 radio-quiz → #4 inline-gap → #5 typed-transform → #6 dictation → … (see spec §11)
+        [x] shared shell (extracted @ #2): lib/prepareChoiceItems.ts (generic) + ExerciseFooter.tsx + ResultSlot.tsx — bun test
+        [x] #1 select — schema + SelectExercise.tsx + 2 fixtures (rows + inline); --success token added
+        [x] #2 inline-choice — schema (TDD) + InlineChoiceExercise.tsx (radio-pill group, arrow-key a11y) + 1 fixture; existing tokens only
+        [ ] #3 radio-quiz → #4 inline-gap → #5 typed-transform → #6 dictation → … (see spec §11)
     [ ] Phase C — example LO (13b/13c) + static pre-render (15) from proven engines
 [ ] 15 Static pre-render (auto-discover lo-config/*/lo.json)
 DEV ARTIFACTS
