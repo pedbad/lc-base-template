@@ -13,12 +13,14 @@
  *   - ExerciseFooter (Check/Reset/Show-answers) + ResultSlot (far-right tick/cross),
  *     and the same `grid-cols-[minmax(0,1fr)_2.5rem]` no-jiggle row select uses.
  *   - all chrome text via resolveLabel(key, config.labels) (ui-strings §9).
+ *   - the radio-pill group itself (ChoicePillGroup): role="radiogroup"/role="radio"
+ *     pills with roving tabIndex, arrow-key nav, aria-checked, and state→token
+ *     classes. Extracted to lib when radio-quiz #3 became its second consumer; this
+ *     engine wraps it in an inline `<span>` so blanks flow inside the sentence.
  *
- * The ONLY engine-specific UI is the radio-pill group: a `role="radiogroup"` of
- * `role="radio"` buttons with roving tabIndex, arrow-key navigation
- * (Left/Right/Up/Down/Home/End), and `aria-checked`. Pill states
- * (selected/correct/incorrect/hover) map onto the existing design tokens
- * (--primary, --success, --destructive, --muted, --border, --ring) — no new tokens.
+ * What stays engine-specific here is the inline layout: each blank's pill group sits
+ * mid-sentence (no new --ex-* tokens; ChoicePillGroup uses --primary/--success/
+ * --destructive/--border/--ring only).
  *
  * Render shape mirrors select: items are walked ONCE during render to build
  * per-blank metadata (`blanksMeta`) + the rendered nodes; grading handlers close
@@ -31,7 +33,7 @@
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5, §7, §8.
  */
-import { Fragment, useId, useReducer, type KeyboardEvent, type ReactNode } from 'react';
+import { Fragment, useId, useReducer, type ReactNode } from 'react';
 
 import { ExerciseOptionsSchema, type ExerciseOptions } from '@/config/lo-schema';
 import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
@@ -46,6 +48,7 @@ import {
   type TextSegment,
 } from '@/exercises/lib/parsing';
 import { prepareChoiceItems, type PrepareChoiceOptions } from '@/exercises/lib/prepareChoiceItems';
+import { ChoicePillGroup } from '@/exercises/lib/ChoicePillGroup';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
@@ -94,10 +97,6 @@ const seedFromId = (id: string): number => {
   return hash >>> 0;
 };
 
-/** Pill base — layout + focus ring (--ring); state colors are appended per pill. */
-const PILL_BASE =
-  'inline-flex min-h-8 cursor-pointer items-center rounded-lg border px-2.5 py-1 text-sm font-medium transition-colors duration-200 ease-out select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2';
-
 export default function InlineChoiceExercise({ config }: ExerciseComponentProps) {
   const uid = useId();
 
@@ -125,46 +124,6 @@ export default function InlineChoiceExercise({ config }: ExerciseComponentProps)
     });
   };
 
-  // Arrow keys move the selection within a radio group (roving focus); Space/Enter
-  // re-commit the focused pill. Ported from french-lo-1's handleChoiceKeyDown.
-  const handleChoiceKeyDown = (
-    blankIndex: number,
-    currentOptionIndex: number,
-    optionsLength: number,
-    event: KeyboardEvent<HTMLButtonElement>,
-  ) => {
-    if (optionsLength <= 0) return;
-    // Every non-default branch assigns nextIndex; default returns. TS proves it's
-    // definitely a number after the switch, so no initializer is needed.
-    let nextIndex: number;
-
-    switch (event.key) {
-      case 'ArrowRight':
-      case 'ArrowDown':
-        nextIndex = (currentOptionIndex + 1) % optionsLength;
-        break;
-      case 'ArrowLeft':
-      case 'ArrowUp':
-        nextIndex = (currentOptionIndex - 1 + optionsLength) % optionsLength;
-        break;
-      case 'Home':
-        nextIndex = 0;
-        break;
-      case 'End':
-        nextIndex = optionsLength - 1;
-        break;
-      case ' ':
-      case 'Enter':
-        nextIndex = currentOptionIndex;
-        break;
-      default:
-        return;
-    }
-
-    event.preventDefault();
-    handleChoiceChange(blankIndex, String(nextIndex));
-  };
-
   const handleReset = () => {
     dispatch((prev) => buildState(items, options, prev.seed + 1));
   };
@@ -178,60 +137,29 @@ export default function InlineChoiceExercise({ config }: ExerciseComponentProps)
     );
   }
 
-  // The engine-specific renderer: an inline radio-pill group for one blank. Pill
-  // state classes use existing tokens only (no new --ex-* tokens).
+  // One blank's renderer: the shared ChoicePillGroup wrapped in an inline `<span>`
+  // so the pills flow mid-sentence. The verdict (correct/incorrect/ungraded) maps
+  // this blank's checkedResults entry onto the group's coloring.
   const renderChoiceGroup = (blankIndex: number, blanksMeta: ChoiceMeta[]): ReactNode => {
     const meta = blanksMeta[blankIndex];
     if (!meta) return null;
 
     const rawValue = state.values[blankIndex] ?? '';
     const selectedIndex = rawValue === '' ? -1 : Number(rawValue);
-    const isCorrectSelection = state.checkedResults[blankIndex] === true;
-    const isIncorrectSelection = state.hasChecked && state.checkedResults[blankIndex] === false;
+    const result = state.checkedResults[blankIndex];
+    const verdict = typeof result === 'boolean' ? result : undefined;
     const groupId = `${uid}-blank-${blankIndex}`;
 
     return (
       <span className="mx-1 inline-flex align-middle" key={groupId}>
-        <div
-          aria-label={`Choose answer for blank ${blankIndex + 1}`}
-          className="inline-flex flex-wrap items-center gap-1.5 rounded-xl border border-border/70 bg-card/70 p-1.5 shadow-sm"
-          role="radiogroup"
-        >
-          {meta.options.map((option, optionIndex) => {
-            const isSelected = selectedIndex === optionIndex;
-
-            let stateClasses =
-              'border-border bg-background text-foreground hover:border-primary/40 hover:bg-muted';
-            if (isSelected && isCorrectSelection) {
-              stateClasses = 'border-success bg-success/15 text-foreground';
-            } else if (isSelected && isIncorrectSelection) {
-              stateClasses = 'border-destructive bg-destructive/15 text-foreground';
-            } else if (isSelected) {
-              stateClasses = 'border-primary bg-primary/10 font-semibold text-foreground';
-            }
-
-            // Roving tabIndex: the selected pill is tabbable; with nothing selected,
-            // the first pill is the tab stop.
-            const isTabStop = isSelected || (selectedIndex === -1 && optionIndex === 0);
-
-            return (
-              <button
-                aria-checked={isSelected}
-                className={`${PILL_BASE} ${stateClasses}`}
-                key={`${groupId}-${optionIndex}`}
-                onClick={() => handleChoiceChange(blankIndex, String(optionIndex))}
-                onKeyDown={(event) =>
-                  handleChoiceKeyDown(blankIndex, optionIndex, meta.options.length, event)
-                }
-                role="radio"
-                tabIndex={isTabStop ? 0 : -1}
-                type="button"
-              >
-                {option}
-              </button>
-            );
-          })}
-        </div>
+        <ChoicePillGroup
+          groupId={groupId}
+          groupLabel={`Choose answer for blank ${blankIndex + 1}`}
+          onSelect={(optionIndex) => handleChoiceChange(blankIndex, String(optionIndex))}
+          options={meta.options}
+          selectedIndex={selectedIndex}
+          verdict={verdict}
+        />
       </span>
     );
   };
