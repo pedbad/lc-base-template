@@ -68,6 +68,27 @@ export const SHOWCASE_FIXTURES: ShowcaseFixture[] = [
     },
   },
   {
+    id: 'select-multi-blank',
+    title: 'select — multiple blanks per sentence',
+    type: 'select',
+    config: {
+      type: 'select',
+      content: {
+        layoutMode: 'rows',
+        // Two dropdowns in ONE sentence: each blank is graded independently and the
+        // row tick turns green only when BOTH are correct (spec §7). Proves the
+        // parser/engine already handle several `[...]` blanks per item.
+        items: [
+          { text: 'Yo [*soy|eres|es] de Madrid y ella [vivo|vives|*vive] en París.' },
+          {
+            text: 'Nosotros [*tenemos|tienes|tiene] hambre y vosotros [tengo|*tenéis|tienen] sed.',
+          },
+        ],
+        footnote: 'Una frase puede tener varios huecos; cada uno se corrige por separado.',
+      },
+    },
+  },
+  {
     id: 'inline-choice',
     title: 'inline-choice — radio pills (shuffled)',
     type: 'inline-choice',
