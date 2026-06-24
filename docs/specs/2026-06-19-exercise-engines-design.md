@@ -51,16 +51,20 @@ same style already seeded in `lo-schema.ts`).
 
 ---
 
-## 3. The showcase: 13 cards, 12 engines
+## 3. The showcase: 14 cards, 12 engines
 
 The exercise showcase (dev artifact #2 — the catalog where each engine is verified
-in isolation) has **13 fixtures**, because `select` is shown **twice**:
+in isolation) has **14 fixtures**, because `select` is shown **three times**:
 
 - **`select` (rows)** — each blank on its own row.
 - **`select` (inline)** — blanks inline in a passage (`layoutMode: "inline-passage"`).
+- **`select` (multi-blank)** — several `[…]` blanks in one sentence, each graded
+  independently (same `layoutMode: "rows"`; proves the parser/engine handle multiple
+  blanks per item).
 
-That's **one engine, one schema, two `layoutMode` values** — proving both display
-modes. This is why the old spec said "13": it counted showcase cards, not engines.
+That's **one engine, one schema**, shown multiple times — two `layoutMode` values
+(rows, inline-passage) plus a multi-blank rows fixture. This is why the old spec said
+"13": it counts showcase cards, not engines (the tally grows as fixtures are added).
 Components stay shared (main spec §6); only the fixture content differs.
 
 ---
@@ -314,7 +318,7 @@ starts. Step 13a (schemas) is already done; `options` is the one addition pendin
 ## Decisions log (quick scan)
 
 - 12 engines, **kebab keys**; `ClozeTyping` dropped (= `inline-gap`).
-- Showcase = **13 fixtures** (`select` ×2: rows + inline).
+- Showcase = **14 fixtures** (`select` ×3: rows + inline + multi-blank).
 - Config envelope = `type` + `content` (per-type) + `options` (shared) + `labels`.
 - `options` = `{ shuffle?, sampleSize?, allowShowAnswers? }`, all optional, per-instance.
 - **Reset** always on; re-shuffles when `shuffle: true`.

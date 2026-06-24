@@ -35,6 +35,7 @@ export type ExerciseComponent = LazyExoticComponent<ComponentType<ExerciseCompon
 export const EXERCISE_REGISTRY: Partial<Record<ExerciseType, ExerciseComponent>> = {
   select: lazy(() => import('./select/SelectExercise')),
   'inline-choice': lazy(() => import('./inline-choice/InlineChoiceExercise')),
+  'radio-quiz': lazy(() => import('./radio-quiz/RadioQuizExercise')),
 };
 
 /** Resolve an engine by type, or `undefined` if not yet registered. */

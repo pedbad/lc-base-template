@@ -539,4 +539,55 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 
 ---
 
+### `radio-quiz` engine — port #3 of 12 _(Phase B, spec 2026-06-19 §2/§8)_
+
+- **What:** the third interactive engine, and the first that is **not**
+  blanks-in-a-sentence. The learner answers **multiple-choice questions** — each a
+  `prompt` (stem) with an `options[]` radio-pill group, exactly one correct. Same
+  blank-grading scoring family as select/inline-choice (§7): one gradeable "blank"
+  per question, `checkedResults` keyed by question index. Lives in
+  `src/exercises/radio-quiz/` — `radio-quiz-schema.ts` (per-type `content` contract)
+  and `RadioQuizExercise.tsx` (the engine). Registered in `lazyRegistry.ts`; one
+  showcase fixture (`radio-quiz`).
+- **`*`-on-array convention + fail-loud single-correct:** the correct option carries
+  a leading `*` (the same marker as `[a|*b|c]`, but on a plain option array). A Zod
+  `.refine()` rejects any question with **0 or 2+** starred options, so bad authoring
+  fails the build, not the browser. `options` requires ≥2 entries (answer + ≥1
+  distractor). A shared `parseStarredOptions` helper (strip `*` → labels + winner
+  index) is the single source of truth for the convention, used by both the refine
+  and the engine render.
+- **Shares the shell (no re-extraction):** consumes `ChoicePillGroup` (the
+  role=radiogroup/radio pills + arrow-keys + roving tabIndex it now shares with
+  inline-choice), `scoring`, `canRevealAnswers`, `ExerciseFooter`, `ResultSlot`, and
+  `shuffle`/`mulberry32`; mirrors the reducer / `buildState` / `seedFromId` pattern
+  and the no-jiggle `grid-cols-[minmax(0,1fr)_2.5rem]` row.
+- **Option shuffle ≠ `prepareChoiceItems`:** `prepareChoiceItems` shuffles `[a|*b|c]`
+  blanks inside a `text` field (and the items themselves) — wrong shape for
+  radio-quiz, whose options are a plain array. So shuffle is done directly with a
+  seeded `mulberry32`, per question, tracking the winner through the reorder; Reset
+  bumps the seed for a fresh order. Question order stays as authored (only options
+  shuffle).
+- **Explanation, wrong-only + derived:** a question's optional `explanation` shows
+  after Check **only when that question is wrong** (matches french). It is DERIVED
+  from `checkedResults` (no extra state field), so re-answering (which clears the
+  verdict) or Show-answers (which marks everything correct) hides it automatically.
+- **Tokens, not new ones:** pill + result states map onto existing tokens
+  (`--primary`/`--success`/`--destructive`/`--border`/`--ring`) via the shared
+  `ChoicePillGroup`. No new `--ex-*` tokens.
+- **Trimmed vs french (YAGNI):** no `ProgressDots` (the shared status line carries
+  the count), no audio/rich-HTML/DOMPurify. Per-question `audio` is accepted by the
+  schema but not rendered (mirrors select/inline), so fixtures can carry refs without
+  a later schema break.
+- **TDD:** `radio-quiz-schema.test.ts` was written failing first (valid single-`*`
+  question; reject 0/2+ stars; reject empty questions/options + single-option;
+  optional explanation+audio; full envelope + wrong-type), then the schema made it
+  green.
+- **Verified:** `format · lint · lint:css · bun test · build` all green, plus the
+  engine seen + tested live in the showcase before commit.
+- **Deferred / future:** `winners[]` for multi-correct radio-quiz questions (case a)
+  and a separate multi-select / checkbox engine (case b, WordSpot-style) are **not**
+  part of radio-quiz — radio-quiz is strictly single-correct.
+
+---
+
 _Append a new section here as each tool lands._

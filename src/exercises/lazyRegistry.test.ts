@@ -13,6 +13,12 @@ test('lazyRegistry: registers the inline-choice engine', () => {
   expect(Object.keys(EXERCISE_REGISTRY)).toContain('inline-choice');
 });
 
+// `radio-quiz` (#3) is registered.
+test('lazyRegistry: registers the radio-quiz engine', () => {
+  expect(getExercise('radio-quiz')).toBeDefined();
+  expect(Object.keys(EXERCISE_REGISTRY)).toContain('radio-quiz');
+});
+
 // A type whose engine is not ported yet resolves to undefined (callers handle it).
 test('lazyRegistry: getExercise returns undefined for an unported type', () => {
   expect(getExercise('dictation')).toBeUndefined();
