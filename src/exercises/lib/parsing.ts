@@ -3,9 +3,8 @@
  * once"). Ported from french-lo-1's exerciseParsing.js, typed.
  *
  * Authored text embeds blanks inside square brackets:
- *   "Yo [soy|*es|eres] aquí."     choice blank — `*` marks the correct option
- *   (typed-answer blanks `[expected::placeholder]` arrive with engine #4's
- *    parseInputBlank — not ported yet, YAGNI.)
+ *   "Yo [soy|*es|eres] aquí."          choice blank — `*` marks the correct option
+ *   "Je [mange::type here] du pain."   typed-answer blank — `expected::placeholder`
  *
  * `parseSentence` walks the string once and yields an ordered segment list:
  *   - text segments  → { key, type: 'text', value }   (HTML entities decoded)
@@ -120,5 +119,41 @@ export function parseChoiceBlank(
   return {
     meta: { options, winner },
     segment: { blankIndex, key: `choice-${blankIndex}`, type: 'choice' },
+  };
+}
+
+/** Metadata for a typed-answer blank: the expected text, an optional hint, a width. */
+export interface InputMeta {
+  expected: string;
+  placeholder: string;
+  /** Suggested input width in `ch` (expected length, floored at 6, plus 2 padding). */
+  widthCh: number;
+}
+
+/** Render segment for a typed-answer blank (the engine maps blankIndex → its input). */
+export interface InputSegment {
+  blankIndex: number;
+  key: string;
+  type: 'input';
+}
+
+/**
+ * Blank handler for typed-answer blanks: `[expected::placeholder]`. The raw token
+ * is entity-decoded, then split on `::` into the expected answer and an optional
+ * placeholder hint (both trimmed). `widthCh` sizes the input to the expected answer
+ * (min 6 chars) so short and long blanks each get a sensible default width.
+ */
+export function parseInputBlank(
+  rawInner: string,
+  blankIndex: number,
+): BlankParseResult<InputMeta, InputSegment> {
+  const rawToken = decodeHtmlEntities(rawInner.trim());
+  const [rawExpected, rawPlaceholder] = rawToken.split('::');
+  const expected = (rawExpected || '').trim();
+  const placeholder = (rawPlaceholder || '').trim();
+
+  return {
+    meta: { expected, placeholder, widthCh: Math.max(expected.length, 6) + 2 },
+    segment: { blankIndex, key: `input-${blankIndex}`, type: 'input' },
   };
 }

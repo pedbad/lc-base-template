@@ -4,7 +4,13 @@
  * the first consumer (winner marked by a `*` prefix: `[suis|*es|est]`).
  */
 import { describe, expect, test } from 'bun:test';
-import { parseChoiceBlank, parseSentence, type ChoiceMeta } from './parsing';
+import {
+  parseChoiceBlank,
+  parseInputBlank,
+  parseSentence,
+  type ChoiceMeta,
+  type InputMeta,
+} from './parsing';
 
 describe('parseChoiceBlank', () => {
   test('splits options and finds the *-marked winner', () => {
@@ -29,6 +35,43 @@ describe('parseChoiceBlank', () => {
     const { segment } = parseChoiceBlank('a|*b', 7);
     expect(segment.blankIndex).toBe(7);
     expect(segment.key).toBe('choice-7');
+  });
+});
+
+describe('parseInputBlank', () => {
+  test('splits expected from placeholder on "::"', () => {
+    const { meta, segment } = parseInputBlank('mange::type here', 0);
+    expect(meta.expected).toBe('mange');
+    expect(meta.placeholder).toBe('type here');
+    expect(segment).toEqual({ blankIndex: 0, key: 'input-0', type: 'input' });
+  });
+
+  test('placeholder is empty when no "::" is present', () => {
+    const { meta } = parseInputBlank('mange', 0);
+    expect(meta.expected).toBe('mange');
+    expect(meta.placeholder).toBe('');
+  });
+
+  test('trims and decodes entities in the expected answer', () => {
+    const { meta } = parseInputBlank(' l&apos;eau :: indice ', 0);
+    expect(meta.expected).toBe("l'eau");
+    expect(meta.placeholder).toBe('indice');
+  });
+
+  test('widthCh floors at 6+2 for short answers and grows with length', () => {
+    expect(parseInputBlank('va', 0).meta.widthCh).toBe(8); // max(2,6)+2
+    expect(parseInputBlank('anticonstitutionnel', 0).meta.widthCh).toBe(21); // 19+2
+  });
+
+  test('feeds parseSentence to produce input segments', () => {
+    const blanksMeta: InputMeta[] = [];
+    const { segments, nextBlankIndex } = parseSentence('Je [mange::indice] du pain.', {
+      blanksMeta,
+      parseBlank: parseInputBlank,
+    });
+    expect(segments.map((s) => s.type)).toEqual(['text', 'input', 'text']);
+    expect(nextBlankIndex).toBe(1);
+    expect(blanksMeta[0]).toEqual({ expected: 'mange', placeholder: 'indice', widthCh: 8 });
   });
 });
 
