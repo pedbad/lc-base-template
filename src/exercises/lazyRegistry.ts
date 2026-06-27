@@ -39,6 +39,7 @@ export const EXERCISE_REGISTRY: Partial<Record<ExerciseType, ExerciseComponent>>
   'inline-gap': lazy(() => import('./inline-gap/InlineTypedGapExercise')),
   'typed-transform': lazy(() => import('./typed-transform/TypedTransformExercise')),
   dictation: lazy(() => import('./dictation/DictationExercise')),
+  'line-match': lazy(() => import('./line-match/LineMatchExercise')),
 };
 
 /** Resolve an engine by type, or `undefined` if not yet registered. */

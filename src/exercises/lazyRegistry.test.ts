@@ -26,6 +26,11 @@ test('lazyRegistry: registers the ported TextEntry-cluster engines', () => {
   expect(getExercise('dictation')).toBeDefined();
 });
 
+// `line-match` (#7) is registered.
+test('lazyRegistry: registers the line-match engine', () => {
+  expect(getExercise('line-match')).toBeDefined();
+});
+
 // A type whose engine is not ported yet resolves to undefined (callers handle it).
 test('lazyRegistry: getExercise returns undefined for an unported type', () => {
   expect(getExercise('word-order')).toBeUndefined();
