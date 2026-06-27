@@ -19,7 +19,14 @@ test('lazyRegistry: registers the radio-quiz engine', () => {
   expect(Object.keys(EXERCISE_REGISTRY)).toContain('radio-quiz');
 });
 
+// `inline-gap` (#4), `typed-transform` (#5) and `dictation` (#6) are registered.
+test('lazyRegistry: registers the ported TextEntry-cluster engines', () => {
+  expect(getExercise('inline-gap')).toBeDefined();
+  expect(getExercise('typed-transform')).toBeDefined();
+  expect(getExercise('dictation')).toBeDefined();
+});
+
 // A type whose engine is not ported yet resolves to undefined (callers handle it).
 test('lazyRegistry: getExercise returns undefined for an unported type', () => {
-  expect(getExercise('dictation')).toBeUndefined();
+  expect(getExercise('word-order')).toBeUndefined();
 });

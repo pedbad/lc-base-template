@@ -18,8 +18,8 @@
 
 /** Fold curly/back/acute apostrophe variants to a straight apostrophe. */
 const APOSTROPHE_VARIANTS = /[’`´ʻʼ]/g;
-/** Sentence punctuation treated as insignificant in dictation. */
-const SENTENCE_PUNCTUATION = /[.,!?;:…]/g;
+/** Sentence punctuation treated as insignificant in dictation (incl. Spanish ¿ ¡). */
+const SENTENCE_PUNCTUATION = /[.,!?;:…¿¡]/g;
 /** Quotation marks (guillemets + curly quotes) treated as insignificant in dictation. */
 const QUOTATION_MARKS = /[«»“”„"]/g;
 

@@ -37,6 +37,11 @@ test('normalizeForDictation: ignores quotation-mark differences', () => {
   expect(normalizeForDictation('«oui»')).toBe(normalizeForDictation('oui'));
 });
 
+test('normalizeForDictation: ignores Spanish inverted marks (¿ ¡)', () => {
+  expect(normalizeForDictation('¿Cómo estás?')).toBe(normalizeForDictation('Cómo estás'));
+  expect(normalizeForDictation('¡Hola!')).toBe(normalizeForDictation('Hola'));
+});
+
 test('normalizeForDictation: still preserves accents', () => {
   expect(normalizeForDictation('élève.')).toBe('élève');
   expect(normalizeForDictation('élève.')).not.toBe('eleve');

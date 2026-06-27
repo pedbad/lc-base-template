@@ -38,6 +38,7 @@ export const EXERCISE_REGISTRY: Partial<Record<ExerciseType, ExerciseComponent>>
   'radio-quiz': lazy(() => import('./radio-quiz/RadioQuizExercise')),
   'inline-gap': lazy(() => import('./inline-gap/InlineTypedGapExercise')),
   'typed-transform': lazy(() => import('./typed-transform/TypedTransformExercise')),
+  dictation: lazy(() => import('./dictation/DictationExercise')),
 };
 
 /** Resolve an engine by type, or `undefined` if not yet registered. */

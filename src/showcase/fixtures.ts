@@ -245,4 +245,24 @@ export const SHOWCASE_FIXTURES: ShowcaseFixture[] = [
       },
     },
   },
+  {
+    id: 'dictation',
+    title: 'dictation — listen and transcribe',
+    type: 'dictation',
+    config: {
+      type: 'dictation',
+      content: {
+        // Audio-only rows (no prompt cue): the learner plays the clip and types what
+        // they hear. Graded in dictation mode (normalizeForDictation): accents count,
+        // punctuation and quotes are forgiven. Every row carries audio (schema-enforced).
+        rows: [
+          { answer: 'Buenos días', audio: 'audio/inline-gap/q1.wav' },
+          { answer: '¿Cómo estás?', audio: 'audio/inline-gap/q2.wav' },
+          { answer: 'Hasta luego', audio: 'audio/inline-gap/q3.wav' },
+        ],
+        footnote:
+          'Escribe lo que oyes. (Clips de demostración — escribe la respuesta para probar.)',
+      },
+    },
+  },
 ];
