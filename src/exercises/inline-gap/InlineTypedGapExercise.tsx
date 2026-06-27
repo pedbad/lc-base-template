@@ -15,15 +15,23 @@
  *   - chrome text via resolveLabel(key, labels) (ui-strings §9).
  *
  * `options.shuffle`/`sampleSize` are N/A for a typed cloze (no choices; prose order
- * is meaningful) — only `allowShowAnswers` applies. Per-item `audio` is accepted by
- * the schema but NOT rendered yet (the audio layer is wired in M4b).
+ * is meaningful) — only `allowShowAnswers` applies. Per-row audio is rendered via
+ * useRowAudio: an independent click-to-play clip per row, or — when
+ * `content.useSequenceAudioController` is set — one master SequenceAudioController
+ * playing every clip as a playlist with each row's speaker driven by it.
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5, §7, §8.
  */
-import { Fragment, useId, useReducer, type KeyboardEvent, type ReactNode } from 'react';
+import { Fragment, useId, useReducer, useRef, type KeyboardEvent, type ReactNode } from 'react';
 
 import { Input } from '@/components/ui/input';
 import AudioManager from '@/audio/AudioManager';
+import { AudioClip } from '@/components/audio/AudioClip';
+import { CircularAudioProgressAnimatedSpeakerDisplay } from '@/components/audio/CircularAudioProgressAnimatedSpeakerDisplay';
+import {
+  SequenceAudioController,
+  type SequenceAudioControllerHandle,
+} from '@/components/audio/SequenceAudioController';
 import { ExerciseOptionsSchema, type ExerciseOptions } from '@/config/lo-schema';
 import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
 import { normalizeAnswer } from '@/exercises/lib/answers';
@@ -42,6 +50,7 @@ import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { InlineGapExerciseConfigSchema, type InlineGapItem } from './inline-gap-schema';
+import { useRowAudio } from './useRowAudio';
 
 interface InlineGapState extends ScoringState {
   /** blankIndex → typed text. */
@@ -77,6 +86,8 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
   );
 
   const [state, dispatch] = useReducer(reducer, undefined, buildState);
+  const sequenceRef = useRef<SequenceAudioControllerHandle | null>(null);
+  const audio = useRowAudio(items, sequenceRef);
 
   const inputId = (blankIndex: number) => `${uid}-gap-${blankIndex}`;
 
@@ -105,6 +116,7 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
 
   const handleReset = () => {
     AudioManager.stopAll();
+    audio.reset();
     dispatch(buildState());
   };
 
@@ -115,6 +127,46 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
       </p>
     );
   }
+
+  const {
+    useSequenceAudioController = false,
+    listenDescriptionText,
+    soundFile,
+  } = parsed.data.content;
+  // Master playlist only when it's switched on AND a row actually carries audio.
+  const useMaster = useSequenceAudioController && audio.playlist.length > 0;
+
+  // A row's audio control: in master mode a display driven by the controller (click
+  // plays that track); otherwise an independent click-to-play clip.
+  const renderRowAudio = (rowIndex: number, item: InlineGapItem): ReactNode => {
+    if (!item.audio) return null;
+    if (useMaster) {
+      const isActive = audio.activeRowIndex === rowIndex;
+      const prog = audio.rowProgress[rowIndex] ?? { currentTime: 0, duration: 0 };
+      const status = isActive && audio.masterPlayState === 'playing' ? 'playing' : 'stopped';
+      return (
+        <span className="shrink-0 pt-0.5">
+          <CircularAudioProgressAnimatedSpeakerDisplay
+            status={status}
+            progress={prog.currentTime}
+            duration={prog.duration}
+            handleClick={() => audio.playRow(rowIndex)}
+            title={isActive ? 'Click to pause' : 'Click to play'}
+          />
+        </span>
+      );
+    }
+    return (
+      <span className="shrink-0 pt-0.5">
+        <AudioClip
+          className="super-compact-speaker"
+          id={`${uid}-audio-${rowIndex}`}
+          soundFile={item.audio}
+          onStatusChange={(status) => audio.setRowStatus(rowIndex, status)}
+        />
+      </span>
+    );
+  };
 
   const renderInput = (blankIndex: number, blanksMeta: InputMeta[]): ReactNode => {
     const meta = blanksMeta[blankIndex];
@@ -193,7 +245,10 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
       >
         {item.prompt ? <p className="mb-2 text-sm text-muted-foreground">{item.prompt}</p> : null}
         <div className="grid grid-cols-[minmax(0,1fr)_2.5rem] items-start gap-2">
-          <span className="min-w-0 text-foreground">{nodes}</span>
+          <span className="flex min-w-0 items-start gap-2">
+            {renderRowAudio(i, item)}
+            <span className="min-w-0 text-foreground">{nodes}</span>
+          </span>
           {renderResultSlot(rowBlankIndices)}
         </div>
       </div>,
@@ -240,6 +295,22 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
 
   return (
     <div className="flex flex-col gap-4">
+      {useMaster ? (
+        <SequenceAudioController
+          ref={sequenceRef}
+          sources={audio.playlist.map((entry) => entry.src)}
+          pauseSeconds={0.4}
+          onPlayStateChange={audio.onMasterPlayStateChange}
+          onTrackChange={audio.onMasterTrackChange}
+          onStopped={audio.onMasterStopped}
+          onTimeUpdate={audio.onMasterTimeUpdate}
+        />
+      ) : null}
+
+      {listenDescriptionText && soundFile ? (
+        <AudioClip id={`${uid}-listen`} listenText={listenDescriptionText} soundFile={soundFile} />
+      ) : null}
+
       <div className="space-y-3">{rows}</div>
 
       {state.hasChecked ? (

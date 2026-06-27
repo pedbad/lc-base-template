@@ -27,6 +27,18 @@ describe('InlineGapContentSchema', () => {
     expect(parsed.footnote).toBe('Escribe la forma correcta.');
   });
 
+  test('accepts the master-player + listen-intro fields', () => {
+    const parsed = InlineGapContentSchema.parse({
+      items: [{ text: 'Uno [dos::número] tres.', audio: 'a/q1.wav' }],
+      useSequenceAudioController: true,
+      listenDescriptionText: 'Escucha primero:',
+      soundFile: 'a/intro.wav',
+    });
+    expect(parsed.useSequenceAudioController).toBe(true);
+    expect(parsed.listenDescriptionText).toBe('Escucha primero:');
+    expect(parsed.soundFile).toBe('a/intro.wav');
+  });
+
   test('rejects an empty items array', () => {
     expect(() => InlineGapContentSchema.parse({ items: [] })).toThrow();
   });
