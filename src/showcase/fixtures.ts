@@ -208,4 +208,41 @@ export const SHOWCASE_FIXTURES: ShowcaseFixture[] = [
       },
     },
   },
+  {
+    id: 'typed-transform',
+    title: 'typed-transform — type the transformed form',
+    type: 'typed-transform',
+    config: {
+      type: 'typed-transform',
+      content: {
+        // A transform drill: read the singular cue, type the plural. Graded in
+        // strict mode (normalizeAnswer): accents count, apostrophes/spacing forgive.
+        columns: { prompt: 'Singular', answer: 'Plural' },
+        rows: [
+          { prompt: 'el gato', answer: 'los gatos' },
+          { prompt: 'la casa', answer: 'las casas' },
+          { prompt: 'el profesor', answer: 'los profesores' },
+          { prompt: 'la canción', answer: 'las canciones' },
+        ],
+        footnote: 'Escribe el plural. Pulsa Intro para pasar a la siguiente fila.',
+      },
+    },
+  },
+  {
+    id: 'typed-transform-audio',
+    title: 'typed-transform — with per-row audio',
+    type: 'typed-transform',
+    config: {
+      type: 'typed-transform',
+      content: {
+        columns: { prompt: 'Escucha', answer: 'Escribe' },
+        rows: [
+          { prompt: 'masculino', answer: 'alto', audio: 'audio/inline-gap/q1.wav' },
+          { prompt: 'femenino', answer: 'alta', audio: 'audio/inline-gap/q2.wav' },
+          { prompt: 'plural', answer: 'altos', audio: 'audio/inline-gap/q3.wav' },
+        ],
+        footnote: 'Pulsa el altavoz para oír cada palabra (clips de demostración).',
+      },
+    },
+  },
 ];
