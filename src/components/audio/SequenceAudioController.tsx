@@ -31,7 +31,6 @@ interface ControllerState {
   playSequence: boolean;
   playState: PlayState;
   scrubTime: number | null; // transient UI-only master time while scrubbing
-  volume: number;
 }
 
 export interface PlayItemOptions {
@@ -72,10 +71,18 @@ const INITIAL_STATE: ControllerState = {
   playSequence: false,
   playState: 'stopped',
   scrubTime: null,
-  volume: 1,
 };
 
 const MS_PER_SECOND = 1000;
+const SECONDS_PER_MINUTE = 60;
+
+/** Format seconds as m:ss for the minimal time readout. */
+const formatTime = (seconds: number): string => {
+  const safe = Number.isFinite(seconds) && seconds > 0 ? seconds : 0;
+  const minutes = Math.floor(safe / SECONDS_PER_MINUTE);
+  const secs = Math.floor(safe % SECONDS_PER_MINUTE);
+  return `${minutes}:${String(secs).padStart(2, '0')}`;
+};
 
 type StatePatch = Partial<ControllerState>;
 type Action = StatePatch | ((state: ControllerState) => StatePatch);
@@ -306,11 +313,6 @@ export function SequenceAudioController({
     }
   };
 
-  const setVolume = (volume: number) => {
-    if (audioRef.current) audioRef.current.volume = volume;
-    setState({ volume });
-  };
-
   /* ---------- Internal media handlers ---------- */
 
   const handleLoadedMetadata = () => {
@@ -432,111 +434,65 @@ export function SequenceAudioController({
 
   /* ---------- Render ---------- */
 
-  const { masterTime, masterDuration, scrubTime, playState, volume } = state;
+  const { masterTime, masterDuration, scrubTime, playState } = state;
   const displayTime = scrubTime !== null ? scrubTime : masterTime;
-  const sliderAccentStyle = { accentColor: 'var(--primary)' };
 
   return (
     // NB: french-lo-1 put onMouseDown/onTouchStart stopPropagation here to shield the
     // controller from an ancestor drag surface (DraggableFillGaps, engine #9, not yet
     // ported). No current consumer nests it in a draggable, so those handlers are
     // omitted; re-add (with a role + keyboard support) when #9 lands.
-    <div className="sequence-audio-controller relative mt-4 w-full rounded-[0.6rem] border border-[var(--border)] bg-[color-mix(in_oklab,var(--muted)_82%,var(--card)_18%)] p-2">
-      <div className="controls grid min-w-0 grid-cols-[0.1fr_2fr_0.1fr_1fr] grid-rows-[1fr] grid-flow-row items-center gap-x-2 text-[var(--foreground)]">
-        <button
-          type="button"
-          aria-label={playState === 'playing' ? 'Pause audio' : 'Play audio'}
-          className="play-pause cursor-pointer justify-self-end text-base"
-          onClick={toggleMasterPlay}
-        >
-          {playState === 'playing' ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 20 20"
-              aria-hidden="true"
-            >
-              <path
-                d="M.682.003H7v19.994H.682ZM13 .003h6.318v19.994H13z"
-                style={{ fill: 'currentColor' }}
-              />
-            </svg>
-          ) : (
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 14 17"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-            >
-              <path
-                d="M12.8378 7.01827L2.19005 0.21473C1.32492 -0.337792 0 0.198383 0 1.56498V15.1688C0 16.3948 1.23114 17.1337 2.19005 16.519L12.8378 9.71877C13.7876 9.11394 13.7906 7.62311 12.8378 7.01827Z"
-                fill="currentColor"
-              />
-            </svg>
-          )}
-        </button>
+    <div className="sequence-audio-controller flex w-full items-center gap-3 rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-foreground">
+      <button
+        type="button"
+        aria-label={playState === 'playing' ? 'Pause audio' : 'Play audio'}
+        className="play-pause shrink-0 cursor-pointer leading-none"
+        onClick={toggleMasterPlay}
+      >
+        {playState === 'playing' ? (
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path d="M.682.003H7v19.994H.682ZM13 .003h6.318v19.994H13z" fill="currentColor" />
+          </svg>
+        ) : (
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 14 17"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path
+              d="M12.8378 7.01827L2.19005 0.21473C1.32492 -0.337792 0 0.198383 0 1.56498V15.1688C0 16.3948 1.23114 17.1337 2.19005 16.519L12.8378 9.71877C13.7876 9.11394 13.7906 7.62311 12.8378 7.01827Z"
+              fill="currentColor"
+            />
+          </svg>
+        )}
+      </button>
 
-        <input
-          aria-label="Audio progress"
-          className="play-scrubber w-full min-w-0"
-          type="range"
-          min="0"
-          max={masterDuration || 0}
-          step="0.01"
-          value={displayTime}
-          onPointerDown={startScrub}
-          onPointerMove={moveScrub}
-          onPointerUp={endScrub}
-          onChange={changeScrub}
-          style={sliderAccentStyle}
-        />
+      <input
+        aria-label="Audio progress"
+        className="play-scrubber min-w-0 flex-1"
+        type="range"
+        min="0"
+        max={masterDuration || 0}
+        step="0.01"
+        value={displayTime}
+        onPointerDown={startScrub}
+        onPointerMove={moveScrub}
+        onPointerUp={endScrub}
+        onChange={changeScrub}
+        style={{ accentColor: 'var(--primary)' }}
+      />
 
-        <svg
-          className="volume-icon justify-self-end"
-          width="24"
-          height="24"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20.001 20"
-          aria-hidden="true"
-        >
-          <path
-            d="M98.024 132.952h3.269v2.513h-3.269z"
-            style={{ fill: 'currentColor', opacity: volume > 0.2 ? 1 : volume + 0.1 }}
-            transform="translate(-95.102 -119.3)"
-          />
-          <path
-            d="M102.427 130.321h3.531v5.143h-3.531z"
-            style={{ fill: 'currentColor', opacity: volume > 0.4 ? 1 : volume + 0.1 }}
-            transform="translate(-95.102 -119.3)"
-          />
-          <path
-            d="M107.025 127.282h3.4v8.182h-3.4z"
-            style={{ fill: 'currentColor', opacity: volume > 0.6 ? 1 : volume + 0.1 }}
-            transform="translate(-95.102 -119.3)"
-          />
-          <path
-            d="M111.428 124.535h3.662v10.929h-3.662z"
-            style={{ fill: 'currentColor', opacity: volume > 0.8 ? 1 : volume + 0.1 }}
-            transform="translate(-95.102 -119.3)"
-          />
-        </svg>
-
-        <input
-          aria-label="Audio volume"
-          className="volume-slider w-full min-w-0"
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          value={volume}
-          onChange={(e) => setVolume(parseFloat(e.target.value))}
-          onPointerDown={(e) => e.stopPropagation()}
-          onPointerUp={(e) => e.stopPropagation()}
-          style={sliderAccentStyle}
-        />
-      </div>
+      <span aria-hidden="true" className="shrink-0 text-xs tabular-nums text-muted-foreground">
+        {formatTime(displayTime)} / {formatTime(masterDuration)}
+      </span>
     </div>
   );
 }

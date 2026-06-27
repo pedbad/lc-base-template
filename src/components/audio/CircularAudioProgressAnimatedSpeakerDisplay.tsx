@@ -1,8 +1,10 @@
 /**
- * CircularAudioProgressAnimatedSpeakerDisplay — the speaker icon with a circular
- * progress ring and radiating arcs while playing. Presentational and props-driven:
- * the AnimatedSpeaker wrapper feeds it useAudioClip state; the master sequence
- * player feeds it controller state. No playback logic lives here.
+ * CircularAudioProgressAnimatedSpeakerDisplay — a circular audio control: a progress
+ * ring around a centre glyph that mirrors the other players (a play triangle by
+ * default, pause bars while playing). Presentational and props-driven: the
+ * AnimatedSpeaker wrapper feeds it useAudioClip state; the master sequence player
+ * feeds it controller state. No playback logic lives here. (Name kept for now though
+ * the radiating-speaker glyph was replaced — a rename is a separate cleanup.)
  *
  * Ported from french-lo-1, with three deliberate changes:
  *  - Size comes from a `size` prop (default constant), not a getComputedStyle read
@@ -24,7 +26,6 @@ const CENTER = VIEWBOX / 2;
 const RADIUS = 11;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 const STROKE_WIDTH = 1.8;
-const ARC_STROKE_WIDTH = 1.2;
 /** Rendered pixel size; mirrors french-lo-1's --compact-dimension default. */
 const DEFAULT_SIZE = 27;
 
@@ -43,7 +44,15 @@ interface SpeakerDisplayProps {
   handleClick?: (event?: SyntheticEvent) => void;
 }
 
-function SpeakerSvg({ size, offset }: { size: number; offset: number }) {
+function SpeakerSvg({
+  size,
+  offset,
+  isPlaying,
+}: {
+  size: number;
+  offset: number;
+  isPlaying: boolean;
+}) {
   return (
     <svg
       className="pointer-events-none"
@@ -73,30 +82,21 @@ function SpeakerSvg({ size, offset }: { size: number; offset: number }) {
         transform={`rotate(-90 ${CENTER} ${CENTER})`}
         style={{ transition: 'stroke-dashoffset 0.2s linear' }}
       />
-      {/* Speaker body */}
-      <path
-        fill="currentColor"
-        d="M10.4 8.1a.8.8 0 0 0-1.36-.57L6.2 10.35a1.15 1.15 0 0 1-.82.34H3.9a.9.9 0 0 0-.9.9v.82a.9.9 0 0 0 .9.9h1.48c.31 0 .61.12.82.34l2.84 2.82a.8.8 0 0 0 1.36-.57z"
-      />
-      {/* Radiating arcs (animated via audio.css when .playing) */}
-      <path
-        className="speaker-arc speaker-arc1"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeWidth={ARC_STROKE_WIDTH}
-        vectorEffect="non-scaling-stroke"
-        d="M13.9 9.3a4.5 4.5 0 0 1 0 5.4"
-      />
-      <path
-        className="speaker-arc speaker-arc2"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeWidth={ARC_STROKE_WIDTH}
-        vectorEffect="non-scaling-stroke"
-        d="M16.2 7.3a7.5 7.5 0 0 1 0 9.4"
-      />
+      {/* Centre glyph: the SAME play/pause shapes as the other players (master +
+          native), reused from SequenceAudioController and scaled + centred into the
+          24 viewBox — a play triangle by default, pause bars while playing. */}
+      {isPlaying ? (
+        <g transform="translate(7 7) scale(0.5)">
+          <path d="M.682.003H7v19.994H.682ZM13 .003h6.318v19.994H13z" fill="currentColor" />
+        </g>
+      ) : (
+        <g transform="translate(8.4 7) scale(0.588)">
+          <path
+            d="M12.8378 7.01827L2.19005 0.21473C1.32492 -0.337792 0 0.198383 0 1.56498V15.1688C0 16.3948 1.23114 17.1337 2.19005 16.519L12.8378 9.71877C13.7876 9.11394 13.7906 7.62311 12.8378 7.01827Z"
+            fill="currentColor"
+          />
+        </g>
+      )}
     </svg>
   );
 }
@@ -122,7 +122,7 @@ function SpeakerDisplay({
   if (!interactive) {
     return (
       <span aria-hidden="true" className={baseClass} style={sizeStyle}>
-        <SpeakerSvg size={size} offset={offset} />
+        <SpeakerSvg size={size} offset={offset} isPlaying={status === 'playing'} />
       </span>
     );
   }
@@ -136,7 +136,7 @@ function SpeakerDisplay({
       style={sizeStyle}
       onClick={handleClick}
     >
-      <SpeakerSvg size={size} offset={offset} />
+      <SpeakerSvg size={size} offset={offset} isPlaying={status === 'playing'} />
     </button>
   );
 }

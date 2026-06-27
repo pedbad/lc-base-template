@@ -1,11 +1,11 @@
 /**
- * audio.css — styling for the animated speaker clip. Co-located with the audio
- * components and imported by the speaker display. Plain CSS + semantic tokens (no
- * hardcoded colours): currentColor on the SVG flows from the `color` set here, so
- * the play/idle/hover states are driven entirely by tokens.
+ * audio.css — styling for the circular audio control. Co-located with the audio
+ * components and imported by the display. Plain CSS + semantic tokens (no hardcoded
+ * colours): currentColor on the SVG flows from the `color` set here, so the
+ * idle/playing/hover states are driven entirely by tokens.
  *
- * Ported from french-lo-1's index.css speaker rules; --edu-affirm/--edu-warn (which
- * the template does not define) map to --success / --foreground.
+ * The centre glyph is now a play/pause shape (matching the other players), so the
+ * old radiating-arc rules + @keyframes radiate were removed.
  */
 @layer components {
   .audio-container {
@@ -42,53 +42,5 @@
   .circular-audio-progress-speaker svg {
     width: 100%;
     height: 100%;
-  }
-
-  .circular-audio-progress-speaker .speaker-arc {
-    opacity: 0;
-    transition: opacity 800ms;
-  }
-
-  .circular-audio-progress-speaker.playing .speaker-arc {
-    transform-origin: 56% 50%;
-    animation: radiate 1600ms linear infinite;
-  }
-
-  .circular-audio-progress-speaker.playing .speaker-arc1 {
-    animation-delay: 0ms;
-  }
-
-  .circular-audio-progress-speaker.playing .speaker-arc2 {
-    animation-delay: 800ms;
-  }
-
-  @keyframes radiate {
-    0% {
-      opacity: 0;
-      transform: scale(0.5);
-    }
-
-    10% {
-      opacity: 1;
-      transform: scale(0.6);
-    }
-
-    90% {
-      opacity: 1;
-      transform: scale(2);
-    }
-
-    100% {
-      opacity: 0;
-      transform: scale(2.2);
-    }
-  }
-
-  /* Respect reduced-motion: hold the arcs visible instead of radiating. */
-  @media (prefers-reduced-motion: reduce) {
-    .circular-audio-progress-speaker.playing .speaker-arc {
-      animation: none;
-      opacity: 1;
-    }
   }
 }
