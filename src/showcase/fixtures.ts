@@ -146,4 +146,26 @@ export const SHOWCASE_FIXTURES: ShowcaseFixture[] = [
       options: { shuffle: true },
     },
   },
+  {
+    id: 'inline-gap',
+    title: 'inline-gap — typed cloze (type the verb)',
+    type: 'inline-gap',
+    config: {
+      type: 'inline-gap',
+      content: {
+        // Typed blanks: `[expected::placeholder]`. The text before `::` is graded
+        // (accent-strict via normalizeAnswer); the optional hint after `::` becomes
+        // the input's placeholder. A wrong Check shows a character diff under the box.
+        items: [
+          {
+            prompt: 'Conjuga «ser» y «llamarse» en presente.',
+            text: 'Hola, yo me [llamo::llamarse] Ana y [soy::ser] de Madrid.',
+          },
+          { text: 'Nosotros [vivimos::vivir] en Barcelona desde 2020.' },
+          { text: 'Mi hermana [tiene::tener] veinte años y [estudia::estudiar] medicina.' },
+        ],
+        footnote: 'Pulsa Intro para saltar al siguiente hueco. Los acentos cuentan.',
+      },
+    },
+  },
 ];
