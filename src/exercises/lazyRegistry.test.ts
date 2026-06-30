@@ -31,6 +31,11 @@ test('lazyRegistry: registers the line-match engine', () => {
   expect(getExercise('line-match')).toBeDefined();
 });
 
+// `word-spot` (#8) is registered.
+test('lazyRegistry: registers the word-spot engine', () => {
+  expect(getExercise('word-spot')).toBeDefined();
+});
+
 // A type whose engine is not ported yet resolves to undefined (callers handle it).
 test('lazyRegistry: getExercise returns undefined for an unported type', () => {
   expect(getExercise('word-order')).toBeUndefined();

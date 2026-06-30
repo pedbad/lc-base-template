@@ -1,0 +1,101 @@
+/**
+ * word-spot.css — styling for the word-spot engine (#8). Layered under `components`
+ * so token and base layers always win where they should (spec §5 css-layer
+ * discipline). Colours come only from semantic tokens; no raw hex, no !important.
+ *
+ * The clickable part-words are real <button>s rendered inline in flowing text, so
+ * the base rules strip native button chrome and let them sit on the text baseline.
+ * Marked state is driven by `data-mark` (hit | miss) set from React state — never by
+ * direct DOM mutation.
+ */
+@layer components {
+  .word-spot {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .word-spot-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .word-spot-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .word-spot-line {
+    margin: 0;
+    font-size: var(--text-lg, 1.125rem);
+    line-height: 1.8;
+  }
+
+  /* Inline clickable part-word: a button that reads as text until marked. */
+  .word-spot-token {
+    appearance: none;
+    display: inline;
+    margin: 0;
+    padding: 0.05em 0.15em;
+    border: 0;
+    border-radius: calc(var(--radius) - 4px);
+    font: inherit;
+    color: inherit;
+    background-color: transparent;
+    cursor: pointer;
+    transition:
+      background-color var(--duration-fast, 150ms) ease,
+      color var(--duration-fast, 150ms) ease;
+  }
+
+  .word-spot-token:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  .word-spot-token:disabled {
+    cursor: default;
+  }
+
+  .word-spot-token:hover:not(:disabled) {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  .word-spot-token[data-mark='hit'] {
+    background-color: var(--success);
+    color: var(--success-foreground);
+  }
+
+  .word-spot-token[data-mark='miss'] {
+    background-color: var(--destructive);
+    color: var(--destructive-foreground);
+  }
+
+  .word-spot-status {
+    margin: 0;
+    font-size: var(--text-sm, 0.875rem);
+    font-variant-numeric: tabular-nums;
+    color: var(--muted-foreground);
+  }
+
+  .word-spot-footnote {
+    margin: 0;
+    font-size: var(--text-sm, 0.875rem);
+    color: var(--muted-foreground);
+  }
+
+  .word-spot-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+}

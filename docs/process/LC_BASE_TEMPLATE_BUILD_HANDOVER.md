@@ -135,7 +135,12 @@ CONTENT ENGINE
         [x] #1 select — schema + SelectExercise.tsx + 2 fixtures (rows + inline); --success token added
         [x] #2 inline-choice — schema (TDD) + InlineChoiceExercise.tsx (radio-pill group, arrow-key a11y) + 1 fixture; existing tokens only
         [x] #3 radio-quiz — schema (TDD, `*`-array single-correct refine) + RadioQuizExercise.tsx (multiple-choice questions, shared ChoicePillGroup, wrong-only explanations) + 1 fixture; existing tokens only
-        [ ] #4 inline-gap → #5 typed-transform → #6 dictation → … (see spec §11)
+        [x] #4 inline-gap — schema (TDD) + InlineTypedGapExercise.tsx (typed blanks in prose) + audio subsystem ported (src/audio/, SequenceAudioController, useRowAudio) + demo clips + 1 fixture
+        [x] #5 typed-transform — schema (TDD) + TypedTransformExercise.tsx (type transformed form) + shared TextEntryRuntime + charDiff/answers libs + 1 fixture
+        [x] #6 dictation — schema (TDD) + DictationExercise.tsx (transcribe audio, Spanish punctuation tolerance) + 1 fixture
+        [x] #7 line-match — schema (TDD) + LineMatchExercise.tsx (image↔word) + LineMatchConnectors.tsx (desktop SVG connector layout) + assets.ts helper + 1 fixture
+        [x] #8 word-spot — schema (TDD, ≥1 [bracketed] target refine) + WordSpotExercise.tsx (own click-mark model, state-driven marks, real <button> part-words for a11y, reveal via canRevealAnswers) + word-spot.css (layered, semantic tokens) + 1 fixture; existing tokens only
+        [ ] #9 memory-match → #10 word-order → #11 phrase-reorder → #12 drag-fill-gaps (see spec §11)
     [ ] Phase C — example LO (13b/13c) + static pre-render (15) from proven engines
 [ ] 15 Static pre-render (auto-discover lo-config/*/lo.json)
 DEV ARTIFACTS

@@ -305,4 +305,23 @@ export const SHOWCASE_FIXTURES: ShowcaseFixture[] = [
       },
     },
   },
+  {
+    id: 'word-spot',
+    title: 'word-spot — click the part-words with the target sound',
+    type: 'word-spot',
+    config: {
+      type: 'word-spot',
+      content: {
+        // Spanish phonics: click every part-word containing the "ch" sound. The
+        // bracketed runs are the targets; clicking any other word scores a miss.
+        // Own scoring model — no Check button, each click is graded live (spec §7).
+        items: [
+          { text: 'El [ch]ico [ch]ileno comió [ch]ocolate.' },
+          { text: 'La [ch]ica escu[ch]a la canción.' },
+          { text: 'Mu[ch]as gracias por la le[ch]e.' },
+        ],
+        footnote: 'Haz clic en cada parte con el sonido «ch».',
+      },
+    },
+  },
 ];
