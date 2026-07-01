@@ -4,11 +4,14 @@
  * driven by `data-*` attributes the stylesheet reads — no inline transform soup,
  * no DOM mutation. Keyboard-operable for free (it's a real button).
  *
- * The french-lo-1 original wrapped the word in a "link" AudioClip; that clip variant
- * isn't ported, so the word renders as plain text and the match audio is played by
- * the engine on a successful pair instead.
+ * When a text card carries `audio`, a "super-compact-speaker" click-to-play control
+ * (§8 shared AudioClip) renders as a SIBLING overlay, not nested inside the flip
+ * button — a <button> inside a <button> is invalid HTML and fails jsx-a11y. It only
+ * shows once the card is revealed or matched, so it never leaks which cards have a
+ * word before the learner flips them.
  */
 import { memo } from 'react';
+import { AudioClip } from '@/components/audio/AudioClip';
 import { resolveAsset } from '@/lib/assets';
 
 export type CardKind = 'image' | 'text';
@@ -41,43 +44,54 @@ function MemoryCardComponent({
   onFlip,
   setRef,
 }: MemoryCardProps) {
-  const label =
-    isRevealed || isMatched
-      ? card.kind === 'text'
-        ? (card.text ?? '')
-        : (card.alt ?? 'picture')
-      : 'Face-down card, click to flip';
+  const isFaceUp = isRevealed || isMatched;
+  const label = isFaceUp
+    ? card.kind === 'text'
+      ? (card.text ?? '')
+      : (card.alt ?? 'picture')
+    : 'Face-down card, click to flip';
+  const showSpeaker = isFaceUp && card.kind === 'text' && Boolean(card.audio);
 
   return (
-    <button
-      type="button"
-      className="memory-card"
-      data-kind={card.kind}
-      data-revealed={isRevealed || isMatched}
-      data-state={isMatched ? 'matched' : 'default'}
-      aria-label={label}
-      aria-pressed={isRevealed || isMatched}
-      disabled={disabled}
-      onClick={() => onFlip(card)}
-      ref={(element) => setRef(card.id, element)}
-    >
-      <span className="memory-card-inner">
-        <span className="memory-card-face memory-card-back" aria-hidden="true">
-          ?
+    <span className="memory-card-wrap">
+      <button
+        type="button"
+        className="memory-card"
+        data-kind={card.kind}
+        data-revealed={isFaceUp}
+        data-state={isMatched ? 'matched' : 'default'}
+        aria-label={label}
+        aria-pressed={isFaceUp}
+        disabled={disabled}
+        onClick={() => onFlip(card)}
+        ref={(element) => setRef(card.id, element)}
+      >
+        <span className="memory-card-inner">
+          <span className="memory-card-face memory-card-back" aria-hidden="true">
+            ?
+          </span>
+          <span className="memory-card-face memory-card-front">
+            {card.kind === 'text' ? (
+              <span className="memory-card-word">{card.text}</span>
+            ) : (
+              <img
+                className="memory-card-image"
+                src={resolveAsset(card.image ?? '')}
+                alt={card.alt ?? ''}
+              />
+            )}
+          </span>
         </span>
-        <span className="memory-card-face memory-card-front">
-          {card.kind === 'text' ? (
-            <span className="memory-card-word">{card.text}</span>
-          ) : (
-            <img
-              className="memory-card-image"
-              src={resolveAsset(card.image ?? '')}
-              alt={card.alt ?? ''}
-            />
-          )}
-        </span>
-      </span>
-    </button>
+      </button>
+      {showSpeaker ? (
+        <AudioClip
+          className="super-compact-speaker memory-card-audio"
+          soundFile={card.audio ?? ''}
+          size={20}
+          inline
+        />
+      ) : null}
+    </span>
   );
 }
 

@@ -326,7 +326,7 @@ export const SHOWCASE_FIXTURES: ShowcaseFixture[] = [
   },
   {
     id: 'memory-match',
-    title: 'memory-match — flip cards to pair each picture with its word',
+    title: 'memory-match — flip cards to pair each picture with its word (no audio)',
     type: 'memory-match',
     config: {
       type: 'memory-match',
@@ -345,6 +345,46 @@ export const SHOWCASE_FIXTURES: ShowcaseFixture[] = [
           { text: 'la estrella', image: 'images/line-match/star.svg', localLanguage: 'star' },
         ],
         footnote: 'Voltea las cartas y empareja cada figura con su palabra.',
+      },
+    },
+  },
+  {
+    id: 'memory-match-audio',
+    title: 'memory-match — with audio (speaker on match)',
+    type: 'memory-match',
+    config: {
+      type: 'memory-match',
+      content: {
+        // Audio mode: each item's `audio` clip auto-plays on a correct match, and a
+        // click-to-play speaker appears next to the word once its card is face-up.
+        // Clips are AAC-in-MP4 (not WAV) — the format used in live deployment.
+        items: [
+          {
+            text: 'el círculo',
+            image: 'images/line-match/circle.svg',
+            audio: 'audio/memory-match/circulo.mp4',
+            localLanguage: 'circle',
+          },
+          {
+            text: 'el cuadrado',
+            image: 'images/line-match/square.svg',
+            audio: 'audio/memory-match/cuadrado.mp4',
+            localLanguage: 'square',
+          },
+          {
+            text: 'el triángulo',
+            image: 'images/line-match/triangle.svg',
+            audio: 'audio/memory-match/triangulo.mp4',
+            localLanguage: 'triangle',
+          },
+          {
+            text: 'la estrella',
+            image: 'images/line-match/star.svg',
+            audio: 'audio/memory-match/estrella.mp4',
+            localLanguage: 'star',
+          },
+        ],
+        footnote: 'Voltea las cartas: al emparejar se reproduce el audio de la palabra.',
       },
     },
   },
