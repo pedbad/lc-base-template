@@ -26,7 +26,7 @@
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5, §7, §8.
  */
-import { Fragment, useId, useReducer, type ReactNode } from 'react';
+import { useId, useReducer, type ReactNode } from 'react';
 
 import {
   Select,
@@ -51,6 +51,7 @@ import { prepareChoiceItems, type PrepareChoiceOptions } from '@/exercises/lib/p
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
+import { TARGET_LANG } from '@/lib/lang';
 import { SelectExerciseConfigSchema, type SelectItem as SelectItemContent } from './select-schema';
 
 /** Trigger placeholder. Engine-specific UI text, not shared chrome — kept local. */
@@ -144,10 +145,14 @@ export default function SelectExercise({ config }: ExerciseComponentProps) {
         <Select value={value} onValueChange={(next) => handleSelectChange(blankIndex, next ?? '')}>
           <SelectTrigger id={selectId} className="min-w-32">
             <SelectValue placeholder={PLACEHOLDER}>
-              {(v) => (v == null || v === '' ? null : (meta?.options[Number(v)] ?? null))}
+              {(v) =>
+                v == null || v === '' ? null : (
+                  <span lang={TARGET_LANG}>{meta?.options[Number(v)] ?? null}</span>
+                )
+              }
             </SelectValue>
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent lang={TARGET_LANG}>
             {meta?.options.map((option, optionIndex) => (
               <SelectItem key={`${selectId}-${optionIndex}`} value={String(optionIndex)}>
                 {option}
@@ -198,7 +203,9 @@ export default function SelectExercise({ config }: ExerciseComponentProps) {
       segment.type === 'choice' ? (
         renderBlank(segment.blankIndex, blanksMeta)
       ) : (
-        <Fragment key={(segment as TextSegment).key}>{(segment as TextSegment).value}</Fragment>
+        <span key={(segment as TextSegment).key} lang={TARGET_LANG}>
+          {(segment as TextSegment).value}
+        </span>
       ),
     );
 
