@@ -36,6 +36,7 @@ import { mulberry32, sampleN, shuffle } from '@/exercises/lib/shuffle';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
 import { resolveAsset } from '@/lib/assets';
+import { TARGET_LANG } from '@/lib/lang';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import {
   LineMatchConnectors,
@@ -417,10 +418,12 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
           <Select value={picked} onValueChange={(next) => handleSelectChange(key, next ?? '')}>
             <SelectTrigger id={selectId} className="w-full">
               <SelectValue placeholder="Choose the matching word">
-                {(value) => (value ? wordLabel(String(value)) : null)}
+                {(value) =>
+                  value ? <span lang={TARGET_LANG}>{wordLabel(String(value))}</span> : null
+                }
               </SelectValue>
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent lang={TARGET_LANG}>
               {state.wordBank.map((option) => {
                 const optionKey = lineMatchItemKey(option);
                 return (
@@ -504,7 +507,9 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
           <span ref={(node) => setTargetNode(key, node)}>
             <span aria-hidden="true" className={dotClass(tone)} />
           </span>
-          <strong className="min-w-0 text-foreground">{item.label}</strong>
+          <strong className="min-w-0 text-foreground" lang={TARGET_LANG}>
+            {item.label}
+          </strong>
         </button>
       </li>
     );
@@ -562,7 +567,9 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
       />
 
       {parsed.data.content.footnote ? (
-        <p className="text-sm text-muted-foreground">{parsed.data.content.footnote}</p>
+        <p className="text-sm text-muted-foreground" lang={TARGET_LANG}>
+          {parsed.data.content.footnote}
+        </p>
       ) : null}
     </div>
   );
