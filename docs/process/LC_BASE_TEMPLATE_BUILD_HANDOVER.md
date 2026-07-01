@@ -142,7 +142,8 @@ CONTENT ENGINE
         [x] #8 word-spot — schema (TDD, ≥1 [bracketed] target refine) + WordSpotExercise.tsx (own click-mark model, state-driven marks, real <button> part-words for a11y, reveal via canRevealAnswers) + word-spot.css (layered, semantic tokens) + 1 fixture; existing tokens only
         [x] #9 memory-match — schema (TDD, ≥2 pairs + unique-key refine) + MemoryMatchExercise.tsx (own flip/match model, pairId matching, audio-on-match, always-shuffled deck, options.sampleSize=nPairsToPlay) + MemoryCard.tsx (3D flip button, a11y) + shared reorderAnimation.ts (FLIP, reduced-motion aware) for animated show-answers reorder + memory-match.css (layered, template tokens) + 1 fixture (reuses line-match SVGs)
         [x] #10 word-order — schema (TDD, ≥2 words refine) + WordOrderExercise.tsx (sequence/placement: failCount + complete, always-scrambled deck, click-to-select/click-to-swap instead of mouse-only HTML5 dnd for keyboard a11y, canRevealAnswers reused) + word-order.css (layered, semantic tokens) + reuses reorderAnimation.ts (FLIP) for the swap animation + 1 fixture
-        [ ] #11 phrase-reorder → #12 drag-fill-gaps (sequence cluster continues — see spec §11)
+        [x] #11 phrase-reorder — schema (TDD, ≥2 rows refine) + PhraseReorderExercise.tsx (sequence/placement: reuses word-order's swap/FLIP/click-select+native-dnd mechanics, but each slot pins a fixed non-draggable prompt/audio pair — only the phrase card moves) + phrase-reorder.css (layered, semantic tokens, grid columns collapse when no row has a prompt) + reuses reorderAnimation.ts (FLIP) + 1 fixture (fixed prompt + per-row audio)
+        [ ] #12 drag-fill-gaps (sequence cluster continues — see spec §11)
     [ ] Phase C — example LO (13b/13c) + static pre-render (15) from proven engines
 [ ] 15 Static pre-render (auto-discover lo-config/*/lo.json)
 DEV ARTIFACTS

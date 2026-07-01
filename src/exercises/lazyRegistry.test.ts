@@ -46,7 +46,12 @@ test('lazyRegistry: registers the word-order engine', () => {
   expect(getExercise('word-order')).toBeDefined();
 });
 
+// `phrase-reorder` (#11) is registered.
+test('lazyRegistry: registers the phrase-reorder engine', () => {
+  expect(getExercise('phrase-reorder')).toBeDefined();
+});
+
 // A type whose engine is not ported yet resolves to undefined (callers handle it).
 test('lazyRegistry: getExercise returns undefined for an unported type', () => {
-  expect(getExercise('phrase-reorder')).toBeUndefined();
+  expect(getExercise('drag-fill-gaps')).toBeUndefined();
 });
