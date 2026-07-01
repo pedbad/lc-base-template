@@ -278,7 +278,9 @@ export default function InlineChoiceExercise({ config }: ExerciseComponentProps)
       />
 
       {parsed.data.content.footnote ? (
-        <p className="text-sm text-muted-foreground">{parsed.data.content.footnote}</p>
+        <p className="text-sm text-muted-foreground" lang={TARGET_LANG}>
+          {parsed.data.content.footnote}
+        </p>
       ) : null}
     </div>
   );
