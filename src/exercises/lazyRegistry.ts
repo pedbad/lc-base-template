@@ -42,6 +42,7 @@ export const EXERCISE_REGISTRY: Partial<Record<ExerciseType, ExerciseComponent>>
   'line-match': lazy(() => import('./line-match/LineMatchExercise')),
   'word-spot': lazy(() => import('./word-spot/WordSpotExercise')),
   'memory-match': lazy(() => import('./memory-match/MemoryMatchExercise')),
+  'word-order': lazy(() => import('./word-order/WordOrderExercise')),
 };
 
 /** Resolve an engine by type, or `undefined` if not yet registered. */

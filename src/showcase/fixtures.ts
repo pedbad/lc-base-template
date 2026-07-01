@@ -388,4 +388,18 @@ export const SHOWCASE_FIXTURES: ShowcaseFixture[] = [
       },
     },
   },
+  {
+    id: 'word-order',
+    title: 'word-order — click to select, click to swap',
+    type: 'word-order',
+    config: {
+      type: 'word-order',
+      content: {
+        // Sequence/placement family (spec §7): `words` is the answer key, in
+        // order. The engine always scrambles it for display (shuffle is N/A).
+        words: ['Yo', 'como', 'una', 'manzana', 'todos', 'los', 'días'],
+        footnote: 'Ordena las palabras para formar la frase correcta.',
+      },
+    },
+  },
 ];
