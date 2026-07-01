@@ -154,9 +154,12 @@ content genuinely needs internal sub-structure).**
 - **`lang` on target-language content.** UI chrome inherits `lang="en"` from
   `<html>`. Actual target-language text (grammar examples, vocab words, exercise
   content) needs its own `lang="{languageCode}"` wrapper (from
-  `course.config.ts`) so assistive tech pronounces it correctly (WCAG 3.1.2).
-  **Currently missing across all 12 shipped exercise engines** — a real gap,
-  tracked as follow-up work, not blocking Phase C.
+  `course.config.ts`, exposed as `TARGET_LANG` via `src/lib/lang.ts`) so
+  assistive tech pronounces it correctly (WCAG 3.1.2). **Fixed 2026-07-01
+  across all 12 shipped exercise engines** — wrapped only target-language
+  content subtrees, never chrome/`aria-label`/sr-only text. Grammar/vocab
+  blocks outside the exercise engines (Phase C content) still need the same
+  treatment when authored.
 
 ## 4. Accordion mechanics
 
