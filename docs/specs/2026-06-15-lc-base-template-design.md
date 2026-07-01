@@ -3,7 +3,7 @@
 **Date:** 2026-06-15
 **Status:** Approved (brainstorm output). Build session pending.
 **Author:** Pedram Badakhchani
-**Source:** Brainstorm session continuing parked work from `docs/process/FUTURE_PROJECTS.md` + `docs/process/LC_BASE_TEMPLATE_HANDOVER.md`.
+**Source:** Brainstorm session continuing parked work from `docs/process/FUTURE_PROJECTS.md` + `docs/process/LC_BASE_TEMPLATE_BUILD_HANDOVER.md`.
 **Reference impl:** `french-lo-1` (proven, but NOT the template — carries content + naming tech-debt).
 
 ---
@@ -16,7 +16,7 @@ A **public GitHub template repo** that acts as a **course factory**. A developer
 2. Filling out one course-identity config.
 3. Dropping JSON files into `lo-config/` — one per Learning Object.
 4. Adding images + audio per LO.
-5. Picking from a menu of 13 ready exercise types; authoring new ones via a documented contract.
+5. Picking from a menu of 12 ready exercise types; authoring new ones via a documented contract.
 
 The template ships with three dev tools (debug sandbox, exercise showcase, example LO) and a guard system that makes drift from the design architecture **impossible to merge**.
 
@@ -32,8 +32,8 @@ The template ships with three dev tools (debug sandbox, exercise showcase, examp
 | 2   | Language/validation   | **TypeScript + Zod.** Configs validated at load/compile.                                                                                                                                                                                                                                                                                                       |
 | 3   | RTL                   | **Dropped from v1.** Separate future template forked off this base.                                                                                                                                                                                                                                                                                            |
 | 4   | Dev artifacts shipped | **Three:** debug sandbox + exercise showcase + example LO. All debug-flag-gated.                                                                                                                                                                                                                                                                               |
-| 5   | Exercise engines      | **All 13**, ported cluster-by-cluster, debt cleared per cluster.                                                                                                                                                                                                                                                                                               |
-| 6   | Guards                | **All 6** (see §5).                                                                                                                                                                                                                                                                                                                                            |
+| 5   | Exercise engines      | **All 12**, ported cluster-by-cluster, debt cleared per cluster.                                                                                                                                                                                                                                                                                               |
+| 6   | Guards                | **All 8** (see §5).                                                                                                                                                                                                                                                                                                                                            |
 | 7   | Enforcement gate      | **Option C** — husky pre-commit (fast) + GitHub Actions CI (unbypassable backstop).                                                                                                                                                                                                                                                                            |
 | 8   | Tooling               | **Zero-touch:** Bun (pkg/runtime/test) + Vite (build) + Prettier + ESLint + Stylelint + husky + lint-staged.                                                                                                                                                                                                                                                   |
 | 9   | Docs                  | `CONTRIBUTING.md` (root) + sandbox renders it as HTML (single source).                                                                                                                                                                                                                                                                                         |
@@ -71,8 +71,8 @@ The template ships with three dev tools (debug sandbox, exercise showcase, examp
 All three behind the debug flag (`VITE_INCLUDE_DEBUG=true`); production builds exclude them.
 
 1. **Debug sandbox — the design control panel.** Renders the live theme across all three token layers (primitives, semantic roles, component tokens), light + dark: palette swatches, font ramp (Open Sans now / Feijoa when present), SVG/icon set, spacing tokens, **plus a live component preview** (real buttons + exercises rendered with the exact tokens). Where the designer's handoff is confirmed visually. Also renders `CONTRIBUTING.md` as HTML (single source — no hand-copied duplicate).
-2. **Exercise showcase.** Full catalog of all 13 exercise types in isolated fixtures. The menu a dev browses + the place a new exercise component is verified.
-3. **Example LO.** One complete, realistic, **Zod-valid** Learning Object: intro + grammar block + vocab block + an exercise section of **4 accordions** (4 exercise types, NOT all 13 — that's the showcase's job). The "copy me to start" artifact. Ships as a **folder** (`lo-config/lo-01-…/`): a thin `lo.json` manifest + one config file per block/exercise; media mirrors under `public/` by the same ordinal+type names (folder-per-LO — see §6/§15).
+2. **Exercise showcase.** Full catalog of all 12 exercise types in isolated fixtures. The menu a dev browses + the place a new exercise component is verified.
+3. **Example LO.** One complete, realistic, **Zod-valid** Learning Object: intro + grammar block + vocab block + an exercise section of **4 accordions** (4 exercise types, NOT all 12 — that's the showcase's job). The "copy me to start" artifact. Ships as a **folder** (`lo-config/lo-01-…/`): a thin `lo.json` manifest + one config file per block/exercise; media mirrors under `public/` by the same ordinal+type names (folder-per-LO — see §6/§15).
 
 ---
 
