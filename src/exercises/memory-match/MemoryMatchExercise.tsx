@@ -23,6 +23,7 @@ import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { canRevealAnswers } from '../lib/reveal';
 import { captureFlipPositions, playFlipAnimation } from '../lib/reorderAnimation';
 import { MemoryCard, type DeckCard } from './MemoryCard';
+import { TARGET_LANG } from '@/lib/lang';
 import { MemoryMatchExerciseConfigSchema, type MemoryMatchContent } from './memory-match-schema';
 import './memory-match.css';
 
@@ -256,7 +257,11 @@ export default function MemoryMatchExercise({ config }: ExerciseComponentProps) 
         {complete ? resolveLabel('correct', labels) : `${nPairs} / ${total} · ${nTries}`}
       </p>
 
-      {content.footnote ? <p className="memory-match-footnote">{content.footnote}</p> : null}
+      {content.footnote ? (
+        <p className="memory-match-footnote" lang={TARGET_LANG}>
+          {content.footnote}
+        </p>
+      ) : null}
 
       <div className="memory-match-footer">
         {nTries > 0 ? (

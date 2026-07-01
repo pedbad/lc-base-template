@@ -13,6 +13,7 @@
 import { memo } from 'react';
 import { AudioClip } from '@/components/audio/AudioClip';
 import { resolveAsset } from '@/lib/assets';
+import { TARGET_LANG } from '@/lib/lang';
 
 export type CardKind = 'image' | 'text';
 
@@ -51,6 +52,9 @@ function MemoryCardComponent({
       : (card.alt ?? 'picture')
     : 'Face-down card, click to flip';
   const showSpeaker = isFaceUp && card.kind === 'text' && Boolean(card.audio);
+  // aria-label IS the target-language word when a text card is face-up (no chrome
+  // mixed in) — safe to tag the button itself. Face-down/image labels are English.
+  const labelLang = isFaceUp && card.kind === 'text' ? TARGET_LANG : undefined;
 
   return (
     <span className="memory-card-wrap">
@@ -61,6 +65,7 @@ function MemoryCardComponent({
         data-revealed={isFaceUp}
         data-state={isMatched ? 'matched' : 'default'}
         aria-label={label}
+        lang={labelLang}
         aria-pressed={isFaceUp}
         disabled={disabled}
         onClick={() => onFlip(card)}
@@ -72,7 +77,9 @@ function MemoryCardComponent({
           </span>
           <span className="memory-card-face memory-card-front">
             {card.kind === 'text' ? (
-              <span className="memory-card-word">{card.text}</span>
+              <span className="memory-card-word" lang={TARGET_LANG}>
+                {card.text}
+              </span>
             ) : (
               <img
                 className="memory-card-image"
