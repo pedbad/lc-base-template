@@ -39,6 +39,7 @@ import { canRevealAnswers } from '@/exercises/lib/reveal';
 import { commitCheck, getInitialScoringState, type ScoringState } from '@/exercises/lib/scoring';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
+import { TARGET_LANG } from '@/lib/lang';
 import type { TextEntryContent } from './text-entry-schema';
 
 export type ComparisonMode = 'strict' | 'dictation';
@@ -167,13 +168,16 @@ export function TextEntryRuntime({
           </TableCell>
         ) : null}
         {hasPrompt ? (
-          <TableCell className="align-top text-foreground">{row.prompt}</TableCell>
+          <TableCell className="align-top text-foreground" lang={TARGET_LANG}>
+            {row.prompt}
+          </TableCell>
         ) : null}
         <TableCell className="align-top">
           <div className="grid grid-cols-[minmax(0,1fr)_2.5rem] items-center gap-2">
             <Input
               id={id}
               type="text"
+              lang={TARGET_LANG}
               value={value}
               onChange={(event) => handleInputChange(rowIndex, event.target.value)}
               onKeyDown={(event) => handleInputKeyDown(event, rowIndex)}
@@ -185,7 +189,7 @@ export function TextEntryRuntime({
             <ResultSlot hasResult={hasResult} isCorrect={isRight} />
           </div>
           {state.hasChecked && diff ? (
-            <div className="mt-1.5">
+            <div className="mt-1.5" lang={TARGET_LANG}>
               <TextDiff parts={diff} />
             </div>
           ) : null}
@@ -211,8 +215,8 @@ export function TextEntryRuntime({
             <TableHeader>
               <TableRow>
                 {hasAudio ? <TableHead className="w-12 sr-only">Audio</TableHead> : null}
-                {hasPrompt ? <TableHead>{columns.prompt}</TableHead> : null}
-                <TableHead>{columns.answer}</TableHead>
+                {hasPrompt ? <TableHead lang={TARGET_LANG}>{columns.prompt}</TableHead> : null}
+                <TableHead lang={TARGET_LANG}>{columns.answer}</TableHead>
               </TableRow>
             </TableHeader>
           ) : null}
@@ -240,7 +244,9 @@ export function TextEntryRuntime({
       />
 
       {content.footnote ? (
-        <p className="text-sm text-muted-foreground">{content.footnote}</p>
+        <p className="text-sm text-muted-foreground" lang={TARGET_LANG}>
+          {content.footnote}
+        </p>
       ) : null}
     </div>
   );
