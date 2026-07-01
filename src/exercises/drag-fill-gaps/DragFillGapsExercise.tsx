@@ -33,6 +33,7 @@ import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { ExerciseFooter } from '../lib/ExerciseFooter';
 import { canRevealAnswers } from '../lib/reveal';
 import { parseSentence, type TextSegment } from '../lib/parsing';
+import { TARGET_LANG } from '@/lib/lang';
 import {
   DragFillGapsExerciseConfigSchema,
   type DragFillGapsContent,
@@ -329,6 +330,7 @@ export default function DragFillGapsExercise({ config }: ExerciseComponentProps)
               data-selected={selectedTileId === tile.id}
               data-dragging={draggingId === tile.id}
               aria-pressed={selectedTileId === tile.id}
+              lang={TARGET_LANG}
               draggable
               onClick={() => handleTileClick(tile.id)}
               onDragStart={(event) => handleTileDragStart(event, tile.id)}
@@ -346,7 +348,7 @@ export default function DragFillGapsExercise({ config }: ExerciseComponentProps)
             {row.audio ? (
               <AudioClip className="super-compact-speaker" soundFile={row.audio} inline />
             ) : null}
-            <p className="drag-fill-gaps-line">
+            <p className="drag-fill-gaps-line" lang={TARGET_LANG}>
               {row.nodes.map((node) => {
                 if (node.type === 'text') return <span key={node.key}>{node.value}</span>;
                 const slotId = node.id;
@@ -379,7 +381,11 @@ export default function DragFillGapsExercise({ config }: ExerciseComponentProps)
         {complete ? resolveLabel('correct', labels) : `${nCorrect} / ${total}`}
       </p>
 
-      {content.footnote ? <p className="drag-fill-gaps-footnote">{content.footnote}</p> : null}
+      {content.footnote ? (
+        <p className="drag-fill-gaps-footnote" lang={TARGET_LANG}>
+          {content.footnote}
+        </p>
+      ) : null}
 
       <ExerciseFooter
         onCheck={handleCheck}
