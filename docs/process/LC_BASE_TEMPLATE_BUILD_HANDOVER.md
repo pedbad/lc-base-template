@@ -145,6 +145,12 @@ CONTENT ENGINE
         [x] #11 phrase-reorder — schema (TDD, ≥2 rows refine) + PhraseReorderExercise.tsx (sequence/placement: reuses word-order's swap/FLIP/click-select+native-dnd mechanics, but each slot pins a fixed non-draggable prompt/audio pair — only the phrase card moves) + phrase-reorder.css (layered, semantic tokens, grid columns collapse when no row has a prompt) + reuses reorderAnimation.ts (FLIP) + 1 fixture (fixed prompt + per-row audio)
         [x] #12 drag-fill-gaps — schema (TDD, ≥2 [bracketed] blanks refine, ported `phrases` variant only — other 4 legacy table layouts YAGNI'd) + DragFillGapsExercise.tsx (sequence/placement: click-to-select-tile-then-place-in-slot + native-dnd, tile bank <-> inline slots across two containers so no FLIP; Check locks correct placements and bounces wrong ones back to the bank) + drag-fill-gaps.css (layered, semantic tokens) + 1 fixture (shuffled bank) — **all 12 engines ported, Phase B complete**
     [ ] Phase C — example LO (13b/13c) + static pre-render (15) from proven engines
+    [ ] KNOWN GAP (found 2026-07-01, not yet fixed): none of the 12 engines wrap
+        target-language content in `lang="{course.config languageCode}"` — `<html>`
+        is `lang="en"` (UI chrome only); learner content has no lang override, so
+        screen readers mispronounce it (WCAG 3.1.2). See
+        docs/specs/lo-semantic-structure.md §3 and the paste-in prompt at the
+        bottom of this file ("lang retrofit").
 [ ] 15 Static pre-render (auto-discover lo-config/*/lo.json)
 DEV ARTIFACTS
 [ ] 16 Debug sandbox (palette/fonts/SVG/preview)
@@ -176,3 +182,76 @@ DOCS + CI + DEPLOY
 - Feijoa is commercial (Klim) — never commit the font file; Open Sans is the public default.
 - Cluster note: ClozeTyping/TypedTransform/Dictation share `TextEntryExerciseRuntime` — port
   together; decide whether to resolve its `TODO(component-split)` during the port.
+
+---
+
+## Paste-in prompt — target-language `lang` retrofit (new session)
+
+Found while brainstorming Phase C (2026-07-01), not yet fixed. Self-contained —
+paste as-is into a fresh session.
+
+```
+Fix a WCAG 3.1.2 gap across the 12 exercise engines in lc-base-template: none of
+them mark up target-language content with a `lang` attribute.
+
+CONTEXT:
+- `index.html` has `<html lang="en">` — that's the UI chrome language, correct
+  as-is. Don't touch it.
+- `src/config/course.config.ts` has `languageCode` (e.g. "es") — the single
+  source of truth for the course's TARGET language. Nothing reads it for `lang`
+  attribution today.
+- All 12 engines under `src/exercises/*/` render learner-facing content
+  (sentences, word tiles, options, phrases, vocab) with no `lang` wrapper at all.
+  Screen readers pronounce it with English phonetics — wrong for a language
+  course.
+- Full rationale: `docs/specs/lo-semantic-structure.md` §3 ("lang on
+  target-language content").
+- Checklist tracking: `docs/process/LC_BASE_TEMPLATE_BUILD_HANDOVER.md`, step 14
+  "KNOWN GAP" line.
+
+THE RULE (do not deviate):
+- Target-language TEXT (authored `content` — sentences, words, phrases, options,
+  vocab, anything the learner reads/hears as the language being taught) gets
+  `lang={TARGET_LANG}`.
+- UI CHROME (Check/Reset/Show-answer button labels, status counts like "3 / 7",
+  aria-labels, footnotes that are course-author English instructions) does NOT
+  get the target-language `lang` — it inherits `lang="en"` from `<html>`.
+- These two are intermixed in the same component in most engines — the work is
+  figuring out, per engine, exactly which JSX subtree is content vs chrome, and
+  wrapping only the content side. Do not wrap an engine's whole root container —
+  that would wrongly mark its Check/Reset buttons as Spanish too.
+
+WORK STYLE (matches how the 12 engines were originally built — see the same file,
+Phase B log): ONE ENGINE PER STEP, one commit each. Verify gate every step:
+`bun run format && bun run lint && bun run lint:css && bun test && bun run build`.
+No batching multiple engines into one commit.
+
+STEP 0 (once, before any engine):
+- Add a single shared export for the target language — e.g.
+  `src/config/course.config.ts` already parses `languageCode`; add a small
+  re-export (or a `src/lib/lang.ts` helper) so every engine imports ONE constant
+  instead of reaching into course.config directly. Bun-test it trivially if it's
+  more than a one-line re-export.
+
+THEN, one engine at a time (select, inline-choice, radio-quiz, inline-gap,
+typed-transform, dictation, line-match, word-spot, memory-match, word-order,
+phrase-reorder, drag-fill-gaps):
+- Read the engine's .tsx, identify every place learner-facing target-language
+  text renders (careful with `<select>`/`<option>` in `select` — `lang` is valid
+  on `<option>` too; careful with parsed segments in inline-gap/word-spot/
+  drag-fill-gaps where content and structure are interleaved token-by-token).
+- Add `lang={TARGET_LANG}` at the smallest sensible wrapping point — usually one
+  wrapper per content region (a sentence, a word bank, a phrase list), not one
+  attribute per individual word/token, unless the engine's structure makes a
+  region-level wrapper impossible.
+- Verify in the showcase (`exercise-showcase.html`) — inspect the rendered DOM
+  (`preview_inspect` or devtools) and confirm `lang="{code}"` sits on content
+  elements and is ABSENT from Check/Reset/Show-answer/status elements.
+- Verify gate, then commit: `fix: add lang={TARGET_LANG} to <engine> content
+  (WCAG 3.1.2 retrofit)`.
+
+DELIVERABLE PER STEP: which JSX subtree got wrapped and why, the diff, one
+commit. Ask before moving to the next engine if anything is ambiguous (e.g. an
+engine mixing target-language and English in the same sentence, like a
+translation exercise) rather than guessing.
+```
