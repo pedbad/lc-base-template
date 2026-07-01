@@ -211,11 +211,14 @@ export default function DragFillGapsExercise({ config }: ExerciseComponentProps)
 
   const handleSlotClick = (slotId: string) => {
     if (locked[slotId]) return;
-    if (assignments[slotId]) {
-      unassignSlot(slotId);
+    // A selected bank tile always wins: placing it into an occupied slot evicts
+    // that slot's current tile back to the bank first (placeTile does this),
+    // matching the native-dnd drop behavior below.
+    if (selectedTileId) {
+      placeTile(selectedTileId, slotId);
       return;
     }
-    if (selectedTileId) placeTile(selectedTileId, slotId);
+    if (assignments[slotId]) unassignSlot(slotId);
   };
 
   const handleTileDragStart = (event: DragEvent<HTMLButtonElement>, tileId: string) => {
