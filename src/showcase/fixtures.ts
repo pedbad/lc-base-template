@@ -324,4 +324,28 @@ export const SHOWCASE_FIXTURES: ShowcaseFixture[] = [
       },
     },
   },
+  {
+    id: 'memory-match',
+    title: 'memory-match — flip cards to pair each picture with its word',
+    type: 'memory-match',
+    config: {
+      type: 'memory-match',
+      content: {
+        // Shape vocab as a pairs game: flip cards to match each picture to its
+        // Spanish word. Deck is always shuffled; a matched pair stays face-up.
+        // Reuses the line-match demo SVGs. Own scoring model (spec §7).
+        items: [
+          { text: 'el círculo', image: 'images/line-match/circle.svg', localLanguage: 'circle' },
+          { text: 'el cuadrado', image: 'images/line-match/square.svg', localLanguage: 'square' },
+          {
+            text: 'el triángulo',
+            image: 'images/line-match/triangle.svg',
+            localLanguage: 'triangle',
+          },
+          { text: 'la estrella', image: 'images/line-match/star.svg', localLanguage: 'star' },
+        ],
+        footnote: 'Voltea las cartas y empareja cada figura con su palabra.',
+      },
+    },
+  },
 ];

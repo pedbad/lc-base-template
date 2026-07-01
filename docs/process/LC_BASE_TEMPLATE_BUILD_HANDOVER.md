@@ -140,7 +140,8 @@ CONTENT ENGINE
         [x] #6 dictation — schema (TDD) + DictationExercise.tsx (transcribe audio, Spanish punctuation tolerance) + 1 fixture
         [x] #7 line-match — schema (TDD) + LineMatchExercise.tsx (image↔word) + LineMatchConnectors.tsx (desktop SVG connector layout) + assets.ts helper + 1 fixture
         [x] #8 word-spot — schema (TDD, ≥1 [bracketed] target refine) + WordSpotExercise.tsx (own click-mark model, state-driven marks, real <button> part-words for a11y, reveal via canRevealAnswers) + word-spot.css (layered, semantic tokens) + 1 fixture; existing tokens only
-        [ ] #9 memory-match → #10 word-order → #11 phrase-reorder → #12 drag-fill-gaps (see spec §11)
+        [x] #9 memory-match — schema (TDD, ≥2 pairs + unique-key refine) + MemoryMatchExercise.tsx (own flip/match model, pairId matching, audio-on-match, always-shuffled deck, options.sampleSize=nPairsToPlay) + MemoryCard.tsx (3D flip button, a11y) + shared reorderAnimation.ts (FLIP, reduced-motion aware) for animated show-answers reorder + memory-match.css (layered, template tokens) + 1 fixture (reuses line-match SVGs)
+        [ ] #10 word-order → #11 phrase-reorder → #12 drag-fill-gaps (sequence cluster — see spec §11)
     [ ] Phase C — example LO (13b/13c) + static pre-render (15) from proven engines
 [ ] 15 Static pre-render (auto-discover lo-config/*/lo.json)
 DEV ARTIFACTS

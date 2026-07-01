@@ -36,6 +36,11 @@ test('lazyRegistry: registers the word-spot engine', () => {
   expect(getExercise('word-spot')).toBeDefined();
 });
 
+// `memory-match` (#9) is registered.
+test('lazyRegistry: registers the memory-match engine', () => {
+  expect(getExercise('memory-match')).toBeDefined();
+});
+
 // A type whose engine is not ported yet resolves to undefined (callers handle it).
 test('lazyRegistry: getExercise returns undefined for an unported type', () => {
   expect(getExercise('word-order')).toBeUndefined();
