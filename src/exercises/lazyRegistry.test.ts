@@ -1,4 +1,5 @@
 import { test, expect } from 'bun:test';
+import { EXERCISE_TYPE_KEYS } from '@/config/exercise-types';
 import { EXERCISE_REGISTRY, getExercise } from './lazyRegistry';
 
 // The registry fills one engine at a time (Phase B). `select` (#1) is registered.
@@ -51,7 +52,14 @@ test('lazyRegistry: registers the phrase-reorder engine', () => {
   expect(getExercise('phrase-reorder')).toBeDefined();
 });
 
-// A type whose engine is not ported yet resolves to undefined (callers handle it).
-test('lazyRegistry: getExercise returns undefined for an unported type', () => {
-  expect(getExercise('drag-fill-gaps')).toBeUndefined();
+// `drag-fill-gaps` (#12) is registered — the last of the 12 engines (spec §11).
+test('lazyRegistry: registers the drag-fill-gaps engine', () => {
+  expect(getExercise('drag-fill-gaps')).toBeDefined();
+});
+
+// All 12 canonical types are ported (Phase B complete): every key resolves.
+test('lazyRegistry: every canonical exercise type is registered', () => {
+  EXERCISE_TYPE_KEYS.forEach((type) => {
+    expect(getExercise(type)).toBeDefined();
+  });
 });

@@ -421,4 +421,25 @@ export const SHOWCASE_FIXTURES: ShowcaseFixture[] = [
       },
     },
   },
+  {
+    id: 'drag-fill-gaps',
+    title: 'drag-fill-gaps — drag word tiles into the blanks',
+    type: 'drag-fill-gaps',
+    config: {
+      type: 'drag-fill-gaps',
+      content: {
+        // Sequence/placement family (spec §7): each `[bracketed]` blank becomes one
+        // draggable tile in the shared bank below. Check locks correct placements
+        // and bounces wrong ones back to the bank (spec §11, ported from
+        // french-lo-1's DraggableFillGaps `phrases` variant).
+        items: [
+          { text: 'Yo [soy] de Madrid y ella [vive] en París.' },
+          { text: 'Nosotros [tenemos] hambre y vosotros [tenéis] sed.' },
+        ],
+        footnote: 'Arrastra cada palabra a su hueco correspondiente.',
+      },
+      // shuffle on: the bank order randomizes and Reset re-shuffles (spec §5.2).
+      options: { shuffle: true },
+    },
+  },
 ];

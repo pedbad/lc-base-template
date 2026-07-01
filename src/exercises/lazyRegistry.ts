@@ -44,6 +44,7 @@ export const EXERCISE_REGISTRY: Partial<Record<ExerciseType, ExerciseComponent>>
   'memory-match': lazy(() => import('./memory-match/MemoryMatchExercise')),
   'word-order': lazy(() => import('./word-order/WordOrderExercise')),
   'phrase-reorder': lazy(() => import('./phrase-reorder/PhraseReorderExercise')),
+  'drag-fill-gaps': lazy(() => import('./drag-fill-gaps/DragFillGapsExercise')),
 };
 
 /** Resolve an engine by type, or `undefined` if not yet registered. */

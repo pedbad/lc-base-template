@@ -129,7 +129,7 @@ CONTENT ENGINE
 [ ] 13 LO schema + example LO FOLDER (folder-per-LO) — [x] 13a schemas (LoManifest + Block/ExerciseConfig shared envelope, labels→UiStringsOverrideSchema, loose content, src/config/lo-schema.ts, proven via bun test) · [ ] 13b example lo-01/ (manifest + 4 accordions) · [ ] 13c loader/stitcher (validates parts + assembled LO)
 [ ] 14 Exercise engines (RESEQUENCED — see docs/specs/2026-06-19-exercise-engines-design.md)
     [x] Phase A foundation — exercise-types, options schema+enum, scoring/shuffle/reveal utils (src/exercises/lib/, bun test)
-    [ ] Phase B — port 12 engines one-by-one (tsx + content schema + options + labels + registry + showcase fixture)
+    [x] Phase B — port 12 engines one-by-one (tsx + content schema + options + labels + registry + showcase fixture)
         [x] shared lib: html.ts (decodeHtmlEntities) + parsing.ts (parseSentence, parseChoiceBlank) — bun test
         [x] shared shell (extracted @ #2): lib/prepareChoiceItems.ts (generic) + ExerciseFooter.tsx + ResultSlot.tsx — bun test
         [x] #1 select — schema + SelectExercise.tsx + 2 fixtures (rows + inline); --success token added
@@ -143,7 +143,7 @@ CONTENT ENGINE
         [x] #9 memory-match — schema (TDD, ≥2 pairs + unique-key refine) + MemoryMatchExercise.tsx (own flip/match model, pairId matching, audio-on-match, always-shuffled deck, options.sampleSize=nPairsToPlay) + MemoryCard.tsx (3D flip button, a11y) + shared reorderAnimation.ts (FLIP, reduced-motion aware) for animated show-answers reorder + memory-match.css (layered, template tokens) + 1 fixture (reuses line-match SVGs)
         [x] #10 word-order — schema (TDD, ≥2 words refine) + WordOrderExercise.tsx (sequence/placement: failCount + complete, always-scrambled deck, click-to-select/click-to-swap instead of mouse-only HTML5 dnd for keyboard a11y, canRevealAnswers reused) + word-order.css (layered, semantic tokens) + reuses reorderAnimation.ts (FLIP) for the swap animation + 1 fixture
         [x] #11 phrase-reorder — schema (TDD, ≥2 rows refine) + PhraseReorderExercise.tsx (sequence/placement: reuses word-order's swap/FLIP/click-select+native-dnd mechanics, but each slot pins a fixed non-draggable prompt/audio pair — only the phrase card moves) + phrase-reorder.css (layered, semantic tokens, grid columns collapse when no row has a prompt) + reuses reorderAnimation.ts (FLIP) + 1 fixture (fixed prompt + per-row audio)
-        [ ] #12 drag-fill-gaps (sequence cluster continues — see spec §11)
+        [x] #12 drag-fill-gaps — schema (TDD, ≥2 [bracketed] blanks refine, ported `phrases` variant only — other 4 legacy table layouts YAGNI'd) + DragFillGapsExercise.tsx (sequence/placement: click-to-select-tile-then-place-in-slot + native-dnd, tile bank <-> inline slots across two containers so no FLIP; Check locks correct placements and bounces wrong ones back to the bank) + drag-fill-gaps.css (layered, semantic tokens) + 1 fixture (shuffled bank) — **all 12 engines ported, Phase B complete**
     [ ] Phase C — example LO (13b/13c) + static pre-render (15) from proven engines
 [ ] 15 Static pre-render (auto-discover lo-config/*/lo.json)
 DEV ARTIFACTS
