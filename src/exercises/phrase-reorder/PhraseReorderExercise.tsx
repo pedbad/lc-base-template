@@ -23,6 +23,7 @@ import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { ExerciseFooter } from '../lib/ExerciseFooter';
 import { canRevealAnswers } from '../lib/reveal';
 import { captureFlipPositions, playFlipAnimation } from '../lib/reorderAnimation';
+import { TARGET_LANG } from '@/lib/lang';
 import {
   PhraseReorderExerciseConfigSchema,
   type PhraseReorderContent,
@@ -300,6 +301,7 @@ export default function PhraseReorderExercise({ config }: ExerciseComponentProps
                 data-dragging={isDragging}
                 data-drop-target={isDropTarget}
                 aria-pressed={isSelected}
+                lang={TARGET_LANG}
                 disabled={complete}
                 draggable={!complete}
                 onClick={() => handleTokenClick(token.id)}
@@ -324,7 +326,11 @@ export default function PhraseReorderExercise({ config }: ExerciseComponentProps
         {complete ? resolveLabel('correct', labels) : `${correctCount} / ${total}`}
       </p>
 
-      {content.footnote ? <p className="phrase-reorder-footnote">{content.footnote}</p> : null}
+      {content.footnote ? (
+        <p className="phrase-reorder-footnote" lang={TARGET_LANG}>
+          {content.footnote}
+        </p>
+      ) : null}
 
       <ExerciseFooter
         onCheck={handleCheck}
