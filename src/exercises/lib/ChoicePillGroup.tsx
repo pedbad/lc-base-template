@@ -41,6 +41,11 @@ interface ChoicePillGroupProps {
   groupLabel: string;
   /** Called with the chosen option index when a pill is clicked or keyed. */
   onSelect: (optionIndex: number) => void;
+  /**
+   * `lang` for each pill's option TEXT only (WCAG 3.1.2) — never applied to the
+   * radiogroup's `aria-label`, which is course-author English chrome.
+   */
+  contentLang?: string;
 }
 
 /** Pill base — layout + focus ring (--ring); state colors are appended per pill. */
@@ -54,6 +59,7 @@ export function ChoicePillGroup({
   groupId,
   groupLabel,
   onSelect,
+  contentLang,
 }: ChoicePillGroupProps) {
   // Arrow keys move the selection within the group (roving focus); Space/Enter
   // re-commit the focused pill. Ported from inline-choice's handleChoiceKeyDown.
@@ -125,7 +131,7 @@ export function ChoicePillGroup({
             tabIndex={isTabStop ? 0 : -1}
             type="button"
           >
-            {option}
+            <span lang={contentLang}>{option}</span>
           </button>
         );
       })}

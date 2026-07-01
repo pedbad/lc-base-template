@@ -33,7 +33,7 @@
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5, §7, §8.
  */
-import { Fragment, useId, useReducer, type ReactNode } from 'react';
+import { useId, useReducer, type ReactNode } from 'react';
 
 import { ExerciseOptionsSchema, type ExerciseOptions } from '@/config/lo-schema';
 import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
@@ -52,6 +52,7 @@ import { ChoicePillGroup } from '@/exercises/lib/ChoicePillGroup';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
+import { TARGET_LANG } from '@/lib/lang';
 import {
   InlineChoiceExerciseConfigSchema,
   type InlineChoiceItem as InlineChoiceItemContent,
@@ -153,6 +154,7 @@ export default function InlineChoiceExercise({ config }: ExerciseComponentProps)
     return (
       <span className="mx-1 inline-flex align-middle" key={groupId}>
         <ChoicePillGroup
+          contentLang={TARGET_LANG}
           groupId={groupId}
           groupLabel={`Choose answer for blank ${blankIndex + 1}`}
           onSelect={(optionIndex) => handleChoiceChange(blankIndex, String(optionIndex))}
@@ -201,7 +203,9 @@ export default function InlineChoiceExercise({ config }: ExerciseComponentProps)
       segment.type === 'choice' ? (
         renderChoiceGroup(segment.blankIndex, blanksMeta)
       ) : (
-        <Fragment key={(segment as TextSegment).key}>{(segment as TextSegment).value}</Fragment>
+        <span key={(segment as TextSegment).key} lang={TARGET_LANG}>
+          {(segment as TextSegment).value}
+        </span>
       ),
     );
 
