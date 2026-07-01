@@ -145,12 +145,16 @@ CONTENT ENGINE
         [x] #11 phrase-reorder — schema (TDD, ≥2 rows refine) + PhraseReorderExercise.tsx (sequence/placement: reuses word-order's swap/FLIP/click-select+native-dnd mechanics, but each slot pins a fixed non-draggable prompt/audio pair — only the phrase card moves) + phrase-reorder.css (layered, semantic tokens, grid columns collapse when no row has a prompt) + reuses reorderAnimation.ts (FLIP) + 1 fixture (fixed prompt + per-row audio)
         [x] #12 drag-fill-gaps — schema (TDD, ≥2 [bracketed] blanks refine, ported `phrases` variant only — other 4 legacy table layouts YAGNI'd) + DragFillGapsExercise.tsx (sequence/placement: click-to-select-tile-then-place-in-slot + native-dnd, tile bank <-> inline slots across two containers so no FLIP; Check locks correct placements and bounces wrong ones back to the bank) + drag-fill-gaps.css (layered, semantic tokens) + 1 fixture (shuffled bank) — **all 12 engines ported, Phase B complete**
     [ ] Phase C — example LO (13b/13c) + static pre-render (15) from proven engines
-    [ ] KNOWN GAP (found 2026-07-01, not yet fixed): none of the 12 engines wrap
+    [x] KNOWN GAP (found 2026-07-01, fixed 2026-07-01): none of the 12 engines wrapped
         target-language content in `lang="{course.config languageCode}"` — `<html>`
-        is `lang="en"` (UI chrome only); learner content has no lang override, so
-        screen readers mispronounce it (WCAG 3.1.2). See
-        docs/specs/lo-semantic-structure.md §3 and the paste-in prompt at the
-        bottom of this file ("lang retrofit").
+        is `lang="en"` (UI chrome only); learner content had no lang override, so
+        screen readers mispronounced it (WCAG 3.1.2). Fixed via `src/lib/lang.ts`
+        (`TARGET_LANG` shared constant) + one commit per engine, wrapping only
+        target-language content subtrees (never chrome/aria-label/sr-only text).
+        Also caught + fixed along the way: `footnote` fields are actually authored
+        in the target language in this course's fixtures (not "course-author
+        English instructions" as the original rule assumed) — they get
+        `lang={TARGET_LANG}` too. See docs/specs/lo-semantic-structure.md §3.
 [ ] 15 Static pre-render (auto-discover lo-config/*/lo.json)
 DEV ARTIFACTS
 [ ] 16 Debug sandbox (palette/fonts/SVG/preview)
