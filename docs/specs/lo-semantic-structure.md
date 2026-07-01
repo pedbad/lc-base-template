@@ -128,6 +128,106 @@ against a semantic-structure audit of the french-lo-1 reference implementation
 
 ---
 
+## 1a. JSON → DOM mapping (illustrative)
+
+**Grounding status:** the LO manifest + exercise envelope shapes below are REAL
+(`src/config/lo-schema.ts`, `src/exercises/select/select-schema.ts` — schema
+already shipped). The grammar/vocab BLOCK `content` shape is NOT yet fixed
+(`BlockConfigSchema.content` is still a loose object) — treat that one field as
+illustrative until 13b (the example LO) locks it down.
+
+A folder-per-LO (spec §6/§9) drives the skeleton in §1 like this:
+
+```
+lo-config/lo-01-salutations/
+  lo.json                          → <h1>, <head>, section+accordion ORDER
+  blocks/01-grammar/block.json     → the "Grammar" <section>'s one <article>
+  blocks/02-vocabulary/block.json  → the "Vocabulary" <section>
+  exercises/01-select/exercise.json → the "Exercises" <section>'s one <article>
+```
+
+`lo.json` (manifest — `LoManifestSchema`):
+
+```json
+{
+  "title": "Salutations",
+  "description": "Greet people and introduce yourself in Spanish.",
+  "blocks": ["01-grammar", "02-vocabulary"],
+  "exercises": ["01-select"]
+}
+```
+
+- `title` → the page's one `<h1>{LO title}</h1>` (§1) and the `<head>` title.
+- `blocks[]` — ORDERED, section-scoped (spec §15) — each entry is a render-mirror
+  folder name that resolves to one accordion `<article>` inside whichever
+  `<section>` that block type maps to (`grammar` → `#grammar`, `vocabulary` →
+  `#vocabulary`). Reorder the array without renaming the folder → guard b fails.
+- `exercises[]` — same ordering rule, own sequence restarting at `01`, all land
+  inside the `#exercises` section.
+
+`blocks/01-grammar/block.json` (`BlockConfigSchema` — `content` shape
+illustrative, not yet locked):
+
+```json
+{
+  "type": "grammar",
+  "content": {
+    "instructions": "Ser vs estar: use «ser» for permanent traits.",
+    "text": "Yo soy de Madrid. Tú eres muy amable."
+  }
+}
+```
+
+- `type` → which content renderer fills the accordion body (not the exercise
+  registry — blocks are a separate, free-string kind per lo-schema.ts).
+- `content.instructions` → the ONE shared `<div class="instructions">` slot
+  (§3) — accordion-level here since it sits inside this block's own file, not
+  the manifest.
+- `content.text` (or whatever the locked-down grammar shape ends up calling it)
+  → the accordion's prose body, `<p>` per sentence (§5), each wrapped
+  `lang={TARGET_LANG}` (§3) since it's Spanish content the learner reads.
+- `labels` (optional, omitted above) → per-block UI-string override, same
+  `resolveLabel(key, labels)` resolution as exercises (spec §9).
+
+`exercises/01-select/exercise.json` (`ExerciseConfigSchema` + the real,
+shipped `SelectContentSchema` — this shape is final):
+
+```json
+{
+  "type": "select",
+  "content": {
+    "items": [{ "text": "Tú [eres|*es|soy] muy amable." }],
+    "layoutMode": "rows",
+    "footnote": "El verbo «ser» cambia según la persona."
+  },
+  "options": { "shuffle": true, "allowShowAnswers": true }
+}
+```
+
+- `type: "select"` → `lazyRegistry` resolves this to `SelectExercise.tsx`
+  (guard e enforces every `type` used here has a registry entry + showcase
+  fixture).
+- `content.items[].text` → one `<p>`/row per item inside the accordion body;
+  the `[a|*b|c]` blanks become the rendered `<Select>` dropdowns (engine #1).
+  Every text segment + the dropdown's chosen value render `lang={TARGET_LANG}`
+  (fixed in the lang retrofit, 2026-07-01) — the sr-only "Answer for blank N"
+  label stays plain English chrome.
+- `content.footnote` → the `<p>` under the exercise body, also
+  `lang={TARGET_LANG}` — confirmed via this course's fixtures that footnotes
+  are author-written IN the target language, not English instructions.
+- `options.shuffle` / `options.allowShowAnswers` → wired straight into the
+  engine's Reset/Show-answers behavior (spec §5.2/§5.3); not DOM structure,
+  but they gate which `<ExerciseFooter>` buttons render.
+- `labels` (optional, omitted above) → same two-layer override as blocks;
+  `config.labels?.check ?? uiStrings.check` (spec §9) decides the Check
+  button's text.
+
+What's still open for 13b to ground: the exact `type` string + `content`
+field names for grammar/vocab/pronunciation/dialogue/monologue blocks (only
+`BlockConfigSchema`'s envelope — `type`, `labels?`, `content` — is locked; the
+per-type `content` shapes are the loose part, same deferral pattern the 12
+exercise engines already went through in `select-schema.ts` etc.).
+
 ## 2. Heading depth — fixed, never skipped, never repeated
 
 **h1 (page, inside `<main>`) → h2 (one per `<section>`) → h3 (one per
