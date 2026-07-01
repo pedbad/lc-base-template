@@ -127,7 +127,7 @@ THEME
 [x] 12 ui-strings.ts (Zod, two-layer) — global strictObject (all keys req) + partial override + resolveLabel; 15 keys (A+B), English; proven via bun test
 CONTENT ENGINE
 [ ] 13 LO schema + example LO FOLDER (folder-per-LO) — [x] 13a schemas (LoManifest + Block/ExerciseConfig shared envelope, labels→UiStringsOverrideSchema, loose content, src/config/lo-schema.ts, proven via bun test) · [ ] 13b example lo-01/ (manifest + 4 accordions) · [ ] 13c loader/stitcher (validates parts + assembled LO)
-[ ] 14 Exercise engines (RESEQUENCED — see docs/specs/2026-06-19-exercise-engines-design.md)
+[x] 14 Exercise engines (RESEQUENCED — see docs/specs/2026-06-19-exercise-engines-design.md)
     [x] Phase A foundation — exercise-types, options schema+enum, scoring/shuffle/reveal utils (src/exercises/lib/, bun test)
     [x] Phase B — port 12 engines one-by-one (tsx + content schema + options + labels + registry + showcase fixture)
         [x] shared lib: html.ts (decodeHtmlEntities) + parsing.ts (parseSentence, parseChoiceBlank) — bun test
@@ -148,20 +148,20 @@ CONTENT ENGINE
 [ ] 15 Static pre-render (auto-discover lo-config/*/lo.json)
 DEV ARTIFACTS
 [ ] 16 Debug sandbox (palette/fonts/SVG/preview)
-[ ] 17 Exercise showcase
+[x] 17 Exercise showcase (built ahead of checklist during Phase B — src/showcase/{Showcase.tsx,fixtures.ts}; 12 engines, 18 fixtures)
 [ ] 18 Sandbox renders docs as HTML
 GUARDS (each: failing fixture → block → green)
 [ ] 19 a config-schema   [ ] 20 b naming+render-mirror   [ ] 21 c asset-path
 [ ] 22 d asset-existence [ ] 23 e registry               [ ] 24 f token-integrity
 [ ] 25 g css-layers      [ ] 26 h w3c/a11y
 ENGINES
-[ ] 27 Port remaining 12 exercises (cluster-by-cluster, debt cleared)
+[x] 27 Port remaining 12 exercises (superseded by step 14 Phase B — all 12 ported there, see log above)
 DOCS + CI + DEPLOY
 [ ] 28 README + LICENSE (MIT + CC-BY-4.0 + disclaimer)
 [ ] 29 CONTRIBUTING / DESIGNER / STRUCTURE / AGENTS.md
 [ ] 30 STRUCTURE tree auto-gen (bun run docs:tree)
 [ ] 31 GitHub Actions CI (all guards, oven-sh/setup-bun)
-[ ] 32 Env base path + resolveAsset()/%BASE_URL% + favicon
+[ ] 32 Env base path + resolveAsset()/%BASE_URL% + favicon — resolveAsset() itself already exists (src/lib/assets.ts, BASE_URL-aware, used by AudioClip); remaining: favicon still hardcoded `/favicon.svg` in index.html (not `%BASE_URL%`), no base-path build config yet
 [ ] 33 Mark repo as GitHub "template repo"
 ```
 
