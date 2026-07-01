@@ -22,7 +22,7 @@
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5, §7, §8.
  */
-import { Fragment, useId, useReducer, useRef, type KeyboardEvent, type ReactNode } from 'react';
+import { useId, useReducer, useRef, type KeyboardEvent, type ReactNode } from 'react';
 
 import { Input } from '@/components/ui/input';
 import AudioManager from '@/audio/AudioManager';
@@ -49,6 +49,7 @@ import {
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
+import { TARGET_LANG } from '@/lib/lang';
 import { InlineGapExerciseConfigSchema, type InlineGapItem } from './inline-gap-schema';
 import { useRowAudio } from './useRowAudio';
 
@@ -183,6 +184,7 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
         <Input
           id={id}
           type="text"
+          lang={TARGET_LANG}
           value={value}
           onChange={(event) => handleInputChange(blankIndex, event.target.value)}
           onKeyDown={(event) => handleInputKeyDown(event, blankIndex)}
@@ -192,7 +194,7 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
           style={{ width: `${meta?.widthCh ?? 8}ch`, maxWidth: '100%' }}
         />
         {state.hasChecked && diff ? (
-          <span className="mt-1">
+          <span className="mt-1" lang={TARGET_LANG}>
             <TextDiff parts={diff} />
           </span>
         ) : null}
@@ -234,7 +236,9 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
       segment.type === 'input' ? (
         renderInput(segment.blankIndex, blanksMeta)
       ) : (
-        <Fragment key={(segment as TextSegment).key}>{(segment as TextSegment).value}</Fragment>
+        <span key={(segment as TextSegment).key} lang={TARGET_LANG}>
+          {(segment as TextSegment).value}
+        </span>
       ),
     );
 
@@ -243,7 +247,11 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
         key={`row-${i}`}
         className="rounded-lg border border-border/70 bg-card px-4 py-3 leading-loose"
       >
-        {item.prompt ? <p className="mb-2 text-sm text-muted-foreground">{item.prompt}</p> : null}
+        {item.prompt ? (
+          <p className="mb-2 text-sm text-muted-foreground" lang={TARGET_LANG}>
+            {item.prompt}
+          </p>
+        ) : null}
         <div className="grid grid-cols-[minmax(0,1fr)_2.5rem] items-start gap-2">
           <span className="flex min-w-0 items-start gap-2">
             {renderRowAudio(i, item)}
@@ -308,7 +316,12 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
       ) : null}
 
       {listenDescriptionText && soundFile ? (
-        <AudioClip id={`${uid}-listen`} listenText={listenDescriptionText} soundFile={soundFile} />
+        <AudioClip
+          id={`${uid}-listen`}
+          listenText={listenDescriptionText}
+          listenTextLang={TARGET_LANG}
+          soundFile={soundFile}
+        />
       ) : null}
 
       <div className="space-y-3">{rows}</div>
@@ -333,7 +346,9 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
       />
 
       {parsed.data.content.footnote ? (
-        <p className="text-sm text-muted-foreground">{parsed.data.content.footnote}</p>
+        <p className="text-sm text-muted-foreground" lang={TARGET_LANG}>
+          {parsed.data.content.footnote}
+        </p>
       ) : null}
     </div>
   );

@@ -24,6 +24,8 @@ interface AudioClipProps {
   size?: number;
   /** Label for the native variant: renders "<label>: <audio>". */
   listenText?: string;
+  /** `lang` for `listenText` (WCAG 3.1.2) when it's authored target-language content. */
+  listenTextLang?: string;
   onStatusChange?: (status: ClipStatus) => void;
 }
 
@@ -35,8 +37,9 @@ function NativeAudioClip({
   className = '',
   id,
   listenText = '',
+  listenTextLang,
   soundFile,
-}: Pick<AudioClipProps, 'className' | 'id' | 'listenText' | 'soundFile'>) {
+}: Pick<AudioClipProps, 'className' | 'id' | 'listenText' | 'listenTextLang' | 'soundFile'>) {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const handlePlay = (event: SyntheticEvent) => {
@@ -65,7 +68,7 @@ function NativeAudioClip({
 
   if (listenText !== '') {
     return (
-      <label className="audio-clip" htmlFor={id}>
+      <label className="audio-clip" htmlFor={id} lang={listenTextLang}>
         {listenText}: {audio(listenText)}
       </label>
     );
@@ -79,6 +82,7 @@ export function AudioClip({
   id,
   inline = false,
   listenText = '',
+  listenTextLang,
   size,
   soundFile,
   onStatusChange,
@@ -97,6 +101,12 @@ export function AudioClip({
   }
 
   return (
-    <NativeAudioClip className={className} id={id} listenText={listenText} soundFile={soundFile} />
+    <NativeAudioClip
+      className={className}
+      id={id}
+      listenText={listenText}
+      listenTextLang={listenTextLang}
+      soundFile={soundFile}
+    />
   );
 }
