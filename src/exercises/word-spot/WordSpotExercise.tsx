@@ -26,6 +26,7 @@ import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { decodeHtmlEntities } from '../lib/html';
 import { parseSentence, type TextSegment } from '../lib/parsing';
 import { canRevealAnswers } from '../lib/reveal';
+import { TARGET_LANG } from '@/lib/lang';
 import { WordSpotExerciseConfigSchema, type WordSpotContent } from './word-spot-schema';
 import './word-spot.css';
 
@@ -175,7 +176,7 @@ export default function WordSpotExercise({ config }: ExerciseComponentProps) {
             {row.audio ? (
               <AudioClip className="super-compact-speaker" soundFile={row.audio} inline />
             ) : null}
-            <p className="word-spot-line">
+            <p className="word-spot-line" lang={TARGET_LANG}>
               {row.nodes.map((node) =>
                 node.kind === 'space' ? (
                   <span key={node.key}>{node.text}</span>
@@ -204,7 +205,11 @@ export default function WordSpotExercise({ config }: ExerciseComponentProps) {
           : `${hits} / ${total}${misses > 0 ? ` · ${misses} ✗` : ''}`}
       </p>
 
-      {footnote ? <p className="word-spot-footnote">{footnote}</p> : null}
+      {footnote ? (
+        <p className="word-spot-footnote" lang={TARGET_LANG}>
+          {footnote}
+        </p>
+      ) : null}
 
       <div className="word-spot-footer">
         {hasAttempted ? (
