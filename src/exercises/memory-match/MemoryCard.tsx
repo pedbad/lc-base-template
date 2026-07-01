@@ -41,11 +41,12 @@ function MemoryCardComponent({
   onFlip,
   setRef,
 }: MemoryCardProps) {
-  const label = isRevealed
-    ? card.kind === 'text'
-      ? (card.text ?? '')
-      : (card.alt ?? 'picture')
-    : 'Face-down card, click to flip';
+  const label =
+    isRevealed || isMatched
+      ? card.kind === 'text'
+        ? (card.text ?? '')
+        : (card.alt ?? 'picture')
+      : 'Face-down card, click to flip';
 
   return (
     <button
