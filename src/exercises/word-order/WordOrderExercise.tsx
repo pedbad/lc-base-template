@@ -2,20 +2,23 @@
  * WordOrderExercise.tsx — engine #10 of 12 (spec §2, §7). Sequence/placement family:
  * the learner reorders scrambled word cards into the correct sentence order.
  *
- * Ported from french-lo-1's WordOrderExercise, but the interaction is click-to-select
- * + click-to-swap instead of native HTML5 drag-and-drop. Native `draggable` is
- * mouse-only — no keyboard path and unreliable on touch — so every card is a plain
- * `<button>`: click one to pick it up (aria-pressed), click another to swap, click the
- * same one again to cancel. Keyboard users get the same flow for free (Tab + Enter/
- * Space). The FLIP swap animation is unchanged from the original (reorderAnimation,
- * "ported once" per spec §8).
+ * Ported from french-lo-1's WordOrderExercise. Two interaction paths, both driving
+ * the same swap, coexist:
+ *   - click-to-select + click-to-swap — every card is a real `<button>`, so this
+ *     works via Tab + Enter/Space (keyboard) and tap (touch/small screens) for free.
+ *   - native HTML5 drag-and-drop — press-and-drag with a mouse, restored from the
+ *     original for desktop/large screens. Mouse-only by nature (no keyboard path),
+ *     which is exactly why the click path exists alongside it rather than instead
+ *     of it.
+ * The FLIP swap animation is unchanged from the original (reorderAnimation, "ported
+ * once" per spec §8).
  *
  * `options.shuffle` is N/A (§5.2): the deck always scrambles, on mount AND on Reset.
  * `allowShowAnswers` applies (§5.3) via the shared `canRevealAnswers` gate.
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5.2, §5.3, §7, §8.
  */
-import { useLayoutEffect, useReducer, useRef } from 'react';
+import { useLayoutEffect, useReducer, useRef, type DragEvent } from 'react';
 import { AudioClip } from '@/components/audio/AudioClip';
 import { ExerciseOptionsSchema } from '@/config/lo-schema';
 import { resolveLabel } from '@/config/ui-strings';
@@ -61,6 +64,8 @@ interface OrderState {
   expected: Token[];
   order: Token[];
   selectedId: string | null;
+  draggingId: string | null;
+  dropTargetId: string | null;
   hasReordered: boolean;
   hasChecked: boolean;
   failCount: number;
@@ -77,6 +82,8 @@ function freshState(expected: Token[]): OrderState {
     expected,
     order: scramble(expected),
     selectedId: null,
+    draggingId: null,
+    dropTargetId: null,
     hasReordered: false,
     hasChecked: false,
     failCount: 0,
@@ -137,6 +144,8 @@ export default function WordOrderExercise({ config }: ExerciseComponentProps) {
     expected,
     order,
     selectedId,
+    draggingId,
+    dropTargetId,
     hasReordered,
     hasChecked,
     complete,
@@ -158,6 +167,21 @@ export default function WordOrderExercise({ config }: ExerciseComponentProps) {
       (id) => cardRefs.current.get(id),
     );
 
+  const swapAndCommit = (idA: string, idB: string) => {
+    pendingFlipRef.current = captureBeforeReorder();
+    dispatch({
+      kind: 'patch',
+      patch: {
+        order: swapById(order, idA, idB),
+        selectedId: null,
+        draggingId: null,
+        dropTargetId: null,
+        hasReordered: true,
+        complete: false,
+      },
+    });
+  };
+
   const handleTokenClick = (id: string) => {
     if (complete) return;
     if (selectedId === null) {
@@ -168,16 +192,42 @@ export default function WordOrderExercise({ config }: ExerciseComponentProps) {
       dispatch({ kind: 'patch', patch: { selectedId: null } });
       return;
     }
-    pendingFlipRef.current = captureBeforeReorder();
-    dispatch({
-      kind: 'patch',
-      patch: {
-        order: swapById(order, selectedId, id),
-        selectedId: null,
-        hasReordered: true,
-        complete: false,
-      },
-    });
+    swapAndCommit(selectedId, id);
+  };
+
+  // Native drag-and-drop — a mouse-only progressive enhancement over the click
+  // path above (desktop/large screens). Keep drag semantics as "move" so the OS
+  // doesn't show a copy (+) cursor.
+  const handleDragStart = (event: DragEvent<HTMLButtonElement>, id: string) => {
+    if (complete) {
+      event.preventDefault();
+      return;
+    }
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', id);
+    dispatch({ kind: 'patch', patch: { draggingId: id, selectedId: null } });
+  };
+
+  const handleDragOver = (event: DragEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDragEnter = (id: string) => {
+    if (draggingId && draggingId !== id) dispatch({ kind: 'patch', patch: { dropTargetId: id } });
+  };
+
+  const handleDrop = (event: DragEvent<HTMLButtonElement>, targetId: string) => {
+    event.preventDefault();
+    if (!draggingId || draggingId === targetId) {
+      dispatch({ kind: 'patch', patch: { draggingId: null, dropTargetId: null } });
+      return;
+    }
+    swapAndCommit(draggingId, targetId);
+  };
+
+  const handleDragEnd = () => {
+    dispatch({ kind: 'patch', patch: { draggingId: null, dropTargetId: null } });
   };
 
   const handleCheck = () => {
@@ -202,6 +252,8 @@ export default function WordOrderExercise({ config }: ExerciseComponentProps) {
       patch: {
         order: [...expected],
         selectedId: null,
+        draggingId: null,
+        dropTargetId: null,
         hasReordered: true,
         hasChecked: true,
         complete: true,
@@ -227,15 +279,25 @@ export default function WordOrderExercise({ config }: ExerciseComponentProps) {
       <ol className="word-order-row" aria-label="Word order">
         {order.map((token, index) => {
           const isSelected = selectedId === token.id;
+          const isDragging = draggingId === token.id;
+          const isDropTarget = dropTargetId === token.id && !isDragging;
           return (
             <li key={token.id}>
               <button
                 type="button"
                 className="word-order-token"
                 data-state={complete ? 'correct' : 'default'}
+                data-dragging={isDragging}
+                data-drop-target={isDropTarget}
                 aria-pressed={isSelected}
                 disabled={complete}
+                draggable={!complete}
                 onClick={() => handleTokenClick(token.id)}
+                onDragStart={(event) => handleDragStart(event, token.id)}
+                onDragOver={handleDragOver}
+                onDragEnter={() => handleDragEnter(token.id)}
+                onDrop={(event) => handleDrop(event, token.id)}
+                onDragEnd={handleDragEnd}
                 ref={(element) => setCardRef(token.id, element)}
               >
                 <span className="word-order-index" aria-hidden="true">
