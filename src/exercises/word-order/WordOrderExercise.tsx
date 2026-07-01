@@ -27,6 +27,7 @@ import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { ExerciseFooter } from '../lib/ExerciseFooter';
 import { canRevealAnswers } from '../lib/reveal';
 import { captureFlipPositions, playFlipAnimation } from '../lib/reorderAnimation';
+import { TARGET_LANG } from '@/lib/lang';
 import { WordOrderExerciseConfigSchema, type WordOrderContent } from './word-order-schema';
 import './word-order.css';
 
@@ -290,6 +291,7 @@ export default function WordOrderExercise({ config }: ExerciseComponentProps) {
                 data-dragging={isDragging}
                 data-drop-target={isDropTarget}
                 aria-pressed={isSelected}
+                lang={TARGET_LANG}
                 disabled={complete}
                 draggable={!complete}
                 onClick={() => handleTokenClick(token.id)}
@@ -314,7 +316,11 @@ export default function WordOrderExercise({ config }: ExerciseComponentProps) {
         {complete ? resolveLabel('correct', labels) : `${correctCount} / ${total}`}
       </p>
 
-      {content.footnote ? <p className="word-order-footnote">{content.footnote}</p> : null}
+      {content.footnote ? (
+        <p className="word-order-footnote" lang={TARGET_LANG}>
+          {content.footnote}
+        </p>
+      ) : null}
 
       <ExerciseFooter
         onCheck={handleCheck}
