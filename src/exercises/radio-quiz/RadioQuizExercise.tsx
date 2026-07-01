@@ -45,6 +45,7 @@ import { ChoicePillGroup } from '@/exercises/lib/ChoicePillGroup';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
+import { TARGET_LANG } from '@/lib/lang';
 import {
   RadioQuizExerciseConfigSchema,
   parseStarredOptions,
@@ -225,9 +226,12 @@ export default function RadioQuizExercise({ config }: ExerciseComponentProps) {
       >
         <div className="grid grid-cols-[minmax(0,1fr)_2.5rem] items-start gap-2">
           <div className="min-w-0">
-            <div className="text-base text-foreground">{question.prompt}</div>
+            <div className="text-base text-foreground" lang={TARGET_LANG}>
+              {question.prompt}
+            </div>
             <div className="mt-2">
               <ChoicePillGroup
+                contentLang={TARGET_LANG}
                 groupId={groupId}
                 groupLabel={`Choose answer for question ${questionIndex + 1}`}
                 onSelect={(optionIndex) => handleChoiceChange(questionIndex, optionIndex)}
@@ -237,7 +241,9 @@ export default function RadioQuizExercise({ config }: ExerciseComponentProps) {
               />
             </div>
             {showExplanation ? (
-              <p className="mt-2 text-sm text-muted-foreground">{question.explanation}</p>
+              <p className="mt-2 text-sm text-muted-foreground" lang={TARGET_LANG}>
+                {question.explanation}
+              </p>
             ) : null}
           </div>
           <ResultSlot hasResult={hasResult} isCorrect={verdict === true} />
@@ -279,7 +285,9 @@ export default function RadioQuizExercise({ config }: ExerciseComponentProps) {
       />
 
       {parsed.data.content.footnote ? (
-        <p className="text-sm text-muted-foreground">{parsed.data.content.footnote}</p>
+        <p className="text-sm text-muted-foreground" lang={TARGET_LANG}>
+          {parsed.data.content.footnote}
+        </p>
       ) : null}
     </div>
   );
