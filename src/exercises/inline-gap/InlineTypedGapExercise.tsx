@@ -146,7 +146,7 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
       const prog = audio.rowProgress[rowIndex] ?? { currentTime: 0, duration: 0 };
       const status = isActive && audio.masterPlayState === 'playing' ? 'playing' : 'stopped';
       return (
-        <span className="shrink-0 pt-0.5">
+        <span className="mr-1 inline-flex align-middle">
           <CircularAudioProgressAnimatedSpeakerDisplay
             status={status}
             progress={prog.currentTime}
@@ -158,7 +158,7 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
       );
     }
     return (
-      <span className="shrink-0 pt-0.5">
+      <span className="mr-1 inline-flex align-middle">
         <AudioClip
           className="super-compact-speaker"
           id={`${uid}-audio-${rowIndex}`}
@@ -190,7 +190,7 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
           onKeyDown={(event) => handleInputKeyDown(event, blankIndex)}
           placeholder={meta?.placeholder || 'Type…'}
           aria-invalid={isWrong}
-          className={`inline-flex h-9 ${isRight ? 'border-success' : ''}`}
+          className={`inline-flex h-9 cursor-text transition-colors hover:border-primary/60 hover:bg-muted/40 ${isRight ? 'border-success' : ''}`}
           style={{ width: `${meta?.widthCh ?? 8}ch`, maxWidth: '100%' }}
         />
         {state.hasChecked && diff ? (
@@ -253,9 +253,9 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
           </p>
         ) : null}
         <div className="grid grid-cols-[minmax(0,1fr)_2.5rem] items-start gap-2">
-          <span className="flex min-w-0 items-start gap-2">
+          <span className="min-w-0 leading-loose text-foreground">
             {renderRowAudio(i, item)}
-            <span className="min-w-0 text-foreground">{nodes}</span>
+            {nodes}
           </span>
           {renderResultSlot(rowBlankIndices)}
         </div>
