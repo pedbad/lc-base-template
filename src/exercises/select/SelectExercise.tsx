@@ -143,7 +143,10 @@ export default function SelectExercise({ config }: ExerciseComponentProps) {
       <span className="mx-1 inline-flex align-middle" key={selectId}>
         <label className="sr-only" htmlFor={selectId}>{`Answer for blank ${blankIndex + 1}`}</label>
         <Select value={value} onValueChange={(next) => handleSelectChange(blankIndex, next ?? '')}>
-          <SelectTrigger id={selectId} className="min-w-32">
+          <SelectTrigger
+            id={selectId}
+            className="min-w-32 cursor-pointer hover:border-primary/60 hover:bg-muted/60 hover:[&_svg]:text-foreground"
+          >
             <SelectValue placeholder={PLACEHOLDER}>
               {(v) =>
                 v == null || v === '' ? null : (
