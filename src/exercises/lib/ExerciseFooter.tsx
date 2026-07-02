@@ -1,8 +1,16 @@
 /**
  * ExerciseFooter.tsx — the shared action-button row for the exercise engines
- * (spec §5, §8). Three buttons in canonical order: Check (primary, always shown),
- * Reset (shown once there's something to reset), Show-answers (shown only after a
- * wrong Check — the caller decides via `showAnswers`, per the §5.3 reveal gate).
+ * (spec §5, §8). Three buttons: Check (validate, always shown), Reset (shown once
+ * there's something to reset), Show-answers (shown only after a wrong Check — the
+ * caller decides via `showAnswers`, per the §5.3 reveal gate).
+ *
+ * Layout (ported from french-lo-1): the row is right-aligned and reads, left to
+ * right, Show-answers · Reset · Check, so the primary validate action sits far
+ * right. `justify-end` keeps Check pinned right even when the other two are
+ * hidden. Each button carries a lucide glyph and a distinct on-token colour:
+ * Check = solid green (success/validate), Reset = soft crest (destructive/clear),
+ * Show-answers = soft blue (primary/reveal). This mirrors the green tick / red
+ * cross verdict icons the blank-grading rows already use (ResultSlot).
  *
  * Extracted from the inlined footer the select engine carried while it was the
  * only engine; engine #2 (inline-choice) renders the exact same shape, so it now
@@ -14,6 +22,8 @@
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §5, §8.
  */
+import { CircleCheck, Eye, RotateCcw } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
 
@@ -44,20 +54,31 @@ export function ExerciseFooter({
   labels,
 }: ExerciseFooterProps) {
   return (
-    <div className="flex flex-wrap items-center gap-2 border-t border-border/60 pt-4">
-      <Button onClick={onCheck} disabled={checkDisabled}>
-        {resolveLabel('check', labels)}
-      </Button>
-      {showReset ? (
-        <Button variant="outline" onClick={onReset}>
-          {resolveLabel('reset', labels)}
-        </Button>
-      ) : null}
+    <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border/60 pt-4">
       {showAnswers ? (
-        <Button variant="ghost" onClick={onShowAnswers}>
+        <Button
+          variant="ghost"
+          className="bg-primary/10 text-primary hover:bg-primary/20"
+          onClick={onShowAnswers}
+        >
+          <Eye />
           {resolveLabel('showAnswer', labels)}
         </Button>
       ) : null}
+      {showReset ? (
+        <Button variant="destructive" onClick={onReset}>
+          <RotateCcw />
+          {resolveLabel('reset', labels)}
+        </Button>
+      ) : null}
+      <Button
+        className="bg-success text-success-foreground hover:bg-success/90"
+        onClick={onCheck}
+        disabled={checkDisabled}
+      >
+        <CircleCheck />
+        {resolveLabel('check', labels)}
+      </Button>
     </div>
   );
 }
