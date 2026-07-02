@@ -49,11 +49,12 @@ function renderWithBold(text: string) {
     // Odd segments are button names → bold, with the matching control glyph.
     const glyph = BUTTON_GLYPHS[segment.trim().toLowerCase()];
     return (
-      <strong
-        key={index}
-        className="inline-flex items-center gap-1 align-baseline font-semibold text-foreground"
-      >
-        {glyph ? <glyph.Icon className={`inline size-4 shrink-0 ${glyph.color}`} /> : null}
+      // Kept as normal inline text (not inline-flex) so the label sits on the same
+      // baseline as the surrounding prose; only the icon is nudged to align with it.
+      <strong key={index} className="font-semibold text-foreground">
+        {glyph ? (
+          <glyph.Icon className={`mr-1 inline size-4 align-[-0.2em] ${glyph.color}`} />
+        ) : null}
         {segment}
       </strong>
     );
