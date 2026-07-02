@@ -24,6 +24,24 @@ describe('ExerciseInstructions', () => {
     expect(html).not.toContain('**');
   });
 
+  test('prefixes known button names with their coloured control glyph', () => {
+    const html = renderToStaticMarkup(
+      <ExerciseInstructions text="Select **Check**, **Reset**, or **Show answers**." />,
+    );
+    // One svg per matched button name (three), each in its identity colour.
+    expect((html.match(/<svg/g) ?? []).length).toBeGreaterThanOrEqual(3);
+    expect(html).toContain('text-success');
+    expect(html).toContain('text-destructive');
+    expect(html).toContain('text-primary');
+  });
+
+  test('bolds an unknown button name without a glyph', () => {
+    const html = renderToStaticMarkup(<ExerciseInstructions text="Press **Submit** now." />);
+    expect(html).toContain('>Submit</strong>');
+    // Only the Alert header Info glyph is present — no button glyph inside the strong.
+    expect((html.match(/<svg/g) ?? []).length).toBe(1);
+  });
+
   test('renders nothing when text is null', () => {
     expect(renderToStaticMarkup(<ExerciseInstructions text={null} />)).toBe('');
   });

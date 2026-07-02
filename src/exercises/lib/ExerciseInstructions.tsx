@@ -7,18 +7,21 @@
  * `text` is null or blank, so a suppressed exercise (`instructions: ''`) renders
  * nothing.
  *
- * The copy marks button names with `**…**`; those segments render as `<strong>` so
- * Check / Reset / Show answers read as UI references.
+ * The copy marks button names with `**…**`; those segments render as `<strong>`, and
+ * when the name matches a real footer control (Check / Reset / Show answers) it is
+ * prefixed with that button's own lucide glyph in the button's identity colour
+ * (success / destructive / primary — mirroring ExerciseFooter) so the reference reads
+ * as the actual control. Unknown bold names (custom overrides) render bold, no icon.
  *
  * a11y: `role="note"` (this is course-author guidance, not a live alert). The text
  * is English course chrome — deliberately NOT tagged `lang={TARGET_LANG}` (same rule
  * as ChoicePillGroup's group labels: only learner-facing target-language content
- * carries the lang attribute).
+ * carries the lang attribute). The inline glyphs are decorative (aria-hidden).
  *
  * Spec: docs/process/2026-07-02-instructions-box-handover.md §3.
  */
-import { Fragment } from 'react';
-import { Info } from 'lucide-react';
+import { Fragment, type ComponentType } from 'react';
+import { CircleCheck, Eye, Info, RotateCcw } from 'lucide-react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
@@ -27,18 +30,34 @@ interface ExerciseInstructionsProps {
   text: string | null;
 }
 
+/** A footer control's inline glyph + its identity colour, keyed by button name. */
+const BUTTON_GLYPHS: Record<
+  string,
+  { Icon: ComponentType<{ className?: string }>; color: string }
+> = {
+  check: { Icon: CircleCheck, color: 'text-success' },
+  reset: { Icon: RotateCcw, color: 'text-destructive' },
+  'show answers': { Icon: Eye, color: 'text-primary' },
+};
+
 /** Split copy on `**bold**` markers into alternating plain / strong segments. */
 function renderWithBold(text: string) {
-  return text.split('**').map((segment, index) =>
-    // Odd segments sat between a pair of `**` markers → button names → bold.
-    index % 2 === 1 ? (
-      <strong key={index} className="font-semibold text-foreground">
+  return text.split('**').map((segment, index) => {
+    // Even segments are plain prose between the `**` markers.
+    if (index % 2 === 0) return <Fragment key={index}>{segment}</Fragment>;
+
+    // Odd segments are button names → bold, with the matching control glyph.
+    const glyph = BUTTON_GLYPHS[segment.trim().toLowerCase()];
+    return (
+      <strong
+        key={index}
+        className="inline-flex items-center gap-1 align-baseline font-semibold text-foreground"
+      >
+        {glyph ? <glyph.Icon className={`inline size-4 shrink-0 ${glyph.color}`} /> : null}
         {segment}
       </strong>
-    ) : (
-      <Fragment key={index}>{segment}</Fragment>
-    ),
-  );
+    );
+  });
 }
 
 export function ExerciseInstructions({ text }: ExerciseInstructionsProps) {
