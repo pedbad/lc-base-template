@@ -11,6 +11,13 @@
  *   - state → token classes: neutral / selected (--primary) / correct (--success) /
  *     incorrect (--destructive). Existing tokens only — no new --ex-* tokens.
  *
+ * Rendered as a CONNECTED segmented control: a single hairline border wraps the
+ * whole group, `divide-x` draws thin separators between segments, and only the
+ * outer corners are rounded (overflow-hidden clips the inner squared edges). No
+ * per-pill border and no outer card/shadow wrapper — selection reads through the
+ * fill colour, not a ring of borders. Focus rings are inset so overflow-hidden
+ * doesn't clip them.
+ *
  * Extracted from inline-choice #2's inlined `renderChoiceGroup` + `handleChoiceKeyDown`
  * when radio-quiz #3 became the second consumer of the exact same widget. Each engine
  * keeps what differs: the OUTER wrapper (inline-choice wraps this in an inline `<span>`
@@ -48,9 +55,14 @@ interface ChoicePillGroupProps {
   contentLang?: string;
 }
 
-/** Pill base — layout + focus ring (--ring); state colors are appended per pill. */
+/**
+ * Segment base — layout + inset focus ring (--ring). No border/radius of its own;
+ * the container owns the single outer border, rounding, and `divide-x` separators.
+ * `focus-visible:z-10` lifts the focused segment so its inset ring sits above the
+ * neighbouring divider. State colours are appended per segment.
+ */
 const PILL_BASE =
-  'inline-flex min-h-8 cursor-pointer items-center rounded-lg border px-2.5 py-1 text-sm font-medium transition-colors duration-200 ease-out select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2';
+  'inline-flex min-h-8 cursor-pointer items-center px-3 py-1 text-sm font-medium transition-colors duration-200 ease-out select-none focus-visible:relative focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring';
 
 export function ChoicePillGroup({
   options,
@@ -100,20 +112,19 @@ export function ChoicePillGroup({
   return (
     <div
       aria-label={groupLabel}
-      className="inline-flex flex-wrap items-center gap-1.5 rounded-xl border border-border/70 bg-card/70 p-1.5 shadow-sm"
+      className="inline-flex items-stretch divide-x divide-border overflow-hidden rounded-lg border border-border bg-background align-middle"
       role="radiogroup"
     >
       {options.map((option, optionIndex) => {
         const isSelected = selectedIndex === optionIndex;
 
-        let stateClasses =
-          'border-border bg-background text-foreground hover:border-primary/40 hover:bg-muted';
+        let stateClasses = 'bg-background text-foreground hover:bg-muted';
         if (isSelected && verdict === true) {
-          stateClasses = 'border-success bg-success/15 text-foreground';
+          stateClasses = 'bg-success/15 text-foreground';
         } else if (isSelected && verdict === false) {
-          stateClasses = 'border-destructive bg-destructive/15 text-foreground';
+          stateClasses = 'bg-destructive/15 text-foreground';
         } else if (isSelected) {
-          stateClasses = 'border-primary bg-primary/10 font-semibold text-foreground';
+          stateClasses = 'bg-primary/10 font-semibold text-primary';
         }
 
         // Roving tabIndex: the selected pill is tabbable; with nothing selected,
