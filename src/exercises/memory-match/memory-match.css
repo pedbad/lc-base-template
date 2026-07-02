@@ -93,6 +93,31 @@
     color: var(--primary-foreground);
     font-size: 2rem;
     font-weight: 700;
+    transition:
+      background-color 200ms ease,
+      box-shadow 200ms ease;
+  }
+
+  /* Hover affordance for a still-playable (face-down, enabled) card: a gentle
+     lift + a soft brand glow on the "?" tile, so it reads as "flip me". Only on
+     devices with a real pointer; matched/revealed/disabled cards never react. */
+  @media (hover: hover) {
+    .memory-card[data-revealed='false']:not(:disabled) {
+      transition: transform 200ms cubic-bezier(0.22, 0.9, 0.25, 1);
+    }
+
+    .memory-card[data-revealed='false']:not(:disabled):hover {
+      transform: translateY(-4px) scale(1.03);
+    }
+
+    .memory-card[data-revealed='false']:not(:disabled):active {
+      transform: translateY(-1px) scale(1.01);
+    }
+
+    .memory-card[data-revealed='false']:not(:disabled):hover .memory-card-back {
+      background-color: color-mix(in oklab, var(--primary) 48%, var(--card));
+      box-shadow: 0 10px 24px -8px color-mix(in oklab, var(--primary) 55%, transparent);
+    }
   }
 
   /* Content side, pre-rotated so it faces out when the card flips. */
@@ -162,6 +187,13 @@
     }
 
     .memory-card[data-revealed='true'] .memory-card-inner {
+      transform: none;
+    }
+
+    .memory-card[data-revealed='false']:not(:disabled),
+    .memory-card[data-revealed='false']:not(:disabled):hover,
+    .memory-card[data-revealed='false']:not(:disabled):active {
+      transition: none;
       transform: none;
     }
 
