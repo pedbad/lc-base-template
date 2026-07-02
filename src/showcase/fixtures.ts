@@ -441,4 +441,21 @@ export const SHOWCASE_FIXTURES: ShowcaseFixture[] = [
       options: { shuffle: true },
     },
   },
+  {
+    id: 'select-instructions-override',
+    title: 'select — custom instructions override (info box)',
+    type: 'select',
+    config: {
+      type: 'select',
+      content: {
+        // Author override: this copy replaces the auto default for `select`, proving
+        // the resolveInstructions override path (handover spec §2/§3). Button names
+        // still render bold via the `**…**` markers.
+        instructions:
+          'Read the mini-dialogue and choose the option that fits each gap. Use **Check** to mark, **Reset** to start over, or **Show answers** to reveal.',
+        layoutMode: 'rows',
+        items: [{ text: '— ¿De dónde [*eres|soy|es]? — [*Soy|Eres|Es] de México.' }],
+      },
+    },
+  },
 ];

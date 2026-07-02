@@ -2,14 +2,14 @@
  * Showcase.tsx — the exercise showcase (dev artifact #2).
  *
  * Renders every entry in SHOWCASE_FIXTURES as an isolated card: a title plus the
- * live engine, resolved through the lazyRegistry. This is where each ported engine
- * is seen and tested in isolation before it is used in a real LO. Cards grow one at
- * a time as engines are ported (Phase B). Empty for now.
+ * live engine (with its instruction box), rendered through the shared ExerciseHost.
+ * This is where each ported engine is seen and tested in isolation before it is used
+ * in a real LO. Cards grow one at a time as engines are ported (Phase B).
  *
- * Spec: docs/specs/2026-06-19-exercise-engines-design.md §3, §8.
+ * Spec: docs/specs/2026-06-19-exercise-engines-design.md §3, §8;
+ *       docs/process/2026-07-02-instructions-box-handover.md §3.
  */
-import { Suspense } from 'react';
-import { getExercise } from '@/exercises/lazyRegistry';
+import { ExerciseHost } from '@/exercises/lib/ExerciseHost';
 import { SHOWCASE_FIXTURES } from './fixtures';
 
 export default function Showcase() {
@@ -28,23 +28,12 @@ export default function Showcase() {
         </p>
       ) : (
         <section className="flex flex-col gap-10">
-          {SHOWCASE_FIXTURES.map((fixture) => {
-            const Engine = getExercise(fixture.type);
-            return (
-              <article key={fixture.id} id={fixture.id} className="rounded-lg border p-6">
-                <h2 className="mb-4 text-xl font-semibold">{fixture.title}</h2>
-                {Engine ? (
-                  <Suspense fallback={<p className="text-muted-foreground">Loading…</p>}>
-                    <Engine config={fixture.config} />
-                  </Suspense>
-                ) : (
-                  <p className="text-destructive">
-                    No engine registered for type <code>{fixture.type}</code>.
-                  </p>
-                )}
-              </article>
-            );
-          })}
+          {SHOWCASE_FIXTURES.map((fixture) => (
+            <article key={fixture.id} id={fixture.id} className="rounded-lg border p-6">
+              <h2 className="mb-4 text-xl font-semibold">{fixture.title}</h2>
+              <ExerciseHost type={fixture.type} config={fixture.config} />
+            </article>
+          ))}
         </section>
       )}
     </main>
