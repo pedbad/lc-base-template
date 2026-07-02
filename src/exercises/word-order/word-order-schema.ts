@@ -17,9 +17,11 @@
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5.2, §7, §8.
  */
 import { z } from 'zod';
+import { instructionsField } from '../lib/instructions';
 import { ExerciseConfigSchema } from '@/config/lo-schema';
 
 export const WordOrderContentSchema = z.object({
+  ...instructionsField,
   words: z.array(z.string().min(1)).min(2),
   audio: z.string().min(1).optional(),
   footnote: z.string().min(1).optional(),

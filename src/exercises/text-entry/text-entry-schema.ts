@@ -21,6 +21,7 @@
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §8, §9.
  */
 import { z } from 'zod';
+import { instructionsField } from '../lib/instructions';
 
 /** One row: an optional cue, the expected typed answer, and an optional clip. */
 export const TextEntryRowSchema = z.object({
@@ -32,6 +33,7 @@ export type TextEntryRow = z.infer<typeof TextEntryRowSchema>;
 
 /** The shared `content` block for a typed-response table exercise. */
 export const TextEntryContentSchema = z.object({
+  ...instructionsField,
   rows: z.array(TextEntryRowSchema).min(1),
   columns: z.object({ prompt: z.string().min(1), answer: z.string().min(1) }).optional(),
   footnote: z.string().min(1).optional(),

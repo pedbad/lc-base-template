@@ -19,6 +19,7 @@
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5.2, §7, §8.
  */
 import { z } from 'zod';
+import { instructionsField } from '../lib/instructions';
 import { ExerciseConfigSchema } from '@/config/lo-schema';
 
 export const PhraseReorderRowSchema = z.object({
@@ -29,6 +30,7 @@ export const PhraseReorderRowSchema = z.object({
 export type PhraseReorderRow = z.infer<typeof PhraseReorderRowSchema>;
 
 export const PhraseReorderContentSchema = z.object({
+  ...instructionsField,
   rows: z.array(PhraseReorderRowSchema).min(2),
   footnote: z.string().min(1).optional(),
 });

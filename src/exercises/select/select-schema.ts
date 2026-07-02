@@ -21,6 +21,7 @@
  *       docs/specs/2026-06-15-lc-base-template-design.md §10.
  */
 import { z } from 'zod';
+import { instructionsField } from '../lib/instructions';
 import { ExerciseConfigSchema } from '@/config/lo-schema';
 
 /** One sentence in a select exercise. `text` carries the `[a|*b|c]` blanks. */
@@ -33,6 +34,7 @@ export type SelectItem = z.infer<typeof SelectItemSchema>;
 
 /** The `content` block for a `select` exercise. */
 export const SelectContentSchema = z.object({
+  ...instructionsField,
   items: z.array(SelectItemSchema).min(1),
   layoutMode: z.enum(['rows', 'inline-passage']).default('rows'),
   footnote: z.string().min(1).optional(),

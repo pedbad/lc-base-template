@@ -26,6 +26,7 @@
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5.2, §7, §8.
  */
 import { z } from 'zod';
+import { instructionsField } from '../lib/instructions';
 import { ExerciseConfigSchema } from '@/config/lo-schema';
 
 /** A `[bracketed]` blank somewhere in the text. */
@@ -43,6 +44,7 @@ export type DragFillGapsItem = z.infer<typeof DragFillGapsItemSchema>;
 
 export const DragFillGapsContentSchema = z
   .object({
+    ...instructionsField,
     items: z.array(DragFillGapsItemSchema).min(1),
     footnote: z.string().min(1).optional(),
   })

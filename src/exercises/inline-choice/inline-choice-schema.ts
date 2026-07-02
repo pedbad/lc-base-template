@@ -25,6 +25,7 @@
  *       docs/specs/2026-06-15-lc-base-template-design.md §10.
  */
 import { z } from 'zod';
+import { instructionsField } from '../lib/instructions';
 import { ExerciseConfigSchema } from '@/config/lo-schema';
 
 /** One sentence in an inline-choice exercise. `text` carries the `[a|*b|c]` blanks. */
@@ -37,6 +38,7 @@ export type InlineChoiceItem = z.infer<typeof InlineChoiceItemSchema>;
 
 /** The `content` block for an inline-choice exercise. */
 export const InlineChoiceContentSchema = z.object({
+  ...instructionsField,
   items: z.array(InlineChoiceItemSchema).min(1),
   footnote: z.string().min(1).optional(),
 });

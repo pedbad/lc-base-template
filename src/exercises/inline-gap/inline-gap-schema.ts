@@ -25,6 +25,7 @@
  *       docs/specs/2026-06-15-lc-base-template-design.md §10.
  */
 import { z } from 'zod';
+import { instructionsField } from '../lib/instructions';
 import { ExerciseConfigSchema } from '@/config/lo-schema';
 
 /** One sentence in an inline-gap exercise. `text` carries `[expected::placeholder]` blanks. */
@@ -39,6 +40,7 @@ export type InlineGapItem = z.infer<typeof InlineGapItemSchema>;
 
 /** The `content` block for an inline-gap exercise. */
 export const InlineGapContentSchema = z.object({
+  ...instructionsField,
   items: z.array(InlineGapItemSchema).min(1),
   /**
    * When true, the rows' audio is played as one continuous playlist by a master

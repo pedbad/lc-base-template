@@ -32,6 +32,7 @@
  *       docs/specs/2026-06-15-lc-base-template-design.md §10.
  */
 import { z } from 'zod';
+import { instructionsField } from '../lib/instructions';
 import { ExerciseConfigSchema } from '@/config/lo-schema';
 
 /** The marker a correct option carries as its first character. */
@@ -82,6 +83,7 @@ export type RadioQuizQuestion = z.infer<typeof RadioQuizQuestionSchema>;
 
 /** The `content` block for a radio-quiz exercise. */
 export const RadioQuizContentSchema = z.object({
+  ...instructionsField,
   questions: z.array(RadioQuizQuestionSchema).min(1),
   footnote: z.string().min(1).optional(),
 });

@@ -23,6 +23,7 @@
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §7, §8.
  */
 import { z } from 'zod';
+import { instructionsField } from '../lib/instructions';
 import { ExerciseConfigSchema } from '@/config/lo-schema';
 
 /** A `[bracketed]` target somewhere in the text. */
@@ -36,6 +37,7 @@ export type WordSpotItem = z.infer<typeof WordSpotItemSchema>;
 
 export const WordSpotContentSchema = z
   .object({
+    ...instructionsField,
     items: z.array(WordSpotItemSchema).min(1),
     footnote: z.string().min(1).optional(),
   })

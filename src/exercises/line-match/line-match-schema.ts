@@ -25,6 +25,7 @@
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §8.
  */
 import { z } from 'zod';
+import { instructionsField } from '../lib/instructions';
 import { ExerciseConfigSchema } from '@/config/lo-schema';
 
 export const LineMatchItemSchema = z.object({
@@ -42,6 +43,7 @@ export const lineMatchItemKey = (item: LineMatchItem): string => item.id ?? item
 
 export const LineMatchContentSchema = z
   .object({
+    ...instructionsField,
     items: z.array(LineMatchItemSchema).min(2),
     footnote: z.string().min(1).optional(),
   })
