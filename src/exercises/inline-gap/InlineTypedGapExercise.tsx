@@ -146,7 +146,7 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
       const prog = audio.rowProgress[rowIndex] ?? { currentTime: 0, duration: 0 };
       const status = isActive && audio.masterPlayState === 'playing' ? 'playing' : 'stopped';
       return (
-        <span className="mr-1 inline-flex align-middle">
+        <span className="mr-4 inline-flex -translate-y-px align-middle">
           <CircularAudioProgressAnimatedSpeakerDisplay
             status={status}
             progress={prog.currentTime}
@@ -158,7 +158,7 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
       );
     }
     return (
-      <span className="mr-1 inline-flex align-middle">
+      <span className="mr-4 inline-flex -translate-y-px align-middle">
         <AudioClip
           className="super-compact-speaker"
           id={`${uid}-audio-${rowIndex}`}
