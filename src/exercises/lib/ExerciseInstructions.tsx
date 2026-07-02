@@ -65,9 +65,12 @@ export function ExerciseInstructions({ text }: ExerciseInstructionsProps) {
   if (text === null || text.trim() === '') return null;
 
   return (
-    <Alert role="note" className="mb-4">
-      <Info />
-      <AlertDescription>{renderWithBold(text)}</AlertDescription>
+    // Info-alert styling: a light primary (blue) tint + border, with the leading
+    // glyph in the primary colour. There is no dedicated --info token, so --primary
+    // (the same blue as the Show-answers control) carries the "informational" role.
+    <Alert role="note" className="mb-4 border-primary/25 bg-primary/10 text-foreground">
+      <Info className="text-primary" />
+      <AlertDescription className="text-foreground/80">{renderWithBold(text)}</AlertDescription>
     </Alert>
   );
 }
