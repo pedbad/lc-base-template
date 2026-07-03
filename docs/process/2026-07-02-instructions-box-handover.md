@@ -1,6 +1,6 @@
 # Handover — Per-exercise instructions box
 
-**Status:** spec, not started
+**Status:** shipped (commits `483470d`→`d501b7c`, 2026-07-02). Spec below retained as the build record.
 **Author:** session 2026-07-02
 **Scope:** add an info-alert instruction box above every exercise engine.
 
@@ -10,9 +10,9 @@
 
 Every exercise should show a short instruction box (info alert) telling the
 learner **what to do** and **which buttons to use** (Check / Reset / Show
-answers). Currently no such box exists anywhere: not in schema, not in any
-engine, not in the showcase. The `src/components/ui/alert.tsx` component exists
-but is unused — reuse it.
+answers). At spec time no such box existed anywhere: not in schema, not in any
+engine, not in the showcase. The `src/components/ui/alert.tsx` component existed
+but was unused — it was reused as the base. (All shipped; see §Status.)
 
 ## 2. Locked decisions
 
@@ -102,7 +102,8 @@ Copy must name only the buttons an engine actually shows:
    - `ExerciseInstructions.test.tsx` — renders text; renders nothing when null;
      button names present.
    - update `lazyRegistry.test.ts` only if the host wrapper changes its surface.
-7. `bunx tsc --noEmit` + `bunx vitest run` green; verify in showcase.
+7. `bunx tsc --noEmit` + `bun test` green; verify in showcase. (Tests use
+   `bun:test`; the repo's `test` script is `bun test`, not vitest.)
 
 ## 6. Draft default copy (neutral English, task + buttons)
 
