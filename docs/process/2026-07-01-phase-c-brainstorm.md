@@ -142,11 +142,23 @@ LO page can render)_
 
 **D. Static pre-render (15)**
 
-1. Decide SSG mechanism — Vite's `rollupOptions.input` is static, so either
-   (a) a Vite plugin generating entries from `lo-config/` at config time, or
-   (b) a Node post-build script rendering each LO via
-   `ReactDOMServer.renderToStaticMarkup` into a shared template. Spike/decide,
-   don't build yet.
+1. SSG mechanism — **DECIDED: option (b), Node post-build script** rendering each
+   LO via `ReactDOMServer.renderToStaticMarkup` into a shared template. Spiked and
+   proven 2026-07-03 (throwaway, since deleted): a single example LO rendered to a
+   real ~12 KB `dist/example.html` — actual engine + instruction-box markup, not a
+   blank shell — with valid, accessible HTML (correct landmarks, h1→h2 order,
+   `<label for>` combobox names, `<details open>` reachable with JS disabled).
+   Rejected (a) Vite plugin: more Vite-internal glue for no output-control gain.
+   Productionisation findings from the spike (do these when building for real):
+   - engines can't use `React.lazy` under `renderToStaticMarkup` — resolve them
+     through a build-time static engine map instead of the runtime lazyRegistry;
+   - inject the hashed CSS/JS `<link>`/`<script>` tags into the template, and fix
+     `%BASE_URL%` (the favicon bug, handover step 32) while wiring asset URLs;
+   - decide hydration story — spike was static-only (no interactivity re-mount);
+   - the HTML/a11y gate needs config work: tune html-validate so it stops flagging
+     React's valid serialization (lowercase doctype, self-closing void elements,
+     boolean `attr=""`, `useId()` ids), and wire axe/pa11y against a headless
+     Chromium in CI (couldn't run headless axe in the spike env).
 2. Implement for the one example LO — prove `dist/example.html` (or whatever the
    `lo-00-example` slug resolves to) has real content
 3. Fix `%BASE_URL%` on favicon (currently hardcoded `/favicon.svg`, see handover
@@ -162,4 +174,5 @@ LO page can render)_
 ## Open decisions before building
 
 - [ ] Final exercise-type picks + count (4, 5, or 6) — §5
-- [ ] SSG mechanism (Vite plugin vs. Node post-build script) — §6.D step 1
+- [x] SSG mechanism (Vite plugin vs. Node post-build script) — §6.D step 1.
+      DECIDED 2026-07-03: Node post-build `renderToStaticMarkup` (spiked, proven).
