@@ -1,0 +1,200 @@
+/**
+ * flashcards.css — 3D flip card for the flashcards engine (#13, Phase C). Layered
+ * under `components` (spec §5 css-layer discipline); colours from semantic tokens
+ * only, no raw hex, no !important. Flip state is driven by the `data-flipped`
+ * attribute set from React state — never by direct DOM mutation.
+ *
+ * Motion is compositor-friendly (transform/opacity only). The flip is disabled under
+ * prefers-reduced-motion: the visible face is chosen by the state attribute instead.
+ *
+ * Spec: docs/specs/2026-07-03-new-exercise-engines-design.md §4.
+ */
+@layer components {
+  .flashcards {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    max-width: 30rem;
+    margin: 0 auto;
+  }
+
+  /* Positioning context for the optional speaker overlay (a sibling of the flip
+     button, never nested inside it — a button-in-button is invalid HTML). */
+  .flashcards-card-wrap {
+    position: relative;
+    display: block;
+  }
+
+  /* The card is a button; strip native chrome and give it a wide card footprint. */
+  .flashcards-card {
+    appearance: none;
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    perspective: 1400px;
+  }
+
+  .flashcards-card:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+    border-radius: var(--radius);
+  }
+
+  .flashcards-card-inner {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 640ms cubic-bezier(0.22, 0.9, 0.25, 1);
+  }
+
+  .flashcards-card[data-flipped='true'] .flashcards-card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .flashcards-face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) + 4px);
+    backface-visibility: hidden;
+    overflow: hidden;
+  }
+
+  /* Front (prompt): brand-tinted surface with a subtle depth shadow. */
+  .flashcards-face-front {
+    background-color: color-mix(in oklab, var(--primary) 8%, var(--card));
+    color: var(--card-foreground);
+    box-shadow: 0 12px 32px -18px color-mix(in oklab, var(--primary) 60%, transparent);
+  }
+
+  /* Back (reveal): plain card surface, pre-rotated so it faces out when flipped. */
+  .flashcards-face-back {
+    background-color: var(--card);
+    color: var(--card-foreground);
+    transform: rotateY(180deg);
+  }
+
+  .flashcards-term {
+    font-size: clamp(1.5rem, 1rem + 2.5vw, 2.25rem);
+    font-weight: 650;
+    line-height: 1.15;
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  .flashcards-image {
+    max-width: 60%;
+    max-height: 45%;
+    object-fit: contain;
+  }
+
+  /* Hover affordance: a gentle lift + brand glow so the card reads as "flip me".
+     Pointer devices only. */
+  @media (hover: hover) {
+    .flashcards-card {
+      transition: transform 200ms cubic-bezier(0.22, 0.9, 0.25, 1);
+    }
+
+    .flashcards-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .flashcards-card:active {
+      transform: translateY(-1px);
+    }
+  }
+
+  /* Speaker overlay: top-right corner of the card, a sibling of the flip button so
+     it never rotates with the 3D flip. It renders only while the Spanish (target)
+     face is visible. */
+  .flashcards-audio {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 1;
+    color: var(--muted-foreground);
+    background-color: var(--card);
+    border-radius: var(--radius);
+  }
+
+  .flashcards-progress {
+    margin: 0;
+    font-size: var(--text-sm, 0.875rem);
+    font-variant-numeric: tabular-nums;
+    color: var(--muted-foreground);
+  }
+
+  .flashcards-status {
+    margin: 0;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .flashcards-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+
+  .flashcards-actions > * {
+    min-width: 7rem;
+  }
+
+  .flashcards-footnote {
+    margin: 0;
+    font-size: var(--text-sm, 0.875rem);
+    color: var(--muted-foreground);
+    text-align: center;
+  }
+
+  .flashcards-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Reduced motion: no 3D spin — the visible face is chosen by data-flipped. */
+  @media (prefers-reduced-motion: reduce) {
+    .flashcards-card-inner,
+    .flashcards-card[data-flipped='true'] .flashcards-card-inner {
+      transition: none;
+      transform: none;
+    }
+
+    .flashcards-card,
+    .flashcards-card:hover,
+    .flashcards-card:active {
+      transition: none;
+      transform: none;
+    }
+
+    .flashcards-face-back {
+      transform: none;
+    }
+
+    .flashcards-card[data-flipped='false'] .flashcards-face-back {
+      display: none;
+    }
+
+    .flashcards-card[data-flipped='true'] .flashcards-face-front {
+      display: none;
+    }
+  }
+}
