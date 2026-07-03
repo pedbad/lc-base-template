@@ -56,6 +56,8 @@ export const EXERCISE_INSTRUCTIONS: Record<ExerciseType, string> = {
     'Flip the cards two at a time to find the matching pairs. Matches are kept automatically; select **Reset** to shuffle and start again.',
   'word-spot':
     'Click every part of the text that matches the target. Select **Check** to mark your selection, **Reset** to clear it, or **Show answers** to reveal the correct parts.',
+  flashcards:
+    'Read the card, then select **Flip** to reveal the other side. Rate yourself: **Again** if you missed it (the card comes back later) or **Good** if you knew it. Use **Switch direction** to change which language shows first, and **Restart** to shuffle and start over.',
 };
 
 /**

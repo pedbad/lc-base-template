@@ -1,7 +1,7 @@
 import { test, expect } from 'bun:test';
 import { EXERCISE_TYPE_KEYS } from './exercise-types';
 
-test('exercise-types: exactly the 12 canonical kebab keys', () => {
+test('exercise-types: the 12 canonical kebab keys plus Phase C additions', () => {
   expect(EXERCISE_TYPE_KEYS).toEqual([
     'select',
     'inline-choice',
@@ -15,6 +15,7 @@ test('exercise-types: exactly the 12 canonical kebab keys', () => {
     'line-match',
     'memory-match',
     'word-spot',
+    'flashcards',
   ]);
 });
 
