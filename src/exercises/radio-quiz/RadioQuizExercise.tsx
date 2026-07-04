@@ -51,6 +51,7 @@ import {
   parseStarredOptions,
   type RadioQuizQuestion,
 } from './radio-quiz-schema';
+import { fillRadioAnswers, gradeRadioQuiz } from './radio-quiz-grading';
 
 /** One question after option-shuffle: the labels to render + where the winner landed. */
 interface PreparedQuestion {
@@ -190,23 +191,12 @@ export default function RadioQuizExercise({ config }: ExerciseComponentProps) {
   const nToSolve = state.preparedQuestions.length;
 
   const handleCheck = () => {
-    const checkedResults: Record<number, boolean> = {};
-    for (let i = 0; i < nToSolve; i += 1) {
-      const value = state.values[i];
-      if (value === undefined) continue;
-      checkedResults[i] = value === state.preparedQuestions[i].winnerIndex;
-    }
-    dispatch(commitCheck(checkedResults));
+    dispatch(commitCheck(gradeRadioQuiz(state.preparedQuestions, state.values)));
   };
 
   const handleShowAnswers = () => {
-    const values: Record<number, number> = {};
-    const checkedResults: Record<number, boolean> = {};
-    for (let i = 0; i < nToSolve; i += 1) {
-      values[i] = state.preparedQuestions[i].winnerIndex;
-      checkedResults[i] = true;
-    }
-    dispatch({ values, checkedResults, hasChecked: true, nCorrect: nToSolve });
+    const { values, checkedResults } = fillRadioAnswers(state.preparedQuestions);
+    dispatch({ values, ...commitCheck(checkedResults) });
   };
 
   const cards: ReactNode[] = state.preparedQuestions.map((question, questionIndex) => {
