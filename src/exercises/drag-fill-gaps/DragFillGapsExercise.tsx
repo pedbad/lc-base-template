@@ -28,57 +28,22 @@ import { useReducer, type DragEvent } from 'react';
 import { AudioClip } from '@/components/audio/AudioClip';
 import { ExerciseOptionsSchema } from '@/config/lo-schema';
 import { resolveLabel } from '@/config/ui-strings';
-import { shuffle } from '@/exercises/lib/shuffle';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { ExerciseFooter } from '../lib/ExerciseFooter';
 import { canRevealAnswers } from '../lib/reveal';
-import { parseSentence, type TextSegment } from '../lib/parsing';
 import { TARGET_LANG } from '@/lib/lang';
 import {
   DragFillGapsExerciseConfigSchema,
   type DragFillGapsContent,
 } from './drag-fill-gaps-schema';
+import {
+  bankOrderFor,
+  buildModel,
+  checkPlacements,
+  fillPlacements,
+  type Tile,
+} from './drag-fill-gaps-grading';
 import './drag-fill-gaps.css';
-
-interface Tile {
-  id: string;
-  word: string;
-}
-
-/** The blank segment `parseSentence` yields for a `[word]` token. */
-interface SlotSegment {
-  type: 'slot';
-  key: string;
-  id: string;
-}
-
-interface RowModel {
-  audio?: string;
-  nodes: Array<TextSegment | SlotSegment>;
-}
-
-/** One pass over every item: collects the tile bank (blank order) + per-row render nodes. */
-function buildModel(content: DragFillGapsContent): { rows: RowModel[]; tiles: Tile[] } {
-  const blanksMeta: Array<{ word: string }> = [];
-  const rows: RowModel[] = [];
-  let blankIndex = 0;
-
-  content.items.forEach((item) => {
-    const { segments, nextBlankIndex } = parseSentence<{ word: string }, SlotSegment>(item.text, {
-      startBlankIndex: blankIndex,
-      blanksMeta,
-      parseBlank: (rawInner, idx) => {
-        const id = `tile-${idx}`;
-        return { meta: { word: rawInner.trim() }, segment: { type: 'slot', key: id, id } };
-      },
-    });
-    blankIndex = nextBlankIndex;
-    rows.push({ audio: item.audio, nodes: segments });
-  });
-
-  const tiles: Tile[] = blanksMeta.map((meta, index) => ({ id: `tile-${index}`, word: meta.word }));
-  return { rows, tiles };
-}
 
 interface DragState {
   /** slotId -> the tileId currently placed there, or null when empty. */
@@ -99,11 +64,6 @@ interface DragState {
 type DragAction =
   | { kind: 'patch'; patch: Partial<DragState> }
   | { kind: 'reset'; tiles: Tile[]; shuffleBank: boolean };
-
-function bankOrderFor(tiles: readonly Tile[], shuffleBank: boolean): string[] {
-  const ids = tiles.map((tile) => tile.id);
-  return shuffleBank ? shuffle(ids) : ids;
-}
 
 function freshState(tiles: readonly Tile[], shuffleBank: boolean): DragState {
   return {
@@ -258,21 +218,12 @@ export default function DragFillGapsExercise({ config }: ExerciseComponentProps)
   const handleDragEnd = () => dispatch({ kind: 'patch', patch: clearTransient() });
 
   const handleCheck = () => {
-    const nextAssignments = { ...assignments };
-    const nextLocked = { ...locked };
-    let anyWrong = false;
-    tiles.forEach((tile) => {
-      if (nextLocked[tile.id]) return;
-      const placedTileId = nextAssignments[tile.id];
-      if (placedTileId === null) return;
-      if (placedTileId === tile.id) {
-        nextLocked[tile.id] = true;
-      } else {
-        nextAssignments[tile.id] = null;
-        anyWrong = true;
-      }
-    });
-    const isComplete = Object.values(nextLocked).every(Boolean);
+    const {
+      assignments: nextAssignments,
+      locked: nextLocked,
+      anyWrong,
+      complete: isComplete,
+    } = checkPlacements(tiles, assignments, locked);
     dispatch({
       kind: 'patch',
       patch: {
@@ -289,11 +240,12 @@ export default function DragFillGapsExercise({ config }: ExerciseComponentProps)
   const handleReset = () => dispatch({ kind: 'reset', tiles, shuffleBank: options.shuffle });
 
   const handleShowAnswers = () => {
+    const { assignments: filledAssignments, locked: filledLocked } = fillPlacements(tiles);
     dispatch({
       kind: 'patch',
       patch: {
-        assignments: Object.fromEntries(tiles.map((tile) => [tile.id, tile.id])),
-        locked: Object.fromEntries(tiles.map((tile) => [tile.id, true])),
+        assignments: filledAssignments,
+        locked: filledLocked,
         hasChecked: true,
         complete: true,
         usedShowAnswer: true,
