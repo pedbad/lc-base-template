@@ -23,89 +23,11 @@ import { AudioClip } from '@/components/audio/AudioClip';
 import { ExerciseOptionsSchema } from '@/config/lo-schema';
 import { resolveLabel } from '@/config/ui-strings';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
-import { decodeHtmlEntities } from '../lib/html';
-import { parseSentence, type TextSegment } from '../lib/parsing';
 import { canRevealAnswers } from '../lib/reveal';
 import { TARGET_LANG } from '@/lib/lang';
-import { WordSpotExerciseConfigSchema, type WordSpotContent } from './word-spot-schema';
+import { WordSpotExerciseConfigSchema } from './word-spot-schema';
+import { buildModel, scoreWordSpot, type ClickableToken, type Mark } from './word-spot-grading';
 import './word-spot.css';
-
-type Mark = 'hit' | 'miss';
-
-/** One clickable part-word: its stable state key, display text, and whether it scores. */
-interface ClickableToken {
-  key: string;
-  text: string;
-  isTarget: boolean;
-}
-
-/** A rendered phrase: optional audio plus an ordered list of spans (clickable or space). */
-interface RowModel {
-  audio?: string;
-  nodes: Array<
-    { kind: 'space'; key: string; text: string } | { kind: 'token'; token: ClickableToken }
-  >;
-}
-
-/** The parser segment a bracketed target yields (the only blank kind word-spot needs). */
-interface TargetSegment {
-  type: 'target';
-  key: string;
-  value: string;
-}
-
-/**
- * Build the render model + the list of all target keys, in one pass over the items.
- * Bracketed runs become target tokens; plain text is split into word tokens (misses)
- * and whitespace nodes. Keys are namespaced by row so they stay globally unique.
- */
-function buildModel(content: WordSpotContent): { rows: RowModel[]; targetKeys: string[] } {
-  const rows: RowModel[] = [];
-  const targetKeys: string[] = [];
-  let blankIndex = 0;
-
-  content.items.forEach((item, rowIndex) => {
-    const { segments, nextBlankIndex } = parseSentence<{ value: string }, TargetSegment>(
-      item.text,
-      {
-        startBlankIndex: blankIndex,
-        parseBlank: (rawInner, idx) => {
-          const value = decodeHtmlEntities(rawInner.trim());
-          return { meta: { value }, segment: { type: 'target', key: `t-${idx}`, value } };
-        },
-      },
-    );
-    blankIndex = nextBlankIndex;
-
-    const nodes: RowModel['nodes'] = [];
-    segments.forEach((segment) => {
-      if ((segment as TargetSegment).type === 'target') {
-        const target = segment as TargetSegment;
-        targetKeys.push(target.key);
-        nodes.push({
-          kind: 'token',
-          token: { key: target.key, text: target.value, isTarget: true },
-        });
-        return;
-      }
-      // A literal text run: split into words (clickable misses) and whitespace.
-      const text = (segment as TextSegment).value;
-      text.split(/(\s+)/).forEach((piece, pieceIndex) => {
-        if (!piece) return;
-        const key = `r${rowIndex}-${(segment as TextSegment).key}-${pieceIndex}`;
-        if (piece.trim() === '') {
-          nodes.push({ kind: 'space', key, text: piece });
-        } else {
-          nodes.push({ kind: 'token', token: { key, text: piece, isTarget: false } });
-        }
-      });
-    });
-
-    rows.push({ audio: item.audio, nodes });
-  });
-
-  return { rows, targetKeys };
-}
 
 type MarksState = Record<string, Mark>;
 type MarksAction =
@@ -149,14 +71,7 @@ export default function WordSpotExercise({ config }: ExerciseComponentProps) {
   const { rows, targetKeys } = buildModel(parsed.data.content);
   const { footnote } = parsed.data.content;
 
-  const total = targetKeys.length;
-  const targetSet = new Set(targetKeys);
-  const hits = Object.entries(marks).filter(
-    ([key, mark]) => mark === 'hit' && targetSet.has(key),
-  ).length;
-  const misses = Object.values(marks).filter((mark) => mark === 'miss').length;
-  const complete = hits === total;
-  const hasAttempted = hits + misses > 0;
+  const { hits, misses, total, complete, hasAttempted } = scoreWordSpot(marks, targetKeys);
 
   const canReveal = canRevealAnswers({
     allowShowAnswers: options.allowShowAnswers,

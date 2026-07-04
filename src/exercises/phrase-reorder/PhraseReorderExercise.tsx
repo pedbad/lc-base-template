@@ -18,7 +18,6 @@ import { useLayoutEffect, useReducer, useRef, type DragEvent } from 'react';
 import { AudioClip } from '@/components/audio/AudioClip';
 import { ExerciseOptionsSchema } from '@/config/lo-schema';
 import { resolveLabel } from '@/config/ui-strings';
-import { shuffle } from '@/exercises/lib/shuffle';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { ExerciseFooter } from '../lib/ExerciseFooter';
 import { canRevealAnswers } from '../lib/reveal';
@@ -28,37 +27,16 @@ import {
   PhraseReorderExerciseConfigSchema,
   type PhraseReorderContent,
 } from './phrase-reorder-schema';
+import {
+  buildTokens,
+  countCorrectPositions,
+  scramble,
+  swapById,
+  type PhraseToken,
+} from './phrase-reorder-grading';
 import './phrase-reorder.css';
 
 const REORDER_DURATION_MS = 260;
-
-interface PhraseToken {
-  id: string;
-  phrase: string;
-}
-
-function buildTokens(rows: PhraseReorderContent['rows']): PhraseToken[] {
-  return rows.map((row, index) => ({ id: `slot-${index}`, phrase: row.phrase }));
-}
-
-/** Shuffle, retrying once if it happens to land back on the original order. */
-function scramble(tokens: readonly PhraseToken[]): PhraseToken[] {
-  const scrambled = shuffle(tokens);
-  if (tokens.length < 2) return scrambled;
-  const unchanged = scrambled.every((token, index) => token.id === tokens[index]?.id);
-  if (!unchanged) return scrambled;
-  const [first, second, ...rest] = scrambled;
-  return first && second ? [second, first, ...rest] : scrambled;
-}
-
-function swapById(order: readonly PhraseToken[], idA: string, idB: string): PhraseToken[] {
-  const next = [...order];
-  const indexA = next.findIndex((token) => token.id === idA);
-  const indexB = next.findIndex((token) => token.id === idB);
-  if (indexA < 0 || indexB < 0) return next;
-  [next[indexA], next[indexB]] = [next[indexB], next[indexA]];
-  return next;
-}
 
 interface ReorderState {
   expected: PhraseToken[];
@@ -154,7 +132,7 @@ export default function PhraseReorderExercise({ config }: ExerciseComponentProps
   } = state;
   const total = expected.length;
   const labels = parsed.data.labels;
-  const correctCount = order.filter((token, index) => token.id === expected[index]?.id).length;
+  const correctCount = countCorrectPositions(order, expected);
   const showPromptColumn = content.rows.some((row) => row.prompt);
 
   const setCardRef = (id: string, element: HTMLButtonElement | null) => {

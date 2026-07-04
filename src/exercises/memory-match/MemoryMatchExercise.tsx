@@ -24,7 +24,8 @@ import { canRevealAnswers } from '../lib/reveal';
 import { captureFlipPositions, playFlipAnimation } from '../lib/reorderAnimation';
 import { MemoryCard, type DeckCard } from './MemoryCard';
 import { TARGET_LANG } from '@/lib/lang';
-import { MemoryMatchExerciseConfigSchema, type MemoryMatchContent } from './memory-match-schema';
+import { MemoryMatchExerciseConfigSchema } from './memory-match-schema';
+import { buildDeck, solveOrder } from './memory-match-grading';
 import './memory-match.css';
 
 const FLIP_DURATION_MS = 800;
@@ -32,56 +33,6 @@ const REVEAL_PAUSE_MS = 450;
 const CARD_TRANSITION_MS = FLIP_DURATION_MS + REVEAL_PAUSE_MS;
 const REORDER_DURATION_MS = 620;
 const REORDER_STAGGER_MS = 18;
-
-/** Fisher-Yates, immutable (returns a new array; never mutates the input). */
-function shuffle<T>(input: readonly T[]): T[] {
-  const out = [...input];
-  for (let i = out.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [out[i], out[j]] = [out[j], out[i]];
-  }
-  return out;
-}
-
-/** Expand the pairs into a shuffled deck: one image card + one text card per pair. */
-function buildDeck(content: MemoryMatchContent, sampleSize?: number): DeckCard[] {
-  const chosen = shuffle(content.items).slice(0, sampleSize ?? content.items.length);
-  const cards: DeckCard[] = [];
-  chosen.forEach((item, index) => {
-    const pairId = String(index);
-    cards.push({
-      id: `${index}-img`,
-      pairId,
-      kind: 'image',
-      image: item.image,
-      alt: item.alt ?? item.localLanguage ?? '',
-    });
-    cards.push({
-      id: `${index}-txt`,
-      pairId,
-      kind: 'text',
-      text: item.text,
-      audio: item.audio,
-      alt: item.text,
-    });
-  });
-  return shuffle(cards);
-}
-
-/** Reorder the current deck so matched pairs sit adjacent (image then text). */
-function solveOrder(cards: readonly DeckCard[]): DeckCard[] {
-  const byPair = new Map<string, { image?: DeckCard; text?: DeckCard }>();
-  cards.forEach((card) => {
-    const entry = byPair.get(card.pairId) ?? {};
-    if (card.kind === 'image') entry.image = card;
-    else entry.text = card;
-    byPair.set(card.pairId, entry);
-  });
-  return [...byPair.entries()]
-    .sort(([a], [b]) => Number(a) - Number(b))
-    .flatMap(([, pair]) => [pair.image, pair.text])
-    .filter((card): card is DeckCard => Boolean(card));
-}
 
 interface GameState {
   cards: DeckCard[];

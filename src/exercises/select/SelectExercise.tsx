@@ -53,6 +53,7 @@ import { ResultSlot } from '@/exercises/lib/ResultSlot';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { TARGET_LANG } from '@/lib/lang';
 import { SelectExerciseConfigSchema, type SelectItem as SelectItemContent } from './select-schema';
+import { fillSelectAnswers, gradeSelect } from './select-grading';
 
 /** Trigger placeholder. Engine-specific UI text, not shared chrome — kept local. */
 const PLACEHOLDER = 'Select…';
@@ -239,23 +240,12 @@ export default function SelectExercise({ config }: ExerciseComponentProps) {
   const nToSolve = blankCursor;
 
   const handleCheck = () => {
-    const checkedResults: Record<number, boolean> = {};
-    for (let i = 0; i < nToSolve; i += 1) {
-      const value = state.values[i];
-      if (value === undefined || value === '') continue;
-      checkedResults[i] = Number(value) === blanksMeta[i]?.winner;
-    }
-    dispatch(commitCheck(checkedResults));
+    dispatch(commitCheck(gradeSelect(blanksMeta, state.values, nToSolve)));
   };
 
   const handleShowAnswers = () => {
-    const values: Record<number, string> = {};
-    const checkedResults: Record<number, boolean> = {};
-    for (let i = 0; i < nToSolve; i += 1) {
-      values[i] = String(blanksMeta[i]?.winner ?? -1);
-      checkedResults[i] = true;
-    }
-    dispatch({ values, checkedResults, hasChecked: true, nCorrect: nToSolve });
+    const { values, checkedResults } = fillSelectAnswers(blanksMeta, nToSolve);
+    dispatch({ values, ...commitCheck(checkedResults) });
   };
 
   const hasSelections = Object.keys(state.values).length > 0;

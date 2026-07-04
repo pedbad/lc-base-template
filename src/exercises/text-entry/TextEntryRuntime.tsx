@@ -32,8 +32,7 @@ import AudioManager from '@/audio/AudioManager';
 import { AudioClip } from '@/components/audio/AudioClip';
 import type { ExerciseOptions } from '@/config/lo-schema';
 import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
-import { normalizeAnswer, normalizeForDictation } from '@/exercises/lib/answers';
-import { diffChars, type DiffPart } from '@/exercises/lib/charDiff';
+import { type DiffPart } from '@/exercises/lib/charDiff';
 import { TextDiff } from '@/exercises/lib/TextDiff';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
 import { commitCheck, getInitialScoringState, type ScoringState } from '@/exercises/lib/scoring';
@@ -41,8 +40,9 @@ import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
 import { TARGET_LANG } from '@/lib/lang';
 import type { TextEntryContent } from './text-entry-schema';
+import { fillAnswers, gradeTextEntry, type ComparisonMode } from './text-entry-grading';
 
-export type ComparisonMode = 'strict' | 'dictation';
+export type { ComparisonMode };
 
 interface TextEntryRuntimeProps {
   content: TextEntryContent;
@@ -84,7 +84,6 @@ export function TextEntryRuntime({
   const [state, dispatch] = useReducer(reducer, undefined, buildState);
 
   const { rows, columns } = content;
-  const normalize = comparisonMode === 'dictation' ? normalizeForDictation : normalizeAnswer;
   const total = rows.length;
 
   const answerId = (rowIndex: number) => `${uid}-answer-${rowIndex}`;
@@ -113,29 +112,12 @@ export function TextEntryRuntime({
   };
 
   const handleCheck = () => {
-    const checkedResults: Record<number, boolean> = {};
-    const diffs: Record<number, DiffPart[]> = {};
-    for (let i = 0; i < total; i += 1) {
-      const value = state.values[i] ?? '';
-      if (value.trim() === '') continue; // grade only rows the learner filled
-      const normalizedAnswer = normalize(value);
-      const normalizedExpected = normalize(rows[i].answer);
-      checkedResults[i] = normalizedAnswer === normalizedExpected;
-      diffs[i] = diffChars(normalizedAnswer, normalizedExpected).parts;
-    }
+    const { checkedResults, diffs } = gradeTextEntry(rows, state.values, comparisonMode);
     dispatch({ ...commitCheck(checkedResults), diffs });
   };
 
   const handleShowAnswers = () => {
-    const values: Record<number, string> = {};
-    const checkedResults: Record<number, boolean> = {};
-    const diffs: Record<number, DiffPart[]> = {};
-    for (let i = 0; i < total; i += 1) {
-      const expected = rows[i].answer;
-      values[i] = expected;
-      checkedResults[i] = true;
-      diffs[i] = diffChars(normalize(expected), normalize(expected)).parts;
-    }
+    const { values, checkedResults, diffs } = fillAnswers(rows, comparisonMode);
     dispatch({ values, ...commitCheck(checkedResults), diffs });
   };
 
