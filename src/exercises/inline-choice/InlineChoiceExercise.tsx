@@ -57,6 +57,7 @@ import {
   InlineChoiceExerciseConfigSchema,
   type InlineChoiceItem as InlineChoiceItemContent,
 } from './inline-choice-schema';
+import { fillInlineChoiceAnswers, gradeInlineChoice } from './inline-choice-grading';
 
 interface InlineChoiceState extends ScoringState {
   /** blankIndex → selected option index (as a string, mirrors select). */
@@ -226,23 +227,12 @@ export default function InlineChoiceExercise({ config }: ExerciseComponentProps)
   const nToSolve = blankCursor;
 
   const handleCheck = () => {
-    const checkedResults: Record<number, boolean> = {};
-    for (let i = 0; i < nToSolve; i += 1) {
-      const value = state.values[i];
-      if (value === undefined || value === '') continue;
-      checkedResults[i] = Number(value) === blanksMeta[i]?.winner;
-    }
-    dispatch(commitCheck(checkedResults));
+    dispatch(commitCheck(gradeInlineChoice(blanksMeta, state.values, nToSolve)));
   };
 
   const handleShowAnswers = () => {
-    const values: Record<number, string> = {};
-    const checkedResults: Record<number, boolean> = {};
-    for (let i = 0; i < nToSolve; i += 1) {
-      values[i] = String(blanksMeta[i]?.winner ?? -1);
-      checkedResults[i] = true;
-    }
-    dispatch({ values, checkedResults, hasChecked: true, nCorrect: nToSolve });
+    const { values, checkedResults } = fillInlineChoiceAnswers(blanksMeta, nToSolve);
+    dispatch({ values, ...commitCheck(checkedResults) });
   };
 
   const hasSelections = Object.keys(state.values).length > 0;
