@@ -10,3 +10,8 @@ coverage
 # Lockfile — owned by Bun, not Prettier. Reformatting it would corrupt it.
 bun.lock
 bun.lockb
+
+# Per-machine generated knowledge-graph / tool caches (never committed, never formatted).
+graphify-out
+.understand-anything
+.impeccable
