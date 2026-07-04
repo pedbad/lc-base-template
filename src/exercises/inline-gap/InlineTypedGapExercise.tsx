@@ -34,8 +34,7 @@ import {
 } from '@/components/audio/SequenceAudioController';
 import { ExerciseOptionsSchema, type ExerciseOptions } from '@/config/lo-schema';
 import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
-import { normalizeAnswer } from '@/exercises/lib/answers';
-import { diffChars, type DiffPart } from '@/exercises/lib/charDiff';
+import { type DiffPart } from '@/exercises/lib/charDiff';
 import { TextDiff } from '@/exercises/lib/TextDiff';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
 import { commitCheck, getInitialScoringState, type ScoringState } from '@/exercises/lib/scoring';
@@ -51,6 +50,7 @@ import { ResultSlot } from '@/exercises/lib/ResultSlot';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { TARGET_LANG } from '@/lib/lang';
 import { InlineGapExerciseConfigSchema, type InlineGapItem } from './inline-gap-schema';
+import { fillInlineGapAnswers, gradeInlineGap } from './inline-gap-grading';
 import { useRowAudio } from './useRowAudio';
 
 interface InlineGapState extends ScoringState {
@@ -266,29 +266,12 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
   const nToSolve = blankCursor;
 
   const handleCheck = () => {
-    const checkedResults: Record<number, boolean> = {};
-    const diffs: Record<number, DiffPart[]> = {};
-    for (let i = 0; i < nToSolve; i += 1) {
-      const value = state.values[i] ?? '';
-      if (value.trim() === '') continue; // grade only blanks the learner filled
-      const normalizedAnswer = normalizeAnswer(value);
-      const normalizedExpected = normalizeAnswer(blanksMeta[i]?.expected ?? '');
-      checkedResults[i] = normalizedAnswer === normalizedExpected;
-      diffs[i] = diffChars(normalizedAnswer, normalizedExpected).parts;
-    }
+    const { checkedResults, diffs } = gradeInlineGap(blanksMeta, state.values, nToSolve);
     dispatch({ ...commitCheck(checkedResults), diffs });
   };
 
   const handleShowAnswers = () => {
-    const values: Record<number, string> = {};
-    const checkedResults: Record<number, boolean> = {};
-    const diffs: Record<number, DiffPart[]> = {};
-    for (let i = 0; i < nToSolve; i += 1) {
-      const expected = blanksMeta[i]?.expected ?? '';
-      values[i] = expected;
-      checkedResults[i] = true;
-      diffs[i] = diffChars(expected, expected).parts; // all 'same'
-    }
+    const { values, checkedResults, diffs } = fillInlineGapAnswers(blanksMeta, nToSolve);
     dispatch({ values, ...commitCheck(checkedResults), diffs });
   };
 
