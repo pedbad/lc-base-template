@@ -31,3 +31,9 @@ public/fonts/feijoa/*
 *.njsproj
 *.sln
 *.sw?
+
+# graphify knowledge-graph output (local only, do not commit)
+graphify-out/
+
+# Understand-Anything knowledge-graph output (local only, per-machine, do not commit)
+.understand-anything/
