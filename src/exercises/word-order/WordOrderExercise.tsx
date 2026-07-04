@@ -22,44 +22,22 @@ import { useLayoutEffect, useReducer, useRef, type DragEvent } from 'react';
 import { AudioClip } from '@/components/audio/AudioClip';
 import { ExerciseOptionsSchema } from '@/config/lo-schema';
 import { resolveLabel } from '@/config/ui-strings';
-import { shuffle } from '@/exercises/lib/shuffle';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { ExerciseFooter } from '../lib/ExerciseFooter';
 import { canRevealAnswers } from '../lib/reveal';
 import { captureFlipPositions, playFlipAnimation } from '../lib/reorderAnimation';
 import { TARGET_LANG } from '@/lib/lang';
 import { WordOrderExerciseConfigSchema, type WordOrderContent } from './word-order-schema';
+import {
+  buildTokens,
+  countCorrectPositions,
+  scramble,
+  swapById,
+  type Token,
+} from './word-order-grading';
 import './word-order.css';
 
 const REORDER_DURATION_MS = 260;
-
-interface Token {
-  id: string;
-  label: string;
-}
-
-function buildTokens(words: readonly string[]): Token[] {
-  return words.map((label, index) => ({ id: `token-${index}`, label }));
-}
-
-/** Shuffle, retrying once if it happens to land back on the original order. */
-function scramble(tokens: readonly Token[]): Token[] {
-  const scrambled = shuffle(tokens);
-  if (tokens.length < 2) return scrambled;
-  const unchanged = scrambled.every((token, index) => token.id === tokens[index]?.id);
-  if (!unchanged) return scrambled;
-  const [first, second, ...rest] = scrambled;
-  return first && second ? [second, first, ...rest] : scrambled;
-}
-
-function swapById(order: readonly Token[], idA: string, idB: string): Token[] {
-  const next = [...order];
-  const indexA = next.findIndex((token) => token.id === idA);
-  const indexB = next.findIndex((token) => token.id === idB);
-  if (indexA < 0 || indexB < 0) return next;
-  [next[indexA], next[indexB]] = [next[indexB], next[indexA]];
-  return next;
-}
 
 interface OrderState {
   expected: Token[];
@@ -155,7 +133,7 @@ export default function WordOrderExercise({ config }: ExerciseComponentProps) {
   } = state;
   const total = expected.length;
   const labels = parsed.data.labels;
-  const correctCount = order.filter((token, index) => token.id === expected[index]?.id).length;
+  const correctCount = countCorrectPositions(order, expected);
 
   const setCardRef = (id: string, element: HTMLButtonElement | null) => {
     if (element) cardRefs.current.set(id, element);
