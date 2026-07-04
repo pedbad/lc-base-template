@@ -48,6 +48,7 @@ import {
   lineMatchItemKey,
   type LineMatchItem,
 } from './line-match-schema';
+import { fillLineMatchAnswers, gradeLineMatch } from './line-match-grading';
 
 const DESKTOP_BREAKPOINT = 980;
 const RECOIL_DURATION_MS = 380;
@@ -320,21 +321,11 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
   const handleCheck = () => {
     const desktop = state.isDesktopViewport;
     const answers = desktop ? state.connections : state.values;
-    const checkedResults: Record<string, boolean> = {};
-    const recoiling: RecoilingConnection[] = [];
-    const keptConnections: Record<string, string> = {};
-
-    for (const item of state.sampledItems) {
-      const key = lineMatchItemKey(item);
-      const picked = answers[key];
-      if (!picked) continue;
-      const correct = picked === key;
-      checkedResults[key] = correct;
-      if (desktop) {
-        if (correct) keptConnections[key] = picked;
-        else recoiling.push({ sourceId: key, targetId: picked });
-      }
-    }
+    const { checkedResults, recoiling, keptConnections } = gradeLineMatch(
+      state.sampledItems,
+      answers,
+      desktop,
+    );
 
     if (desktop) {
       dispatch({
@@ -353,15 +344,7 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
 
   const handleShowAnswers = () => {
     stopRecoil();
-    const values: Record<string, string> = {};
-    const connections: Record<string, string> = {};
-    const checkedResults: Record<string, boolean> = {};
-    for (const item of state.sampledItems) {
-      const key = lineMatchItemKey(item);
-      values[key] = key;
-      connections[key] = key;
-      checkedResults[key] = true;
-    }
+    const { values, connections, checkedResults } = fillLineMatchAnswers(state.sampledItems);
     dispatch({
       values,
       connections,
