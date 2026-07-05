@@ -590,4 +590,45 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 
 ---
 
+### Per-engine grading extraction — `*-grading.ts` _(finding H1)_
+
+- **What:** each engine's grading logic — the pure "is this answer correct, and what
+  fills it on Show-answers" functions — was lifted out of the `*.tsx` component into a
+  colocated `src/exercises/<engine>/<engine>-grading.ts` (e.g. `select-grading.ts`
+  exports `gradeSelect` + `fillSelectAnswers`). 11 engines now carry a grading file;
+  the component imports the fns instead of inlining them.
+- **Why:** grading is the one genuinely engine-specific pure function in each engine,
+  and it was tangled into JSX/handlers where it could not be unit-tested in isolation.
+  Split out, each grader gets a `.test.ts` and the component shrinks to wiring +
+  render. This is the counterpart to M1 below: H1 isolates what is **unique** per
+  engine, M1 isolates what is **shared**.
+- **Boundary:** grading only — no phase/scoring/footer wiring moved here (that is M1).
+- **Verified:** `bun test · lint · build` green. Merged via PRs #1 + #3.
+
+---
+
+### Shared blank-grading scaffold — `lib/exerciseScaffold.ts` _(finding M1)_
+
+- **What:** the repeated, non-engine-specific wiring that every blank-grading engine
+  was hand-rolling around its grader + render, extracted **once** into
+  `src/exercises/lib/exerciseScaffold.ts` (+ `exerciseScaffold.test.ts`). Three
+  exports: `seedFromId` (FNV-1a `useId` → stable uint32 seed, was copy-pasted verbatim
+  into 4 engines), `createExerciseReducer` (the merge-patch reducer with a null-patch
+  no-op that returns the same ref — line-match's measure-after-render settle — was
+  hand-rolled in 6 engines), and `useExerciseScaffold` (packages `seed(useId)` +
+  `useReducer(buildRound)` + a `reset()` that rebuilds with `seed + 1`).
+- **Why:** with ~10 more engines planned, the duplicated seed/reducer/reset plumbing
+  would double. The scaffold owns **only** that wiring — it does not grade (H1 above)
+  and does not render (intrinsically per engine).
+- **Ordering with H1:** M1 landed as a **new file, no engine edits**, so it merged with
+  zero conflict against H1's concurrent per-engine `.tsx` edits. Per-engine **adoption**
+  of the scaffold is deferred (one engine per commit) — see
+  `docs/process/2026-07-05-exercise-scaffold-adoption-handover.md` for the recipe.
+- **State:** shipped, not yet consumed — `seedFromId` is still duplicated 4× and the
+  merge reducer 6× until the engines are migrated onto the hook.
+- **Verified:** pure logic covered by `exerciseScaffold.test.ts` (10 tests);
+  `bun test · lint · build` green. Merged via PR #2 (`7ff7e55`).
+
+---
+
 _Append a new section here as each tool lands._
