@@ -154,3 +154,68 @@ Before broad refactor churn:
 >
 > Note: an unpushed **flashcards** engine exists on a separate work machine —
 > confirm no overlap before broad churn.
+
+---
+
+## Monday runbook — land the flashcards (run ON THE WORK MACHINE)
+
+The flashcards engine was built on a separate work computer and is **uncommitted +
+unpushed**. That machine is behind `main` (missing H1 + M1 + this handover). Do this
+FIRST, before any scaffold-adoption work, to secure it and rebase onto current `main`.
+
+### Step 0 — secure it immediately (before anything else)
+
+```bash
+cd <repo>                       # the lc-base-template clone on the work machine
+git status                      # confirm the flashcard files are listed
+git checkout -b feat/flashcards-engine
+git add -A
+git commit -m "feat: add flashcards exercise engine"
+git push -u origin feat/flashcards-engine   # now off local disk — safe
+```
+
+### Step 1 — rebase onto current `main`
+
+```bash
+git fetch origin
+git rebase origin/main
+```
+
+Expected clean (flashcards is a new dir). If conflicts appear — only likely in shared
+glue (`lazyRegistry.ts`, `exercise-types.ts`, the instructions map, showcase fixtures):
+
+```bash
+git status                      # see conflicted files
+# edit: keep BOTH the flashcards registration AND main's existing entries
+git add <file>
+git rebase --continue
+```
+
+Bail out anytime with `git rebase --abort` — the Step 0 commit stays safe.
+
+### Step 2 — verify (CI runs these on push; run locally first)
+
+```bash
+bun install                     # main may have added deps
+bun test
+bun run lint
+bun run build
+```
+
+### Step 3 — land it
+
+```bash
+git push --force-with-lease     # rebase rewrote history; safe force
+gh pr create --base main --title "feat: flashcards exercise engine" --body "New flashcards engine."
+gh pr merge --squash --delete-branch
+```
+
+### Step 4 — then start the scaffold refactor on fresh `main`
+
+```bash
+git checkout main && git pull
+git checkout -b refactor/scaffold-select
+```
+
+Then follow the **Continue prompt** above (adopt `useExerciseScaffold` + `seedFromId`,
+`select` first, one engine per commit).
