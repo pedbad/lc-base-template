@@ -29,6 +29,7 @@ import { memoryMatchFixtures } from '@/exercises/memory-match/memory-match.fixtu
 import { wordOrderFixtures } from '@/exercises/word-order/word-order.fixture';
 import { phraseReorderFixtures } from '@/exercises/phrase-reorder/phrase-reorder.fixture';
 import { dragFillGapsFixtures } from '@/exercises/drag-fill-gaps/drag-fill-gaps.fixture';
+import { flashcardsFixtures } from '@/exercises/flashcards/flashcards.fixture';
 
 export type { ShowcaseFixture } from './fixture-types';
 
@@ -49,4 +50,5 @@ export const SHOWCASE_FIXTURES: ShowcaseFixture[] = [
   ...wordOrderFixtures,
   ...phraseReorderFixtures,
   ...dragFillGapsFixtures,
+  ...flashcardsFixtures,
 ];
