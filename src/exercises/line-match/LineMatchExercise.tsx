@@ -18,7 +18,7 @@
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5, §7, §8.
  */
-import { useCallback, useEffect, useId, useReducer, useRef, type ReactNode } from 'react';
+import { useCallback, useEffect, useId, useRef, type ReactNode } from 'react';
 
 import {
   Select,
@@ -35,6 +35,7 @@ import { commitCheck, getInitialScoringState, type ScoringState } from '@/exerci
 import { mulberry32, sampleN, shuffle } from '@/exercises/lib/shuffle';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
+import { useExerciseScaffold } from '@/exercises/lib/exerciseScaffold';
 import { resolveAsset } from '@/lib/assets';
 import { TARGET_LANG } from '@/lib/lang';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
@@ -69,18 +70,6 @@ interface LineMatchState extends ScoringState {
   seed: number;
 }
 
-type LineMatchPatch =
-  | Partial<LineMatchState>
-  | null
-  | ((state: LineMatchState) => Partial<LineMatchState> | null);
-
-/** Merge reducer with a no-op bail-out: a null patch returns the SAME state ref, so
- *  the measure-after-every-render effect can re-measure without looping forever. */
-const reducer = (state: LineMatchState, patch: LineMatchPatch): LineMatchState => {
-  const update = typeof patch === 'function' ? patch(state) : patch;
-  return update ? { ...state, ...update } : state;
-};
-
 const buildRound = (
   items: readonly LineMatchItem[],
   sampleSize: number | undefined,
@@ -103,16 +92,6 @@ const buildRound = (
     recoilProgress: 1,
     seed,
   };
-};
-
-/** FNV-1a hash → a stable numeric seed from the component's useId. */
-const seedFromId = (id: string): number => {
-  let hash = 2166136261;
-  for (let i = 0; i < id.length; i += 1) {
-    hash ^= id.charCodeAt(i);
-    hash = Math.imul(hash, 16777619);
-  }
-  return hash >>> 0;
 };
 
 const isDesktopNow = (): boolean =>
@@ -162,8 +141,12 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
     parsed.success ? (parsed.data.options ?? {}) : {},
   );
 
-  const [state, dispatch] = useReducer(reducer, undefined, () =>
-    buildRound(items, options.sampleSize, seedFromId(uid), isDesktopNow()),
+  // Shared scaffold: seeds from a stable per-instance useId and wires the merge
+  // reducer (including its null no-op bail-out, which lets the measure-after-render
+  // effect settle without looping). reset() rebuilds with seed + 1; viewport is read
+  // fresh via isDesktopNow() (kept in sync with state by updateViewport).
+  const { state, dispatch, reset } = useExerciseScaffold<LineMatchState>((seed) =>
+    buildRound(items, options.sampleSize, seed, isDesktopNow()),
   );
 
   // View-machinery refs (do not drive rendering directly).
@@ -209,7 +192,7 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
         ? null
         : { connectorLayout: next },
     );
-  }, []);
+  }, [dispatch]);
 
   const scheduleMeasure = useCallback(() => {
     if (typeof window === 'undefined') return;
@@ -223,7 +206,7 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
   const updateViewport = useCallback(() => {
     const next = isDesktopNow();
     dispatch((prev) => (prev.isDesktopViewport === next ? null : { isDesktopViewport: next }));
-  }, []);
+  }, [dispatch]);
 
   const stopRecoil = useCallback(() => {
     if (typeof window !== 'undefined' && recoilFrame.current) {
@@ -247,7 +230,7 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
       dispatch({ recoilProgress: 1, recoiling: [] });
     };
     recoilFrame.current = window.requestAnimationFrame(step);
-  }, [stopRecoil]);
+  }, [dispatch, stopRecoil]);
 
   // Mount: viewport + resize listener + ResizeObserver on the desktop stage.
   useEffect(() => {
@@ -313,9 +296,7 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
 
   const handleReset = () => {
     stopRecoil();
-    dispatch((prev) =>
-      buildRound(items, options.sampleSize, prev.seed + 1, prev.isDesktopViewport),
-    );
+    reset();
   };
 
   const handleCheck = () => {
