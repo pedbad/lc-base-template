@@ -622,12 +622,15 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   and does not render (intrinsically per engine).
 - **Ordering with H1:** M1 landed as a **new file, no engine edits**, so it merged with
   zero conflict against H1's concurrent per-engine `.tsx` edits. Per-engine **adoption**
-  of the scaffold is deferred (one engine per commit) — see
-  `docs/process/2026-07-05-exercise-scaffold-adoption-handover.md` for the recipe.
-- **State:** shipped, not yet consumed — `seedFromId` is still duplicated 4× and the
-  merge reducer 6× until the engines are migrated onto the hook.
-- **Verified:** pure logic covered by `exerciseScaffold.test.ts` (10 tests);
-  `bun test · lint · build` green. Merged via PR #2 (`7ff7e55`).
+  of the scaffold followed (one engine per commit) — recipe in
+  `docs/process/2026-07-05-exercise-scaffold-adoption-handover.md`.
+- **State:** shipped **and consumed**. All four `seedFromId` engines now use
+  `useExerciseScaffold` — `select`, `inline-choice`, `radio-quiz`, `line-match` (one
+  commit each). `seedFromId` local defs: **0 left** (was 4). `inline-gap` and
+  `text-entry` keep a local merge reducer only (no `seed`, so out of scope for the hook).
+- **Verified:** pure logic covered by `exerciseScaffold.test.ts` (10 tests); after each
+  engine `bun test · lint · build` green (313 tests). Scaffold merged via PR #2
+  (`7ff7e55`); adoption via the `feat/scaffold-adoption` branch.
 
 ---
 

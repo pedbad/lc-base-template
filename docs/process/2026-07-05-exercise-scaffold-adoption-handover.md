@@ -1,8 +1,12 @@
 # Handover — M1 exercise-scaffold adoption
 
-**Date:** 2026-07-05
+**Date:** 2026-07-05 (adoption completed 2026-07-08)
 **Audit finding:** M1 (shared exercise scaffold)
-**Status:** shared unit shipped & merged; **per-engine adoption NOT started**
+**Status:** ✅ **DONE** — shared unit shipped & merged, and all four target engines
+migrated onto `useExerciseScaffold` (2026-07-08, `feat/scaffold-adoption`,
+one commit each: `select` `0f1dd20`, `inline-choice` `5b3f263`,
+`radio-quiz` `1beecba`, `line-match` `238011b`). `seedFromId` local defs: 0 left.
+The runbook + recipe below are retained as historical reference.
 
 ---
 
@@ -45,14 +49,18 @@ their grading fns (e.g. `select` imports `gradeSelect`, `fillSelectAnswers` from
 
 ## Current state / what remains
 
-M1's **goal is not met yet**: the scaffold exists but **no engine consumes it**.
-Duplication still live on `main`:
+✅ **Complete as of 2026-07-08.** All four `seedFromId` engines now consume
+`useExerciseScaffold` (`select`, `inline-choice`, `radio-quiz`, `line-match`), one
+commit each, behavior identical (313 tests · lint · build green after each). No local
+`seedFromId` defs remain.
 
-- `seedFromId` — **4×** verbatim: `select`, `inline-choice`, `radio-quiz`, `line-match`
-- merge reducer (`typeof patch === 'function'`) — **6×**: those four + `inline-gap`, `text-entry`
+`inline-gap` and `text-entry` still carry a local merge reducer **only** — they have no
+`seed`, so they cannot take `useExerciseScaffold` (`S extends { seed: number }`). A
+follow-up could point them at `createExerciseReducer` alone; out of scope for M1.
 
-Remaining work = adopt `useExerciseScaffold` / `seedFromId` / `createExerciseReducer`
-in the blank-grading engines, **one engine per commit**, behavior identical.
+_Original remaining-work note (historical):_ adopt `useExerciseScaffold` / `seedFromId` /
+`createExerciseReducer` in the blank-grading engines, **one engine per commit**, behavior
+identical.
 
 ### Adoption targets (blank-grading family)
 
