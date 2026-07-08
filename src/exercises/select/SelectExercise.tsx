@@ -26,7 +26,7 @@
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5, §7, §8.
  */
-import { useId, useReducer, type ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 
 import {
   Select,
@@ -50,6 +50,7 @@ import {
 import { prepareChoiceItems, type PrepareChoiceOptions } from '@/exercises/lib/prepareChoiceItems';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
+import { useExerciseScaffold } from '@/exercises/lib/exerciseScaffold';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { TARGET_LANG } from '@/lib/lang';
 import { SelectExerciseConfigSchema, type SelectItem as SelectItemContent } from './select-schema';
@@ -67,14 +68,6 @@ interface SelectState extends ScoringState {
   seed: number;
 }
 
-type SelectPatch = Partial<SelectState> | ((state: SelectState) => Partial<SelectState>);
-
-/** Merge reducer: each dispatch is a partial patch (answer fields are interdependent). */
-const reducer = (state: SelectState, patch: SelectPatch): SelectState => ({
-  ...state,
-  ...(typeof patch === 'function' ? patch(state) : patch),
-});
-
 const buildState = (
   items: readonly SelectItemContent[],
   options: PrepareChoiceOptions,
@@ -86,16 +79,6 @@ const buildState = (
   seed,
 });
 
-/** FNV-1a hash → a stable numeric seed from the component's useId (pure; no Math.random). */
-const seedFromId = (id: string): number => {
-  let hash = 2166136261;
-  for (let i = 0; i < id.length; i += 1) {
-    hash ^= id.charCodeAt(i);
-    hash = Math.imul(hash, 16777619);
-  }
-  return hash >>> 0;
-};
-
 export default function SelectExercise({ config }: ExerciseComponentProps) {
   const uid = useId();
 
@@ -106,10 +89,11 @@ export default function SelectExercise({ config }: ExerciseComponentProps) {
     parsed.success ? (parsed.data.options ?? {}) : {},
   );
 
-  // Seed from useId: stable across re-renders, distinct per instance (so the two
-  // showcase cards shuffle differently). Reset bumps the seed for a fresh order.
-  const [state, dispatch] = useReducer(reducer, undefined, () =>
-    buildState(items, options, seedFromId(uid)),
+  // Shared scaffold: seeds from a stable per-instance useId (so the two showcase
+  // cards shuffle differently), wires the merge reducer, and gives reset() which
+  // rebuilds with seed + 1 for a fresh order.
+  const { state, dispatch, reset } = useExerciseScaffold<SelectState>((seed) =>
+    buildState(items, options, seed),
   );
 
   const handleSelectChange = (blankIndex: number, value: string) => {
@@ -123,9 +107,7 @@ export default function SelectExercise({ config }: ExerciseComponentProps) {
     });
   };
 
-  const handleReset = () => {
-    dispatch((prev) => buildState(items, options, prev.seed + 1));
-  };
+  const handleReset = reset;
 
   if (!parsed.success) {
     return (
