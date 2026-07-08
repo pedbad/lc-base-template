@@ -34,7 +34,7 @@
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5, §7, §8.
  */
-import { useId, useReducer, type ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 
 import { ExerciseOptionsSchema, type ExerciseOptions } from '@/config/lo-schema';
 import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
@@ -44,6 +44,7 @@ import { mulberry32, shuffle } from '@/exercises/lib/shuffle';
 import { ChoicePillGroup } from '@/exercises/lib/ChoicePillGroup';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
+import { useExerciseScaffold } from '@/exercises/lib/exerciseScaffold';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { TARGET_LANG } from '@/lib/lang';
 import {
@@ -71,16 +72,6 @@ interface RadioQuizState extends ScoringState {
   /** RNG seed; bumped on reset so an `options.shuffle` exercise re-shuffles. */
   seed: number;
 }
-
-type RadioQuizPatch =
-  | Partial<RadioQuizState>
-  | ((state: RadioQuizState) => Partial<RadioQuizState>);
-
-/** Merge reducer: each dispatch is a partial patch (answer fields are interdependent). */
-const reducer = (state: RadioQuizState, patch: RadioQuizPatch): RadioQuizState => ({
-  ...state,
-  ...(typeof patch === 'function' ? patch(state) : patch),
-});
 
 /**
  * Prepare one question for render: strip the `*`, then (if shuffling) reorder the
@@ -131,21 +122,6 @@ const buildState = (
   };
 };
 
-/**
- * FNV-1a hash → a stable numeric seed from the component's useId (pure; no
- * Math.random). Mirrors the helper in select/inline-choice; promote to lib if a
- * fourth consumer appears (rule of three already met, but extracting would touch the
- * shipped engines — out of scope for this port).
- */
-const seedFromId = (id: string): number => {
-  let hash = 2166136261;
-  for (let i = 0; i < id.length; i += 1) {
-    hash ^= id.charCodeAt(i);
-    hash = Math.imul(hash, 16777619);
-  }
-  return hash >>> 0;
-};
-
 export default function RadioQuizExercise({ config }: ExerciseComponentProps) {
   const uid = useId();
 
@@ -158,10 +134,10 @@ export default function RadioQuizExercise({ config }: ExerciseComponentProps) {
     parsed.success ? (parsed.data.options ?? {}) : {},
   );
 
-  // Seed from useId: stable across re-renders, distinct per instance. Reset bumps
-  // the seed for a fresh option order.
-  const [state, dispatch] = useReducer(reducer, undefined, () =>
-    buildState(questions, options, seedFromId(uid)),
+  // Shared scaffold: seeds from a stable per-instance useId, wires the merge
+  // reducer, and gives reset() which rebuilds with seed + 1 for a fresh option order.
+  const { state, dispatch, reset } = useExerciseScaffold<RadioQuizState>((seed) =>
+    buildState(questions, options, seed),
   );
 
   const handleChoiceChange = (questionIndex: number, optionIndex: number) => {
@@ -176,9 +152,7 @@ export default function RadioQuizExercise({ config }: ExerciseComponentProps) {
     });
   };
 
-  const handleReset = () => {
-    dispatch((prev) => buildState(questions, options, prev.seed + 1));
-  };
+  const handleReset = reset;
 
   if (!parsed.success) {
     return (
