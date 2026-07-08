@@ -47,6 +47,7 @@ import {
 } from '@/exercises/lib/parsing';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
+import { createExerciseReducer } from '@/exercises/lib/exerciseScaffold';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { TARGET_LANG } from '@/lib/lang';
 import { InlineGapExerciseConfigSchema, type InlineGapItem } from './inline-gap-schema';
@@ -60,15 +61,8 @@ interface InlineGapState extends ScoringState {
   diffs: Record<number, DiffPart[]>;
 }
 
-type InlineGapPatch =
-  | Partial<InlineGapState>
-  | ((state: InlineGapState) => Partial<InlineGapState>);
-
-/** Merge reducer: each dispatch is a partial patch (answer fields are interdependent). */
-const reducer = (state: InlineGapState, patch: InlineGapPatch): InlineGapState => ({
-  ...state,
-  ...(typeof patch === 'function' ? patch(state) : patch),
-});
+/** Shared merge reducer (partial/function patch); answer fields are interdependent. */
+const reducer = createExerciseReducer<InlineGapState>();
 
 const buildState = (): InlineGapState => ({
   ...getInitialScoringState(),

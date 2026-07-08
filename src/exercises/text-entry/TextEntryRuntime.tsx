@@ -38,6 +38,7 @@ import { canRevealAnswers } from '@/exercises/lib/reveal';
 import { commitCheck, getInitialScoringState, type ScoringState } from '@/exercises/lib/scoring';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
+import { createExerciseReducer } from '@/exercises/lib/exerciseScaffold';
 import { TARGET_LANG } from '@/lib/lang';
 import type { TextEntryContent } from './text-entry-schema';
 import { fillAnswers, gradeTextEntry, type ComparisonMode } from './text-entry-grading';
@@ -59,14 +60,8 @@ interface TextEntryState extends ScoringState {
   diffs: Record<number, DiffPart[]>;
 }
 
-type TextEntryPatch =
-  | Partial<TextEntryState>
-  | ((state: TextEntryState) => Partial<TextEntryState>);
-
-const reducer = (state: TextEntryState, patch: TextEntryPatch): TextEntryState => ({
-  ...state,
-  ...(typeof patch === 'function' ? patch(state) : patch),
-});
+/** Shared merge reducer (partial/function patch); answer fields are interdependent. */
+const reducer = createExerciseReducer<TextEntryState>();
 
 const buildState = (): TextEntryState => ({
   ...getInitialScoringState(),
