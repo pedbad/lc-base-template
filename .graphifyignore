@@ -1,0 +1,17 @@
+# graphify ignore — keep tooling/agent noise out of the knowledge graph.
+# gitignore syntax; takes precedence over .gitignore.
+
+# Build + deps
+dist/
+node_modules/
+coverage/
+
+# graphify's own output
+graphify-out/
+
+# Git hooks (husky stubs — not project code)
+.husky/
+
+# Editor + agent tooling
+.vscode/
+.claude/

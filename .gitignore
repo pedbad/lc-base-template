@@ -37,3 +37,6 @@ graphify-out/
 
 # Understand-Anything knowledge-graph output (local only, per-machine, do not commit)
 .understand-anything/
+
+# tdd-guard agent runtime scratch (per-machine state; .claude/launch.json stays tracked)
+.claude/tdd-guard/
