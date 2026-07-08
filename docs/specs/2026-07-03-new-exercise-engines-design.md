@@ -186,8 +186,14 @@ Non-chosen and infra-heavy ideas live in
 
 ## 9. Open decisions deferred to build time
 
-- Flashcards: self-rate scale — 2-button (Again/Good) vs 4-button (Again/Hard/
-  Good/Easy). Lean 2-button for v1.
-- Flashcards: author direction-lock — support in schema v1, or add later?
-- Confirm audio file extension against the existing dictation clips.
+- **RESOLVED (2026-07-08):** Flashcards self-rate scale → **2-button (Again/Good)**
+  for v1. Widen to 4-button only if the Step 2 SRS wants finer intervals.
+- **RESOLVED (2026-07-08):** Author direction-lock → **supported in schema v1**
+  (`options.direction` default `target-native`, `options.lockDirection` hides the
+  learner toggle).
+- **RESOLVED (2026-07-08):** Audio extension → the repo's live clips are actually
+  AAC (`.mp4` in memory-match, `.wav` in inline-gap); there are no `.mp3`/`.m4a`
+  clips in-repo. Flashcards uses `.m4a` (AAC) per this doc; the schema/player accept
+  any path (HTML5 `<audio>` is extension-agnostic). Placeholder `.m4a` clips for the
+  showcase were generated with macOS `say` + `afconvert`.
 - SRS algorithm detail: plain Leitner boxes vs SM-2 lite (decide at Step 2).

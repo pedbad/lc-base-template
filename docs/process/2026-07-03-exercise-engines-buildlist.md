@@ -9,21 +9,21 @@ commit-sized unit.
 
 ---
 
-## 1. Flashcards `[ ]` — build FIRST, in two steps
+## 1. Flashcards `[~]` — build FIRST, in two steps
 
-### Step 1 — in-memory deck (shippable checkpoint) `[ ]`
+### Step 1 — in-memory deck (shippable checkpoint) `[x]`
 
-- [ ] `exercise-types.ts` — add `flashcards` key
-- [ ] `flashcards/flashcards-schema.ts` — Zod (`cards[{target,native,image?,audio?}]`, `options{shuffle?,srs?}`, `instructionsField`)
-- [ ] `flashcards/FlashcardsExercise.tsx` — flip, self-rate (Again/Good), advance, progress, restart
-- [ ] Direction toggle — default Spanish→English, learner-flippable
-- [ ] Audio icon on `target` field (reuse `AudioClip` / `CircularAudioProgressAnimatedSpeaker`)
-- [ ] `lang={TARGET_LANG}` on target content only
-- [ ] `lazyRegistry.ts` — register
-- [ ] `instructions.ts` — `EXERCISE_INSTRUCTIONS.flashcards` (flip + self-rate copy, no Check/Show-answers)
-- [ ] `showcase/fixtures.ts` — card(s) with placeholder audio clips
-- [ ] Tests (`bun test`) + tsc clean
-- [ ] Showcase a11y verify — keyboard flip/rate, audio label, lang tagging
+- [x] `exercise-types.ts` — add `flashcards` key
+- [x] `flashcards/flashcards-schema.ts` — Zod (`cards[{target,native,image?,audio?}]`, `options{shuffle?,direction?,lockDirection?,srs?}`, `instructionsField`)
+- [x] `flashcards/FlashcardsExercise.tsx` — flip, self-rate (Again/Good), advance, progress, restart (thin view over pure `flashcards-deck.ts`)
+- [x] Direction toggle — default Spanish→English, learner-flippable; author `lockDirection` hides it
+- [x] Audio icon on `target` field (reuse `AudioClip` / `CircularAudioProgressAnimatedSpeaker`)
+- [x] `lang={TARGET_LANG}` on target content only
+- [x] `lazyRegistry.ts` — register
+- [x] `instructions.ts` — `EXERCISE_INSTRUCTIONS.flashcards` (flip + self-rate copy, no Check/Show-answers)
+- [x] `flashcards.fixture.ts` — card(s) with placeholder audio clips (`.m4a`; colocated per refactor `8df1f4e`)
+- [x] Tests (`bun test`) + tsc clean — 15 flashcards tests (schema + pure deck reducer)
+- [x] Showcase a11y verify — keyboard flip/rate, audio label, lang tagging (verified 2026-07-08)
 
 ### Step 2 — SRS layer `[ ]`
 
