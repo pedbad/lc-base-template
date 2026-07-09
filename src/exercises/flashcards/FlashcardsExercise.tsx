@@ -5,9 +5,17 @@
  * footer; the rating IS the interaction.
  *
  * This file is a thin view over the pure session model in `flashcards-deck.ts`
- * (buildDeck + deckReducer, unit-tested there). Step 1 is fully in-memory: "Again"
- * requeues the card so it resurfaces this session, "Good" retires it, and the deck is
- * done when every card is Good. `options.srs` + localStorage are Step 2 (design §4).
+ * (buildDeck + deckReducer, unit-tested there). The in-session pass is in-memory:
+ * "Again" requeues the card so it resurfaces this session, "Good" retires it, and the
+ * deck is done when every card is Good.
+ *
+ * SRS layer (Step 2, design §4.2) — active only when `options.srs` is set. On top of
+ * the in-memory pass it adds cross-session Leitner memory: `srs-scheduler.ts` (pure)
+ * tracks each card's box + due-step, `flashcards-storage.ts` persists it to
+ * localStorage (guarded — untrusted reads, no-window safe, fresh-deck fallback). On
+ * load the deck is ordered by due (struggled cards first — this supersedes `shuffle`
+ * for the starting order); rating a card persists its box move ("Again" → box 1 so it
+ * leads next time, "Good" → promote so it fades). "Reset progress" clears the store.
  *
  * Direction: the learner flips the whole deck between Spanish→English (default,
  * recognition-first) and English→Spanish, unless `options.lockDirection` hides the
@@ -33,8 +41,25 @@ import {
   FlashcardsOptionsSchema,
   type FlashcardDirection,
 } from './flashcards-schema';
-import { buildDeck, deckReducer, initDeckState } from './flashcards-deck';
+import { buildDeck, deckReducer, initDeckState, type DeckCard } from './flashcards-deck';
+import { initSrsState, gradeCard, dueOrder, type SrsGrade, type SrsState } from './srs-scheduler';
+import { storageKey, loadSrsState, saveSrsState, clearSrsState } from './flashcards-storage';
 import './flashcards.css';
+
+/**
+ * Reorder a freshly-built deck so the most-due cards lead (SRS load-order). A fresh
+ * scheduler has every card due 0, so this is a stable no-op on a first visit and only
+ * bites once boxes diverge across sessions. Pure wiring over the scheduler's `dueOrder`.
+ */
+function orderByDue(cards: readonly DeckCard[], srs: SrsState): DeckCard[] {
+  const byId = new Map(cards.map((card) => [card.id, card]));
+  return dueOrder(
+    srs,
+    cards.map((card) => card.id),
+  )
+    .map((id) => byId.get(id))
+    .filter((card): card is DeckCard => card !== undefined);
+}
 
 export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
   const parsed = FlashcardsExerciseConfigSchema.safeParse(config);
@@ -44,10 +69,24 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
   const options = parsed.success ? FlashcardsOptionsSchema.parse(parsed.data.options ?? {}) : null;
   const content = parsed.success ? parsed.data.content : null;
 
+  // SRS wiring (design §4.2), engaged only when the author opts in. Card ids are
+  // `String(index)` from buildDeck and are shuffle-independent, so they derive
+  // straight from the content — no need to build the deck to seed the scheduler.
+  const srsEnabled = Boolean(options?.srs) && content !== null;
+  const cardIds = content ? content.cards.map((_, index) => String(index)) : [];
+  const storeKey = srsEnabled && content ? storageKey(content) : '';
+
+  const [srs, setSrs] = useState<SrsState>(() =>
+    srsEnabled ? loadSrsState(storeKey, cardIds) : initSrsState(cardIds),
+  );
+
   const [state, dispatch] = useReducer(
     deckReducer,
-    { content, shuffle: options?.shuffle ?? false },
-    (init) => initDeckState(init.content ? buildDeck(init.content, init.shuffle) : []),
+    { content, shuffle: options?.shuffle ?? false, srsEnabled, srs },
+    (init) => {
+      const base = init.content ? buildDeck(init.content, init.shuffle) : [];
+      return initDeckState(init.srsEnabled ? orderByDue(base, init.srs) : base);
+    },
   );
 
   const [direction, setDirection] = useState<FlashcardDirection>(
@@ -68,8 +107,33 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
 
   const handleToggleDirection = () =>
     setDirection((d) => (d === 'target-native' ? 'native-target' : 'target-native'));
-  const handleRestart = () =>
-    dispatch({ kind: 'restart', queue: buildDeck(content, options.shuffle) });
+
+  // Rebuild the deck for another pass. SRS progress persists, so the fresh deck is
+  // re-ordered by the current due-state (struggled cards lead again).
+  const freshQueue = (nextSrs: SrsState) => {
+    const base = buildDeck(content, options.shuffle);
+    return srsEnabled ? orderByDue(base, nextSrs) : base;
+  };
+  const handleRestart = () => dispatch({ kind: 'restart', queue: freshQueue(srs) });
+
+  // Rating a card runs the in-memory pass (requeue-on-again / retire-on-good) and, when
+  // SRS is on, persists the card's Leitner box move for the next session.
+  const handleRate = (grade: SrsGrade) => {
+    if (srsEnabled && current) {
+      const nextSrs = gradeCard(srs, current.id, grade);
+      setSrs(nextSrs);
+      saveSrsState(storeKey, nextSrs);
+    }
+    dispatch({ kind: 'rate', grade });
+  };
+
+  // "Reset progress": wipe persisted boxes and start a fresh deck from box 1.
+  const handleResetProgress = () => {
+    clearSrsState(storeKey);
+    const fresh = initSrsState(cardIds);
+    setSrs(fresh);
+    dispatch({ kind: 'restart', queue: freshQueue(fresh) });
+  };
 
   if (!current) {
     return (
@@ -79,6 +143,11 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
         </p>
         <div className="flashcards-footer">
           <Button onClick={handleRestart}>Restart</Button>
+          {srsEnabled ? (
+            <Button variant="ghost" onClick={handleResetProgress}>
+              Reset progress
+            </Button>
+          ) : null}
         </div>
       </div>
     );
@@ -137,10 +206,10 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
       <div className="flashcards-actions">
         {flipped ? (
           <>
-            <Button variant="outline" onClick={() => dispatch({ kind: 'rate', grade: 'again' })}>
+            <Button variant="outline" onClick={() => handleRate('again')}>
               Again
             </Button>
-            <Button onClick={() => dispatch({ kind: 'rate', grade: 'good' })}>Good</Button>
+            <Button onClick={() => handleRate('good')}>Good</Button>
           </>
         ) : (
           <Button onClick={() => dispatch({ kind: 'flip' })}>Flip</Button>
@@ -162,6 +231,11 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
         <Button variant="ghost" onClick={handleRestart}>
           Restart
         </Button>
+        {srsEnabled ? (
+          <Button variant="ghost" onClick={handleResetProgress}>
+            Reset progress
+          </Button>
+        ) : null}
       </div>
     </div>
   );

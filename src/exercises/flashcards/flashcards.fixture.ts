@@ -33,7 +33,10 @@ export const flashcardsFixtures: ShowcaseFixture[] = [
         footnote: 'Demo hint line — flip each card and rate how well you knew it.',
       },
       // shuffle on: the deck order randomizes and Restart re-shuffles.
-      options: { shuffle: true },
+      // shuffle on + SRS on (Step 2): progress persists to localStorage, the deck
+      // loads in due-order (struggled cards first), and a "Reset progress" control
+      // appears. Due-order supersedes shuffle once boxes diverge across sessions.
+      options: { shuffle: true, srs: true },
     } satisfies FlashcardsConfigInput,
   },
   {
