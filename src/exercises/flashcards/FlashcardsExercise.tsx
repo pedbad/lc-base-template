@@ -23,10 +23,13 @@
  * faces front. The audio speaker and `lang={TARGET_LANG}` always follow the `target`
  * (Spanish) side, wherever it currently renders.
  *
- * A11y: the card is a real <button> (keyboard-flippable); rating/toggle/restart are
- * real <button>s; the audio control is a sibling overlay (never nested in the card
- * button — a button-in-button is invalid HTML). Only target-language content is
- * wrapped in `lang={TARGET_LANG}`; all chrome stays `en`.
+ * A11y: flipping is a transparent full-card <button> (`flashcards-flip-hit`) layered
+ * under the faces; rating/toggle/restart are real <button>s; the inline audio speaker
+ * is a real <button> living inside the target face. None nest inside another button
+ * (a button-in-button is invalid HTML) — the faces are non-interactive, and CSS
+ * pointer-events routing lets card clicks fall through to the flip-hit while the
+ * speaker keeps its own. Only target-language content is wrapped in
+ * `lang={TARGET_LANG}`; all chrome stays `en`.
  *
  * Spec: docs/specs/2026-07-03-new-exercise-engines-design.md §4.
  */
@@ -153,13 +156,26 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
     );
   }
 
-  // Which role faces front, and whether the Spanish (target) side is currently visible.
+  // Which role faces front. The audio speaker rides inside whichever face carries the
+  // Spanish (target) term, so it sits beside the word and rotates with the flip.
   const targetOnFront = direction === 'target-native';
   const frontText = targetOnFront ? current.target : current.native;
   const backText = targetOnFront ? current.native : current.target;
-  const targetVisible = targetOnFront ? !flipped : flipped;
-  const showSpeaker = Boolean(current.audio) && targetVisible;
   const faceLang = (isTarget: boolean) => (isTarget ? TARGET_LANG : undefined);
+
+  // The speaker is a real <button>, so it can't nest inside a <button> card. The card
+  // instead layers a transparent flip-hit <button> UNDER the faces (pointer-events
+  // routing in CSS): clicks on empty card area fall through to it and flip, while the
+  // inline speaker keeps its own clicks. Both stay keyboard-reachable, no nesting.
+  const speaker = (isTarget: boolean) =>
+    isTarget && current.audio ? (
+      <AudioClip
+        className="super-compact-speaker flashcards-audio"
+        soundFile={current.audio}
+        size={22}
+        inline
+      />
+    ) : null;
 
   return (
     <div className="flashcards">
@@ -168,39 +184,38 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
       </p>
 
       <div className="flashcards-card-wrap">
-        <button
-          type="button"
-          className="flashcards-card"
-          data-flipped={flipped}
-          aria-pressed={flipped}
-          aria-label={flipped ? 'Card back, click to flip to front' : 'Card front, click to flip'}
-          onClick={() => dispatch({ kind: 'flip' })}
-        >
+        <div className="flashcards-card" data-flipped={flipped}>
           <span className="flashcards-card-inner">
             <span className="flashcards-face flashcards-face-front" aria-hidden={flipped}>
-              <span className="flashcards-term" lang={faceLang(targetOnFront)}>
-                {frontText}
+              <span className="flashcards-term-row">
+                <span className="flashcards-term" lang={faceLang(targetOnFront)}>
+                  {frontText}
+                </span>
+                {speaker(targetOnFront)}
               </span>
             </span>
             <span className="flashcards-face flashcards-face-back" aria-hidden={!flipped}>
-              <span className="flashcards-term" lang={faceLang(!targetOnFront)}>
-                {backText}
+              <span className="flashcards-term-row">
+                <span className="flashcards-term" lang={faceLang(!targetOnFront)}>
+                  {backText}
+                </span>
+                {speaker(!targetOnFront)}
               </span>
               {current.image ? (
                 <img className="flashcards-image" src={resolveAsset(current.image)} alt="" />
               ) : null}
             </span>
           </span>
-        </button>
 
-        {showSpeaker ? (
-          <AudioClip
-            className="super-compact-speaker flashcards-audio"
-            soundFile={current.audio ?? ''}
-            size={22}
-            inline
+          <button
+            type="button"
+            className="flashcards-flip-hit"
+            data-flipped={flipped}
+            aria-pressed={flipped}
+            aria-label={flipped ? 'Card back, click to flip to front' : 'Card front, click to flip'}
+            onClick={() => dispatch({ kind: 'flip' })}
           />
-        ) : null}
+        </div>
       </div>
 
       <div className="flashcards-actions">

@@ -19,39 +19,51 @@
     margin: 0 auto;
   }
 
-  /* Positioning context for the optional speaker overlay (a sibling of the flip
-     button, never nested inside it — a button-in-button is invalid HTML). */
   .flashcards-card-wrap {
-    position: relative;
     display: block;
   }
 
-  /* The card is a button; strip native chrome and give it a wide card footprint. */
+  /* The card is the 3D stage + hit-target anchor (no longer a button — the flip
+     control is the transparent .flashcards-flip-hit layered under the faces). */
   .flashcards-card {
-    appearance: none;
+    position: relative;
     display: block;
     width: 100%;
     aspect-ratio: 3 / 2;
+    perspective: 1400px;
+  }
+
+  /* The rotating layer sits above the flip-hit button but passes pointer events
+     through, so a click on the card falls to the flip-hit beneath (the inline
+     speaker re-enables its own — see .flashcards-audio). */
+  .flashcards-card-inner {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    transform-style: preserve-3d;
+    transition: transform 640ms cubic-bezier(0.22, 0.9, 0.25, 1);
+  }
+
+  /* Transparent full-card flip control, beneath the faces. Real <button> so flipping
+     stays keyboard-reachable without nesting a button inside the card. */
+  .flashcards-flip-hit {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    appearance: none;
     padding: 0;
     border: 0;
     background: transparent;
     cursor: pointer;
-    perspective: 1400px;
   }
 
-  .flashcards-card:focus-visible {
+  .flashcards-flip-hit:focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 3px;
     border-radius: var(--radius);
-  }
-
-  .flashcards-card-inner {
-    position: relative;
-    display: block;
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    transition: transform 640ms cubic-bezier(0.22, 0.9, 0.25, 1);
   }
 
   .flashcards-card[data-flipped='true'] .flashcards-card-inner {
@@ -87,6 +99,14 @@
     transform: rotateY(180deg);
   }
 
+  /* Term + inline speaker on one row, so the icon sits just right of the word. */
+  .flashcards-term-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
   .flashcards-term {
     font-size: clamp(1.5rem, 1rem + 2.5vw, 2.25rem);
     font-weight: 650;
@@ -117,17 +137,14 @@
     }
   }
 
-  /* Speaker overlay: top-right corner of the card, a sibling of the flip button so
-     it never rotates with the 3D flip. It renders only while the Spanish (target)
-     face is visible. */
+  /* Inline speaker: lives inside the target face beside the word, so it rotates with
+     the flip (backface-visibility hides it until its face is front — no pre-animation
+     pop). Re-enables pointer events the rotating layer disables, so its own clicks
+     work while empty-card clicks fall through to the flip-hit button. */
   .flashcards-audio {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    z-index: 1;
+    flex: 0 0 auto;
+    pointer-events: auto;
     color: var(--muted-foreground);
-    background-color: var(--card);
-    border-radius: var(--radius);
   }
 
   .flashcards-progress {
