@@ -34,7 +34,9 @@
     --cam-cherry: #cd3572;
     --cam-purple: #a368df;
     --cam-indigo: #5366e0;
-    --cam-green: #4db78c;
+    --cam-green: #4db78c; /* bright — data-viz (chart-3), success on dark surfaces */
+    --cam-green-deep: #1f7d52; /* darkened — AA success on light surfaces (5.1:1 on white) */
+    --cam-green-soft: #5fc79d; /* lightened — AA success text on dark surfaces (4.9:1 on dark card) */
     --cam-dark-crest: #dd3025; /* destructive / error */
 
     /* Typography — official Cambridge brand (spec §7.2).
