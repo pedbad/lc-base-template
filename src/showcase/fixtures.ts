@@ -31,6 +31,7 @@ import { phraseReorderFixtures } from '@/exercises/phrase-reorder/phrase-reorder
 import { dragFillGapsFixtures } from '@/exercises/drag-fill-gaps/drag-fill-gaps.fixture';
 import { flashcardsFixtures } from '@/exercises/flashcards/flashcards.fixture';
 import { conjugationFixtures } from '@/exercises/conjugation/conjugation.fixture';
+import { readingFixtures } from '@/exercises/reading/reading.fixture';
 
 export type { ShowcaseFixture } from './fixture-types';
 
@@ -53,4 +54,5 @@ export const SHOWCASE_FIXTURES: ShowcaseFixture[] = [
   ...dragFillGapsFixtures,
   ...flashcardsFixtures,
   ...conjugationFixtures,
+  ...readingFixtures,
 ];

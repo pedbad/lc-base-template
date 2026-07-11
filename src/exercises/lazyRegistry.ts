@@ -47,6 +47,7 @@ export const EXERCISE_REGISTRY: Partial<Record<ExerciseType, ExerciseComponent>>
   'drag-fill-gaps': lazy(() => import('./drag-fill-gaps/DragFillGapsExercise')),
   flashcards: lazy(() => import('./flashcards/FlashcardsExercise')),
   conjugation: lazy(() => import('./conjugation/ConjugationExercise')),
+  reading: lazy(() => import('./reading/ReadingExercise')),
 };
 
 /** Resolve an engine by type, or `undefined` if not yet registered. */

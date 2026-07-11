@@ -17,6 +17,7 @@ test('exercise-types: the 12 canonical kebab keys plus Phase C additions', () =>
     'word-spot',
     'flashcards',
     'conjugation',
+    'reading',
   ]);
 });
 

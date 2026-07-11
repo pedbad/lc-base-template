@@ -29,6 +29,7 @@ export const EXERCISE_TYPE_KEYS = [
   // Phase C — new engines (docs/specs/2026-07-03-new-exercise-engines-design.md).
   'flashcards',
   'conjugation',
+  'reading',
 ] as const;
 
 /** A valid exercise engine key. */
