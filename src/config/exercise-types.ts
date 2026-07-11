@@ -28,6 +28,7 @@ export const EXERCISE_TYPE_KEYS = [
   'word-spot',
   // Phase C — new engines (docs/specs/2026-07-03-new-exercise-engines-design.md).
   'flashcards',
+  'conjugation',
 ] as const;
 
 /** A valid exercise engine key. */
