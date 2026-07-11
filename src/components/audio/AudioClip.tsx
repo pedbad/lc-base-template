@@ -67,10 +67,12 @@ function NativeAudioClip({
   if (className.split(/\s+/).includes('compact')) return audio('Audio clip');
 
   if (listenText !== '') {
+    // NB: not a <label> — <audio> is not a labelable form control, so `for=` would
+    // orphan. The caption is a plain sibling; the audio names itself via aria-label.
     return (
-      <label className="audio-clip" htmlFor={id} lang={listenTextLang}>
+      <span className="audio-clip" lang={listenTextLang}>
         {listenText}: {audio(listenText)}
-      </label>
+      </span>
     );
   }
 

@@ -188,15 +188,28 @@ export function TextEntryRuntime({
     <div className="flex flex-col gap-4">
       <div className="overflow-x-auto">
         <Table>
-          {columns ? (
-            <TableHeader>
-              <TableRow>
-                {hasAudio ? <TableHead className="w-12 sr-only">Audio</TableHead> : null}
-                {hasPrompt ? <TableHead lang={TARGET_LANG}>{columns.prompt}</TableHead> : null}
-                <TableHead lang={TARGET_LANG}>{columns.answer}</TableHead>
-              </TableRow>
-            </TableHeader>
-          ) : null}
+          {/* Always render column headers so this stays a semantic data table (each
+              row = one prompt/answer). When the LO gives no visible column labels we
+              still emit sr-only headers — an unheadered table reads as a layout table. */}
+          <TableHeader>
+            <TableRow>
+              {hasAudio ? <TableHead className="w-12 sr-only">Audio</TableHead> : null}
+              {hasPrompt ? (
+                <TableHead
+                  className={columns ? undefined : 'sr-only'}
+                  lang={columns ? TARGET_LANG : undefined}
+                >
+                  {columns ? columns.prompt : 'Prompt'}
+                </TableHead>
+              ) : null}
+              <TableHead
+                className={columns ? undefined : 'sr-only'}
+                lang={columns ? TARGET_LANG : undefined}
+              >
+                {columns ? columns.answer : 'Answer'}
+              </TableHead>
+            </TableRow>
+          </TableHeader>
           <TableBody>{rows.map((_, rowIndex) => renderRow(rowIndex))}</TableBody>
         </Table>
       </div>
