@@ -446,7 +446,7 @@ export function SequenceAudioController({
       <button
         type="button"
         aria-label={playState === 'playing' ? 'Pause audio' : 'Play audio'}
-        className="play-pause shrink-0 cursor-pointer leading-none"
+        className="play-pause grid min-h-6 min-w-6 shrink-0 cursor-pointer place-items-center leading-none"
         onClick={toggleMasterPlay}
       >
         {playState === 'playing' ? (

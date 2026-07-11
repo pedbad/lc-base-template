@@ -1,0 +1,22 @@
+# lc-base-template
+
+> Starter template for building accessible, interactive language-course exercise
+> engines with React, TypeScript and Vite. Each engine is a self-contained,
+> keyboard-operable, WCAG-conscious component driven by validated JSON content.
+
+## Pages
+
+- [Home](/index.html): Vite + React starter entry point for the template.
+- [Exercise showcase](/exercise-showcase.html): Live gallery rendering every exercise engine with sample content.
+
+## Engines
+
+Flashcards, dictation, memory match, drag-to-fill gaps, word order, word spot,
+line match, phrase reorder, radio quiz, and reading comprehension. Each lives under
+`src/exercises/<engine>/` with a pure grader plus a thin React view.
+
+## Notes
+
+- UI chrome strings resolve through `src/config/ui-strings.ts` (English by default);
+  authored content carries the target language via `lang` attributes.
+- Design tokens and theme colours live in `src/styles/`.

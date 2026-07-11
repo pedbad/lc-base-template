@@ -6,7 +6,33 @@ import { Select as SelectPrimitive } from '@base-ui/react/select';
 import { cn } from '@/lib/utils';
 import { ChevronDownIcon, CheckIcon, ChevronUpIcon } from 'lucide-react';
 
-const Select = SelectPrimitive.Root;
+/**
+ * base-ui renders a visually-hidden, `aria-hidden` proxy `<input>` per Select for
+ * native form submission. It ships no way to name it, so automated scanners (WAVE)
+ * flag it as an unlabeled form control even though assistive tech already skips it.
+ * We attach a name via `inputRef` (the only hook base-ui exposes for that node),
+ * merging with any caller-supplied ref. Screen readers never read it (aria-hidden);
+ * the label exists purely to satisfy label-presence audits.
+ */
+/** Assign a node to a callback- or object-ref (local param, so no prop mutation). */
+function assignRef<T>(ref: React.Ref<T> | undefined, node: T | null) {
+  if (typeof ref === 'function') ref(node);
+  else if (ref) (ref as React.RefObject<T | null>).current = node;
+}
+
+function Select<Value>({ inputRef, ...props }: SelectPrimitive.Root.Props<Value>) {
+  const nameHiddenInput = React.useCallback(
+    (node: HTMLInputElement | null) => {
+      if (node && !node.getAttribute('aria-label')) {
+        node.setAttribute('aria-label', 'Selected answer');
+      }
+      assignRef(inputRef, node);
+    },
+    [inputRef],
+  );
+
+  return <SelectPrimitive.Root inputRef={nameHiddenInput} {...props} />;
+}
 
 function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   return (

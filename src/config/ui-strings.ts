@@ -39,6 +39,8 @@ export const UiStringsSchema = z.strictObject({
   correct: z.string().min(1),
   incorrect: z.string().min(1),
   showHints: z.string().min(1),
+  // Accessible names for controls with no readable text of their own
+  blank: z.string().min(1),
   // Audio controls (listening / dictation exercises)
   play: z.string().min(1),
   pause: z.string().min(1),
@@ -71,6 +73,7 @@ const raw: UiStrings = {
   correct: 'Correct!',
   incorrect: 'Incorrect',
   showHints: 'Show hints',
+  blank: 'Blank',
   play: 'Play',
   pause: 'Pause',
   listen: 'Listen',

@@ -45,8 +45,9 @@
     --destructive: var(--cam-dark-crest);
     --destructive-foreground: var(--white);
 
-    /* Success — Cambridge Green (correct-answer feedback for exercise engines) */
-    --success: var(--cam-green);
+    /* Success — deepened Cambridge Green so white text / green-on-white text both
+       clear WCAG AA 4.5:1 on the white card surface (bright cam-green was 2.5:1). */
+    --success: var(--cam-green-deep);
     --success-foreground: var(--white);
 
     /* Lines + form fields + focus */
@@ -92,8 +93,11 @@
     --accent-foreground: var(--slate-4);
     --destructive: var(--cam-dark-crest);
     --destructive-foreground: var(--white);
-    --success: var(--cam-green);
-    --success-foreground: var(--white);
+
+    /* Dark surface: lightened green reads as text on the dark card (4.9:1); dark ink
+       on it clears AA for the solid success button. */
+    --success: var(--cam-green-soft);
+    --success-foreground: var(--cam-dark-blue);
     --border: color-mix(in oklab, var(--white) 12%, transparent);
     --input: color-mix(in oklab, var(--white) 16%, transparent);
     --ring: var(--cam-blue);

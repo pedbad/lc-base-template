@@ -312,6 +312,7 @@ export default function DragFillGapsExercise({ config }: ExerciseComponentProps)
                     type="button"
                     key={node.key}
                     className="drag-fill-gaps-slot"
+                    aria-label={placedTile ? undefined : resolveLabel('blank', labels)}
                     data-state={isLocked ? 'correct' : 'default'}
                     data-drop-target={dropTargetSlotId === slotId}
                     data-filled={Boolean(placedTile)}
