@@ -75,7 +75,7 @@ function MemoryCardComponent({
           <span className="memory-card-face memory-card-back" aria-hidden="true">
             ?
           </span>
-          <span className="memory-card-face memory-card-front">
+          <span className="memory-card-face memory-card-front" aria-hidden="true">
             {card.kind === 'text' ? (
               <span className="memory-card-word" lang={TARGET_LANG}>
                 {card.text}

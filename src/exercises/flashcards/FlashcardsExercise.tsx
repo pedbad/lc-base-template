@@ -186,7 +186,11 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
       <div className="flashcards-card-wrap">
         <div className="flashcards-card" data-flipped={flipped}>
           <span className="flashcards-card-inner">
-            <span className="flashcards-face flashcards-face-front" aria-hidden={flipped}>
+            <span
+              className="flashcards-face flashcards-face-front"
+              aria-hidden={flipped}
+              inert={flipped}
+            >
               <span className="flashcards-term-row">
                 <span className="flashcards-term" lang={faceLang(targetOnFront)}>
                   {frontText}
@@ -194,7 +198,11 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
                 {speaker(targetOnFront)}
               </span>
             </span>
-            <span className="flashcards-face flashcards-face-back" aria-hidden={!flipped}>
+            <span
+              className="flashcards-face flashcards-face-back"
+              aria-hidden={!flipped}
+              inert={!flipped}
+            >
               <span className="flashcards-term-row">
                 <span className="flashcards-term" lang={faceLang(!targetOnFront)}>
                   {backText}
