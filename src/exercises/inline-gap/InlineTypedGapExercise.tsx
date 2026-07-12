@@ -127,7 +127,6 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
     useSequenceAudioController = false,
     listenDescriptionText,
     soundFile,
-    audioTranscript,
   } = parsed.data.content;
   // Master playlist only when it's switched on AND a row actually carries audio.
   const useMaster = useSequenceAudioController && audio.playlist.length > 0;
@@ -303,24 +302,6 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
           <AudioClip className="super-compact-speaker" id={`${uid}-listen`} soundFile={soundFile} />
           <span lang={TARGET_LANG}>{listenDescriptionText}</span>
         </p>
-      ) : null}
-
-      {soundFile && audioTranscript ? (
-        // WCAG 1.2.1 text alternative for the audio-only "listen first" clip. Kept in a
-        // collapsed <details> so it's always reachable (incl. by AT users who can't hear
-        // the clip) without auto-revealing the answer to a casual learner. Not gated on
-        // Check — gating it there makes the transcript unreachable for the deaf/HoH users
-        // the requirement exists to serve (Check stays disabled until a gap is typed).
-        <details className="rounded-lg border border-border/70 bg-muted/30 px-4 py-3 text-sm">
-          <summary className="cursor-pointer font-medium text-foreground">Transcript</summary>
-          {/* English chrome — framing, deliberately not tagged lang={TARGET_LANG}. */}
-          <p className="mt-2 text-xs text-muted-foreground">
-            For hard-of-hearing learners who can’t use the audio.
-          </p>
-          <p className="mt-1 text-muted-foreground" lang={TARGET_LANG}>
-            {audioTranscript}
-          </p>
-        </details>
       ) : null}
 
       <div className="space-y-3">{rows}</div>
