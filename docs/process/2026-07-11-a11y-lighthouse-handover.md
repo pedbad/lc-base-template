@@ -55,6 +55,15 @@ AIM Score: 7/10
 3 Alerts: Orphaned form label · Layout table · HTML5 video or audio
 ```
 
+> **RESOLVED (2026-07-12):** the residual **HTML5 video or audio** alert was the
+> inline-gap "listen first" clip — the only caller of `AudioClip`'s native
+> `<audio controls>` variant, i.e. the app's sole `<audio>` DOM element. Every other
+> clip plays a _detached_ `new Audio()` via `AudioManager` (never in the DOM, so
+> invisible to WAVE). Fixed by routing listen-first through the same
+> `super-compact-speaker` + label (commit `27ba5d5`); the redundant clip was then
+> dropped from the master fixture (`802c4da`). No native `<audio>` remains → the alert
+> is gone. See `src/exercises/inline-gap/InlineTypedGapExercise.tsx`.
+
 ### Prime suspects (start here)
 
 The showcase renders audio-bearing engines (dictation, inline-gap row audio) plus
