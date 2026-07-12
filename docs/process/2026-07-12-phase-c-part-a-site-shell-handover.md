@@ -1,7 +1,7 @@
 # Handover — Phase C · Part A: Site Shell
 
 **Date:** 2026-07-12 (draft for a Monday resume)
-**Repo:** `lc-base-template` · branch `main` · in sync with `origin/main` at `7925f92`.
+**Repo:** `lc-base-template` · branch `main` · in sync with `origin/main` (clean, all pushed).
 Working tree clean, all pushed.
 **Prev work:** Phase A + B done (12 core engines), findings H1 + M1 done, all 3 new
 engines done (flashcards Step 1+2 SRS, conjugation typed v1, reading comprehension),
@@ -84,8 +84,8 @@ branch protection are the real gate.**
 
 ## 3. Start-of-session checklist
 
-1. `git fetch origin && git status -sb` — confirm `main` == `origin/main` at `7925f92`,
-   clean tree. A separate work machine may have unpushed commits — reconcile FIRST.
+1. `git fetch origin && git status -sb` — confirm `main` == `origin/main`, clean tree.
+   A separate work machine may have unpushed commits — reconcile FIRST.
 2. Branch off main: `git checkout -b feat/phase-c-site-shell main`.
 3. `bun install` (pulls the vitest + tdd-guard devDeps). TDD guard is active — either
    test-first, or mute via `.claude/tdd-guard/data/config.json` (see §2).
@@ -124,7 +124,7 @@ Build order + the DOM each must produce (all markup mirrors
       visually hidden until `:focus`, always in the DOM.
 - [ ] `Header` + `<main id="content" tabindex="-1">` + `Footer`.
 - [ ] `<main>` holds `<h1>{LO title}</h1>` then one `<section
-  id aria-labelledby={id}-heading>` per section, each with its `<h2>`.
+id aria-labelledby={id}-heading>` per section, each with its `<h2>`.
 - [ ] Rewire `src/App.tsx` (or a new `src/app/` composition root) to render `PageLayout`
       with placeholder sections. Delete the Rocket/count demo + its `App.css` / unused
       `assets/*.svg|png` imports if now dead.
@@ -141,18 +141,11 @@ Build order + the DOM each must produce (all markup mirrors
 
 ### Step 5 — the ONE accordion wrapper (`LoAccordion.tsx`)
 
-- [ ] Structure exactly (§4):
-    `html
-  <article aria-labelledby="{id}-heading">
-    <details>
-      <summary><h3 id="{id}-heading">{title}</h3></summary>
-      <div class="details-content">
-        <div class="instructions">{optional}</div>
-        {body}
-      </div>
-    </details>
-  </article>
-  `
+- [ ] Structure exactly (§4) — nest in this order:
+      `<article aria-labelledby="{id}-heading">` › `<details>` › `<summary>` containing
+      `<h3 id="{id}-heading">{title}</h3>` › `<div class="details-content">` containing an
+      optional `<div class="instructions">` then the body. (Full markup in
+      `lo-semantic-structure.md` §1 lines 75–88.)
 - [ ] **No `aria-expanded`/`aria-controls` bookkeeping** — native `<details>` provides it.
 - [ ] **No `role="region"`** on the panel (APG: not recommended for many small accordions).
 - [ ] Animation = progressive enhancement: baseline native open/close works with **JS
@@ -244,7 +237,7 @@ Full Phase C map: `docs/process/2026-07-01-phase-c-brainstorm.md` §6.B–D.
 > Build **Phase C · Part A — the Site Shell** in `lc-base-template`. Full recipe:
 > `docs/process/2026-07-12-phase-c-part-a-site-shell-handover.md`; canonical DOM spec:
 > `docs/specs/lo-semantic-structure.md` §1–5. FIRST: `git fetch origin`, confirm `main` ==
-> `origin/main` (`7925f92`), reconcile any unpushed work from the other machine, branch
+> `origin/main`, reconcile any unpushed work from the other machine, branch
 > `feat/phase-c-site-shell` off main. `bun install`. The TDD guard is now ACTIVE repo-locally
 > (Vitest + `tdd-guard-vitest` reporter) — work test-first, or mute it for pure-markup spikes
 > via `.claude/tdd-guard/data/config.json` → `{"guardEnabled":false}` (gitignored, never
