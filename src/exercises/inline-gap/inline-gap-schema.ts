@@ -52,6 +52,12 @@ export const InlineGapContentSchema = z.object({
   /** Optional "listen first" intro: a label + a single clip above the items. */
   listenDescriptionText: z.string().min(1).optional(),
   soundFile: z.string().min(1).optional(),
+  /**
+   * Transcript for the audio-only "listen first" clip (WCAG 1.2.1). Revealed only
+   * after the learner checks, so it satisfies the text-alternative requirement
+   * without leaking the answer during the listening task. No-op without `soundFile`.
+   */
+  audioTranscript: z.string().min(1).optional(),
   footnote: z.string().min(1).optional(),
 });
 export type InlineGapContent = z.infer<typeof InlineGapContentSchema>;

@@ -67,6 +67,7 @@ export const inlineGapFixtures: ShowcaseFixture[] = [
         useSequenceAudioController: true,
         listenDescriptionText: 'Escucha la secuencia completa primero:',
         soundFile: 'audio/inline-gap/q1.wav',
+        audioTranscript: 'Hace sol hoy. Mañana va a llover. En invierno hace frío.',
         items: [
           { text: 'Hace [sol::el tiempo] hoy.', audio: 'audio/inline-gap/q1.wav' },
           { text: 'Mañana va a [llover::el tiempo].', audio: 'audio/inline-gap/q2.wav' },
