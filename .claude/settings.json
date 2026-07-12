@@ -1,0 +1,16 @@
+{
+  "$comment": "Repo-local Claude Code config — committed so it travels to anyone who clones this template. The TDD guard below is scoped to THIS repo only (it is NOT enabled in the user's global settings), so it protects LO authors working here without affecting their other projects. Requires `bun install` (installs the tdd-guard + tdd-guard-vitest devDeps). Runtime on/off lives in the gitignored .claude/tdd-guard/data/config.json; delete that file or set {\"guardEnabled\":false} to mute locally.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bunx tdd-guard"
+          }
+        ]
+      }
+    ]
+  }
+}

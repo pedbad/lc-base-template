@@ -31,7 +31,8 @@ Verified toolchain (macOS, 2026-06-16):
 | [Git](https://git-scm.com)                | ≥ 2.40        | 2.50.1  |
 | [GitHub CLI](https://cli.github.com) `gh` | ≥ 2.0         | 2.94.0  |
 
-**Bun** is the package manager, runtime, and test runner. **Node** is only a tooling fallback.
+**Bun** is the package manager and runtime; **Vitest** is the test runner (`bun run test`).
+**Node** is only a tooling fallback. Vite builds. (Bun installs/runs · Vitest tests · Vite builds.)
 
 ## Setup
 

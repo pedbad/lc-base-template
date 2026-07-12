@@ -60,14 +60,25 @@ free (guard-h w3c/a11y then passes downstream without per-page fixes).
 
 ---
 
-## 2. ⚠️ tdd-guard gotcha — READ FIRST
+## 2. ⚠️ TDD guard is now ACTIVE (repo-local) — READ FIRST
 
-This repo runs **`bun test`**. The global `tdd-guard` plugin only reads a jest/vitest
-reporter, so it never sees bun output and blocks EVERY implementation write as "premature —
-no failing test". Part A is almost all `.tsx` view/markup, which tdd-guard blocks outright.
+**Changed 2026-07-12.** The repo migrated `bun test` → **Vitest** (`bun run test`) and the
+**TDD guard is now wired repo-locally** (committed `.claude/settings.json` hook + the
+`tdd-guard-vitest` reporter). It is NO LONGER the old "always-blind, send `tdd-guard off`"
+situation — the guard actually works now and **enforces Red→Green**: it blocks an
+implementation write unless a failing test exists first.
 
-**At session start send exactly:** `tdd-guard off` (wait for "TDD Guard disabled"). Re-enable
-at the end if you want. Do NOT commit `.claude/tdd-guard/` (gitignored).
+Part A is almost all `.tsx` view/markup. Two ways to work with the guard:
+
+- **Preferred — write a failing test first** (the guard's intent). For shell components,
+  a `renderToStaticMarkup` test asserting the expected landmarks/roles is a genuine Red
+  (see `conjugation/ConjugationExercise.test.tsx` for the server-render pattern).
+- **Pragmatic — mute it for pure-markup spikes:** set
+  `.claude/tdd-guard/data/config.json` → `{"guardEnabled":false}` (gitignored, per-machine,
+  never committed), then re-enable when done. Do NOT commit `.claude/tdd-guard/`.
+
+Note: the guard is a Claude Code helper only — **CI (`bun run test` · lint · build) +
+branch protection are the real gate.**
 
 ---
 
@@ -76,7 +87,8 @@ at the end if you want. Do NOT commit `.claude/tdd-guard/` (gitignored).
 1. `git fetch origin && git status -sb` — confirm `main` == `origin/main` at `7925f92`,
    clean tree. A separate work machine may have unpushed commits — reconcile FIRST.
 2. Branch off main: `git checkout -b feat/phase-c-site-shell main`.
-3. Send `tdd-guard off`.
+3. `bun install` (pulls the vitest + tdd-guard devDeps). TDD guard is active — either
+   test-first, or mute via `.claude/tdd-guard/data/config.json` (see §2).
 4. Read `docs/specs/lo-semantic-structure.md` §1–5 in full, then
    `docs/process/2026-07-01-phase-c-brainstorm.md` §4 (mistakes) + §6.A (the plan).
 
@@ -112,7 +124,7 @@ Build order + the DOM each must produce (all markup mirrors
       visually hidden until `:focus`, always in the DOM.
 - [ ] `Header` + `<main id="content" tabindex="-1">` + `Footer`.
 - [ ] `<main>` holds `<h1>{LO title}</h1>` then one `<section
-    id aria-labelledby={id}-heading>` per section, each with its `<h2>`.
+  id aria-labelledby={id}-heading>` per section, each with its `<h2>`.
 - [ ] Rewire `src/App.tsx` (or a new `src/app/` composition root) to render `PageLayout`
       with placeholder sections. Delete the Rocket/count demo + its `App.css` / unused
       `assets/*.svg|png` imports if now dead.
@@ -130,17 +142,17 @@ Build order + the DOM each must produce (all markup mirrors
 ### Step 5 — the ONE accordion wrapper (`LoAccordion.tsx`)
 
 - [ ] Structure exactly (§4):
-      `html
-    <article aria-labelledby="{id}-heading">
-      <details>
-        <summary><h3 id="{id}-heading">{title}</h3></summary>
-        <div class="details-content">
-          <div class="instructions">{optional}</div>
-          {body}
-        </div>
-      </details>
-    </article>
-    `
+    `html
+  <article aria-labelledby="{id}-heading">
+    <details>
+      <summary><h3 id="{id}-heading">{title}</h3></summary>
+      <div class="details-content">
+        <div class="instructions">{optional}</div>
+        {body}
+      </div>
+    </details>
+  </article>
+  `
 - [ ] **No `aria-expanded`/`aria-controls` bookkeeping** — native `<details>` provides it.
 - [ ] **No `role="region"`** on the panel (APG: not recommended for many small accordions).
 - [ ] Animation = progressive enhancement: baseline native open/close works with **JS
@@ -170,7 +182,7 @@ Build order + the DOM each must produce (all markup mirrors
 ## 5. Verify (CI runs the first three on push)
 
 ```bash
-bun test
+bun run test       # Vitest
 bun run lint
 bun run lint:css
 bun run build      # tsc -b + vite build
@@ -233,8 +245,10 @@ Full Phase C map: `docs/process/2026-07-01-phase-c-brainstorm.md` §6.B–D.
 > `docs/process/2026-07-12-phase-c-part-a-site-shell-handover.md`; canonical DOM spec:
 > `docs/specs/lo-semantic-structure.md` §1–5. FIRST: `git fetch origin`, confirm `main` ==
 > `origin/main` (`7925f92`), reconcile any unpushed work from the other machine, branch
-> `feat/phase-c-site-shell` off main. Send `tdd-guard off` (bun test → tdd-guard blocks
-> every `.tsx` write otherwise). Build 7 steps, one commit each, new files in
+> `feat/phase-c-site-shell` off main. `bun install`. The TDD guard is now ACTIVE repo-locally
+> (Vitest + `tdd-guard-vitest` reporter) — work test-first, or mute it for pure-markup spikes
+> via `.claude/tdd-guard/data/config.json` → `{"guardEnabled":false}` (gitignored, never
+> commit). Build 7 steps, one commit each, new files in
 > `src/components/shell/`: (1) `Header.tsx` — one `<header><nav aria-label="Main
 navigation">`, section-derived links, mobile panel via `sheet` with `hidden` when closed,
 > Escape-closes-and-restores-focus; (2) `Footer.tsx` — plain `<footer>`, no heading inside;
@@ -251,7 +265,7 @@ navigation">`, section-derived links, mobile panel via `sheet` with `hidden` whe
 > (role="switch"/aria-checked) + `useTheme` hook toggling `.dark` on documentElement,
 > localStorage-persisted, prefers-color-scheme fallback, no-window-safe; (7) verify.
 > Reuse existing `ui/` primitives, tokens only (light+dark parity), semantic HTML first,
-> `<800`-line files. Verify each step: `bun test · bun run lint · bun run lint:css · bun run
+> `<800`-line files. Verify each step: `bun run test · bun run lint · bun run lint:css · bun run
 > build`, then browser-preview `index.html` — landmarks, h1→h2→h3 no skips, keyboard-only
 > (no trapped focus in closed panels), accordion works with JS OFF, dark-mode persists —
 > and re-audit with `lighthouse_audit` + WAVE so the 2026-07-11 a11y wins don't regress.

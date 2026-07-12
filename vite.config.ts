@@ -42,7 +42,9 @@ export default defineConfig({
     include: ['src/**/*.test.{ts,tsx}'],
     // Explicit imports in every test (no globals) — keep it that way for clarity.
     globals: false,
-    // tdd-guard reporter is appended in a follow-up commit that re-enables the guard.
-    reporters: ['default'],
+    // `default` = human console output; `tdd-guard-vitest` writes results to
+    // .claude/tdd-guard/data/test.json so the repo-local TDD guard (see
+    // .claude/settings.json) can read Red/Green state. projectRoot pins that path.
+    reporters: ['default', ['tdd-guard-vitest', { projectRoot: import.meta.dirname }]],
   },
 });

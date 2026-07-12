@@ -48,6 +48,8 @@
     "stylelint": "^17.13.0",
     "stylelint-config-standard": "^40.0.0",
     "tailwindcss": "^4.3.1",
+    "tdd-guard": "^1.7.0",
+    "tdd-guard-vitest": "^0.2.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.59.2",
     "vite": "^8.0.12",

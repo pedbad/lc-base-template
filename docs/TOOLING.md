@@ -17,7 +17,8 @@ and `eslint.config.js`. The `README` (later) will link here rather than restate 
 
 | Tool                        | Role                                           | Step |
 | --------------------------- | ---------------------------------------------- | ---- |
-| **Bun**                     | Package manager · runtime · test runner        | 1, 3 |
+| **Bun**                     | Package manager · runtime · script runner      | 1, 3 |
+| **Vitest**                  | Test runner (Vite-native)                      | 3    |
 | **Vite**                    | Dev server · production bundler                | 2    |
 | **TypeScript**              | Language · type safety                         | 2    |
 | **Prettier**                | Code formatter (layout)                        | 4    |
@@ -65,16 +66,55 @@ Layer 1 is the carrot; layers 2–3 are the stick.
 
 ## Decisions
 
-### Bun — package manager, runtime, test runner
+### Bun — package manager + runtime + script runner
 
-- **What:** an all-in-one JS toolkit. Installs deps, runs scripts, runs tests.
-- **Why:** one tool instead of three (npm/yarn + node + jest/vitest). Fast. Setup
-  collapses to `git clone && bun install`. Lockfile (`bun.lock`) pins exact
-  versions so every clone is reproducible.
+- **What:** an all-in-one JS toolkit. Installs deps, runs scripts.
+- **Why:** fast installs; setup collapses to `git clone && bun install`. Lockfile
+  (`bun.lock`) pins exact versions so every clone is reproducible.
 - **How it helps:** zero-touch onboarding (spec #8); identical dependency trees
   across all courses spun from the template.
-- **Rejected:** npm/pnpm + a separate test runner — more moving parts, slower.
-- **Note:** Bun is **not** the bundler — Vite is. Bun installs/runs/tests; Vite builds.
+- **Rejected:** npm/pnpm — more moving parts, slower.
+- **Note:** Bun is **not** the bundler (Vite is) and **not** the test runner (Vitest
+  is — see below). Division of labour: **Bun installs/runs · Vitest tests · Vite builds.**
+
+### Vitest — test runner (and why NOT `bun test`)
+
+- **What:** the Vite-native test runner. Runs via `bun run test` (`vitest run`) — Bun
+  still executes it, so the "everything is Bun" workflow is intact; only the runner
+  under the hood is Vitest.
+- **Why Vitest, not Bun's built-in `bun test`:** two reasons.
+  1. **Vite-native.** Vitest reuses `vite.config.ts` — same React plugin, same `@`
+     alias — so JSX/TSX and shadcn imports resolve in tests exactly as in the app.
+     Bun's runner doesn't know the Vite config.
+  2. **TDD-guard compatibility (the deciding factor for handoff).** `tdd-guard`
+     (the Red-before-Green enforcer) reads test results from a per-runner reporter.
+     It ships reporters for Vitest/Jest/pytest/etc. but **none for `bun test`** — so
+     on Bun's runner the guard is blind and blocks every write. On Vitest the guard
+     works. Since this template is handed to future LO authors, a working guard that
+     travels with the repo matters.
+- **Config:** `vite.config.ts` → `test` block (node env — the suite renders via
+  `renderToStaticMarkup`, and the two storage tests stub `window`/`localStorage`
+  themselves, so no jsdom). 53 files · 365 tests.
+- **Migration note (2026-07-12):** moved off `bun test`. Purely mechanical — every
+  test imported only `test/expect/describe/afterEach` (zero Bun-specific mock/spy
+  APIs), so only the import source changed (`bun:test` → `vitest`).
+
+### TDD guard — repo-local, opt-in, travels with the template
+
+- **What:** `tdd-guard` (`nizos/tdd-guard`) — a Claude Code `PreToolUse` hook that
+  blocks implementation writes unless a failing test exists (enforces Red→Green).
+- **How it's wired here:** **repo-local, not global.** The hook lives in this repo's
+  committed `.claude/settings.json` (`bunx tdd-guard` on Write/Edit), and the Vitest
+  reporter `tdd-guard-vitest` writes Red/Green state to
+  `.claude/tdd-guard/data/test.json` (gitignored). Cloning the template + `bun install`
+  is all a future LO author needs — the guard comes with the repo.
+- **Why repo-local:** it is deliberately **off** in any developer's global Claude
+  settings, so it guards work in THIS template without misfiring on their other
+  (non-Vitest) projects.
+- **Muting locally:** set `.claude/tdd-guard/data/config.json` → `{"guardEnabled":false}`
+  (gitignored, per-machine). The guard only affects Claude Code sessions — it is a
+  helper, not the real gate. **CI (lint · test · build) + branch protection are the
+  actual wall** that keeps mess out of the template.
 
 ### Vite — dev server + bundler
 

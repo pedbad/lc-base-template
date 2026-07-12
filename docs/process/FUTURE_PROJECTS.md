@@ -119,6 +119,30 @@ jobs:
         run: bun run check:a11y:branch
 ```
 
+## Test Runner Rule — Vitest, not `bun test` (Carry Forward)
+
+Use **Bun** for install/run/build, but pick **Vitest** as the test runner from day one —
+`"test": "vitest run"`, invoked as `bun run test`. Do **not** use Bun's built-in `bun test`.
+
+Two reasons:
+
+1. **Vite-native.** Vitest reuses `vite.config.ts` (React plugin, `@` alias), so JSX/TSX
+   and component imports resolve in tests exactly as in the app. Bun's runner ignores the
+   Vite config.
+2. **TDD-guard compatibility.** `tdd-guard` (Red→Green enforcer) reads results from a
+   per-runner reporter and ships one for Vitest/Jest/pytest but **none for `bun test`** —
+   on Bun's runner the guard is blind and blocks every write. On Vitest it works.
+
+**Wire the guard repo-local, not global:** commit a `.claude/settings.json` `PreToolUse`
+hook (`bunx tdd-guard`) + add the `tdd-guard-vitest` reporter to the vitest config. It then
+travels with the repo (any cloner who runs `bun install` gets it) and does not misfire on a
+developer's other non-Vitest projects. Keep it **off** in global `~/.claude/settings.json`.
+The guard is a Claude-Code-session helper only — **CI + branch protection are the real gate.**
+
+> Migration is cheap if deferred: swapping `bun:test` → `vitest` is a one-line import change
+> per file **only if** tests avoid Bun-specific `mock()`/`spyOn` APIs. Prefer plain
+> `test/expect/describe` + dependency injection over Bun test mocks to keep the door open.
+
 ## Additional Prevention Defaults (Recommended)
 
 Add these from day one to avoid late cleanup projects:

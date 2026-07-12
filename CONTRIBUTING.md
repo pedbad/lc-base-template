@@ -13,7 +13,8 @@ How to work in this repo: setup, everyday commands, the commit gate, and convent
 
 ## Prerequisites
 
-- **[Bun](https://bun.com)** ≥ 1.3 — package manager, script runner, and test runner.
+- **[Bun](https://bun.com)** ≥ 1.3 — package manager and script runner. Tests run on
+  **Vitest** (via `bun run test`), not Bun's built-in `bun test` — see [docs/TOOLING.md](docs/TOOLING.md).
   Install: `curl -fsSL https://bun.com/install | bash`. No separate Node/npm needed.
 
 ## Getting started
@@ -35,7 +36,8 @@ below is active immediately, no manual `git config` step.
 | `bun run dev`          | Vite dev server with hot reload                 |
 | `bun run build`        | Type-check (`tsc -b`) + production build        |
 | `bun run preview`      | Serve the production build locally              |
-| `bun test`             | Run the test suite (Bun)                        |
+| `bun run test`         | Run the test suite (Vitest, one-shot)           |
+| `bun run test:watch`   | Vitest in watch mode                            |
 | `bun run lint`         | ESLint over the repo                            |
 | `bun run lint:css`     | Stylelint over `src/**/*.css`                   |
 | `bun run format`       | Prettier — rewrite all files to the house style |
