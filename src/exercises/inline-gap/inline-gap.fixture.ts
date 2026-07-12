@@ -65,8 +65,6 @@ export const inlineGapFixtures: ShowcaseFixture[] = [
         // volume, auto-advance) plays all clips as a timeline; each row's speaker
         // becomes a display driven by it, highlighting the active row.
         useSequenceAudioController: true,
-        listenDescriptionText: 'Escucha la secuencia completa primero:',
-        soundFile: 'audio/inline-gap/q1.wav',
         items: [
           { text: 'Hace [sol::el tiempo] hoy.', audio: 'audio/inline-gap/q1.wav' },
           { text: 'Mañana va a [llover::el tiempo].', audio: 'audio/inline-gap/q2.wav' },
