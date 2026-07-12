@@ -309,8 +309,12 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
         // Check — gating it there makes the transcript unreachable for the deaf/HoH users
         // the requirement exists to serve (Check stays disabled until a gap is typed).
         <details className="rounded-lg border border-border/70 bg-muted/30 px-4 py-3 text-sm">
-          <summary className="cursor-pointer font-medium text-foreground">Audio transcript</summary>
-          <p className="mt-2 text-muted-foreground" lang={TARGET_LANG}>
+          <summary className="cursor-pointer font-medium text-foreground">Transcript</summary>
+          {/* English chrome — framing, deliberately not tagged lang={TARGET_LANG}. */}
+          <p className="mt-2 text-xs text-muted-foreground">
+            For hard-of-hearing learners who can’t use the audio.
+          </p>
+          <p className="mt-1 text-muted-foreground" lang={TARGET_LANG}>
             {audioTranscript}
           </p>
         </details>
