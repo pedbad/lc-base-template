@@ -101,7 +101,8 @@ and ask** — usually the content model needs extending, not the component patch
 
 **Every PR** goes through [`.github/pull_request_template.md`](.github/pull_request_template.md):
 green `bun run test · lint · build`, plus the keyboard / landmark / contrast / screenshot
-checks CI can't fully judge. `main` is protected — no direct pushes; PR + green CI to merge.
+checks CI can't fully judge. `main` is protected — no direct pushes; PR + green CI to merge
+(maintainer setup: [`docs/BRANCH_PROTECTION.md`](docs/BRANCH_PROTECTION.md)).
 
 > Note: adding a new **exercise engine** (not just content) follows the engine recipe —
 > schema + pure grading + colocated tests + thin view + fixture + registry entry. See a
