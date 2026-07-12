@@ -5,7 +5,7 @@
  * heading, per-row pronouns + typed inputs, target-language tagging, the choice-mode
  * notice, and the invalid-config guard.
  */
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { TARGET_LANG } from '@/lib/lang';
 import ConjugationExercise from './ConjugationExercise';

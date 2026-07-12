@@ -1,4 +1,4 @@
-import { test, expect } from 'bun:test';
+import { test, expect } from 'vitest';
 import { EXERCISE_TYPE_KEYS } from '@/config/exercise-types';
 import { EXERCISE_REGISTRY, getExercise } from './lazyRegistry';
 

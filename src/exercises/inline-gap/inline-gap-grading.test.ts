@@ -1,4 +1,4 @@
-import { test, expect } from 'bun:test';
+import { test, expect } from 'vitest';
 
 import type { InputMeta } from '@/exercises/lib/parsing';
 import { gradeInlineGap, fillInlineGapAnswers } from './inline-gap-grading';

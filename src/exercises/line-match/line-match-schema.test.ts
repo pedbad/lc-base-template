@@ -2,7 +2,7 @@
  * Tests for the line-match content + config schemas (spec §8). Each item is a
  * picture↔word pair; keys (id ?? label) must be unique so a match grades correctly.
  */
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vitest';
 import {
   LineMatchContentSchema,
   LineMatchExerciseConfigSchema,

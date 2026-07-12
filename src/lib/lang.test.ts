@@ -1,4 +1,4 @@
-import { expect, test } from 'bun:test';
+import { expect, test } from 'vitest';
 import { TARGET_LANG } from './lang';
 import { courseConfig } from '../config/course.config';
 

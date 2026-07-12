@@ -4,7 +4,7 @@
  * tolerant), mirroring inline-gap. gradeConjugation grades only rows the learner
  * filled; fillConjugationAnswers reveals every expected form.
  */
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vitest';
 import { fillConjugationAnswers, gradeConjugation } from './conjugation-grading';
 import type { ConjugationRow } from './conjugation-schema';
 

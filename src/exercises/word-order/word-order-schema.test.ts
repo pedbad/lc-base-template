@@ -1,4 +1,4 @@
-import { test, expect } from 'bun:test';
+import { test, expect } from 'vitest';
 import { WordOrderContentSchema, WordOrderExerciseConfigSchema } from './word-order-schema';
 
 test('word-order: accepts a valid config', () => {

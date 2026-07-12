@@ -5,7 +5,7 @@
  * passage, one radiogroup per question, radio + true-false option labels, and the
  * invalid-config guard.
  */
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { TARGET_LANG } from '@/lib/lang';
 import ReadingExercise from './ReadingExercise';

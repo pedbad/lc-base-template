@@ -1,4 +1,4 @@
-import { test, expect } from 'bun:test';
+import { test, expect } from 'vitest';
 import { uiStrings, UiStringsSchema, UiStringsOverrideSchema, resolveLabel } from './ui-strings';
 
 // Importing uiStrings runs the Layer-1 parse at load — see course.config.test.ts.

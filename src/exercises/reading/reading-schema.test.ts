@@ -3,7 +3,7 @@
  * composite shape: a passage plus a discriminated set of radio / true-false
  * questions, and the refine that a radio question's answer must be one of its options.
  */
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vitest';
 import { ReadingContentSchema, ReadingExerciseConfigSchema } from './reading-schema';
 
 const validContent = {

@@ -3,7 +3,7 @@
  * are preserved (é ≠ e), apostrophe variants fold, whitespace collapses, and the
  * dictation variant additionally ignores sentence punctuation and quotes.
  */
-import { expect, test } from 'bun:test';
+import { expect, test } from 'vitest';
 import { normalizeAnswer, normalizeForDictation } from './answers';
 
 test('normalizeAnswer: trims and collapses internal whitespace', () => {

@@ -4,7 +4,7 @@
  * that grade/fill aggregate correctly across the question set via the delegated
  * radio-quiz grader.
  */
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vitest';
 import { fillReadingAnswers, gradeReading, prepareReadingQuestions } from './reading-grading';
 import type { ReadingQuestion } from './reading-schema';
 

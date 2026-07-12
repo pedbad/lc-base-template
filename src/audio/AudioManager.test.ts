@@ -4,7 +4,7 @@
  * needs a real HTMLAudioElement, which `bun test` has no DOM for, so those are
  * verified in the showcase instead.
  */
-import { afterEach, expect, test } from 'bun:test';
+import { afterEach, expect, test } from 'vitest';
 import AudioManager, { type AudioManagerState } from './AudioManager';
 
 afterEach(() => {

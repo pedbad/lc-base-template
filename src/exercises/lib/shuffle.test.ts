@@ -1,4 +1,4 @@
-import { test, expect } from 'bun:test';
+import { test, expect } from 'vitest';
 import { mulberry32, shuffle, sampleN } from './shuffle';
 
 test('shuffle: preserves length and multiset (no items lost or added)', () => {

@@ -1,4 +1,4 @@
-import { test, expect, afterEach } from 'bun:test';
+import { test, expect, afterEach } from 'vitest';
 import { buildDeck, deckReducer, initDeckState } from './flashcards-deck';
 
 const realRandom = Math.random;

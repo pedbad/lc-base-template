@@ -1,4 +1,4 @@
-import { test, expect } from 'bun:test';
+import { test, expect } from 'vitest';
 import { WordSpotExerciseConfigSchema, WordSpotContentSchema } from './word-spot-schema';
 
 test('word-spot: accepts a valid config with bracketed targets', () => {

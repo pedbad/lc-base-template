@@ -3,7 +3,7 @@
  * here we assert the data: kinds, order, the `correct` flag, and the edge cases
  * (empty inputs, pure insert, pure delete).
  */
-import { expect, test } from 'bun:test';
+import { expect, test } from 'vitest';
 import { diffChars, type DiffKind } from './charDiff';
 
 const kinds = (actual: string, expected: string): DiffKind[] =>

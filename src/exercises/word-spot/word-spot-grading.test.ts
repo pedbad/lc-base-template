@@ -1,4 +1,4 @@
-import { test, expect } from 'bun:test';
+import { test, expect } from 'vitest';
 
 import { buildModel, scoreWordSpot } from './word-spot-grading';
 import type { WordSpotContent } from './word-spot-schema';

@@ -9,7 +9,7 @@
  * The single-correct invariant is enforced loud at load: a question with 0 or 2+
  * starred options is rejected, so bad authoring fails the build, not the browser.
  */
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vitest';
 import {
   RadioQuizContentSchema,
   RadioQuizExerciseConfigSchema,

@@ -4,7 +4,7 @@
  * Full named/numeric entity decoding is browser-only (delegates to a <textarea>)
  * and is therefore not exercised here.
  */
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vitest';
 import { decodeHtmlEntities } from './html';
 
 describe('decodeHtmlEntities', () => {

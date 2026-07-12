@@ -3,7 +3,7 @@
  * handler (parseChoiceBlank). These power every fill-blank engine; `select` is
  * the first consumer (winner marked by a `*` prefix: `[suis|*es|est]`).
  */
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vitest';
 import {
   parseChoiceBlank,
   parseInputBlank,

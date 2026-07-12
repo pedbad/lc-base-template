@@ -1,7 +1,7 @@
 /**
  * Tests for the instruction copy map and resolver (handover spec §3, §7).
  */
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vitest';
 import { EXERCISE_TYPE_KEYS } from '@/config/exercise-types';
 import { EXERCISE_INSTRUCTIONS, resolveInstructions } from './instructions';
 

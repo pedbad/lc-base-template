@@ -36,8 +36,8 @@ jobs:
       - name: Check formatting (Prettier)
         run: bun run format:check
 
-      - name: Test (bun test)
-        run: bun test
+      - name: Test (Vitest)
+        run: bun run test
 
       - name: Build (tsc + vite)
         run: bun run build

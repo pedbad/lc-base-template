@@ -1,4 +1,4 @@
-import { test, expect } from 'bun:test';
+import { test, expect } from 'vitest';
 
 import type { LineMatchItem } from './line-match-schema';
 import { gradeLineMatch, fillLineMatchAnswers } from './line-match-grading';

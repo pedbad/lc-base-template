@@ -2,7 +2,7 @@
  * Tests for resolveAsset. Under `bun test` there is no Vite `import.meta.env`, so
  * BASE_URL falls back to "/" — these assert the root-served behaviour.
  */
-import { expect, test } from 'bun:test';
+import { expect, test } from 'vitest';
 import { resolveAsset } from './assets';
 
 test('resolveAsset: empty path returns empty', () => {

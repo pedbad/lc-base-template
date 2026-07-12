@@ -3,7 +3,7 @@
  * is a TYPED cloze: sentences with `[expected::placeholder]` blanks the learner types
  * into. These assert the content shape and that the envelope pins `type: 'inline-gap'`.
  */
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vitest';
 import { InlineGapContentSchema, InlineGapExerciseConfigSchema } from './inline-gap-schema';
 
 describe('InlineGapContentSchema', () => {

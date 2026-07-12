@@ -5,7 +5,7 @@
  * assertable. Uses a minimal local `{ text }` item type — the layer is generic
  * and does not depend on any one engine's content schema.
  */
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vitest';
 import { mulberry32 } from '@/exercises/lib/shuffle';
 import { prepareChoiceItems, shuffleItemChoices } from './prepareChoiceItems';
 

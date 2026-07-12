@@ -1,4 +1,4 @@
-import { test, expect } from 'bun:test';
+import { test, expect } from 'vitest';
 import { EXERCISE_TYPE_KEYS } from './exercise-types';
 
 test('exercise-types: the 12 canonical kebab keys plus Phase C additions', () => {

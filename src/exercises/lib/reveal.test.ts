@@ -1,4 +1,4 @@
-import { test, expect } from 'bun:test';
+import { test, expect } from 'vitest';
 import { canRevealAnswers } from './reveal';
 
 test('reveal: hidden before any attempt', () => {

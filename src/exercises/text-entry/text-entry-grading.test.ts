@@ -1,4 +1,4 @@
-import { test, expect } from 'bun:test';
+import { test, expect } from 'vitest';
 
 import { gradeTextEntry, fillAnswers } from './text-entry-grading';
 import type { TextEntryRow } from './text-entry-schema';

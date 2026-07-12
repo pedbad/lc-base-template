@@ -4,7 +4,7 @@
  * `type: 'inline-choice'`. Unlike select, inline-choice has NO layoutMode — blanks
  * always render as inline radio-pill groups in flowing text.
  */
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vitest';
 import {
   InlineChoiceContentSchema,
   InlineChoiceExerciseConfigSchema,

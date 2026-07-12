@@ -1,4 +1,4 @@
-import { test, expect } from 'bun:test';
+import { test, expect } from 'vitest';
 
 import type { DragFillGapsContent } from './drag-fill-gaps-schema';
 import {

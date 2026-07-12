@@ -1,4 +1,4 @@
-import { test, expect } from 'bun:test';
+import { test, expect } from 'vitest';
 import { getInitialScoringState, countCorrect, commitCheck } from './scoring';
 
 test('scoring: initial state is empty, unchecked, zero correct', () => {

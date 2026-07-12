@@ -4,7 +4,7 @@
  * or chosen (v2) verb form. These assert the content shape, the forward-compatible
  * `answerMode` + per-row `options`, and that the envelope pins `type: 'conjugation'`.
  */
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vitest';
 import { ConjugationContentSchema, ConjugationExerciseConfigSchema } from './conjugation-schema';
 
 describe('ConjugationContentSchema', () => {

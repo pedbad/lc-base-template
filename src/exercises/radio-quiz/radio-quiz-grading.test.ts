@@ -1,4 +1,4 @@
-import { test, expect } from 'bun:test';
+import { test, expect } from 'vitest';
 
 import { gradeRadioQuiz, fillRadioAnswers, type GradableQuestion } from './radio-quiz-grading';
 

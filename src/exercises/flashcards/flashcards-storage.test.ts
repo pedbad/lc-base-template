@@ -1,4 +1,4 @@
-import { test, expect, afterEach } from 'bun:test';
+import { test, expect, afterEach } from 'vitest';
 import { storageKey, loadSrsState, saveSrsState, clearSrsState } from './flashcards-storage';
 import { initSrsState, gradeCard } from './srs-scheduler';
 import type { FlashcardsContent } from './flashcards-schema';

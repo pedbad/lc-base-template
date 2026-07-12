@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite';
 import path from 'node:path';
 import react from '@vitejs/plugin-react';
@@ -27,5 +28,21 @@ export default defineConfig({
         showcase: path.resolve(import.meta.dirname, 'exercise-showcase.html'),
       },
     },
+  },
+  // Vitest is the test runner (Vite-native: reuses the plugins + `@` alias above,
+  // so JSX/TSX and shadcn imports resolve in tests exactly as in the app). We run
+  // it via Bun (`bun run test` → `vitest run`) — Bun stays the installer/runtime,
+  // Vitest owns testing. Chosen over Bun's built-in `bun test` because tdd-guard
+  // can watch a Vitest reporter but has no Bun-test reporter. See docs/TOOLING.md.
+  test: {
+    // node env: the suite renders via `renderToStaticMarkup` (string output, no
+    // DOM) and the two storage tests stub `window`/`localStorage` themselves, so
+    // no jsdom/happy-dom is needed. Add one here only if a real DOM test appears.
+    environment: 'node',
+    include: ['src/**/*.test.{ts,tsx}'],
+    // Explicit imports in every test (no globals) — keep it that way for clarity.
+    globals: false,
+    // tdd-guard reporter is appended in a follow-up commit that re-enables the guard.
+    reporters: ['default'],
   },
 });

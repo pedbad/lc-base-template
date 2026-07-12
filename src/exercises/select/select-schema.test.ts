@@ -2,7 +2,7 @@
  * Tests for the select engine's content + config schemas. These tighten the loose
  * `content` from lo-schema's ExerciseConfigSchema (spec §8.2) for `type: 'select'`.
  */
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vitest';
 import { SelectContentSchema, SelectExerciseConfigSchema } from './select-schema';
 
 describe('SelectContentSchema', () => {

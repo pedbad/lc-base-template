@@ -1,4 +1,4 @@
-import { test, expect } from 'bun:test';
+import { test, expect } from 'vitest';
 import { courseConfig } from './course.config';
 
 // Importing courseConfig runs CourseConfigSchema.parse() at module load.

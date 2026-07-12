@@ -3,7 +3,7 @@
  * (spec §8, §9). typed-transform is a typed-response table: rows of an optional
  * prompt cue, an expected `answer`, and an optional audio clip.
  */
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vitest';
 import { TextEntryContentSchema } from '../text-entry/text-entry-schema';
 import { TypedTransformExerciseConfigSchema } from './typed-transform-schema';
 

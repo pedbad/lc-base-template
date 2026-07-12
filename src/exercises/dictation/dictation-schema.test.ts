@@ -2,7 +2,7 @@
  * Tests for the dictation envelope (spec §8, §9). dictation reuses the shared
  * TextEntryContentSchema but tightens it: every row must carry audio.
  */
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vitest';
 import { DictationExerciseConfigSchema } from './dictation-schema';
 
 describe('DictationExerciseConfigSchema', () => {

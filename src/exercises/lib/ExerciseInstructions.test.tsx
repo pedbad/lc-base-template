@@ -2,7 +2,7 @@
  * Tests for ExerciseInstructions (handover spec §3). Rendered to static markup via
  * react-dom/server so no DOM is needed under `bun test`.
  */
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ExerciseInstructions } from './ExerciseInstructions';
 

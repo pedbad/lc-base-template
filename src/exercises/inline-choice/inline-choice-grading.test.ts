@@ -1,4 +1,4 @@
-import { test, expect } from 'bun:test';
+import { test, expect } from 'vitest';
 
 import type { ChoiceMeta } from '@/exercises/lib/parsing';
 import { gradeInlineChoice, fillInlineChoiceAnswers } from './inline-choice-grading';

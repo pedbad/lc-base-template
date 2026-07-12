@@ -1,4 +1,4 @@
-import { test, expect } from 'bun:test';
+import { test, expect } from 'vitest';
 
 import type { DeckCard } from './MemoryCard';
 import type { MemoryMatchContent } from './memory-match-schema';

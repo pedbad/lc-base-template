@@ -1,4 +1,4 @@
-import { test, expect } from 'bun:test';
+import { test, expect } from 'vitest';
 import {
   SRS_BOX_COUNT,
   SRS_MIN_BOX,
