@@ -294,12 +294,15 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
       ) : null}
 
       {listenDescriptionText && soundFile ? (
-        <AudioClip
-          id={`${uid}-listen`}
-          listenText={listenDescriptionText}
-          listenTextLang={TARGET_LANG}
-          soundFile={soundFile}
-        />
+        // Custom click-to-play speaker (AudioManager plays a *detached* `new Audio()`,
+        // never a DOM <audio> element) + a plain label. Matches every other clip in the
+        // app and the french LOs: no native <audio controls> in the DOM means nothing for
+        // WAVE's "HTML5 video or audio" check to flag. The label is a sibling, not a
+        // <label for>, since the speaker is a <button>, not a labelable form control.
+        <p className="flex items-center gap-2 text-foreground">
+          <AudioClip className="super-compact-speaker" id={`${uid}-listen`} soundFile={soundFile} />
+          <span lang={TARGET_LANG}>{listenDescriptionText}</span>
+        </p>
       ) : null}
 
       {soundFile && audioTranscript ? (
