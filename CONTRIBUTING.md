@@ -76,6 +76,39 @@ chore: bump Stylelint to 17
 
 ---
 
+## Adding content vs. changing the system (READ before a PR)
+
+This is a **template**: many people will author Learning Objects from it. The rule that
+keeps every course consistent — **add content as data; don't quietly change the machinery.**
+
+**Green path (author freely, normal review):**
+
+- New LO content, fixtures, and (once Phase C lands) `lo-config/` JSON.
+- Copy an existing exercise fixture, change the Spanish content, wire it into the showcase.
+- Docs and process notes.
+
+**Requires maintainer review (owned in [`.github/CODEOWNERS`](.github/CODEOWNERS)):**
+
+- `src/styles/**` — design tokens, theme, global CSS. Drift here re-skins every course.
+- `src/config/**` — the LO / exercise **schemas** and course config (the content contract).
+- `src/exercises/lazyRegistry.ts` + `src/exercises/lib/**` — core engine wiring / shared scaffold.
+- `.github/**`, `vite.config.ts`, `package.json`, `bun.lock`, tsconfig/eslint/prettier/stylelint,
+  `.claude/settings.json` — build, CI, and the TDD-guard setup.
+- `docs/specs/**` — the canonical specs authors build against.
+
+If a content PR finds itself editing a file in the second list, that's the signal to **stop
+and ask** — usually the content model needs extending, not the component patched.
+
+**Every PR** goes through [`.github/pull_request_template.md`](.github/pull_request_template.md):
+green `bun run test · lint · build`, plus the keyboard / landmark / contrast / screenshot
+checks CI can't fully judge. `main` is protected — no direct pushes; PR + green CI to merge.
+
+> Note: adding a new **exercise engine** (not just content) follows the engine recipe —
+> schema + pure grading + colocated tests + thin view + fixture + registry entry. See a
+> recent engine (`src/exercises/reading/`) as the reference shape.
+
+---
+
 ## Coming as the template grows
 
 These are locked spec decisions, documented here when each lands:

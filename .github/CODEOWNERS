@@ -1,0 +1,36 @@
+# CODEOWNERS — who must review changes to protected paths.
+#
+# GitHub auto-requests review from the owner when a PR touches a matching path.
+# ENFORCEMENT requires branch protection → "Require review from Code Owners"
+# (see docs: repo Settings → Branches → main). Without that, this only *requests*.
+#
+# Goal for this template: LO authors add content freely (lo-config/, fixtures,
+# new LO JSON) but cannot silently change the design system, config schemas,
+# core engine wiring, or the build/CI/guard setup that keeps every course consistent.
+
+# Everything defaults to the maintainer unless a more specific rule below wins.
+*                       @pedbad
+
+# --- Design system: tokens, theme, global CSS (drift here breaks every course) ---
+/src/styles/            @pedbad
+
+# --- Config + schemas: the LO/exercise contract and course config ---
+/src/config/            @pedbad
+
+# --- Core engine plumbing: registry + shared scaffold (not individual engines) ---
+/src/exercises/lazyRegistry.ts   @pedbad
+/src/exercises/lib/              @pedbad
+
+# --- Build, tooling, CI, and the TDD-guard wiring ---
+/.github/               @pedbad
+/vite.config.ts         @pedbad
+/package.json           @pedbad
+/bun.lock               @pedbad
+/tsconfig*.json         @pedbad
+/eslint.config.js       @pedbad
+/prettier.config.mjs    @pedbad
+/.stylelintrc*          @pedbad
+/.claude/settings.json  @pedbad
+
+# --- Specs + canonical process docs (the source of truth authors build against) ---
+/docs/specs/            @pedbad
