@@ -11,6 +11,7 @@ import type { PageSection } from '@/components/shell/PageLayout';
 import InstructionsCallout from '@/components/shell/InstructionsCallout';
 import DemoModal from '@/components/shell/DemoModal';
 import LoAccordion from '@/components/shell/LoAccordion';
+import ThemeToggle from '@/components/shell/ThemeToggle';
 import { courseConfig } from '@/config/course.config';
 import { DEFAULT_SECTIONS } from '@/components/shell/sections';
 
@@ -57,7 +58,13 @@ const sections: PageSection[] = DEFAULT_SECTIONS.map((section) => ({
 }));
 
 function App() {
-  return <PageLayout title={courseConfig.courseTitle} sections={sections} />;
+  return (
+    <PageLayout
+      title={courseConfig.courseTitle}
+      sections={sections}
+      themeToggle={<ThemeToggle />}
+    />
+  );
 }
 
 export default App;
