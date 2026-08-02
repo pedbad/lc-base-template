@@ -118,11 +118,16 @@ export default function LoAccordion({
           onTransitionEnd={handleTransitionEnd}
           className={`details-content${isClosing ? ' is-closing' : ''}`}
         >
-          <div className="details-inner px-4 pb-4">
-            {instructions ? (
-              <InstructionsCallout className="mb-3">{instructions}</InstructionsCallout>
-            ) : null}
-            {children}
+          {/* .details-inner is the collapsing grid item: overflow-hidden + min-h-0,
+              and NO padding of its own (padding on this element would leak past a
+              0fr track). The padding lives on the nested wrapper it clips. */}
+          <div className="details-inner">
+            <div className="px-4 pb-4">
+              {instructions ? (
+                <InstructionsCallout className="mb-3">{instructions}</InstructionsCallout>
+              ) : null}
+              {children}
+            </div>
           </div>
         </div>
       </details>
