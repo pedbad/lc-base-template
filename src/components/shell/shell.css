@@ -1,0 +1,36 @@
+/**
+ * shell.css — styling for the site-shell layer (Phase C · Part A). Co-located with
+ * the shell components and imported by PageLayout (same pattern as audio.css).
+ * Plain CSS + semantic tokens only (no hardcoded colours); everything sits inside
+ * @layer components so Tailwind utilities can still override where needed.
+ */
+@layer components {
+  /* Skip-to-main link: always in the DOM, visually hidden until it receives
+     keyboard focus, then it slides into the top-left corner (spec §1). */
+  .skip-link {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 100;
+    padding: 0.5rem 0.875rem;
+    border-radius: var(--radius);
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    font-weight: 600;
+    text-decoration: none;
+    transform: translateY(-150%);
+    transition: transform 150ms ease;
+  }
+
+  .skip-link:focus-visible {
+    transform: translateY(0);
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skip-link {
+      transition: none;
+    }
+  }
+}
