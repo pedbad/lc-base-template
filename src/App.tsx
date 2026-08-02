@@ -10,6 +10,7 @@ import PageLayout from '@/components/shell/PageLayout';
 import type { PageSection } from '@/components/shell/PageLayout';
 import InstructionsCallout from '@/components/shell/InstructionsCallout';
 import DemoModal from '@/components/shell/DemoModal';
+import LoAccordion from '@/components/shell/LoAccordion';
 import { courseConfig } from '@/config/course.config';
 import { DEFAULT_SECTIONS } from '@/components/shell/sections';
 
@@ -26,6 +27,26 @@ const SECTION_CONTENT: Record<string, PageSection['content']> = {
         parts.
       </p>
       <DemoModal />
+    </div>
+  ),
+  grammar: (
+    <div className="space-y-3">
+      <LoAccordion
+        id="grammar-1"
+        title="Placeholder grammar item"
+        instructions="How this block works."
+      >
+        <p className="text-muted-foreground">
+          Grammar block body. A real block renders target-language prose here.
+        </p>
+      </LoAccordion>
+    </div>
+  ),
+  exercises: (
+    <div className="space-y-3">
+      <LoAccordion id="ex-1" title="Placeholder exercise" defaultOpen>
+        <p className="text-muted-foreground">Exercise body. A real exercise engine mounts here.</p>
+      </LoAccordion>
     </div>
   ),
 };

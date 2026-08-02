@@ -33,4 +33,35 @@
       transition: none;
     }
   }
+
+  /* LO accordion open/close animation (spec §4). The panel wrapper is a 1-row grid
+     whose row collapses from 1fr → 0fr; the inner element clips the overflow. This
+     is progressive enhancement: the `details[open]` rule shows the body with no JS,
+     so the native path is never broken. JS adds the `is-closing` state so closing
+     animates too (native close would snap). */
+  .details-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 250ms var(--ease-out, ease);
+  }
+
+  details[open] .details-content {
+    grid-template-rows: 1fr;
+  }
+
+  /* JS-driven close: keep [open] but force the row shut to play the transition. */
+  details[open] .details-content.is-closing {
+    grid-template-rows: 0fr;
+  }
+
+  .details-inner {
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .details-content {
+      transition: none;
+    }
+  }
 }
