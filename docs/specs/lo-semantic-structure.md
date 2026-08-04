@@ -128,21 +128,22 @@ against a semantic-structure audit of the french-lo-1 reference implementation
 
 ---
 
-## 1a. JSON → DOM mapping (illustrative)
+## 1a. JSON → DOM mapping
 
-**Grounding status:** the LO manifest + exercise envelope shapes below are REAL
-(`src/config/lo-schema.ts`, `src/exercises/select/select-schema.ts` — schema
-already shipped). The grammar/vocab BLOCK `content` shape is NOT yet fixed
-(`BlockConfigSchema.content` is still a loose object) — treat that one field as
-illustrative until 13b (the example LO) locks it down.
+**Grounding status:** every shape below is REAL and shipped — `src/config/lo-schema.ts`
+for the manifest and part envelopes, `src/lo/blocks/*-schema.ts` for block `content`,
+`src/exercises/select/select-schema.ts` for the select exercise. The loader
+(`src/lo/`) validates all of it at load and the adapter
+(`src/lo/lo-page-sections.tsx`) is what turns it into the DOM in §1.
 
 A folder-per-LO (spec §6/§9) drives the skeleton in §1 like this:
 
 ```
 lo-config/lo-01-salutations/
-  lo.json                          → <h1>, <head>, section+accordion ORDER
-  blocks/01-grammar/block.json     → the "Grammar" <section>'s one <article>
-  blocks/02-vocabulary/block.json  → the "Vocabulary" <section>
+  lo.json                           → <h1>, <head>, the SECTIONS and their order
+  blocks/00-intro/block.json        → the "Introduction" <section>'s one <article>
+  blocks/01-grammar/block.json      → the "Grammar" <section>'s one <article>
+  blocks/02-vocabulary/block.json   → the "Vocabulary" <section>
   exercises/01-select/exercise.json → the "Exercises" <section>'s one <article>
 ```
 
@@ -152,51 +153,90 @@ lo-config/lo-01-salutations/
 {
   "title": "Salutations",
   "description": "Greet people and introduce yourself in Spanish.",
-  "blocks": ["01-grammar", "02-vocabulary"],
-  "exercises": ["01-select"]
+  "sections": [
+    { "id": "introduction", "label": "Introduction", "blocks": ["00-intro"] },
+    {
+      "id": "grammar",
+      "label": "Grammar: ser and estar",
+      "navLabel": "Grammar",
+      "blocks": ["01-grammar"]
+    },
+    { "id": "vocabulary", "label": "Vocabulary", "blocks": ["02-vocabulary"] },
+    { "id": "exercises", "label": "Exercises", "exercises": ["01-select"] }
+  ]
 }
 ```
 
 - `title` → the page's one `<h1>{LO title}</h1>` (§1) and the `<head>` title.
-- `blocks[]` — ORDERED, section-scoped (spec §15) — each entry is a render-mirror
-  folder name that resolves to one accordion `<article>` inside whichever
-  `<section>` that block type maps to (`grammar` → `#grammar`, `vocabulary` →
-  `#vocabulary`). Reorder the array without renaming the folder → guard b fails.
-- `exercises[]` — same ordering rule, own sequence restarting at `01`, all land
-  inside the `#exercises` section.
+- `sections[]` — the page, IN ORDER. The LO declares what sections exist; there is no
+  code-side `type → section` map and no `section` field inside a block. Order is the
+  ARRAY order, never JS object key insertion order (the french-lo-1 reference relied on
+  that by accident — reorder two keys there and the page silently reorders).
+- `sections[].id` → the `<section id>` anchor, the nav link's `href="#id"`, and via
+  `headingId()` the `<h2 id="{id}-heading">` that `aria-labelledby` points at. URL-safe
+  kebab-case, unique across the manifest (both enforced by Zod).
+- `sections[].label` → the section's `<h2>` text AND its nav text. Required, never
+  derived from `id`: an id has already lost case and accents (`going-to-a-cafe` dropped
+  the é in _café_; `faq` → "Faq").
+- `sections[].navLabel` (optional) → nav text ONLY, for a heading too long for a nav
+  bar. Resolution is `navLabel ?? label`, in one place (`Header`).
+- **The introduction is an ordinary section.** It is declared, ordered, renamed and
+  reordered like any other — never a hardcoded first nav entry (which is what
+  french-lo-1 does, leaving two sources of truth for "what sections exist" and emitting
+  an `#introduction` link even when there is no intro content). A section with neither
+  `blocks` nor `exercises` is rejected, so a nav entry exists because CONTENT exists.
+- `blocks[]` / `exercises[]` — ORDERED refs, scoped to their section. Each is a
+  render-mirror folder name resolving to `blocks/<ref>/block.json` or
+  `exercises/<ref>/exercise.json`; the two lists stay separate because that split
+  mirrors the two on-disk folders. Ordinal prefixes (`01-`, `02-`) are LO-wide per kind;
+  the array orders items within a section. Inside a section, blocks render before
+  exercises. Reorder an array without renaming the folder → guard b fails.
 
-`blocks/01-grammar/block.json` (`BlockConfigSchema` — `content` shape
-illustrative, not yet locked):
+`blocks/01-grammar/block.json` (`BlockConfigSchema` + `TextBlockContentSchema`):
 
 ```json
 {
   "type": "grammar",
+  "title": "Ser vs estar",
   "content": {
-    "instructions": "Ser vs estar: use «ser» for permanent traits.",
-    "text": "Yo soy de Madrid. Tú eres muy amable."
+    "instructions": "Use «ser» for permanent traits.",
+    "text": ["Yo soy de Madrid.", "Tú eres muy amable."]
   }
 }
 ```
 
-- `type` → which content renderer fills the accordion body (not the exercise
-  registry — blocks are a separate, free-string kind per lo-schema.ts).
-- `content.instructions` → the ONE shared `<div class="instructions">` slot
-  (§3) — accordion-level here since it sits inside this block's own file, not
-  the manifest.
-- `content.text` (or whatever the locked-down grammar shape ends up calling it)
-  → the accordion's prose body, `<p>` per sentence (§5), each wrapped
-  `lang={TARGET_LANG}` (§3) since it's Spanish content the learner reads.
-- `labels` (optional, omitted above) → per-block UI-string override, same
-  `resolveLabel(key, labels)` resolution as exercises (spec §9).
+- `type` → which body renderer fills the accordion, resolved through
+  `getBlockRenderer()` (`src/lo/blocks/block-renderers.ts`) — the block-side
+  counterpart of the exercise `lazyRegistry`, not the same map: blocks are content,
+  not engines. Shipped types: `prose` (UI-language commentary), `grammar`
+  (target-language prose), `vocabulary` (term/gloss `<dl>`). An unregistered `type`
+  renders a visible error, never silence.
+- `title` → the accordion's `<h3>` inside `<summary>`. Required, same reasoning as
+  `label` above.
+- `defaultOpen` (optional, `prose`/blocks only) → the accordion starts open. For an
+  introduction the learner should not have to unfold. Exercises have no equivalent: a
+  page of pre-opened exercises is a wall of controls.
+- `content.instructions` → the ONE shared `<div class="instructions">` slot (§3),
+  accordion-level here since it sits in this block's own file, not the manifest.
+- `content.text` → one `<p>` PER ARRAY ENTRY, the whole block wrapped
+  `lang={TARGET_LANG}` (§3) for `grammar` but NOT for `prose` (an introduction is UI
+  language). An array, not one string the renderer splits: sentence-splitting in code
+  guesses wrong on abbreviations and quotations, and the author knows where the breaks
+  belong.
+- `labels` (optional) → per-block UI-string override, same `resolveLabel(key, labels)`
+  resolution as exercises (spec §9).
 
-`exercises/01-select/exercise.json` (`ExerciseConfigSchema` + the real,
-shipped `SelectContentSchema` — this shape is final):
+For a vocabulary block, `content.items[] = { term, gloss }` → a `<dl>`, with `<dt>`
+carrying `lang={TARGET_LANG}` (the target-language term) and its `<dd>` gloss left in
+the UI language — `lang` is per-part, not per-block.
+
+`exercises/01-select/exercise.json` (`LoExerciseConfigSchema` + the real, shipped
+`SelectContentSchema` — this shape is final):
 
 ```json
 {
   "type": "select",
-  "content": {
-    "items": [{ "text": "Tú [eres|*es|soy] muy amable." }],
+  "title": "Ser or estar?",
     "layoutMode": "rows",
     "footnote": "El verbo «ser» cambia según la persona."
   },
@@ -206,7 +246,12 @@ shipped `SelectContentSchema` — this shape is final):
 
 - `type: "select"` → `lazyRegistry` resolves this to `SelectExercise.tsx`
   (guard e enforces every `type` used here has a registry entry + showcase
-  fixture).
+  fixture). The exercise mounts through `ExerciseHost`, which also renders the
+  instruction box — so the accordion's own `instructions` slot stays empty for
+  exercises. One instruction box, not two.
+- `title` → the accordion's `<h3>`. Required for an LO exercise
+  (`LoExerciseConfigSchema`); the shared envelope keeps it optional because a
+  showcase card supplies its title out-of-band and is not an LO accordion.
 - `content.items[].text` → one `<p>`/row per item inside the accordion body;
   the `[a|*b|c]` blanks become the rendered `<Select>` dropdowns (engine #1).
   Every text segment + the dropdown's chosen value render `lang={TARGET_LANG}`
@@ -222,11 +267,11 @@ shipped `SelectContentSchema` — this shape is final):
   `config.labels?.check ?? uiStrings.check` (spec §9) decides the Check
   button's text.
 
-What's still open for 13b to ground: the exact `type` string + `content`
-field names for grammar/vocab/pronunciation/dialogue/monologue blocks (only
-`BlockConfigSchema`'s envelope — `type`, `labels?`, `content` — is locked; the
-per-type `content` shapes are the loose part, same deferral pattern the 12
-exercise engines already went through in `select-schema.ts` etc.).
+Still open: block types beyond the three shipped ones (`prose`, `grammar`,
+`vocabulary`) — pronunciation, dialogue and monologue blocks each need a `type`
+string, a `content` schema and a registry entry when they arrive. The envelope
+(`type`, `title`, `defaultOpen`, `labels?`, `content`) is locked; only per-type
+`content` stays deferred, the same pattern the 12 exercise engines went through.
 
 ## 2. Heading depth — fixed, never skipped, never repeated
 
