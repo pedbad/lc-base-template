@@ -1,13 +1,22 @@
 {
   "type": "select",
+  "title": "Placeholder select exercise",
   "content": {
     "layoutMode": "rows",
     "items": [
-      { "text": "Yo [*soy|eres|es] de Madrid." },
-      { "text": "Tú [soy|*eres|es] muy amable." },
-      { "text": "Ella [soy|eres|*es] profesora de español." }
+      {
+        "text": "Yo [*soy|eres|es] de Madrid."
+      },
+      {
+        "text": "Tú [soy|*eres|es] muy amable."
+      },
+      {
+        "text": "Ella [soy|eres|*es] profesora de español."
+      }
     ],
     "footnote": "Demo hint line — pick the correct option for each blank."
   },
-  "options": { "shuffle": true }
+  "options": {
+    "shuffle": true
+  }
 }

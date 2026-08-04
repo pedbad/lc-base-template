@@ -173,6 +173,14 @@ test('lo-schema: block config missing title throws', () => {
   expect(() => BlockConfigSchema.parse({ type: 'grammar', content: {} })).toThrow();
 });
 
+// Accordions start closed; a block may opt in to opening (an introduction the
+// learner shouldn't have to unfold to read).
+test('lo-schema: block defaultOpen defaults to false and accepts true', () => {
+  const base = { type: 'prose', title: 'Intro', content: {} };
+  expect(BlockConfigSchema.parse(base).defaultOpen).toBe(false);
+  expect(BlockConfigSchema.parse({ ...base, defaultOpen: true }).defaultOpen).toBe(true);
+});
+
 // Guard: type must be one of the 12 canonical keys — a stray string is rejected.
 test('lo-schema: exercise rejects an unknown type key', () => {
   expect(() => ExerciseConfigSchema.parse({ type: 'fill-gaps', content: {} })).toThrow();

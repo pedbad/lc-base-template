@@ -71,6 +71,13 @@ export const BlockConfigSchema = z.object({
   type: z.string().min(1),
   /** Accordion heading (`<h3>` inside `<summary>`). Blank rejected. */
   title: z.string().min(1),
+  /**
+   * Whether this block's accordion starts open. Accordions default to closed;
+   * prose an author expects to be READ on arrival (an introduction) opts in.
+   * Exercises deliberately have no equivalent — a page of pre-opened exercises is
+   * a wall of controls.
+   */
+  defaultOpen: z.boolean().default(false),
   labels: UiStringsOverrideSchema.optional(),
   content: z.looseObject({}),
 });

@@ -1,0 +1,9 @@
+{
+  "type": "prose",
+  "title": "How this Learning Object works",
+  "defaultOpen": true,
+  "content": {
+    "instructions": "Instructions render as a plain callout — informative, never an assertive announcement.",
+    "text": "Placeholder introduction. Every section, accordion, block and exercise on this page comes from this LO's JSON under lo-config/lo-00-example — nothing about the page is hardcoded in the app. Copy that folder to start a real Learning Object, then replace this filler."
+  }
+}

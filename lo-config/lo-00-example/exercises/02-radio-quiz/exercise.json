@@ -1,5 +1,6 @@
 {
   "type": "radio-quiz",
+  "title": "Placeholder multiple-choice quiz",
   "content": {
     "questions": [
       {
@@ -15,5 +16,7 @@
     ],
     "footnote": "Demo hint line — each question has one correct answer."
   },
-  "options": { "shuffle": true }
+  "options": {
+    "shuffle": true
+  }
 }

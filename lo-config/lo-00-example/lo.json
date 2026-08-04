@@ -1,6 +1,27 @@
 {
   "title": "Example Learning Object",
   "description": "A placeholder Learning Object that shows authors the page chrome — sections, accordions, blocks and exercises — with filler content only.",
-  "blocks": ["01-grammar", "02-vocabulary"],
-  "exercises": ["01-select", "02-radio-quiz"]
+  "sections": [
+    {
+      "id": "introduction",
+      "label": "Introduction",
+      "blocks": ["00-intro"]
+    },
+    {
+      "id": "grammar",
+      "label": "Grammar: formal and informal address",
+      "navLabel": "Grammar",
+      "blocks": ["01-grammar"]
+    },
+    {
+      "id": "vocabulary",
+      "label": "Vocabulary",
+      "blocks": ["02-vocabulary"]
+    },
+    {
+      "id": "exercises",
+      "label": "Exercises",
+      "exercises": ["01-select", "02-radio-quiz"]
+    }
+  ]
 }
