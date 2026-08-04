@@ -3,6 +3,9 @@
   "title": "Placeholder grammar note",
   "content": {
     "instructions": "Placeholder grammar note — replace this with the rule the accordion should teach. Bold **key terms** as needed.",
-    "text": "Placeholder grammar example sentence one. Placeholder grammar example sentence two. Each sentence renders as its own paragraph, wrapped in the target language for assistive tech."
+    "text": [
+      "Placeholder grammar example sentence one.",
+      "Placeholder grammar example sentence two. Each entry in this array renders as its own paragraph, wrapped in the target language for assistive tech."
+    ]
   }
 }

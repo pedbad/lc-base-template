@@ -12,6 +12,11 @@
  *     <div id="mobile-nav-panel" hidden>…</div>    ← real focus removal when closed
  *   </header>
  *
+ * Nav text is `navLabel ?? label` (LO decision D3, 2026-08-04): the section's `label`
+ * is its `<h2>`, and a section whose heading is too long for a nav bar supplies the
+ * shorter `navLabel` instead. Nothing here is hardcoded — including the introduction,
+ * which is an ordinary declared section like any other.
+ *
  * A11y contract (spec §5): the closed mobile panel uses the `hidden` attribute
  * (not aria-hidden + CSS), so its links are truly unfocusable; Escape closes the
  * panel AND returns focus to the toggle button.
@@ -20,7 +25,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Menu } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { courseConfig } from '@/config/course.config';
-import type { NavSection } from './sections';
+import type { NavSection } from './nav-section';
 
 interface HeaderProps {
   /** Ordered top-level sections; one nav link is derived per entry, in order. */
@@ -58,7 +63,7 @@ function NavLinks({
             onClick={onNavigate}
             className="rounded-sm px-2 py-1 font-medium text-foreground/80 underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:text-foreground aria-[current]:text-primary aria-[current]:underline"
           >
-            {section.label}
+            {section.navLabel ?? section.label}
           </a>
         </li>
       ))}

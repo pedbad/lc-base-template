@@ -1,70 +1,29 @@
 /**
- * App — the composition root (Phase C · Part A, step 3). Replaces the default Vite
- * scaffold (Rocket + count demo) with the real site shell: it builds the placeholder
- * section list and hands it to PageLayout, which renders the header/nav, main with
- * h1 + sections, and footer (spec §1). Per-section content is filled in by later
- * steps (instructions callout + demo modal, the LO accordion) and later Phase C
- * parts (real LO JSON → sections).
+ * App — the composition root. It loads ONE Learning Object from `lo-config/` and
+ * hands its sections to PageLayout. Nothing about the page is authored here: the
+ * title, the sections, their order, their nav labels and every accordion come from
+ * that LO's JSON (Phase C · Part C).
+ *
+ * `loadLo` throws if the LO is malformed, naming the offending file — so a broken LO
+ * fails at load with a precise message instead of rendering a half page.
+ *
+ * Which LO renders is still fixed here. Per-LO pages arrive with Part D, where the
+ * post-build pre-render walks every folder in `lo-config/` and emits one HTML file
+ * each; this constant is the single-page stand-in until then.
  */
 import PageLayout from '@/components/shell/PageLayout';
-import type { PageSection } from '@/components/shell/PageLayout';
-import InstructionsCallout from '@/components/shell/InstructionsCallout';
-import DemoModal from '@/components/shell/DemoModal';
-import LoAccordion from '@/components/shell/LoAccordion';
 import ThemeToggle from '@/components/shell/ThemeToggle';
-import { courseConfig } from '@/config/course.config';
-import { DEFAULT_SECTIONS } from '@/components/shell/sections';
+import { loadLo } from '@/lo/load-lo-glob';
+import { toPageSections } from '@/lo/lo-page-sections';
 
-/** Per-section placeholder content. The introduction shows the two chrome demos
- *  (instructions callout + demo modal) so authors can see what they look like. */
-const SECTION_CONTENT: Record<string, PageSection['content']> = {
-  introduction: (
-    <div className="space-y-4">
-      <InstructionsCallout>
-        Instructions render as a plain callout — informative, never an assertive announcement.
-      </InstructionsCallout>
-      <p className="text-muted-foreground">
-        Placeholder introduction. Real Learning Object content is stitched in by later Phase C
-        parts.
-      </p>
-      <DemoModal />
-    </div>
-  ),
-  grammar: (
-    <div className="space-y-3">
-      <LoAccordion
-        id="grammar-1"
-        title="Placeholder grammar item"
-        instructions="How this block works."
-      >
-        <p className="text-muted-foreground">
-          Grammar block body. A real block renders target-language prose here.
-        </p>
-      </LoAccordion>
-    </div>
-  ),
-  exercises: (
-    <div className="space-y-3">
-      <LoAccordion id="ex-1" title="Placeholder exercise" defaultOpen>
-        <p className="text-muted-foreground">Exercise body. A real exercise engine mounts here.</p>
-      </LoAccordion>
-    </div>
-  ),
-};
+/** The LO this page renders, by folder name under `lo-config/`. */
+const LO_SLUG = 'lo-00-example';
 
-const sections: PageSection[] = DEFAULT_SECTIONS.map((section) => ({
-  ...section,
-  content: SECTION_CONTENT[section.id],
-}));
+const lo = loadLo(LO_SLUG);
+const sections = toPageSections(lo);
 
 function App() {
-  return (
-    <PageLayout
-      title={courseConfig.courseTitle}
-      sections={sections}
-      themeToggle={<ThemeToggle />}
-    />
-  );
+  return <PageLayout title={lo.title} sections={sections} themeToggle={<ThemeToggle />} />;
 }
 
 export default App;

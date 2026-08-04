@@ -10,9 +10,18 @@ import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import PageLayout from './PageLayout';
 import { headingId } from '@/lib/headingId';
-import { DEFAULT_SECTIONS } from './sections';
+import type { NavSection } from './nav-section';
+/** Local section fixture. Sections come from an LO's lo.json in the real app; these
+ *  tests exercise the FRAME, so they own a small list rather than importing one
+ *  (there is no default list in code any more — see nav-section.ts). */
+const SECTIONS: readonly NavSection[] = [
+  { id: 'introduction', label: 'Introduction' },
+  { id: 'grammar', label: 'Grammar: formal and informal address', navLabel: 'Grammar' },
+  { id: 'vocabulary', label: 'Vocabulary' },
+  { id: 'exercises', label: 'Exercises' },
+];
 
-const sections = DEFAULT_SECTIONS.map((s) => ({ ...s }));
+const sections = SECTIONS.map((section) => ({ ...section }));
 
 describe('PageLayout', () => {
   test('renders the skip-link before the header, pointing at #content', () => {

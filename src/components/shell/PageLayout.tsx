@@ -19,7 +19,7 @@ import type { ReactNode } from 'react';
 import { headingId } from '@/lib/headingId';
 import Header from './Header';
 import Footer from './Footer';
-import type { NavSection } from './sections';
+import type { NavSection } from './nav-section';
 import './shell.css';
 
 /** A body section: the nav fields (id/label) plus optional rendered content. */
