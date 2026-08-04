@@ -43,9 +43,9 @@ export const typedTransformFixtures: ShowcaseFixture[] = [
       content: {
         columns: { prompt: 'Escucha', answer: 'Escribe' },
         rows: [
-          { prompt: 'masculino', answer: 'alto', audio: 'audio/inline-gap/q1.wav' },
-          { prompt: 'femenino', answer: 'alta', audio: 'audio/inline-gap/q2.wav' },
-          { prompt: 'plural', answer: 'altos', audio: 'audio/inline-gap/q3.wav' },
+          { prompt: 'masculino', answer: 'alto', audio: 'audio/showcase-demo/inline-gap/q1.wav' },
+          { prompt: 'femenino', answer: 'alta', audio: 'audio/showcase-demo/inline-gap/q2.wav' },
+          { prompt: 'plural', answer: 'altos', audio: 'audio/showcase-demo/inline-gap/q3.wav' },
         ],
         footnote: 'Demo hint line — tap the speaker to hear each word (demo clips).',
       },

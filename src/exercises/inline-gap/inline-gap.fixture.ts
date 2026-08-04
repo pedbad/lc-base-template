@@ -46,9 +46,12 @@ export const inlineGapFixtures: ShowcaseFixture[] = [
         // Each row carries its own clip → an independent click-to-play speaker
         // (AudioClip + useAudioClip). Starting one stops the others (AudioManager).
         items: [
-          { text: 'Yo [soy::ser] de Madrid.', audio: 'audio/inline-gap/q1.wav' },
-          { text: 'Tú [eres::ser] muy amable.', audio: 'audio/inline-gap/q2.wav' },
-          { text: 'Ella [es::ser] profesora de español.', audio: 'audio/inline-gap/q3.wav' },
+          { text: 'Yo [soy::ser] de Madrid.', audio: 'audio/showcase-demo/inline-gap/q1.wav' },
+          { text: 'Tú [eres::ser] muy amable.', audio: 'audio/showcase-demo/inline-gap/q2.wav' },
+          {
+            text: 'Ella [es::ser] profesora de español.',
+            audio: 'audio/showcase-demo/inline-gap/q3.wav',
+          },
         ],
         footnote: 'Demo hint line — tap each speaker to hear the phrase (demo clips).',
       },
@@ -66,9 +69,15 @@ export const inlineGapFixtures: ShowcaseFixture[] = [
         // becomes a display driven by it, highlighting the active row.
         useSequenceAudioController: true,
         items: [
-          { text: 'Hace [sol::el tiempo] hoy.', audio: 'audio/inline-gap/q1.wav' },
-          { text: 'Mañana va a [llover::el tiempo].', audio: 'audio/inline-gap/q2.wav' },
-          { text: 'En invierno hace [frío::temperatura].', audio: 'audio/inline-gap/q3.wav' },
+          { text: 'Hace [sol::el tiempo] hoy.', audio: 'audio/showcase-demo/inline-gap/q1.wav' },
+          {
+            text: 'Mañana va a [llover::el tiempo].',
+            audio: 'audio/showcase-demo/inline-gap/q2.wav',
+          },
+          {
+            text: 'En invierno hace [frío::temperatura].',
+            audio: 'audio/showcase-demo/inline-gap/q3.wav',
+          },
         ],
         footnote: 'Demo hint line — synthetic demo audio clips (q1–q3).',
       },

@@ -25,10 +25,26 @@ export const flashcardsFixtures: ShowcaseFixture[] = [
         // card carries a recorded target-language clip (placeholder .m4a for the
         // demo; author-supplied in a real course). No Check/Show-answers footer.
         cards: [
-          { target: 'el perro', native: 'the dog', audio: 'audio/flashcards/perro.m4a' },
-          { target: 'el gato', native: 'the cat', audio: 'audio/flashcards/gato.m4a' },
-          { target: 'la casa', native: 'the house', audio: 'audio/flashcards/casa.m4a' },
-          { target: 'el libro', native: 'the book', audio: 'audio/flashcards/libro.m4a' },
+          {
+            target: 'el perro',
+            native: 'the dog',
+            audio: 'audio/showcase-demo/flashcards/perro.m4a',
+          },
+          {
+            target: 'el gato',
+            native: 'the cat',
+            audio: 'audio/showcase-demo/flashcards/gato.m4a',
+          },
+          {
+            target: 'la casa',
+            native: 'the house',
+            audio: 'audio/showcase-demo/flashcards/casa.m4a',
+          },
+          {
+            target: 'el libro',
+            native: 'the book',
+            audio: 'audio/showcase-demo/flashcards/libro.m4a',
+          },
         ],
         footnote: 'Demo hint line — flip each card and rate how well you knew it.',
       },
@@ -54,25 +70,25 @@ export const flashcardsFixtures: ShowcaseFixture[] = [
             target: 'el círculo',
             native: 'the circle',
             image: 'images/line-match/circle.svg',
-            audio: 'audio/flashcards/circulo.m4a',
+            audio: 'audio/showcase-demo/flashcards/circulo.m4a',
           },
           {
             target: 'el cuadrado',
             native: 'the square',
             image: 'images/line-match/square.svg',
-            audio: 'audio/flashcards/cuadrado.m4a',
+            audio: 'audio/showcase-demo/flashcards/cuadrado.m4a',
           },
           {
             target: 'el triángulo',
             native: 'the triangle',
             image: 'images/line-match/triangle.svg',
-            audio: 'audio/flashcards/triangulo.m4a',
+            audio: 'audio/showcase-demo/flashcards/triangulo.m4a',
           },
           {
             target: 'la estrella',
             native: 'the star',
             image: 'images/line-match/star.svg',
-            audio: 'audio/flashcards/estrella.m4a',
+            audio: 'audio/showcase-demo/flashcards/estrella.m4a',
           },
         ],
       },

@@ -24,9 +24,9 @@ export const dictationFixtures: ShowcaseFixture[] = [
         // they hear. Graded in dictation mode (normalizeForDictation): accents count,
         // punctuation and quotes are forgiven. Every row carries audio (schema-enforced).
         rows: [
-          { answer: 'Buenos días', audio: 'audio/inline-gap/q1.wav' },
-          { answer: '¿Cómo estás?', audio: 'audio/inline-gap/q2.wav' },
-          { answer: 'Hasta luego', audio: 'audio/inline-gap/q3.wav' },
+          { answer: 'Buenos días', audio: 'audio/showcase-demo/inline-gap/q1.wav' },
+          { answer: '¿Cómo estás?', audio: 'audio/showcase-demo/inline-gap/q2.wav' },
+          { answer: 'Hasta luego', audio: 'audio/showcase-demo/inline-gap/q3.wav' },
         ],
         footnote: 'Demo hint line — type what you hear (demo clips).',
       },
