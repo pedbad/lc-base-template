@@ -19,4 +19,11 @@ describe('ThemeToggle', () => {
     const html = renderToStaticMarkup(<ThemeToggle />);
     expect(html).toMatch(/aria-checked="(true|false)"/);
   });
+
+  test('associates the Switch hidden form input with a label (WAVE: no missing form label)', () => {
+    const html = renderToStaticMarkup(<ThemeToggle />);
+    const inputId = html.match(/<input[^>]*\bid="([^"]+)"/)?.[1];
+    expect(inputId, 'Switch should render a hidden input with an id').toBeDefined();
+    expect(html, 'a <label for> must target the hidden input id').toContain(`for="${inputId}"`);
+  });
 });
