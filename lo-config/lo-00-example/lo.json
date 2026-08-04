@@ -1,0 +1,6 @@
+{
+  "title": "Example Learning Object",
+  "description": "A placeholder Learning Object that shows authors the page chrome — sections, accordions, blocks and exercises — with filler content only.",
+  "blocks": ["01-grammar", "02-vocabulary"],
+  "exercises": ["01-select", "02-radio-quiz"]
+}

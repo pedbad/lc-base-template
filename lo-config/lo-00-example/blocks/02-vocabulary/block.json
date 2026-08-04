@@ -1,0 +1,11 @@
+{
+  "type": "vocabulary",
+  "content": {
+    "instructions": "Placeholder vocabulary note — list the words this accordion introduces, each with its gloss.",
+    "items": [
+      { "term": "Placeholder term one", "gloss": "placeholder gloss one" },
+      { "term": "Placeholder term two", "gloss": "placeholder gloss two" },
+      { "term": "Placeholder term three", "gloss": "placeholder gloss three" }
+    ]
+  }
+}

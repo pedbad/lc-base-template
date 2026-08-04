@@ -1,0 +1,19 @@
+{
+  "type": "radio-quiz",
+  "content": {
+    "questions": [
+      {
+        "prompt": "¿Cuál de estos saludos es formal?",
+        "options": ["¡Hola!", "*Buenos días", "¿Qué tal?"],
+        "explanation": "«Buenos días» es formal; «¡Hola!» y «¿Qué tal?» son informales."
+      },
+      {
+        "prompt": "En español, ¿qué palabra NO es un color?",
+        "options": ["rojo", "*martes", "verde"],
+        "explanation": "«Martes» es un día de la semana; «rojo» y «verde» son colores."
+      }
+    ],
+    "footnote": "Demo hint line — each question has one correct answer."
+  },
+  "options": { "shuffle": true }
+}
