@@ -26,6 +26,12 @@ interface AudioClipProps {
   listenText?: string;
   /** `lang` for `listenText` (WCAG 3.1.2) when it's authored target-language content. */
   listenTextLang?: string;
+  /**
+   * Accessible name / hover label for the speaker variant, which has no visible text
+   * of its own. Defaults to a play/pause hint from the clip's status. Authored rich
+   * text sets this from `data-audio-label` (see `RichText`).
+   */
+  title?: string;
   onStatusChange?: (status: ClipStatus) => void;
 }
 
@@ -87,6 +93,7 @@ export function AudioClip({
   listenTextLang,
   size,
   soundFile,
+  title,
   onStatusChange,
 }: AudioClipProps) {
   if (className.split(/\s+/).includes('super-compact-speaker')) {
@@ -97,6 +104,7 @@ export function AudioClip({
         inline={inline}
         size={size}
         soundFile={soundFile}
+        title={title}
         onStatusChange={onStatusChange}
       />
     );

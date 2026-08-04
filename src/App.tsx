@@ -15,6 +15,7 @@ import PageLayout from '@/components/shell/PageLayout';
 import ThemeToggle from '@/components/shell/ThemeToggle';
 import { loadLo } from '@/lo/load-lo-glob';
 import { toPageSections } from '@/lo/lo-page-sections';
+import { ModalProvider } from '@/lo/rich-text/modal/ModalProvider';
 
 /** The LO this page renders, by folder name under `lo-config/`. */
 const LO_SLUG = 'lo-00-example';
@@ -23,7 +24,13 @@ const lo = loadLo(LO_SLUG);
 const sections = toPageSections(lo);
 
 function App() {
-  return <PageLayout title={lo.title} sections={sections} themeToggle={<ThemeToggle />} />;
+  // ModalProvider wraps the page because a modal link can appear in ANY section's
+  // prose, and it renders the one dialog host for all of them (rich-text spec §7).
+  return (
+    <ModalProvider modals={lo.modals}>
+      <PageLayout title={lo.title} sections={sections} themeToggle={<ThemeToggle />} />
+    </ModalProvider>
+  );
 }
 
 export default App;

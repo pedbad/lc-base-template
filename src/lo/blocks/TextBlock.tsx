@@ -11,6 +11,7 @@
  * TARGET_LANG so assistive tech pronounces it correctly.
  */
 import { TARGET_LANG } from '@/lib/lang';
+import { RichText } from '../rich-text/RichText';
 import { parseBlockContent } from './parse-block-content';
 import { TextBlockContentSchema } from './text-block-schema';
 
@@ -32,7 +33,9 @@ export function TextBlock({ content, type, lang }: TextBlockProps) {
         // Paragraph text is the only identity a paragraph has; index is stable
         // because the list is static config, never reordered at runtime.
         <p key={index} className="text-foreground">
-          {paragraph}
+          {/* Inline rich text: emphasis, modal links and audio icons the author
+              wrote into this paragraph, already parsed to a validated node tree. */}
+          <RichText nodes={paragraph} />
         </p>
       ))}
     </div>

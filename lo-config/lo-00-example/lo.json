@@ -1,6 +1,6 @@
 {
   "title": "Example Learning Object",
-  "description": "A placeholder Learning Object that shows authors the page chrome — sections, accordions, blocks and exercises — with filler content only.",
+  "description": "A placeholder Learning Object that shows authors the page chrome — sections, accordions, blocks, exercises and a popup — with filler content only.",
   "sections": [
     {
       "id": "introduction",
@@ -23,5 +23,6 @@
       "label": "Exercises",
       "exercises": ["01-select", "02-radio-quiz"]
     }
-  ]
+  ],
+  "modals": ["example-popup"]
 }

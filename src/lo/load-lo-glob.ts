@@ -24,6 +24,10 @@ const EXERCISES = import.meta.glob('/lo-config/*/exercises/*/exercise.json', {
   eager: true,
   import: 'default',
 });
+const MODALS = import.meta.glob('/lo-config/*/modals/*/modal.json', {
+  eager: true,
+  import: 'default',
+});
 
 /**
  * Collect the part files belonging to `slug`, keyed by ref. Glob keys look like
@@ -68,6 +72,7 @@ export function loadLo(slug: string): AssembledLo {
     manifest,
     blocks: partsForSlug(BLOCKS, slug),
     exercises: partsForSlug(EXERCISES, slug),
+    modals: partsForSlug(MODALS, slug),
   };
   return assembleLo(slug, tree);
 }

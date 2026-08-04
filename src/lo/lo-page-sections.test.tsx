@@ -9,13 +9,23 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { test, expect } from 'vitest';
 import { loadLo } from './load-lo-disk';
 import { toPageSections } from './lo-page-sections';
+import { ModalProvider } from './rich-text/modal/ModalProvider';
 
 const lo = loadLo('lo-00-example');
 const sections = toPageSections(lo);
 
-/** Render one mapped section's body, as PageLayout does. */
+/**
+ * Render one mapped section's body, as PageLayout does — inside a ModalProvider,
+ * because block prose may contain a modal link and `useModal` throws without one.
+ * That throw is deliberate (a link with nothing to open is a wiring bug), so the
+ * provider belongs here exactly as it does in App.
+ */
 const renderSection = (id: string): string =>
-  renderToStaticMarkup(<>{sections.find((section) => section.id === id)?.content}</>);
+  renderToStaticMarkup(
+    <ModalProvider modals={lo.modals}>
+      {sections.find((section) => section.id === id)?.content}
+    </ModalProvider>,
+  );
 
 test('toPageSections: one PageSection per declared section, in order', () => {
   expect(sections.map((section) => section.id)).toEqual(lo.sections.map((section) => section.id));
@@ -44,7 +54,13 @@ test('toPageSections: renders one accordion per block, with its title as the h3'
   expect(html).toContain('<h3');
   expect(html).toContain('Placeholder grammar note');
   // Block bodies render through the block registry.
-  expect(html).toContain('Placeholder grammar example sentence one.');
+  expect(html).toContain('Placeholder grammar example sentence one');
+  // ...and their prose renders as inline rich text, not as escaped literal markup:
+  // authored <strong> becomes an element, and a modal link becomes a real button.
+  expect(html).toContain('<strong>a key term</strong>');
+  expect(html).not.toContain('&lt;strong&gt;');
+  expect(html).toContain('class="modal-link"');
+  expect(html).toContain('type="button"');
 });
 
 test('toPageSections: a block accordion opens by default only when the JSON says so', () => {

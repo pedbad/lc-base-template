@@ -1,0 +1,9 @@
+{
+  "title": "Example popup",
+  "content": [
+    "This popup is launched from a link inside the grammar block's prose. A real Learning Object would use one for a <strong>glossary entry</strong>, a grammar aside, or a pronunciation note — anything that would interrupt the flow if it sat inline.",
+    "Modal prose is <em>inline rich text</em>, so it supports <strong>semantic emphasis</strong>, line breaks, links to other popups, and audio icons. Presentational tags are rejected at load: write <strong>strong</strong> and <em>em</em>, never b or i.",
+    "Audio icons work inline, anywhere in the prose: <span data-audio=\"audio/lo-00-example/placeholder.m4a\" data-audio-label=\"Play the placeholder clip\"></span> — that is a placeholder clip, not real course audio. Click it to play; playing a clip stops any other clip on the page.",
+    "Each entry in this array renders as its own paragraph, so the author decides where the prose breaks rather than the renderer guessing."
+  ]
+}

@@ -2,10 +2,11 @@
   "type": "grammar",
   "title": "Placeholder grammar note",
   "content": {
-    "instructions": "Placeholder grammar note — replace this with the rule the accordion should teach. Bold **key terms** as needed.",
+    "instructions": "Placeholder grammar note — replace this with the rule the accordion should teach. Instructions are plain text; the paragraphs below support inline rich text.",
     "text": [
-      "Placeholder grammar example sentence one.",
-      "Placeholder grammar example sentence two. Each entry in this array renders as its own paragraph, wrapped in the target language for assistive tech."
+      "Placeholder grammar example sentence one, with <strong>a key term</strong> and <em>a stressed word</em>.",
+      "Prose can launch a popup mid-sentence — <a class=\"modal-link\" href=\"#content\" data-modal-target=\"example-popup\">open the example popup</a> — and can carry an inline audio icon: <span data-audio=\"audio/lo-00-example/placeholder.m4a\" data-audio-label=\"Play the placeholder clip\"></span>",
+      "Each entry in this array renders as its own paragraph, wrapped in the target language for assistive tech."
     ]
   }
 }

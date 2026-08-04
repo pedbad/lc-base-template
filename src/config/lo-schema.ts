@@ -120,6 +120,34 @@ export type LoExerciseConfig = z.infer<typeof LoExerciseConfigSchema>;
 const SECTION_ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 /**
+ * Validates one modal's `modals/<id>/modal.json` — a popup launched from inline
+ * authored prose (`<a class="modal-link" data-modal-target="…">`).
+ *
+ * `content` is an ARRAY of paragraphs, each holding inline rich text, for the same
+ * reason `TextBlockContentSchema.text` is: the renderer must never guess where prose
+ * breaks. The strings stay strings here — the ALLOWLIST is enforced by the rich-text
+ * parser at load, not by Zod, because "which tags are legal" is one contract that
+ * belongs in one place (`parse-rich-text.ts`).
+ *
+ * Spec: docs/specs/lo-rich-text-modals.md §2, §4.
+ */
+export const ModalConfigSchema = z.object({
+  /**
+   * The dialog's accessible name. Required, so a dialog can never be nameless — a
+   * modal with no name is unusable with a screen reader.
+   */
+  title: z.string().min(1),
+  /** One entry per paragraph of inline rich text. At least one — an empty modal is a bug. */
+  content: z.array(z.string().min(1)).min(1),
+  /**
+   * Set when the body is TARGET-language content (WCAG 3.1.2, semantic-structure §3).
+   * Omit for UI-language commentary, which inherits `lang` from <html>.
+   */
+  lang: z.string().min(1).optional(),
+});
+export type ModalConfig = z.infer<typeof ModalConfigSchema>;
+
+/**
  * One top-level section of the page, declared BY the LO (decision D1, 2026-08-04).
  *
  * The manifest owns page structure: there is no code-side `type → section` map and
@@ -170,6 +198,18 @@ export const LoManifestSchema = z
     description: z.string().min(1).optional(),
     /** The page, in order. At least one — an LO with no sections renders nothing. */
     sections: z.array(LoSectionSchema).min(1),
+    /**
+     * Modal ids this LO declares, each resolving to `modals/<id>/modal.json`.
+     *
+     * Top-level, NOT inside a section: a modal is not page structure — it has no
+     * heading in the document outline and can be linked from any section's prose.
+     * Declared explicitly rather than discovered by globbing the folder, for the same
+     * reason sections are (decision D1): an undeclared file is then a detectable
+     * authoring mistake instead of silently-live content.
+     */
+    modals: z
+      .array(z.string().regex(SECTION_ID_PATTERN, 'modal id must be url-safe kebab-case'))
+      .default([]),
   })
   .superRefine((manifest, ctx) => {
     // Duplicate ids would collide as BOTH `#anchor` targets and `{id}-heading` ids.
@@ -183,6 +223,19 @@ export const LoManifestSchema = z
         });
       }
       seen.add(section.id);
+    });
+
+    // A duplicate modal id would silently shadow one modal's content with another's.
+    const seenModals = new Set<string>();
+    manifest.modals.forEach((id, index) => {
+      if (seenModals.has(id)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `duplicate modal id "${id}"`,
+          path: ['modals', index],
+        });
+      }
+      seenModals.add(id);
     });
   });
 export type LoManifest = z.infer<typeof LoManifestSchema>;

@@ -26,9 +26,13 @@ import {
   LoManifestSchema,
   BlockConfigSchema,
   LoExerciseConfigSchema,
+  ModalConfigSchema,
   type BlockConfig,
   type LoExerciseConfig,
 } from '@/config/lo-schema';
+import { parseRichText } from './rich-text/parse-rich-text';
+import { collectModalTargets } from './rich-text/rich-text-nodes';
+import type { ModalContent } from './rich-text/modal/modal-context';
 
 /**
  * One LO's files, already read and JSON-parsed but NOT yet validated. `blocks` and
@@ -41,6 +45,8 @@ export interface LoFileTree {
   readonly blocks: Readonly<Record<string, unknown>>;
   /** ref → raw `exercises/<ref>/exercise.json`. */
   readonly exercises: Readonly<Record<string, unknown>>;
+  /** id → raw `modals/<id>/modal.json`. Absent is normal: most LOs declare none. */
+  readonly modals?: Readonly<Record<string, unknown>>;
 }
 
 /** One resolved part: the ref it was named by, plus its validated config. */
@@ -65,6 +71,12 @@ export interface AssembledLo {
   readonly title: string;
   readonly description?: string;
   readonly sections: readonly AssembledSection[];
+  /**
+   * Declared modals, keyed by id, with their prose already parsed to rich-text nodes
+   * — never raw strings, so no renderer downstream can re-introduce an HTML
+   * injection path (spec §5).
+   */
+  readonly modals: Readonly<Record<string, ModalContent>>;
 }
 
 /** An author-facing path for the LO file at `relative` inside this LO's folder. */
@@ -109,6 +121,27 @@ function requireFile(
 export function assembleLo(slug: string, tree: LoFileTree): AssembledLo {
   const manifest = parseFile(LoManifestSchema, tree.manifest, loPath(slug, 'lo.json'));
 
+  const modals = Object.fromEntries(
+    manifest.modals.map((id) => {
+      const filePath = loPath(slug, `modals/${id}/modal.json`);
+      const config = parseFile(
+        ModalConfigSchema,
+        requireFile(tree.modals ?? {}, id, filePath),
+        filePath,
+      );
+      return [
+        id,
+        {
+          id,
+          title: config.title,
+          // Parsed HERE, at load, so a bad tag dies naming the file the author edits.
+          content: config.content.map((paragraph) => parseRichText(paragraph, filePath)),
+          ...(config.lang === undefined ? {} : { lang: config.lang }),
+        } satisfies ModalContent,
+      ];
+    }),
+  );
+
   const sections = manifest.sections.map<AssembledSection>((section) => ({
     id: section.id,
     label: section.label,
@@ -133,10 +166,27 @@ export function assembleLo(slug: string, tree: LoFileTree): AssembledLo {
     }),
   }));
 
+  // Cross-reference guard: a modal link pointing at an undeclared modal is an author
+  // error, caught here rather than surfacing as a dead button in the browser. Only
+  // modal-to-modal links can be checked at this layer — block prose is parsed by its
+  // per-type content schema at render, so links authored there are covered by the
+  // repo-wide guard in `lo-rich-text.test.ts` instead (spec §5).
+  Object.values(modals).forEach((modal) => {
+    modal.content.flatMap(collectModalTargets).forEach((target) => {
+      if (!(target in modals)) {
+        throw new Error(
+          `${loPath(slug, `modals/${modal.id}/modal.json`)} links to modal "${target}", ` +
+            `which lo.json does not declare — known modals: ${Object.keys(modals).join(', ') || '(none)'}`,
+        );
+      }
+    });
+  });
+
   return {
     slug,
     title: manifest.title,
     ...(manifest.description === undefined ? {} : { description: manifest.description }),
     sections,
+    modals,
   };
 }
