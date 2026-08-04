@@ -34,34 +34,28 @@
     }
   }
 
-  /* LO accordion open/close animation (spec §4). The panel wrapper is a 1-row grid
-     whose row collapses from 1fr → 0fr; the inner element clips the overflow. This
-     is progressive enhancement: the `details[open]` rule shows the body with no JS,
-     so the native path is never broken. JS adds the `is-closing` state so closing
-     animates too (native close would snap). */
+  /* LO accordion panel (spec §4). The wrapper is a 1-row grid whose row collapses
+     from 1fr → 0fr; the inner element clips the overflow. This is the SHOW/HIDE
+     mechanism only, and it needs no JS — the `details[open]` rule reveals the body on
+     the native path, so no-JS is never broken.
+
+     There is deliberately NO transition on grid-template-rows. In Chrome 148 that
+     transition completes but never fires `transitionend`, so JS could not tell when a
+     close had finished: `<details>` stayed `open` around a 0px body and reopening gave
+     an expanded accordion with no content (verified in-browser 2026-08-04). The
+     animation now lives in LoAccordion, which animates `.details-inner`'s height in
+     pixels via the Web Animations API and honours prefers-reduced-motion in JS. */
   .details-content {
     display: grid;
     grid-template-rows: 0fr;
-    transition: grid-template-rows 250ms var(--ease-out, ease);
   }
 
   details[open] .details-content {
     grid-template-rows: 1fr;
   }
 
-  /* JS-driven close: keep [open] but force the row shut to play the transition. */
-  details[open] .details-content.is-closing {
-    grid-template-rows: 0fr;
-  }
-
   .details-inner {
     overflow: hidden;
     min-height: 0;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .details-content {
-      transition: none;
-    }
   }
 }
