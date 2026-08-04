@@ -195,6 +195,36 @@ Notes on the sketch:
 - **Where do the Part A chrome demos go?** `InstructionsCallout` is covered by a block's
   `content.instructions`, but `DemoModal` (App.tsx:30) has no JSON home. Keep it as a
   showcase-only widget, give it a block `type`, or drop it from the rendered LO?
+
+  > **RESOLVED (2026-08-04): dropped.** `DemoModal.tsx` is deleted. Part C's adapter left it
+  > the only orphan of the Part A placeholder batch — the callout, filler prose and demo
+  > accordions that shared its purpose went with `SECTION_CONTENT`, and it referenced nothing
+  > and was referenced by nothing.
+  >
+  > **A block `type` was rejected, and not merely as speculative generality — it is the wrong
+  > shape.** The real modal requirement carried forward from the reference implementation is an
+  > INLINE one: authored rich text embeds
+  > `<a class="modal-link" href="#content" data-modal-target="…">`, and ONE document-level
+  > capture-phase click delegation resolves it to a dialog
+  > (`docs/process/FUTURE_PROJECTS.md` §262 item 6, and the Modal-Link Authoring Rule).
+  > Modals are therefore launched from within a block's prose against a content-by-id map —
+  > never declared as a standalone block sitting in a section. A `modal` block would also nest
+  > a dialog inside `LoAccordion` (disclosure stacked on disclosure) and would pre-render to
+  > meaningless static markup under Part D's `renderToStaticMarkup`.
+  >
+  > **Keeping it documented-but-unmounted was rejected too**: that is dead code plus a comment
+  > promising a future that isn't planned, and it violates the repo's own anti-pattern #11
+  > (`FUTURE_PROJECTS.md` §191) — sample scaffolding belongs in a dev-only sandbox entrypoint,
+  > not the production module tree. The showcase entrypoint is a pure
+  > `SHOWCASE_FIXTURES.map` over exercise engines, so parking a filler-text widget there would
+  > have meant inventing a chrome-demo surface for it.
+  >
+  > **`src/components/ui/dialog.tsx` is deliberately KEPT.** It is the vendored Base UI
+  > primitive the eventual `.modal-link` delegation hook will mount, and it sits alongside 11
+  > other zero-consumer primitives in `ui/` — which is exactly what a vendored primitive
+  > library is for. Nothing about the accessible dialog behaviour (focus trap, Escape, focus
+  > restore) is lost by deleting the wrapper that demoed it.
+
 - **Does a block `type` still need a renderer registry?** Exercises resolve via `lazyRegistry`;
   blocks currently have no equivalent. `prose`/`grammar`/`vocabulary` need something that maps
   `type` → a body renderer. Smallest thing that works, no speculative generality.
