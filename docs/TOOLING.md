@@ -33,6 +33,7 @@ and `eslint.config.js`. The `README` links here rather than restating it.
 | **Zod**                     | Runtime config validation (fail-fast at load)  | 11   |
 | **Static prerender**        | One `.html` per LO (post-build Bun script)     | 15   |
 | **Course landing page**     | `dist/index.html` — hero + one card per LO     | 15b  |
+| **`loDevPages()` plugin**   | Dev server serves `/<slug>.html` per LO        | 15b  |
 
 ---
 
@@ -125,9 +126,11 @@ Layer 1 is the carrot; layers 2–3 are the stick.
 - **What:** the dev server (instant hot-reload) and production build tool.
 - **Why:** fast, first-class React + TypeScript support, supports the multi-page
   entries (debug sandbox, showcase) and static pre-render the template needs.
-- **How it helps:** sub-second dev feedback. The static pre-render (one `.html` per
-  Learning Object) runs **after** `vite build` as a Bun script, reusing the built
-  `dist/index.html` — see _Static prerender_ below.
+- **How it helps:** sub-second dev feedback. The static pre-render (the course landing
+  page plus one `.html` per Learning Object) runs **after** `vite build` as a Bun
+  script, reusing the built `dist/index.html` — see _Static prerender_ below. One
+  repo-local plugin, `loDevPages()`, teaches the dev server to serve the per-LO URLs
+  the prerender pass will later write — see _Dev-server LO pages_ below.
 - **Rejected:** Create-React-App (deprecated), Webpack (slower, heavier config).
 
 ### TypeScript — language + type safety
@@ -732,13 +735,45 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 - **Write order matters:** the landing page overwrites the very file being used as the
   template, so it is written last, after every LO page has been rendered from the
   untouched original.
-- **Authoring is `bun run build && bun run preview` (decision A):** `bun run dev`
-  serves the landing page, but `<slug>.html` exists only after a build, so card links
-  404 there and LO pages have no dev URL. **Rejected:** a Vite dev-server middleware
-  that fakes LO routes (a third rendering path to keep in step with the bundle and the
-  prerender pass — and dev-vs-build divergence is exactly what pinned an LO to `/`),
-  and a dev-only pinned-LO entry (the same divergence, restated). The cost is real and
-  accepted: content edits need a ~10s rebuild to view.
+
+### Dev-server LO pages — `loDevPages()` _(Phase D, decision A revised)_
+
+- **What:** a serve-only Vite plugin (`src/build/lo-dev-pages.ts`). A GET for
+  `/<slug>.html`, where `<slug>` is one an LO folder actually derives, is answered with
+  the dev `index.html` — run through `server.transformIndexHtml`, so HMR and the React
+  refresh preamble are intact — with that LO's folder stamped on the root div.
+- **The bug it fixes:** `<slug>.html` files come from the prerender pass, so under
+  `dev` they do not exist, and Vite's SPA fallback answers a missing `.html` with
+  `index.html` — the UNSTAMPED landing template. A lesson card therefore silently
+  re-rendered the landing page. Not a 404: no error, no clue, a card that looked dead.
+- **Decision A, twice:** the first answer was "author via `build && preview`, add no
+  dev shim", on the grounds that a shim is a third rendering path beside the bundle and
+  the prerender pass — and dev-vs-build divergence is what pinned an LO to `/` to begin
+  with. That objection turns out not to apply to this shape: **nothing is rendered
+  here.** The middleware picks a folder and calls `injectRootDiv()`, extracted so the
+  prerender pass and the dev server share one implementation of how an LO page is
+  mounted. There is no second renderer, so there is nothing to drift. Reversed
+  2026-08-06, same day, after the silent-bounce behaviour was seen in practice.
+- **No entry list:** the LO folders are read from `lo-config/` per request, so a new
+  folder is live on the next reload. `build.rollupOptions.input` stays `index.html` +
+  the showcase — registering per-LO entries there would be a list to keep in sync, and
+  it is exactly what was rejected.
+- **Registered directly in `configureServer`, not in a returned function:** that runs
+  the middleware BEFORE Vite's internal ones, so the SPA fallback cannot take the
+  request first. `apply: 'serve'` keeps it out of the build entirely.
+- **`src/lo/lo-folders.ts` exists because of this:** `vite.config.ts` imports the
+  plugin, and the config is bundled before its own `resolve.alias` exists, so anything
+  it reaches must be free of `@/…` imports. `load-lo-disk` is not (`assembleLo` pulls
+  the schemas in by alias), so `listLoSlugs()` moved to a lean `node:fs`-only module
+  that `load-lo-disk` re-exports — one implementation of "which LOs exist", no copy.
+- **What dev still does not do:** prerender. A dev LO page is client-rendered from an
+  empty root div, so `dev` proves content, layout and behaviour while the no-JS static
+  page is proven only by `bun run build && bun run preview`. That stays the pre-ship
+  check, and the docs say so in both README and CONTRIBUTING.
+- **Known rough edge (Vite's, not ours):** a slug no LO derives — a typo — falls
+  through to the SPA fallback and renders the landing page rather than 404ing. The
+  middleware declines it deliberately; claiming unknown `.html` paths would mean
+  owning Vite's 404 behaviour for the whole dev server.
 - **LO order has one source (decision B):** the `lo-NN-` folder ordinal, sorted
   numerically by `sortLoFolders()` so `lo-9-` precedes `lo-10-`. `courseConfig.loOrder`
   is deleted, and a test asserts it stays gone — a second list for the same fact is

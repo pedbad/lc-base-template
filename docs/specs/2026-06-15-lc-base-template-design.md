@@ -149,7 +149,7 @@ Change Slate 3 once → primitive → semantic → every button updates. Guard *
 
 One Zod-validated file, the single source of course identity. Dev fills it out first. Feeds the static pre-render (titles, `<head>`, per-LO meta) and centralizes `%BASE_URL%` asset refs (kills favicon-on-subpath bug #28).
 
-Fields: `courseTitle`, `languageCode`, `basePath` (env-driven deploy subpath), `landingCopy`, `logo`/`favicon` paths, LO order.
+Fields: `courseTitle`, `languageCode`, `basePath` (env-driven deploy subpath), `landingCopy`, `logo`/`favicon` paths. (**Amended 2026-08-06, Phase D decision B:** no LO-order field. The `lo-NN-` folder ordinal is the single source of course order — a list here would be a second source for the same fact, free to drift from the folders.)
 
 ---
 

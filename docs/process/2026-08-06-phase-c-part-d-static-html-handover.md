@@ -274,6 +274,12 @@ late). It duplicates `resolveInitialTheme`'s rule by necessity; both sides carry
 note. Residue: on a dark-theme page the switch itself renders in its off position for one frame
 after hydration. Accepted — the page never flashes, only the control settles.
 
+> **SUPERSEDED 2026-08-06 by Phase D** (`2026-08-06-phase-d-landing-page-handover.md`): `index.html`
+> is no longer pinned to an LO. Its root div is unstamped, which now MEANS the course landing page;
+> `main.tsx` branches on `data-lo-folder`, the prerender pass writes `dist/index.html` from
+> `CourseHome`, and `loDevPages()` serves each LO's page under `bun run dev`. The paragraph below is
+> the record of what Part D decided, not current behaviour.
+
 **§5 — `dist/index.html`.** Unresolved by design for now: it stays the dev/SPA entry, pinned to
 `lo-00-example` via `data-lo-folder`, so `bun run dev` behaves exactly as before. Making it an
 index page listing every LO only becomes meaningful once the loop exists — decide it there.

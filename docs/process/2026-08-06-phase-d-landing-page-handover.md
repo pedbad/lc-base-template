@@ -164,18 +164,43 @@ build**. So clicking a card in dev 404s. Options:
 
 This is the choice that changes daily authoring. Pick deliberately and record why.
 
-> **ANSWER: option 2 — author via `bun run build && bun run preview`.** (Author's call,
-> 2026-08-06.) Option 1 means a third rendering path — bundle, prerender pass, and a
-> dev-only middleware — to keep in step with the other two, and option 3 is the
-> dev-vs-prod divergence that pinned `lo-00-example` to `/` in the first place. Zero new
-> build config wins.
+> **FIRST ANSWER: option 2 — author via `bun run build && bun run preview`.** (Author's
+> call, 2026-08-06.) Reasoning at the time: option 1 means a third rendering path —
+> bundle, prerender pass, and a dev-only middleware — to keep in step with the other
+> two, and option 3 is the dev-vs-prod divergence that pinned `lo-00-example` to `/` in
+> the first place. Zero new build config wins.
 >
-> **The cost, stated plainly:** `bun run dev` serves the landing page (and the exercise
-> showcase) and nothing else. LO pages have **no dev URL at all** — `<slug>.html` is
-> written by the prerender pass — so a card link 404s under `dev`, and editing an LO's
-> JSON means rebuilding (~10s) to see it. Documented in README's _Previewing a course
-> while you author it_ and CONTRIBUTING's authoring section, both of which say it in
-> those words rather than leaving an author to discover the 404.
+> **REVISED, same day, to option 1 — `loDevPages()`.** What the first answer missed:
+> the failure under `dev` is not a 404. Vite's SPA fallback answers a request for a
+> missing `.html` with `index.html`, which is the UNSTAMPED landing template — so
+> clicking a lesson card silently re-rendered the landing page. No error, no clue, a
+> card that looked dead. Verified against the running servers:
+>
+> ```
+> dev      /example.html → HTTP 200, no data-lo-folder  → landing page again
+> preview  /example.html → HTTP 200, data-lo-folder="lo-00-example" → the LO
+> ```
+>
+> **Why the third-rendering-path objection does not apply to this shape:** nothing is
+> rendered by the middleware. It resolves `/<slug>.html` to an LO folder and calls
+> `injectRootDiv()` — extracted in the same commit so the prerender pass and the dev
+> server share ONE implementation of how an LO page is mounted. No second renderer, so
+> nothing to drift. The LO list is read from `lo-config/` per request, so there is no
+> entry list either; `build.rollupOptions.input` stays `index.html` + the showcase.
+>
+> **What dev still does not do:** prerender. A dev LO page is client-rendered from an
+> empty root div, so `dev` proves content, layout and behaviour, and the no-JS static
+> page is proven only by `bun run build && bun run preview` — which stays the pre-ship
+> check, and is documented as such in README and CONTRIBUTING.
+>
+> **Left as Vite's:** a typo'd slug still falls through to the SPA fallback and shows
+> the landing page rather than 404ing. Claiming unknown `.html` paths would mean owning
+> the dev server's 404 behaviour wholesale.
+>
+> **Structural consequence worth knowing:** `vite.config.ts` now imports repo source,
+> and the config is bundled before its own `resolve.alias` exists — so `listLoSlugs()`
+> moved to `src/lo/lo-folders.ts`, a `node:fs`-only module free of `@/…` imports, which
+> `load-lo-disk` re-exports. One implementation of "which LOs exist", no copy.
 
 **B. LO order — one source of truth.** The folder ordinal already encodes order (`lo-00-`,
 `lo-01-`). `courseConfig.loOrder` is a _second_ source for the same fact, and silent config
@@ -277,8 +302,13 @@ All met, 2026-08-06. Evidence in brackets.
       tests incl. the `lo-9` before `lo-10` case; `course.config.test.ts` asserts `loOrder`
       is gone]
 - [x] `bun run test · lint · lint:css · format:check · build` green, plus a browser pass over
-      HTTP (not `file://`). [591 tests; all four gates clean; everything above over
-      `http://localhost:4173`]
+      HTTP (not `file://`). [605 tests; all four gates clean; everything above over
+      `http://localhost:4173`, and the dev-server pass over `http://localhost:5173`]
+- [x] Dev-server parity (added by the decision-A reversal): a lesson card in `bun run dev`
+      loads that LO. [`/example.html` → `data-lo-folder="lo-00-example"`, the four sections
+      and five accordions rendered, console clean; editing a block's JSON showed up without a
+      rebuild, proving hot reload survives; `/` stays unstamped and the showcase entry is
+      untouched]
 - [x] Docs updated in the same pass: README's Build section, CONTRIBUTING's authoring section,
       TOOLING, and the buildlist. [README gained _Previewing a course while you author it_ +
       the order rule; CONTRIBUTING's authoring section gained the card fields, the order rule

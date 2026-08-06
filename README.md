@@ -83,19 +83,21 @@ drift from the folders. Move a lesson by renaming its folder.
 
 ### Previewing a course while you author it
 
-`bun run dev` serves the landing page with hot reload, but **a card link 404s there**:
-`<slug>.html` files are written by the build, so the way to click through a course is
-build-then-preview.
+`bun run dev` serves the whole course with hot reload — the landing page at `/`, and
+each LO at `/<slug>.html`, so lesson cards and the lesson nav work as they do in
+production. `<slug>.html` files themselves only exist after a build, so a small
+serve-only Vite plugin answers those URLs by stamping the LO's folder onto the dev
+`index.html`; the LO list is read from `lo-config/` per request, so a new folder is
+live on the next reload with nothing to register.
 
 ```bash
-bun run build && bun run preview   # the whole course, exactly as it deploys
+bun run dev                        # author content, hot reload, cards work
+bun run build && bun run preview   # the real static pages, before you ship
 ```
 
-That is the deliberate trade (Phase D, decision A): a dev-server shim for LO routes
-would be a third rendering path to keep in step with the other two, and dev diverging
-from the build is what put `lo-00-example` on `/` in the first place. So `bun run dev`
-serves the landing page and the exercise showcase; **LO pages come from the build**,
-and editing an LO's JSON means building again to see it — about ten seconds.
+**The dev server does not prerender.** An LO page there is client-rendered, so it
+proves content, layout and behaviour — not the no-JS static page. Check that with
+`build && preview`, which is what actually deploys.
 
 Serving from a sub-path takes one env var, which feeds both the bundle and the
 prerender pass:

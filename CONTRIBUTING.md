@@ -33,7 +33,7 @@ below is active immediately, no manual `git config` step.
 
 | Command                | What it does                                                         |
 | ---------------------- | -------------------------------------------------------------------- |
-| `bun run dev`          | Vite dev server, hot reload — landing page only (see below)          |
+| `bun run dev`          | Vite dev server, hot reload — landing page and every LO page         |
 | `bun run build`        | Type-check + bundle + prerender the landing page and one HTML per LO |
 | `bun run preview`      | Serve the production build locally                                   |
 | `bun run test`         | Run the test suite (Vitest, one-shot)                                |
@@ -84,24 +84,28 @@ It is sorted **numerically**, so `lo-9-` precedes `lo-10-` (alphabetically it wo
 not). `course.config.ts` has no order list — a second source for the same fact would
 be free to drift from the folders silently. **To reorder a course, rename folders.**
 
-### The authoring loop, and the one dev-server wrinkle
-
-`bun run dev` serves the **landing page** (and the exercise showcase). It does not
-serve LO pages: `<slug>.html` is written by the prerender pass, so a card link 404s
-under `dev` and an LO's page has no dev URL. Editing LO content therefore means:
+### The authoring loop
 
 ```bash
-bun run build && bun run preview
+bun run dev                        # write content: hot reload, and cards actually work
+bun run build && bun run preview   # the real static pages, before you ship
 ```
 
-This is deliberate (Phase D, decision A — `docs/process/2026-08-06-phase-d-landing-page-handover.md` §5).
-Teaching the dev server to serve LO routes means a third rendering path beside the
-bundle and the prerender pass, and it was dev-vs-build divergence that pinned
-`lo-00-example` to `/` and duplicated it as `example.html` in the first place. A build
-is ~10s; a silently different dev page costs more than that.
+`bun run dev` serves the landing page at `/` and each LO at `/<slug>.html`. Those files
+are written by the prerender pass and so do not exist during `dev`; a serve-only Vite
+plugin (`src/build/lo-dev-pages.ts`) answers those URLs instead, stamping the LO's
+folder onto the dev `index.html` through the same `injectRootDiv()` the prerender pass
+uses. It renders nothing of its own, and reads the LO list from `lo-config/` per
+request — so a new folder is live on the next reload, with nothing to register.
+
+**Dev does not prerender.** An LO page there is client-rendered, so `dev` proves
+content, layout and behaviour, while the no-JS static page — the thing that deploys —
+is only proven by `build && preview`. Run that before you ship, and after any change
+to page structure.
 
 A malformed LO fails the **build** with the offending file named — it never emits a
 half-rendered page. Two folders that derive the same slug fail too, naming both.
+(The same malformed-folder error surfaces on a dev request, so you meet it early.)
 
 ## Code quality & the commit gate
 

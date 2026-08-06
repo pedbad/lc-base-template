@@ -163,8 +163,12 @@ CONTENT ENGINE
     lock, inert when closed, reduced-motion in CSS) + buildLoIndex (src/lo/lo-index.ts,
     reader-agnostic). index.html's root div is unstamped and main.tsx branches on
     data-lo-folder, so one entry serves both pages; LO header brand now links home.
-    Decisions: (A) authoring is `bun run build && bun run preview` — no dev-server shim
-    for LO routes; (B) the lo-NN- folder ordinal is the ONLY source of course order,
+    Decisions: (A) REVISED same day — loDevPages() (src/build/lo-dev-pages.ts) serves
+    /<slug>.html on the dev server by stamping data-lo-folder through the shared
+    injectRootDiv(), because without it Vite's SPA fallback answered a lesson card with
+    the unstamped landing template (silent bounce, no 404); dev still does not
+    prerender, so `bun run build && bun run preview` stays the no-JS check;
+    (B) the lo-NN- folder ordinal is the ONLY source of course order,
     courseConfig.loOrder deleted; (E) optional `image` added to the LO manifest, with
     public/images/lo-placeholder.svg shipped and wired into lo-00-example.
     Full record: docs/process/2026-08-06-phase-d-landing-page-handover.md §5.
