@@ -13,8 +13,20 @@
 /**
  * `lo-` + ordinal + `-` + a url-safe kebab-case slug. The slug pattern matches
  * `SECTION_ID_PATTERN` in lo-schema.ts for the same reason: it becomes a URL.
+ * Both captures are used: group 1 is the ordinal (course order), group 2 the slug.
  */
-const LO_FOLDER_PATTERN = /^lo-\d+-([a-z0-9]+(?:-[a-z0-9]+)*)$/;
+const LO_FOLDER_PATTERN = /^lo-(\d+)-([a-z0-9]+(?:-[a-z0-9]+)*)$/;
+
+/** Match `folderName` or throw naming it the way the author sees it on disk. */
+function matchLoFolder(folderName: string): RegExpExecArray {
+  const match = LO_FOLDER_PATTERN.exec(folderName);
+  if (match === null) {
+    throw new Error(
+      `lo-config/${folderName}: LO folder must be named lo-<ordinal>-<url-safe-kebab-slug>, e.g. lo-00-example`,
+    );
+  }
+  return match;
+}
 
 /**
  * Derive the URL slug for an LO folder.
@@ -24,13 +36,41 @@ const LO_FOLDER_PATTERN = /^lo-\d+-([a-z0-9]+(?:-[a-z0-9]+)*)$/;
  * @throws Error naming the folder when it is not `lo-<ordinal>-<kebab-slug>`
  */
 export function loSlug(folderName: string): string {
-  const match = LO_FOLDER_PATTERN.exec(folderName);
-  if (match === null) {
-    throw new Error(
-      `lo-config/${folderName}: LO folder must be named lo-<ordinal>-<url-safe-kebab-slug>, e.g. lo-00-example`,
-    );
-  }
-  return match[1];
+  return matchLoFolder(folderName)[2];
+}
+
+/**
+ * Derive the course-order ordinal for an LO folder.
+ *
+ * @param folderName an LO folder name under `lo-config/`, e.g. `lo-01-greetings`
+ * @returns the ordinal as a NUMBER, e.g. 1
+ * @throws Error naming the folder when it is not `lo-<ordinal>-<kebab-slug>`
+ */
+export function loOrdinal(folderName: string): number {
+  return Number(matchLoFolder(folderName)[1]);
+}
+
+/**
+ * Order LO folders the way the course runs: by ordinal, ties broken by folder name.
+ *
+ * The ordinal in the folder name is the SINGLE source of truth for course order
+ * (decision B, 2026-08-06) — there is no second list in `course.config.ts` to drift
+ * from it. Sorting is NUMERIC, not the alphabetical order `readdirSync` and
+ * `import.meta.glob` hand back: alphabetically `lo-10-` sorts before `lo-9-`, which
+ * would silently reorder any course that does not zero-pad past nine.
+ *
+ * Returns a new array; the caller's is untouched.
+ *
+ * @throws Error naming the folder when any name is malformed
+ */
+export function sortLoFolders(folderNames: readonly string[]): readonly string[] {
+  // Ordinals are read up front so a malformed name throws before any comparison,
+  // and so each name is parsed once rather than once per comparison.
+  const ordinals = new Map(folderNames.map((name) => [name, loOrdinal(name)]));
+
+  return [...folderNames].sort(
+    (a, b) => (ordinals.get(a) ?? 0) - (ordinals.get(b) ?? 0) || a.localeCompare(b),
+  );
 }
 
 /**

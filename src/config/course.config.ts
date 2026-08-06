@@ -2,8 +2,8 @@
  * course.config.ts — single source of truth for course identity.
  *
  * WHAT: One Zod-validated object describing the whole course (title, language,
- * deploy base path, landing copy, logo/favicon, LO order). Filled out first when
- * cloning the template.
+ * deploy base path, landing copy, logo/favicon). Filled out first when cloning the
+ * template. Course ORDER is deliberately absent — see the note on the schema below.
  *
  * WHY Zod (spec decision #2 + §8): configs are validated AT LOAD. `parse()` runs
  * the moment this module is imported, so a missing/blank/misshapen field fails the
@@ -35,8 +35,11 @@ const CourseConfigSchema = z.object({
   /** %BASE_URL%-relative asset paths. */
   logo: z.string().min(1),
   favicon: z.string().min(1),
-  /** LO slugs in display order. Auto-discovery fills the real list later. */
-  loOrder: z.array(z.string()).default([]),
+  // NO loOrder field: course order is the `lo-NN-` ordinal in each LO's folder name,
+  // and nothing else (decision B, 2026-08-06 — see the Phase D handover §5). A list
+  // here would be a SECOND source for a fact the folder already states, free to drift
+  // from it silently — the exact class of bug this config exists to prevent. Ordering
+  // lives in `sortLoFolders()` (src/lo/lo-slug.ts); reorder a course by renaming.
 });
 
 /** Type is INFERRED from the schema — one source of truth, never drifts apart. */
@@ -52,7 +55,6 @@ const raw = {
   },
   logo: 'logo.svg',
   favicon: 'favicon.svg',
-  loOrder: [],
 };
 
 /** Validate at load. Invalid `raw` throws here → dev/build dies immediately. */
