@@ -2,16 +2,43 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Head asset hrefs go through Vite's BASE_URL token, never a relative or
+         root-absolute path (carry-forward anti-pattern #28): a relative href resolves
+         against the CURRENT page URL, so it 404s on any path-slug route, and a
+         root-absolute one 404s under a non-root base. (Don't write the token itself in
+         a comment — Vite substitutes it there too.) -->
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
       content="Starter template for building accessible, interactive language-course exercise engines with React and Vite."
     />
     <title>lc-base-template</title>
+    <script>
+      // Pre-hydration theme. Prerendered HTML cannot know the reader's stored choice,
+      // so the `.dark` class is stamped here — synchronously, before first paint — or
+      // every dark-theme reader gets a flash of the light theme. Deliberately inline
+      // and module-free: an imported module is deferred, which is too late. Mirrors
+      // resolveInitialTheme() in src/hooks/useTheme.ts — keep the two in sync. (A CSP,
+      // if one is added later, needs a nonce here.)
+      (function () {
+        try {
+          var stored = localStorage.getItem('lc-theme');
+          var isDark =
+            stored === 'dark' ||
+            (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) document.documentElement.classList.add('dark');
+        } catch (error) {
+          // storage or matchMedia unavailable — the light default stands
+        }
+      })();
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <!-- data-lo-folder names the LO this page renders; main.tsx reads it instead of
+         hardcoding a slug, so one bundle serves every LO. Part D's prerender pass
+         stamps it per generated page. -->
+    <div id="root" data-lo-folder="lo-00-example"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

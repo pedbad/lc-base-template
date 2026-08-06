@@ -6,6 +6,12 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://vite.dev/config/
 export default defineConfig({
+  // Serve-from-a-sub-path support, e.g. `BASE_URL=/course/ bun run build`. Read from
+  // the environment rather than hardcoded because the post-build prerender pass needs
+  // the SAME value: Bun exposes process.env as `import.meta.env`, so resolveAsset()
+  // resolves audio/image URLs against this base while rendering static pages. One
+  // knob, both steps — set it via CLI `--base` and the prerender would not see it.
+  base: process.env.BASE_URL ?? '/',
   // tailwindcss() is Tailwind v4's first-party Vite plugin — it compiles the
   // `@import "tailwindcss"` in src/index.css and generates utilities on demand.
   // Faster than the v3 PostCSS path; no postcss.config / tailwind.config needed

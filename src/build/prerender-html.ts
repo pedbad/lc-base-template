@@ -18,8 +18,12 @@
  * Pure string work — the disk I/O lives in `scripts/prerender.tsx`.
  */
 
-/** The empty root div the app mounts into; the injection anchor. */
-const ROOT_DIV = '<div id="root"></div>';
+/**
+ * The empty root div the app mounts into; the injection anchor. Attributes are
+ * matched and DISCARDED, not preserved: index.html carries its own
+ * `data-lo-folder` for the dev server, and a generated page must name its own LO.
+ */
+const ROOT_DIV_PATTERN = /<div id="root"[^>]*><\/div>/;
 const TITLE_PATTERN = /<title>[\s\S]*?<\/title>/i;
 /** `[^>]` matches newlines, so this spans Prettier's multi-line meta tag. */
 const DESCRIPTION_META_PATTERN = /[ \t]*<meta\s[^>]*\bname="description"[^>]*>\n?/i;
@@ -62,9 +66,9 @@ export function buildPrerenderedHtml({
   title,
   description,
 }: PrerenderPageInput): string {
-  if (!template.includes(ROOT_DIV)) {
+  if (!ROOT_DIV_PATTERN.test(template)) {
     throw new Error(
-      `prerender: template has no ${ROOT_DIV} to mount into — index.html's root element changed shape`,
+      'prerender: template has no empty <div id="root"> to mount into — index.html\'s root element changed shape',
     );
   }
   if (!TITLE_PATTERN.test(template)) {
@@ -83,5 +87,8 @@ export function buildPrerenderedHtml({
 
   return withDescription
     .replace(TITLE_PATTERN, `<title>${escapeHtml(title)}</title>`)
-    .replace(ROOT_DIV, `<div id="root" data-lo-folder="${escapeHtml(loFolder)}">${appHtml}</div>`);
+    .replace(
+      ROOT_DIV_PATTERN,
+      `<div id="root" data-lo-folder="${escapeHtml(loFolder)}">${appHtml}</div>`,
+    );
 }

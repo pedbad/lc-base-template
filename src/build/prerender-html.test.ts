@@ -82,10 +82,22 @@ describe('buildPrerenderedHtml', () => {
     expect(html).toContain('content="Uses &lt;em&gt; &amp; &quot;quotes&quot;."');
   });
 
+  it("replaces the template's own data-lo-folder with this page's LO", () => {
+    const template = TEMPLATE.replace(
+      '<div id="root"></div>',
+      '<div id="root" data-lo-folder="lo-99-dev"></div>',
+    );
+
+    const html = buildPrerenderedHtml({ ...input, template });
+
+    expect(html).toContain('data-lo-folder="lo-00-example"');
+    expect(html).not.toContain('lo-99-dev');
+  });
+
   it('throws naming the missing anchor when the template has no root div', () => {
     const template = TEMPLATE.replace('<div id="root"></div>', '<div id="app"></div>');
 
-    expect(() => buildPrerenderedHtml({ ...input, template })).toThrow(/<div id="root"><\/div>/);
+    expect(() => buildPrerenderedHtml({ ...input, template })).toThrow(/id="root"/);
   });
 
   it('throws when the template has no title element', () => {
