@@ -1,0 +1,240 @@
+/**
+ * home.css — styling for the course landing page (Phase D). Co-located with the home
+ * components and imported by CourseHome + LessonSideNav (same pattern as shell.css).
+ * Plain CSS + semantic tokens only (no hardcoded colours or raw px palette values);
+ * everything sits inside @layer components so Tailwind utilities still override.
+ */
+@layer components {
+  /* --- Hero ---------------------------------------------------------------
+     Editorial masthead: oversized display heading with an accent rule down the
+     left, so the landing page reads as a cover rather than a card dump. */
+  .home-hero {
+    padding-block: clamp(2.5rem, 1.5rem + 4vw, 5rem);
+  }
+
+  .home-hero-heading {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 1.5rem + 5vw, 5rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--foreground);
+    text-wrap: balance;
+  }
+
+  .home-hero-subheading {
+    max-width: 46ch;
+    margin-top: 1.25rem;
+    padding-left: 1.25rem;
+    border-left: 2px solid var(--accent);
+    color: var(--muted-foreground);
+    font-size: 1.125rem;
+    line-height: 1.6;
+  }
+
+  /* --- Card grid --------------------------------------------------------- */
+  .home-card-grid {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    grid-template-columns: 1fr;
+  }
+
+  @media (width >= 40rem) {
+    .home-card-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (width >= 64rem) {
+    .home-card-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  /* --- One card ---------------------------------------------------------- */
+  .lo-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) + 4px);
+    background-color: var(--card);
+    color: var(--card-foreground);
+    text-decoration: none;
+    transition:
+      transform 300ms ease,
+      border-color 300ms ease,
+      box-shadow 300ms ease;
+  }
+
+  .lo-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 12px 28px -12px var(--ring);
+  }
+
+  .lo-card:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+
+  /* Illustration band. `aspect-ratio` reserves the box before the image loads, so
+     there is no layout shift and no width/height attributes are needed on an
+     author's image of unknown intrinsic size. */
+  .lo-card-band {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 3 / 2;
+    background-color: var(--muted);
+  }
+
+  .lo-card-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    transition: transform 500ms ease;
+  }
+
+  .lo-card:hover .lo-card-image {
+    transform: scale(1.05);
+  }
+
+  .lo-card-band-fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: var(--muted-foreground);
+  }
+
+  /* Title over the band, on a glass strip that fades out to the right so long
+     titles stay legible without boxing the whole image in. */
+  .lo-card-title-overlay {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    display: block;
+    padding: 0.5rem 1rem;
+    border-top: 1px solid var(--border);
+    background-image: linear-gradient(
+      to right,
+      color-mix(in oklab, var(--card) 94%, transparent),
+      color-mix(in oklab, var(--card) 78%, transparent),
+      transparent
+    );
+    backdrop-filter: blur(3px);
+  }
+
+  .lo-card-blurb {
+    /* Clamped to four lines, opening up on hover: the grid stays an even rhythm
+       while a full blurb is still reachable without leaving the page. */
+    max-height: 6rem;
+    padding: 1.25rem 1rem 0;
+    overflow: hidden;
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+    line-height: 1.55;
+    transition: max-height 300ms ease-in-out;
+  }
+
+  .lo-card:hover .lo-card-blurb {
+    max-height: 12rem;
+  }
+
+  .lo-card-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding: 1.25rem 1rem;
+    color: var(--primary);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: gap 300ms ease;
+  }
+
+  .lo-card:hover .lo-card-cta {
+    gap: 0.875rem;
+  }
+
+  .lo-card-cta-icon {
+    transition: transform 300ms ease;
+  }
+
+  .lo-card:hover .lo-card-cta-icon {
+    transform: translateX(2px);
+  }
+
+  /* --- Sliding lesson nav ------------------------------------------------
+     The panel is FIXED, so it overlays the page from the viewport edge rather
+     than pushing the layout around. It slides on `transform` only (compositor
+     work, no layout), and is `inert` when closed — see LessonSideNav.tsx for why
+     that is not `hidden`. */
+  .lesson-nav-panel {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    width: min(20rem, 85vw);
+    border-inline-end: 1px solid var(--border);
+    background-color: var(--card);
+    box-shadow: 0 0 40px -12px var(--ring);
+    transform: translateX(-100%);
+    transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .lesson-nav-panel[data-open='true'] {
+    transform: translateX(0);
+  }
+
+  .lesson-nav-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background-color: color-mix(in oklab, var(--foreground) 45%, transparent);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 260ms ease;
+  }
+
+  .lesson-nav-backdrop[data-open='true'] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Scroll lock: LessonSideNav puts this class on <html> while the panel is open,
+     so the page behind cannot scroll under it. */
+  :root.lesson-nav-open {
+    overflow: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lo-card,
+    .lo-card-image,
+    .lo-card-blurb,
+    .lo-card-cta,
+    .lo-card-cta-icon,
+    .lesson-nav-panel,
+    .lesson-nav-backdrop {
+      transition: none;
+    }
+
+    .lo-card:hover {
+      transform: none;
+    }
+
+    .lo-card:hover .lo-card-image {
+      transform: none;
+    }
+  }
+}
