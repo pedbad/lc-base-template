@@ -32,3 +32,32 @@ export function loSlug(folderName: string): string {
   }
   return match[1];
 }
+
+/**
+ * Slug every LO folder at once, in the order given, rejecting a collision.
+ *
+ * The ordinal is what distinguishes `lo-00-example` from `lo-01-example` on disk, and
+ * the slug drops it — so two folders CAN name the same page. Silently, that is one LO
+ * overwriting another's HTML; hence the check lives here, where the whole set is
+ * visible, rather than in the caller that writes the files.
+ *
+ * @throws Error naming both offenders on a collision, or the malformed folder
+ */
+export function loSlugsByFolder(folderNames: readonly string[]): ReadonlyMap<string, string> {
+  const byFolder = new Map<string, string>();
+  const folderBySlug = new Map<string, string>();
+
+  for (const folderName of folderNames) {
+    const slug = loSlug(folderName);
+    const claimed = folderBySlug.get(slug);
+    if (claimed !== undefined) {
+      throw new Error(
+        `lo-config/${claimed} and lo-config/${folderName} both derive the slug "${slug}" — they would write the same ${slug}.html. Rename one.`,
+      );
+    }
+    folderBySlug.set(slug, folderName);
+    byFolder.set(folderName, slug);
+  }
+
+  return byFolder;
+}

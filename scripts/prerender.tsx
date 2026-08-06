@@ -13,8 +13,8 @@
  * Fails the build loudly: any malformed LO, missing dist, or reshaped template throws
  * with the offending path named. A half-rendered page is never written.
  *
- * Scope: ONE LO for now (Part D §2 — get the hashed-asset injection right on file one).
- * The loop over `listLoSlugs()` is the next commit.
+ * Every folder under `lo-config/` gets one file. Nothing here enumerates LOs by hand —
+ * an LO exists because its folder exists.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
@@ -22,20 +22,17 @@ import { StrictMode } from 'react';
 import { renderToString } from 'react-dom/server';
 import App from '@/App';
 import { buildPrerenderedHtml } from '@/build/prerender-html';
-import { loadLo } from '@/lo/load-lo-disk';
-import { loSlug } from '@/lo/lo-slug';
+import { listLoSlugs, loadLo } from '@/lo/load-lo-disk';
+import { loSlugsByFolder } from '@/lo/lo-slug';
 
 const DIST_DIR = path.resolve(import.meta.dirname, '../dist');
 const TEMPLATE_PATH = path.join(DIST_DIR, 'index.html');
-
-/** The one LO rendered for now; `listLoSlugs()` replaces this in the next commit. */
-const LO_FOLDER = 'lo-00-example';
 
 /**
  * `renderToString`, not `renderToStaticMarkup`: static markup is documented as
  * non-hydratable, and these pages hydrate into the live app.
  */
-function renderLoPage(template: string, loFolder: string): { slug: string; html: string } {
+function renderLoPage(template: string, loFolder: string): string {
   const lo = loadLo(loFolder);
   const appHtml = renderToString(
     <StrictMode>
@@ -43,16 +40,13 @@ function renderLoPage(template: string, loFolder: string): { slug: string; html:
     </StrictMode>,
   );
 
-  return {
-    slug: loSlug(loFolder),
-    html: buildPrerenderedHtml({
-      template,
-      appHtml,
-      loFolder,
-      title: lo.title,
-      description: lo.description,
-    }),
-  };
+  return buildPrerenderedHtml({
+    template,
+    appHtml,
+    loFolder,
+    title: lo.title,
+    description: lo.description,
+  });
 }
 
 let template: string;
@@ -62,9 +56,13 @@ try {
   throw new Error(`prerender: ${TEMPLATE_PATH} not found — run \`vite build\` first`);
 }
 
-const { slug, html } = renderLoPage(template, LO_FOLDER);
-const outPath = path.join(DIST_DIR, `${slug}.html`);
-writeFileSync(outPath, html, 'utf-8');
+// Slug the whole set BEFORE rendering anything, so a malformed folder name or a slug
+// collision fails before any file is written.
+const slugsByFolder = loSlugsByFolder(listLoSlugs());
+if (slugsByFolder.size === 0) throw new Error('prerender: no LO folders found under lo-config/');
 
-// The build's only progress output — one line per generated page.
-process.stdout.write(`prerendered ${LO_FOLDER} → dist/${slug}.html\n`);
+for (const [loFolder, slug] of slugsByFolder) {
+  writeFileSync(path.join(DIST_DIR, `${slug}.html`), renderLoPage(template, loFolder), 'utf-8');
+  // The build's only progress output — one line per generated page.
+  process.stdout.write(`prerendered ${loFolder} → dist/${slug}.html\n`);
+}

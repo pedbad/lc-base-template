@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { loSlug } from './lo-slug';
+import { loSlug, loSlugsByFolder } from './lo-slug';
 
 describe('loSlug', () => {
   it('strips the lo-NN- authoring-order prefix', () => {
@@ -25,5 +25,24 @@ describe('loSlug', () => {
 
   it('rejects a slug that is not url-safe kebab-case', () => {
     expect(() => loSlug('lo-00-Example_One')).toThrow(/lo-00-Example_One/);
+  });
+});
+
+describe('loSlugsByFolder', () => {
+  it('maps every folder to its slug, preserving order', () => {
+    expect([...loSlugsByFolder(['lo-00-example', 'lo-01-salutations'])]).toEqual([
+      ['lo-00-example', 'example'],
+      ['lo-01-salutations', 'salutations'],
+    ]);
+  });
+
+  it('rejects two folders that would write the same page, naming both', () => {
+    expect(() => loSlugsByFolder(['lo-00-example', 'lo-01-example'])).toThrow(
+      /lo-00-example.*lo-01-example|lo-01-example.*lo-00-example/s,
+    );
+  });
+
+  it('propagates a malformed folder name', () => {
+    expect(() => loSlugsByFolder(['lo-00-example', 'stray'])).toThrow(/stray/);
   });
 });
