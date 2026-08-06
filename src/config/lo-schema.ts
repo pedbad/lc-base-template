@@ -196,6 +196,17 @@ export const LoManifestSchema = z
     title: z.string().min(1),
     /** Optional meta description for the LO's <head>. Omit the key when unused. */
     description: z.string().min(1).optional(),
+    /**
+     * Optional illustration for this LO's card on the course landing page. An
+     * author-relative asset path (`images/first-contact.webp`) resolved against
+     * `BASE_URL` by `resolveAsset()` at render — never used as written, or it would
+     * 404 under a non-root base (anti-pattern #28). Omit the key and the card falls
+     * back to a decorative icon band, so an image is never required to ship an LO.
+     *
+     * Blank is rejected rather than treated as "no image": an empty path resolves to
+     * the base URL itself, which would request the page as an image.
+     */
+    image: z.string().min(1).optional(),
     /** The page, in order. At least one — an LO with no sections renders nothing. */
     sections: z.array(LoSectionSchema).min(1),
     /**

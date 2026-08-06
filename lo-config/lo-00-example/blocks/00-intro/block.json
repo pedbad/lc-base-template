@@ -6,7 +6,8 @@
     "instructions": "Instructions render as a plain callout — informative, never an assertive announcement.",
     "text": [
       "Placeholder introduction. Every section, accordion, block and exercise on this page comes from this Learning Object's JSON under lo-config/lo-00-example — nothing about the page is hardcoded in the app.",
-      "Copy that folder to start a real Learning Object, then replace this filler: lo.json declares the sections in order, and each block or exercise folder holds its own config."
+      "Copy that folder to start a real Learning Object, then replace this filler: lo.json declares the sections in order, and each block or exercise folder holds its own config.",
+      "Two fields in lo.json are about the course landing page rather than this page: description is the blurb on this Learning Object's card, and image is the picture on it — this one still points at the shared placeholder, images/lo-placeholder.svg. Drop your own file into public/images/ and name it there. The folder's lo-NN- number is what orders the cards, so renaming the folder is how a lesson moves."
     ]
   }
 }

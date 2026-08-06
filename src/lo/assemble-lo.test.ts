@@ -45,6 +45,22 @@ test('assembleLo: returns sections and their items in declared order', () => {
   ]);
 });
 
+test('assembleLo: carries the manifest card image through to the assembled LO', () => {
+  const tree = validTree();
+  const lo = assembleLo('lo-01-salutations', {
+    ...tree,
+    manifest: { ...(tree.manifest as object), image: 'images/salutations.svg' },
+  });
+
+  expect(lo.image).toBe('images/salutations.svg');
+});
+
+test('assembleLo: omits the image key entirely when the manifest declares none', () => {
+  const lo = assembleLo('lo-01-salutations', validTree());
+
+  expect('image' in lo).toBe(false);
+});
+
 test('assembleLo: resolves each ref to its parsed config', () => {
   const lo = assembleLo('lo-01-salutations', validTree());
 

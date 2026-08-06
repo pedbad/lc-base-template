@@ -1,0 +1,47 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 600 400"
+  width="600"
+  height="400"
+  role="presentation"
+  aria-hidden="true"
+>
+  <!--
+    lo-placeholder.svg — the out-of-box illustration for a Learning Object card on
+    the course landing page (`"image"` in an LO's lo.json).
+
+    Purely decorative: cards render it with alt="" and aria-hidden, so it carries no
+    text and needs no accessible name. Authors replace it per LO; it exists so a
+    fresh clone's cards look finished rather than half-authored.
+
+    Hex literals are deliberate HERE and only here: an <img> is a separate document
+    and cannot read the page's CSS custom properties, so the token chain cannot
+    reach inside it. Values are copied from src/styles/palette.css (Cambridge Light
+    Blue / Blue / Warm Blue / Dark Blue) — keep them in step if the palette changes.
+    Mid-tone by design, so it sits well on both the light and dark card surface.
+  -->
+  <defs>
+    <linearGradient id="lo-placeholder-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d1f9f1" />
+      <stop offset="1" stop-color="#8ee8d8" />
+    </linearGradient>
+  </defs>
+
+  <rect width="600" height="400" fill="url(#lo-placeholder-bg)" />
+
+  <!-- Two overlapping speech bubbles: a conversation, the unit of a language course. -->
+  <g fill="none" stroke="#133844" stroke-linecap="round" stroke-linejoin="round">
+    <g opacity="0.14" stroke-width="18">
+      <path d="M104 232h132a28 28 0 0 0 28-28v-72a28 28 0 0 0-28-28H104a28 28 0 0 0-28 28v72a28 28 0 0 0 28 28h4l-16 40 44-40" />
+    </g>
+    <g opacity="0.28" stroke-width="14">
+      <path d="M300 300h180a28 28 0 0 0 28-28v-92a28 28 0 0 0-28-28H300a28 28 0 0 0-28 28v92a28 28 0 0 0 28 28h6l-14 34 38-34" />
+    </g>
+  </g>
+
+  <!-- Speech lines inside the front bubble — suggestion of text, not glyphs. -->
+  <g stroke="#00bdb6" stroke-linecap="round" stroke-width="12" opacity="0.55">
+    <path d="M312 206h132" />
+    <path d="M312 244h96" />
+  </g>
+</svg>

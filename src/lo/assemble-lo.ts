@@ -70,6 +70,8 @@ export interface AssembledLo {
   readonly slug: string;
   readonly title: string;
   readonly description?: string;
+  /** Author-relative card illustration path; absent when the author declared none. */
+  readonly image?: string;
   readonly sections: readonly AssembledSection[];
   /**
    * Declared modals, keyed by id, with their prose already parsed to rich-text nodes
@@ -186,6 +188,7 @@ export function assembleLo(slug: string, tree: LoFileTree): AssembledLo {
     slug,
     title: manifest.title,
     ...(manifest.description === undefined ? {} : { description: manifest.description }),
+    ...(manifest.image === undefined ? {} : { image: manifest.image }),
     sections,
     modals,
   };

@@ -73,6 +73,16 @@ describe('example LO (lo-00-example)', () => {
     expect(manifest.sections.some((section) => section.navLabel !== undefined)).toBe(true);
   });
 
+  // The optional card image ships exercised, for the same reason navLabel does: the
+  // landing page's image path would otherwise be untested until an author tried it.
+  // The file must EXIST too (guard d seed) — a card pointing at a missing image is a
+  // broken image on the course's front page.
+  it('declares a landing-card image that exists under public/', () => {
+    expect(manifest.image, 'example LO should exercise the optional card image').toBeDefined();
+    const file = path.resolve(import.meta.dirname, '../../public', manifest.image!);
+    expect(existsSync(file), `missing ${file}`).toBe(true);
+  });
+
   const blockRefs = manifest.sections.flatMap((section) =>
     section.blocks.map((ref) => [section.id, ref] as const),
   );

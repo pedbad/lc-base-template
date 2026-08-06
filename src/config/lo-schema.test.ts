@@ -39,6 +39,30 @@ test('lo-schema: manifest with meta + ordered sections validates', () => {
   expect(parsed.sections[2].exercises).toEqual(['01-select', '02-radio-quiz']);
 });
 
+// The landing-page card image: optional, and an author-relative asset path (it is
+// resolved against BASE_URL at render, never used as written).
+test('lo-schema: manifest accepts an optional card image path', () => {
+  const parsed = LoManifestSchema.parse({
+    title: 'Salutations',
+    image: 'images/lo-placeholder.svg',
+    sections: oneSection,
+  });
+  expect(parsed.image).toBe('images/lo-placeholder.svg');
+});
+
+test('lo-schema: manifest without an image parses, leaving it undefined', () => {
+  const parsed = LoManifestSchema.parse({ title: 'Salutations', sections: oneSection });
+  expect(parsed.image).toBeUndefined();
+});
+
+// Guard: a blank image is an authoring slip, not "no image" — it would resolve to
+// the base URL itself and request the page as an image.
+test('lo-schema: manifest rejects a blank image path', () => {
+  expect(() =>
+    LoManifestSchema.parse({ title: 'Salutations', image: '', sections: oneSection }),
+  ).toThrow();
+});
+
 // Guard: title is required — a manifest without it fails the build.
 test('lo-schema: manifest missing title throws', () => {
   expect(() => LoManifestSchema.parse({ sections: oneSection })).toThrow();

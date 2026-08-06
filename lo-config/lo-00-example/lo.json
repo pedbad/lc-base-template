@@ -1,6 +1,7 @@
 {
   "title": "Example Learning Object",
   "description": "A placeholder Learning Object that shows authors the page chrome — sections, accordions, blocks, exercises and a popup — with filler content only.",
+  "image": "images/lo-placeholder.svg",
   "sections": [
     {
       "id": "introduction",
