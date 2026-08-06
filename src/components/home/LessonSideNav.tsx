@@ -63,7 +63,9 @@ export default function LessonSideNav({ lessons }: LessonSideNavProps) {
     focusables(panel)[0]?.focus();
     document.documentElement.classList.add(SCROLL_LOCK_CLASS);
 
-    function handleKeydown(event: KeyboardEvent) {
+    // An arrow const, not a `function` declaration: a declaration is hoisted, so TS
+    // cannot carry the `panel !== null` narrowing above into it.
+    const handleKeydown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setIsOpen(false);
         return;
@@ -85,7 +87,7 @@ export default function LessonSideNav({ lessons }: LessonSideNavProps) {
         event.preventDefault();
         first.focus();
       }
-    }
+    };
 
     document.addEventListener('keydown', handleKeydown);
     return () => {
