@@ -65,14 +65,37 @@ _(More steps added as the template grows.)_
 ## Build
 
 ```bash
-bun run build     # type-check, bundle, then prerender one HTML file per LO
+bun run build     # type-check, bundle, then prerender the landing page + one HTML file per LO
 bun run preview   # serve the built output locally
 ```
 
 The build emits **one real HTML file per folder in `lo-config/`** (`lo-00-example` →
-`dist/example.html`). Each page's body is already rendered, so a course reads and
-navigates with JavaScript disabled, and hydrates into the interactive app when
-JavaScript runs. Exercises need JavaScript and say so on the static page.
+`dist/example.html`) plus **`dist/index.html`, the course landing page** — hero copy
+from `src/config/course.config.ts` and one card per LO, linking to that LO's page.
+Each page's body is already rendered, so a course reads and navigates with JavaScript
+disabled, and hydrates into the interactive app when JavaScript runs. Exercises need
+JavaScript and say so on the static page.
+
+**LO order is the `lo-NN-` number in each LO's folder name, and nothing else** — cards,
+the lesson nav and the build all read that one source, sorted numerically (so `lo-9-`
+comes before `lo-10-`). There is deliberately no order list in `course.config.ts` to
+drift from the folders. Move a lesson by renaming its folder.
+
+### Previewing a course while you author it
+
+`bun run dev` serves the landing page with hot reload, but **a card link 404s there**:
+`<slug>.html` files are written by the build, so the way to click through a course is
+build-then-preview.
+
+```bash
+bun run build && bun run preview   # the whole course, exactly as it deploys
+```
+
+That is the deliberate trade (Phase D, decision A): a dev-server shim for LO routes
+would be a third rendering path to keep in step with the other two, and dev diverging
+from the build is what put `lo-00-example` on `/` in the first place. So `bun run dev`
+serves the landing page and the exercise showcase; **LO pages come from the build**,
+and editing an LO's JSON means building again to see it — about ten seconds.
 
 Serving from a sub-path takes one env var, which feeds both the bundle and the
 prerender pass:

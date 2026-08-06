@@ -32,6 +32,7 @@ and `eslint.config.js`. The `README` links here rather than restating it.
 | **Cambridge typography**    | Open Sans (body) + Feijoa (display) + baseline | 10b  |
 | **Zod**                     | Runtime config validation (fail-fast at load)  | 11   |
 | **Static prerender**        | One `.html` per LO (post-build Bun script)     | 15   |
+| **Course landing page**     | `dist/index.html` — hero + one card per LO     | 15b  |
 
 ---
 
@@ -715,6 +716,40 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   `lo-config/`, or a reshaped template all exit non-zero **before** any file is written.
 - **Rejected:** a `?lo=` query route (path slugs are the only content route — carry-forward
   anti-pattern #26); hardcoding asset hashes in a hand-written template.
+
+### Course landing page — and why authoring is build-then-preview _(Phase D)_
+
+- **What:** the same post-build script now also renders `dist/index.html` from
+  `CourseHome` — hero copy from `course.config.ts`, one card per LO folder. `/` was
+  `lo-00-example` itself, so `dist/index.html` and `dist/example.html` were the same
+  page and a second LO's page was an orphan nothing linked to.
+- **One entry, branching on one attribute:** `index.html`'s root div is empty and
+  unstamped; `main.tsx` renders the landing page when `data-lo-folder` is absent and
+  that LO when it is present. Forced by the prerender design above — the built
+  `index.html` is the template for **every** page it writes, so its script has to be
+  able to render either. Hence `buildPrerenderedHtml` takes `loFolder` as optional
+  rather than growing a second function to drift from.
+- **Write order matters:** the landing page overwrites the very file being used as the
+  template, so it is written last, after every LO page has been rendered from the
+  untouched original.
+- **Authoring is `bun run build && bun run preview` (decision A):** `bun run dev`
+  serves the landing page, but `<slug>.html` exists only after a build, so card links
+  404 there and LO pages have no dev URL. **Rejected:** a Vite dev-server middleware
+  that fakes LO routes (a third rendering path to keep in step with the bundle and the
+  prerender pass — and dev-vs-build divergence is exactly what pinned an LO to `/`),
+  and a dev-only pinned-LO entry (the same divergence, restated). The cost is real and
+  accepted: content edits need a ~10s rebuild to view.
+- **LO order has one source (decision B):** the `lo-NN-` folder ordinal, sorted
+  numerically by `sortLoFolders()` so `lo-9-` precedes `lo-10-`. `courseConfig.loOrder`
+  is deleted, and a test asserts it stays gone — a second list for the same fact is
+  free to drift from the folders, and silent config drift is what this template exists
+  to prevent.
+- **The sliding lesson nav is hand-rolled, not shadcn's `Sidebar`:** that component
+  branches on a JS-measured viewport (`useIsMobile`) and swaps a rail for a `Sheet`, so
+  its first client render cannot match prerendered markup; it also writes a state
+  cookie. `LessonSideNav` is one off-canvas panel at every width — `inert` when closed
+  (not `hidden`, which cannot slide), Escape/focus-trap/focus-restore/scroll-lock in
+  ~50 lines, motion in CSS so `prefers-reduced-motion` is honoured without JS.
 
 ---
 

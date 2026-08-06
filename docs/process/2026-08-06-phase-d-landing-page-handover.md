@@ -138,6 +138,18 @@ Nothing needs inventing for the data layer:
 
 ## 5. Decisions this phase must settle
 
+> **SETTLED 2026-08-06, during the build.** Each answer is recorded inline under its
+> letter below. A–B were the author's calls (asked before any component was written);
+> C–E followed the reference and the constraints. Summary:
+>
+> | #   | Answer                                                                                                 |
+> | --- | ------------------------------------------------------------------------------------------------------ |
+> | A   | **Build-then-preview.** No dev-server shim; `bun run dev` serves the landing page only.                |
+> | B   | **Folder ordinal only.** `courseConfig.loOrder` deleted; numeric sort; asserted by test.               |
+> | C   | **Every LO** (a course-wide index), landing page only — same as the reference.                         |
+> | D   | **LOs only.** The showcase stays unlinked; gating it out of prod builds is still open.                 |
+> | E   | **Image now.** Optional `image` on the LO manifest + a shipped placeholder wired into `lo-00-example`. |
+
 **A. The dev-server routing wrinkle — settle this FIRST.** `bun run dev` serves `index.html`.
 Once that is the card list, every card links to `<slug>.html`, **which only exists after a
 build**. So clicking a card in dev 404s. Options:
@@ -152,49 +164,126 @@ build**. So clicking a card in dev 404s. Options:
 
 This is the choice that changes daily authoring. Pick deliberately and record why.
 
+> **ANSWER: option 2 — author via `bun run build && bun run preview`.** (Author's call,
+> 2026-08-06.) Option 1 means a third rendering path — bundle, prerender pass, and a
+> dev-only middleware — to keep in step with the other two, and option 3 is the
+> dev-vs-prod divergence that pinned `lo-00-example` to `/` in the first place. Zero new
+> build config wins.
+>
+> **The cost, stated plainly:** `bun run dev` serves the landing page (and the exercise
+> showcase) and nothing else. LO pages have **no dev URL at all** — `<slug>.html` is
+> written by the prerender pass — so a card link 404s under `dev`, and editing an LO's
+> JSON means rebuilding (~10s) to see it. Documented in README's _Previewing a course
+> while you author it_ and CONTRIBUTING's authoring section, both of which say it in
+> those words rather than leaving an author to discover the 404.
+
 **B. LO order — one source of truth.** The folder ordinal already encodes order (`lo-00-`,
 `lo-01-`). `courseConfig.loOrder` is a _second_ source for the same fact, and silent config
 drift is precisely what this template exists to prevent. Recommendation: the folder ordinal
 **is** the order; either delete `loOrder` or redefine it as an explicit override with a guard
 that every slug in it exists and every LO is covered. Do not leave two unreconciled sources.
 
+> **ANSWER: the folder ordinal is the order; `loOrder` is deleted.** (Recommendation
+> taken; the author asked only that the decision be stated in the README, which it is.)
+> `loOrdinal()` + `sortLoFolders()` in `src/lo/lo-slug.ts` sort **numerically**, so
+> `lo-9-` precedes `lo-10-` — alphabetically, which is what both readers hand back, it
+> would not. `course.config.test.ts` asserts `loOrder`'s continued absence, so nobody
+> re-adds a second source by reflex. Reorder a course by renaming folders.
+> The override variant was rejected as YAGNI: nothing yet needs to re-sequence without
+> renaming, and the guard it would need (every slug exists, every LO covered) is more
+> machinery than the problem.
+
 **C. What the sliding nav contains.** All LOs (a course-wide index, same on every page)? The
 current LO's sections (what the header nav does today)? Both, in one panel? The reference
 answers this — follow it, and note the answer here.
+
+> **ANSWER: every LO — a course-wide index — and on the landing page only.** That is what
+> the reference does: its `LandingPage.jsx` renders a `<nav aria-label="Lessons">` listing
+> `learningObjects`, while an LO page gets `MainMenu` (section anchors) instead. Section
+> links stay the LO page's own header nav; the route between the two is the header brand,
+> which now links home (§4 item 5).
+>
+> **Deviation from the reference, deliberately:** its sidebar is a shadcn `Sidebar` with
+> `collapsible="icon"` — a rail that expands on desktop, a `Sheet` on mobile. Not ported.
+> That component branches on a JS-measured viewport (`useIsMobile` reads
+> `window.innerWidth`), so its first client render cannot be guaranteed to match
+> prerendered markup, and it writes a state cookie. `LessonSideNav` is one off-canvas
+> panel at every width: identical server and client markup, one a11y story, ~50 lines.
+> The reference's collapsed-rail social links were not ported either — this template has
+> no social-links config.
 
 **D. Does the landing page list only LOs?** The exercise showcase still ships in production
 builds (`exercise-showcase.html`, still unresolved from Part D §5). Decide whether it appears
 on the landing page, stays unlinked, or is finally gated out of prod builds.
 
+> **ANSWER: LOs only. The showcase stays unlinked, and gating it out of prod builds stays
+> open.** A debug gallery is not a lesson, and the landing page is the course's front
+> door — a card for it would be the first thing a learner sees. Linking it is the one
+> option that would have been hard to undo; not linking it leaves the real question
+> (should it ship at all?) exactly where Part D §5 left it, still on the list.
+
 **E. Card content beyond title + description.** An image or icon per card means a new optional
 manifest field (`lo-schema.ts`) and an asset convention — a schema change, so decide before
 building cards, not after.
+
+> **ANSWER: the image field now, with a placeholder shipped.** (Author's call,
+> 2026-08-06.) `image` is optional on `LoManifestSchema` — an author-relative path under
+> `public/`, resolved by `resolveAsset()` — and an LO without one gets a decorative icon
+> band rather than a broken image. `public/images/lo-placeholder.svg` ships as the
+> out-of-box illustration, `lo-00-example` points at it so the field is exercised on a
+> fresh clone, and that LO's intro block explains the field to authors. `example-lo.test.ts`
+> asserts the named file actually exists (a seed of guard d).
+>
+> The SVG is the one place in the repo with hardcoded colour literals, and says so in a
+> comment: an `<img>` is a separate document and cannot read the page's CSS custom
+> properties, so the token chain cannot reach inside it. Values are copied from
+> `palette.css` and it is mid-tone by design, to sit on the light and dark card surface
+> alike.
 
 ---
 
 ## 6. Acceptance criteria (one concern per commit)
 
-- [ ] `/` renders the course landing page — hero + one card per LO — and **no LO content**.
-- [ ] `dist/index.html` is the landing page; `dist/example.html` remains `lo-00-example`. No
-      duplication.
-- [ ] Every card links to a page that exists, verified under a **non-root base**
-      (`BASE_URL=/course/ bun run build`).
-- [ ] Landing page is prerendered: full card list present with JavaScript disabled, and every
-      card link works with JS off.
-- [ ] Sliding nav: keyboard-operable (open, trap, Escape, restore focus), `aria-expanded`
+All met, 2026-08-06. Evidence in brackets.
+
+- [x] `/` renders the course landing page — hero + one card per LO — and **no LO content**.
+      [`CourseHome.test.tsx` asserts no `<details>` and no section ids; browser pass at
+      `http://localhost:4173/`]
+- [x] `dist/index.html` is the landing page; `dist/example.html` remains `lo-00-example`. No
+      duplication. [`<title>Cambridge Spanish — Level 1</title>` + no `data-lo-folder` on the
+      former; `data-lo-folder="lo-00-example"` on the latter]
+- [x] Every card links to a page that exists, verified under a **non-root base**
+      (`BASE_URL=/course/ bun run build`). [`href="/course/example.html"`,
+      `src="/course/images/lo-placeholder.svg"`; at root base both links returned HTTP 200
+      with the expected `<h1>`]
+- [x] Landing page is prerendered: full card list present with JavaScript disabled, and every
+      card link works with JS off. [`curl` of the served page — no JS engine at all — carries
+      the hero, both cards, both nav entries and the image; also rendered in-browser from a
+      script-stripped copy of `dist/index.html`, which came up fully styled with the icon
+      fallback on the image-less LO]
+- [x] Sliding nav: keyboard-operable (open, trap, Escape, restore focus), `aria-expanded`
       correct, scroll-locked while open, reduced-motion respected. Works with JS off or is
-      inert-but-harmless without it.
-- [ ] Landing page hydrates with no React mismatch warnings; LO pages and the showcase entry
-      unaffected.
-- [ ] Adding a folder to `lo-config/` adds a card with **no code change**. Verify with a real
-      second LO, then delete it.
-- [ ] LO order has exactly one source of truth (decision B), with a test.
-- [ ] `bun run test · lint · lint:css · format:check · build` green, plus a browser pass over
-      HTTP (not `file://`).
-- [ ] Docs updated in the same pass: README's Build section, CONTRIBUTING's authoring section,
-      TOOLING, and the buildlist (`docs/process/LC_BASE_TEMPLATE_BUILD_HANDOVER.md` — step 16
-      and the DOCS/DEPLOY block). **The last session's drift pass cleaned all of these; don't
-      re-introduce drift.**
+      inert-but-harmless without it. [browser pass: open → `aria-expanded="true"`, focus in
+      panel, `<html>` `overflow: hidden`; Tab wrapped at both ends; Escape → collapsed,
+      `inert`, `aria-hidden`, slid to `-320px`, focus back on the toggle, lock released.
+      Motion is CSS-only, guarded by `prefers-reduced-motion` in `home.css`]
+- [x] Landing page hydrates with no React mismatch warnings; LO pages and the showcase entry
+      unaffected. [console empty on the landing page; `/greetings.html` hydrated with its own
+      folder; showcase entry untouched]
+- [x] Adding a folder to `lo-config/` adds a card with **no code change**. Verify with a real
+      second LO, then delete it. [`lo-01-greetings` → `dist/greetings.html` + a second card
+      and a second nav entry, zero code edits; folder removed afterwards]
+- [x] LO order has exactly one source of truth (decision B), with a test. [`sortLoFolders`
+      tests incl. the `lo-9` before `lo-10` case; `course.config.test.ts` asserts `loOrder`
+      is gone]
+- [x] `bun run test · lint · lint:css · format:check · build` green, plus a browser pass over
+      HTTP (not `file://`). [591 tests; all four gates clean; everything above over
+      `http://localhost:4173`]
+- [x] Docs updated in the same pass: README's Build section, CONTRIBUTING's authoring section,
+      TOOLING, and the buildlist. [README gained _Previewing a course while you author it_ +
+      the order rule; CONTRIBUTING's authoring section gained the card fields, the order rule
+      and the build-then-preview loop; TOOLING gained the landing-page section and a
+      glance-table row; the buildlist gained step 15b]
 
 ---
 
@@ -215,6 +304,25 @@ building cards, not after.
 - **Never commit `.claude/tdd-guard/`.** Its hook was muted 2026-08-04 (`Not logged in`).
 
 ---
+
+## 7b. What shipped (2026-08-06)
+
+Six commits, one concern each:
+
+| Commit                                               | What                                                                           |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `refactor(config)`: folder ordinal is the only order | `loOrdinal` + `sortLoFolders`; `loOrder` deleted (decision B)                  |
+| `feat(config)`: optional card image                  | `image` on the manifest + placeholder SVG + `lo-00-example` wired (decision E) |
+| `feat(lo)`: build the course index                   | `buildLoIndex()` — reader-agnostic, ordered, collision-checked                 |
+| `feat(shell)`: course landing page                   | `CourseHome` · `LoCard` · `LessonSideNav` · `home.css`                         |
+| `feat(build)`: prerender the landing page            | optional `loFolder`, unstamped `index.html`, branching `main.tsx`, write-last  |
+| `feat(shell)`: header brand links home               | `resolveHomeHref()`; an LO page finally has a route back to the course         |
+
+Left deliberately alone: the exercise showcase (decision D), the LO page's header nav
+(section anchors, per spec), and `ui-strings.ts` — the landing page's few chrome words
+("Lessons", "Start learning") are hardcoded in the shell components exactly as
+"Skip to main content" and "Main navigation" already are, rather than expanding the
+strictly-required exercise-chrome key set.
 
 ## 8. After this phase
 

@@ -31,17 +31,17 @@ below is active immediately, no manual `git config` step.
 
 ## Everyday commands
 
-| Command                | What it does                                               |
-| ---------------------- | ---------------------------------------------------------- |
-| `bun run dev`          | Vite dev server with hot reload                            |
-| `bun run build`        | Type-check (`tsc -b`) + bundle + prerender one HTML per LO |
-| `bun run preview`      | Serve the production build locally                         |
-| `bun run test`         | Run the test suite (Vitest, one-shot)                      |
-| `bun run test:watch`   | Vitest in watch mode                                       |
-| `bun run lint`         | ESLint over the repo                                       |
-| `bun run lint:css`     | Stylelint over `src/**/*.css`                              |
-| `bun run format`       | Prettier — rewrite all files to the house style            |
-| `bun run format:check` | Prettier — verify formatting without writing               |
+| Command                | What it does                                                         |
+| ---------------------- | -------------------------------------------------------------------- |
+| `bun run dev`          | Vite dev server, hot reload — landing page only (see below)          |
+| `bun run build`        | Type-check + bundle + prerender the landing page and one HTML per LO |
+| `bun run preview`      | Serve the production build locally                                   |
+| `bun run test`         | Run the test suite (Vitest, one-shot)                                |
+| `bun run test:watch`   | Vitest in watch mode                                                 |
+| `bun run lint`         | ESLint over the repo                                                 |
+| `bun run lint:css`     | Stylelint over `src/**/*.css`                                        |
+| `bun run format`       | Prettier — rewrite all files to the house style                      |
+| `bun run format:check` | Prettier — verify formatting without writing                         |
 
 Serving from a sub-path (both deploy targets do) is one env var — it feeds the bundle
 and the prerender pass together, so hashed assets, the favicon and runtime audio/image
@@ -54,13 +54,51 @@ BASE_URL=/course/ bun run build
 ## Authoring a Learning Object
 
 An LO is a folder under `lo-config/`; it exists because the folder exists. Nothing in
-the app enumerates LOs.
+the app enumerates LOs — adding a folder adds its page **and its card on the landing
+page**, with no code change.
 
 1. Copy `lo-config/lo-00-example/` to `lo-config/lo-NN-your-slug/` — the `lo-NN-`
-   ordinal fixes authoring order, and the URL drops it (`your-slug.html`).
-2. Edit `lo.json` (title, optional description, ordered sections) and each
-   `blocks/*/block.json` / `exercises/*/exercise.json`.
-3. `bun run dev` to preview, `bun run build` to emit the static page.
+   ordinal is the course order (see below), and the URL drops it (`your-slug.html`).
+2. Edit `lo.json` and each `blocks/*/block.json` / `exercises/*/exercise.json`.
+3. `bun run build && bun run preview` to click through the whole course.
+
+### What an LO's card on the landing page reads from
+
+Three `lo.json` fields do double duty as that LO's card:
+
+| Field         | On the card                                                      |
+| ------------- | ---------------------------------------------------------------- |
+| `title`       | the card heading (and the page's `<h1>` and `<title>`)           |
+| `description` | the blurb (and the page's meta description). Optional.           |
+| `image`       | the illustration. Optional — omit it and the card shows an icon. |
+
+`image` is a path under `public/`, written the way you'd author any asset
+(`images/your-lo.webp`); the app resolves it against the deploy base, so never write a
+bare relative or root-absolute URL. Out of the box `lo-00-example` points at the shared
+`images/lo-placeholder.svg` — drop your own file into `public/images/` and name it there.
+
+### Course order has one source: the folder ordinal
+
+The `lo-NN-` number in the folder name orders the cards, the lesson nav and the build.
+It is sorted **numerically**, so `lo-9-` precedes `lo-10-` (alphabetically it would
+not). `course.config.ts` has no order list — a second source for the same fact would
+be free to drift from the folders silently. **To reorder a course, rename folders.**
+
+### The authoring loop, and the one dev-server wrinkle
+
+`bun run dev` serves the **landing page** (and the exercise showcase). It does not
+serve LO pages: `<slug>.html` is written by the prerender pass, so a card link 404s
+under `dev` and an LO's page has no dev URL. Editing LO content therefore means:
+
+```bash
+bun run build && bun run preview
+```
+
+This is deliberate (Phase D, decision A — `docs/process/2026-08-06-phase-d-landing-page-handover.md` §5).
+Teaching the dev server to serve LO routes means a third rendering path beside the
+bundle and the prerender pass, and it was dev-vs-build divergence that pinned
+`lo-00-example` to `/` and duplicated it as `example.html` in the first place. A build
+is ~10s; a silently different dev page costs more than that.
 
 A malformed LO fails the **build** with the offending file named — it never emits a
 half-rendered page. Two folders that derive the same slug fail too, naming both.

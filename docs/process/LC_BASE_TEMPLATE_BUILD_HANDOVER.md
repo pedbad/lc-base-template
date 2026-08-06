@@ -156,6 +156,18 @@ CONTENT ENGINE
         English instructions" as the original rule assumed) — they get
         `lang={TARGET_LANG}` too. See docs/specs/lo-semantic-structure.md §3.
 [x] 15 Static pre-render (auto-discover lo-config/*/lo.json) — scripts/prerender.tsx, post-build Bun script, one dist/<slug>.html per folder; hydrates; no-JS readable; BASE_URL feeds bundle + prerender; slug collisions fail the build
+[x] 15b Course landing page (Phase D) — dist/index.html is now the course index, not a
+    duplicate of the first LO: CourseHome (hero from course.config + one card per LO
+    folder, title/description/image from each manifest) + LessonSideNav (left
+    off-canvas nav over every LO: aria-expanded, Escape, focus trap + restore, scroll
+    lock, inert when closed, reduced-motion in CSS) + buildLoIndex (src/lo/lo-index.ts,
+    reader-agnostic). index.html's root div is unstamped and main.tsx branches on
+    data-lo-folder, so one entry serves both pages; LO header brand now links home.
+    Decisions: (A) authoring is `bun run build && bun run preview` — no dev-server shim
+    for LO routes; (B) the lo-NN- folder ordinal is the ONLY source of course order,
+    courseConfig.loOrder deleted; (E) optional `image` added to the LO manifest, with
+    public/images/lo-placeholder.svg shipped and wired into lo-00-example.
+    Full record: docs/process/2026-08-06-phase-d-landing-page-handover.md §5.
 DEV ARTIFACTS
 [ ] 16 Debug sandbox (palette/fonts/SVG/preview)
 [x] 17 Exercise showcase (built ahead of checklist during Phase B — src/showcase/{Showcase.tsx,fixtures.ts}; 12 engines, 18 fixtures)
