@@ -217,11 +217,11 @@ Two known hydration hazards in this codebase:
 
 ---
 
-## 10. Progress log — §2 done (2026-08-06)
+## 10. Progress log — Part D done (2026-08-06)
 
-**Status:** the §2 baby step is complete and verified. `bun run build` now emits
-`dist/example.html`, a real static page that reads without JavaScript and hydrates cleanly.
-The loop over `listLoSlugs()` is the next commit.
+**Status:** complete. `bun run build` emits one static HTML file per folder under
+`lo-config/` — real pages that read without JavaScript and hydrate cleanly into the app.
+§2's one-file step landed first, then the loop.
 
 ### Commits
 
@@ -284,9 +284,14 @@ Path slugs remain the only content route; no `?lo=` fallback was added (anti-pat
 covers it with no workflow change. `tsc -b` type-checks `scripts/` via `tsconfig.app.json`'s
 include.
 
+**Slug collisions fail the build.** The ordinal is what distinguishes `lo-00-example` from
+`lo-01-example` on disk, and the slug drops it — so two folders can claim the same page.
+`loSlugsByFolder` slugs the whole set before anything renders and rejects a collision naming
+both offenders. An empty `lo-config/` is an error too, not a silently empty build. Stale pages
+are not a concern: Vite empties `dist/` at the start of every build.
+
 ### Still open
 
-- **Loop every LO** — `listLoSlugs()` → one file each. The only remaining §2→§6 gap.
 - **Does the showcase ship in production?** Still shipping. Untouched.
 - **One bundle for all LOs, or per-LO chunks?** Still one bundle; every LO's JSON is inlined
   into it. Measure at more than one LO before optimising.
