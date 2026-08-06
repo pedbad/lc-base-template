@@ -233,20 +233,41 @@ Notes on the sketch:
 
 ## 5. Acceptance criteria (one concern per commit)
 
-- [ ] `LoManifestSchema` carries ordered `sections[]` with `id`/`label`/`navLabel?`/`blocks?`/
+> **PART C IS COMPLETE — all criteria met, verified 2026-08-04.** Landed as `ffe168b`
+> (loader + assembler), `17abde4` (LO-driven render), `30c95b0` (accordion reopen fix),
+> `e3ead8a` (spec §1a updated to the declared-sections shape).
+>
+> **Two things happened that this plan did not anticipate**, both after the criteria above
+> were met:
+>
+> 1. **`DemoModal` deleted (`5c9f19f`).** §4's second open question, resolved in place —
+>    see the RESOLVED note there.
+> 2. **Inline rich text + modal popups added (`46de471`)** — NOT in this plan's scope. Once
+>    `DemoModal` was gone the example LO had no popup at all, and the authoring format could
+>    not express one: `TextBlockContentSchema.text` was a `string[]` rendered escaped, so
+>    there was nowhere to put a glossary link. Authors now write a closed six-tag inline HTML
+>    allowlist that parses to a typed node tree (no `dangerouslySetInnerHTML`), modals live in
+>    `modals/<id>/modal.json`, and inline audio icons reuse `AudioClip`'s speaker variant.
+>    Full reasoning and rejected alternatives: **`docs/specs/lo-rich-text-modals.md`**.
+>
+> Consequences for Part D worth knowing before starting it: `AssembledLo` now carries a
+> `modals` map, `App.tsx` wraps `PageLayout` in `ModalProvider`, and the rich-text parser is
+> deliberately DOM-free so it works under `renderToStaticMarkup`.
+
+- [x] `LoManifestSchema` carries ordered `sections[]` with `id`/`label`/`navLabel?`/`blocks?`/
       `exercises?`; unique `id`s and non-empty `label` enforced by Zod.
-- [ ] `lo-config/lo-00-example/lo.json` migrated to the new shape; `blocks/00-intro/block.json`
+- [x] `lo-config/lo-00-example/lo.json` migrated to the new shape; `blocks/00-intro/block.json`
       added for the introduction.
-- [ ] `loadLo(slug)` validates every part and fails with the offending file path named.
-- [ ] `assembleLo()` returns one typed LO with sections and their items in declared order.
-- [ ] Adapter maps the assembled LO to `PageSection[]`; one `LoAccordion` per block/exercise;
+- [x] `loadLo(slug)` validates every part and fails with the offending file path named.
+- [x] `assembleLo()` returns one typed LO with sections and their items in declared order.
+- [x] Adapter maps the assembled LO to `PageSection[]`; one `LoAccordion` per block/exercise;
       exercise engines mount via `lazyRegistry`.
-- [ ] Nav derives from `sections[]` (`navLabel ?? label`); `DEFAULT_SECTIONS` deleted, not
+- [x] Nav derives from `sections[]` (`navLabel ?? label`); `DEFAULT_SECTIONS` deleted, not
       merely bypassed.
-- [ ] `App.tsx` renders from the LO; `SECTION_CONTENT` deleted.
-- [ ] `example-lo.test.ts` updated + extended (section refs resolve, ids unique, labels present).
-- [ ] Heading outline still h1 → h2 → h3, no skips; one `<h1>`; `aria-labelledby` per section.
-- [ ] Verify `bun run test · lint · lint:css · build`, PLUS a real browser pass (this is the
+- [x] `App.tsx` renders from the LO; `SECTION_CONTENT` deleted.
+- [x] `example-lo.test.ts` updated + extended (section refs resolve, ids unique, labels present).
+- [x] Heading outline still h1 → h2 → h3, no skips; one `<h1>`; `aria-labelledby` per section.
+- [x] Verify `bun run test · lint · lint:css · build`, PLUS a real browser pass (this is the
       first part with visible output): landmarks, keyboard/Escape/focus contract, accordions
       collapse to 0px, dark mode persists, no console errors.
 
