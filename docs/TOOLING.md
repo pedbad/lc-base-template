@@ -5,7 +5,7 @@
 _what we rejected_ — so future devs inherit the reasoning, not just the result.
 
 This is the rationale companion to the per-file comments in `prettier.config.mjs`
-and `eslint.config.js`. The `README` (later) will link here rather than restate it.
+and `eslint.config.js`. The `README` links here rather than restating it.
 
 > Toolchain is locked by design decision **#8** in the spec
 > (`docs/specs/2026-06-15-lc-base-template-design.md`): a **zero-touch** setup —
@@ -31,6 +31,7 @@ and `eslint.config.js`. The `README` (later) will link here rather than restate 
 | **Cambridge Slate tokens**  | Theme: primitive→semantic→component CSS vars   | 10   |
 | **Cambridge typography**    | Open Sans (body) + Feijoa (display) + baseline | 10b  |
 | **Zod**                     | Runtime config validation (fail-fast at load)  | 11   |
+| **Static prerender**        | One `.html` per LO (post-build Bun script)     | 15   |
 
 ---
 
@@ -57,8 +58,10 @@ to strongest:
    in VS Code with the Prettier extension installed. Not a guarantee.
 2. **Pre-commit hook** — husky + lint-staged (Step 7). Blocks unformatted /
    lint-failing commits locally. Bypassable with `--no-verify`.
-3. **CI** — GitHub Actions (later step) re-runs `format:check` + `lint` + guards.
-   The unbypassable wall: a `--no-verify` commit still fails here before merge.
+3. **CI** — GitHub Actions (`.github/workflows/ci.yml`) re-runs `lint` + `lint:css` +
+   `format:check` + `test` + `build` on every PR. The unbypassable wall: a
+   `--no-verify` commit still fails here before merge. (Guards b–h join this list as
+   they land; guard a already runs inside `test`.)
 
 Layer 1 is the carrot; layers 2–3 are the stick.
 
@@ -94,7 +97,7 @@ Layer 1 is the carrot; layers 2–3 are the stick.
      travels with the repo matters.
 - **Config:** `vite.config.ts` → `test` block (node env — the suite renders via
   `renderToStaticMarkup`, and the two storage tests stub `window`/`localStorage`
-  themselves, so no jsdom). 53 files · 365 tests.
+  themselves, so no jsdom). 73 files · 551 tests.
 - **Migration note (2026-07-12):** moved off `bun test`. Purely mechanical — every
   test imported only `test/expect/describe/afterEach` (zero Bun-specific mock/spy
   APIs), so only the import source changed (`bun:test` → `vitest`).
@@ -121,15 +124,16 @@ Layer 1 is the carrot; layers 2–3 are the stick.
 - **What:** the dev server (instant hot-reload) and production build tool.
 - **Why:** fast, first-class React + TypeScript support, supports the multi-page
   entries (debug sandbox, showcase) and static pre-render the template needs.
-- **How it helps:** sub-second dev feedback; the static-pre-render build (one
-  `.html` per Learning Object) is a Vite build step.
+- **How it helps:** sub-second dev feedback. The static pre-render (one `.html` per
+  Learning Object) runs **after** `vite build` as a Bun script, reusing the built
+  `dist/index.html` — see _Static prerender_ below.
 - **Rejected:** Create-React-App (deprecated), Webpack (slower, heavier config).
 
 ### TypeScript — language + type safety
 
 - **What:** JavaScript with static types.
 - **Why:** the template validates Learning-Object configs at compile/load time
-  (with Zod, later). Types catch config drift — the class of bug that repeatedly
+  (with Zod — see below). Types catch config drift — the class of bug that repeatedly
   hurt the reference project (`instructionsText` vs `informationText`, etc.).
 - **How it helps:** errors surface in the editor, before runtime.
 - **Note:** `.tsx` = a TypeScript file that also contains **JSX** (the HTML-like
@@ -219,7 +223,7 @@ Layer 1 is the carrot; layers 2–3 are the stick.
   Verified Step 7: a staged file with an unused var was blocked
   (`husky - pre-commit script failed (code 1)`) and never entered history.
 - **pre-commit = lint-staged only (no tests):** kept fast and focused on format/lint.
-  The full `bun test` suite runs in **CI** (Step 31), not on every commit — the standard
+  The full test suite runs in **CI** (`bun run test`), not on every commit — the standard
   split: pre-commit = cheap fast checks, CI = full validation.
 - **Bypass reality:** `git commit --no-verify` skips the hook. That's expected — the
   hook is a fast local helper, **CI is the unbypassable wall** (enforcement layer 3).
@@ -423,17 +427,19 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   discovered at runtime in the browser, sometimes in production. Zod moves that
   failure to **load time** with a message naming the exact field. Config drift fails
   fast and loud. It is also the foundation of guard **a** (every `lo-config/*.json`
-  validates) landing in a later step.
+  validates), which now runs inside the suite — `src/config/example-lo.test.ts`
+  validates the shipped example LO on disk, and `assembleLo` re-validates every part
+  at load, so a malformed LO fails the build with its file named.
 - **Validate-at-load mechanism:** `parse()` runs at the top level of the module, so it
   fires the instant anything imports `courseConfig`. The type is `z.infer`'d from the
   schema — schema and TS type can never drift apart (one source of truth).
 - **Runtime dep, not dev:** the check runs when the app/pre-render loads, so Zod ships
   in `dependencies`, not `devDependencies`.
 - **How it's proven now:** `tsc -b` checks _shapes_ and `vite build` _bundles_ but
-  neither _executes_ the runtime `.parse()`. `bun test` does — importing `courseConfig`
-  in `course.config.test.ts` runs the parse, so a bad value throws a `ZodError` and
-  fails the suite (and therefore pre-commit + CI). The static pre-render (Step 14) will
-  additionally execute it at build time.
+  neither _executes_ the runtime `.parse()`. The test suite does — importing
+  `courseConfig` in `course.config.test.ts` runs the parse, so a bad value throws a
+  `ZodError` and fails the suite (and therefore pre-commit + CI). The static pre-render
+  executes it at build time too, so a bad config cannot reach `dist/`.
 - **Field rules of note:** required identity fields use `.min(1)` (a blank `""` is
   rejected, not silently shipped); truly optional copy (`subheading`) uses
   `.optional()` — _omit the key_ rather than store an ambiguous `""`. Accented/umlaut
@@ -466,13 +472,14 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   folder↔config render-mirror _match_ is guard **b**'s job (Steps 19–26), not pulled
   into the schema.
 - **No slug field:** the folder name is the single source of truth; the URL slug
-  strips the `lo-NN-` ordinal prefix (`lo-01-salutations` → `/salutations.html`) in
-  the build's auto-discovery (Step 15). The schema neither stores nor derives it.
+  strips the `lo-NN-` ordinal prefix (`lo-01-salutations` → `/salutations.html`).
+  The schema neither stores nor derives it — `src/lo/lo-slug.ts` does, at build time.
 - **Schema-only module (no load-time `parse`):** unlike `course.config.ts` /
   `ui-strings.ts`, this file holds _no concrete data_ yet — the example LO is Step
-  13b and the loader that parts-and-assembles + validates is Step 13c. Proven now by
-  `lo-schema.test.ts` (manifest meta/defaults/blank-ref guards; envelope
-  type-required, loose-content, and `labels` typo/partial guards) via `bun test`.
+  13b (shipped: `lo-config/lo-00-example/`) and the loader that parts-and-assembles +
+  validates is Step 13c (shipped: `src/lo/`). Proven by `lo-schema.test.ts` (manifest
+  meta/defaults/blank-ref guards; envelope type-required, loose-content, and `labels`
+  typo/partial guards).
 
 ---
 
@@ -671,6 +678,43 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 - **Verified:** pure logic covered by `exerciseScaffold.test.ts` (10 tests); after each
   engine `bun test · lint · build` green (313 tests). Scaffold merged via PR #2
   (`7ff7e55`); adoption via the `feat/scaffold-adoption` branch.
+
+---
+
+### Static prerender — one HTML file per LO _(Step 15, Phase C · Part D)_
+
+- **What:** `scripts/prerender.tsx` — a post-build Bun script that renders every folder
+  under `lo-config/` to its own `dist/<slug>.html`, body already filled in. Wired into
+  `bun run build` (`tsc -b && vite build && bun scripts/prerender.tsx`), so CI covers it
+  with no workflow change.
+- **Why it is post-build, not a Vite plugin:** `renderToString` returns body markup, not
+  a `<head>`, and a prerendered page must point at the **hashed** bundles Vite just
+  emitted — names that change every build. Vite has already rewritten `dist/index.html`'s
+  tags to those URLs and resolved `%BASE_URL%`, so the built file **is** the template:
+  reusing it inherits favicon, preloads and the pre-hydration theme script for free.
+  Reading `dist/.vite/manifest.json` instead would duplicate knowledge of the head and
+  drift from it silently. The coupling is narrow and checked — two anchors (`<title>`,
+  an empty `<div id="root">`), and a missing anchor throws.
+- **`renderToString`, not `renderToStaticMarkup`:** React documents static markup as
+  non-hydratable, and these pages hydrate into the live app.
+- **Two readers, one assembler:** the script reads LOs with `src/lo/load-lo-disk.ts`
+  (`node:fs`), never `load-lo-glob.ts` — `import.meta.glob` is Vite-only syntax and
+  throws under Bun. Both readers feed `assembleLo`, so validation and ordering are
+  defined once.
+- **One `BASE_URL` knob:** `vite.config.ts` reads `base` from `process.env.BASE_URL`, and
+  Bun exposes `process.env` as `import.meta.env`, so `resolveAsset()` resolves audio and
+  image URLs against the same base while prerendering. `vite build --base=…` would not
+  reach the prerender pass — `BASE_URL=/course/ bun run build` is the supported form.
+- **Hydration cost it imposed:** prerendered markup must equal the first client render.
+  `useTheme` therefore reads through `useSyncExternalStore` with a separate server
+  snapshot (localStorage and the `.dark` class are the truth, and an inline pre-paint
+  script in `index.html` sets the class before React boots). Lazy exercise engines cannot
+  resolve in a static render, so `ExerciseHost` gates them behind `useIsHydrated` and the
+  static page states the exercise needs JavaScript — honest for a no-JS reader either way.
+- **Fails loud:** a malformed LO, a slug collision between two folders, an empty
+  `lo-config/`, or a reshaped template all exit non-zero **before** any file is written.
+- **Rejected:** a `?lo=` query route (path slugs are the only content route — carry-forward
+  anti-pattern #26); hardcoding asset hashes in a hand-written template.
 
 ---
 

@@ -126,7 +126,7 @@ THEME
 [x] 11 course.config.ts (Zod) — src/config/, schema+infer type, validate-at-load, proven via bun test
 [x] 12 ui-strings.ts (Zod, two-layer) — global strictObject (all keys req) + partial override + resolveLabel; 15 keys (A+B), English; proven via bun test
 CONTENT ENGINE
-[ ] 13 LO schema + example LO FOLDER (folder-per-LO) — [x] 13a schemas (LoManifest + Block/ExerciseConfig shared envelope, labels→UiStringsOverrideSchema, loose content, src/config/lo-schema.ts, proven via bun test) · [ ] 13b example lo-01/ (manifest + 4 accordions) · [ ] 13c loader/stitcher (validates parts + assembled LO)
+[x] 13 LO schema + example LO FOLDER (folder-per-LO) — [x] 13a schemas (LoManifest + Block/ExerciseConfig shared envelope, labels→UiStringsOverrideSchema, loose content, src/config/lo-schema.ts) · [x] 13b example lo-config/lo-00-example/ (manifest + sections + blocks + exercises + modal) · [x] 13c loader/stitcher (src/lo/: assembleLo + disk/glob readers, validates parts + assembled LO)
 [x] 14 Exercise engines (RESEQUENCED — see docs/specs/2026-06-19-exercise-engines-design.md)
     [x] Phase A foundation — exercise-types, options schema+enum, scoring/shuffle/reveal utils (src/exercises/lib/, bun test)
     [x] Phase B — port 12 engines one-by-one (tsx + content schema + options + labels + registry + showcase fixture)
@@ -144,7 +144,7 @@ CONTENT ENGINE
         [x] #10 word-order — schema (TDD, ≥2 words refine) + WordOrderExercise.tsx (sequence/placement: failCount + complete, always-scrambled deck, click-to-select/click-to-swap instead of mouse-only HTML5 dnd for keyboard a11y, canRevealAnswers reused) + word-order.css (layered, semantic tokens) + reuses reorderAnimation.ts (FLIP) for the swap animation + 1 fixture
         [x] #11 phrase-reorder — schema (TDD, ≥2 rows refine) + PhraseReorderExercise.tsx (sequence/placement: reuses word-order's swap/FLIP/click-select+native-dnd mechanics, but each slot pins a fixed non-draggable prompt/audio pair — only the phrase card moves) + phrase-reorder.css (layered, semantic tokens, grid columns collapse when no row has a prompt) + reuses reorderAnimation.ts (FLIP) + 1 fixture (fixed prompt + per-row audio)
         [x] #12 drag-fill-gaps — schema (TDD, ≥2 [bracketed] blanks refine, ported `phrases` variant only — other 4 legacy table layouts YAGNI'd) + DragFillGapsExercise.tsx (sequence/placement: click-to-select-tile-then-place-in-slot + native-dnd, tile bank <-> inline slots across two containers so no FLIP; Check locks correct placements and bounces wrong ones back to the bank) + drag-fill-gaps.css (layered, semantic tokens) + 1 fixture (shuffled bank) — **all 12 engines ported, Phase B complete**
-    [ ] Phase C — example LO (13b/13c) + static pre-render (15) from proven engines
+    [x] Phase C — Part A site shell · Part B example LO (13b) · Part C loader (13c) · Part D static pre-render (15); plus inline rich text + modals (docs/specs/lo-rich-text-modals.md)
     [x] KNOWN GAP (found 2026-07-01, fixed 2026-07-01): none of the 12 engines wrapped
         target-language content in `lang="{course.config languageCode}"` — `<html>`
         is `lang="en"` (UI chrome only); learner content had no lang override, so
@@ -155,13 +155,13 @@ CONTENT ENGINE
         in the target language in this course's fixtures (not "course-author
         English instructions" as the original rule assumed) — they get
         `lang={TARGET_LANG}` too. See docs/specs/lo-semantic-structure.md §3.
-[ ] 15 Static pre-render (auto-discover lo-config/*/lo.json)
+[x] 15 Static pre-render (auto-discover lo-config/*/lo.json) — scripts/prerender.tsx, post-build Bun script, one dist/<slug>.html per folder; hydrates; no-JS readable; BASE_URL feeds bundle + prerender; slug collisions fail the build
 DEV ARTIFACTS
 [ ] 16 Debug sandbox (palette/fonts/SVG/preview)
 [x] 17 Exercise showcase (built ahead of checklist during Phase B — src/showcase/{Showcase.tsx,fixtures.ts}; 12 engines, 18 fixtures)
 [ ] 18 Sandbox renders docs as HTML
 GUARDS (each: failing fixture → block → green)
-[ ] 19 a config-schema   [ ] 20 b naming+render-mirror   [ ] 21 c asset-path
+[x] 19 a config-schema   [ ] 20 b naming+render-mirror   [ ] 21 c asset-path
 [ ] 22 d asset-existence [ ] 23 e registry               [ ] 24 f token-integrity
 [ ] 25 g css-layers      [ ] 26 h w3c/a11y
 ENGINES
@@ -170,8 +170,8 @@ DOCS + CI + DEPLOY
 [ ] 28 README + LICENSE (MIT + CC-BY-4.0 + disclaimer)
 [ ] 29 CONTRIBUTING / DESIGNER / STRUCTURE / AGENTS.md
 [ ] 30 STRUCTURE tree auto-gen (bun run docs:tree)
-[ ] 31 GitHub Actions CI (all guards, oven-sh/setup-bun)
-[ ] 32 Env base path + resolveAsset()/%BASE_URL% + favicon — resolveAsset() itself already exists (src/lib/assets.ts, BASE_URL-aware, used by AudioClip); remaining: favicon still hardcoded `/favicon.svg` in index.html (not `%BASE_URL%`), no base-path build config yet
+[~] 31 GitHub Actions CI (oven-sh/setup-bun) — .github/workflows/ci.yml runs lint · lint:css · format:check · test · build; guards b–h join as they land
+[x] 32 Env base path + resolveAsset()/%BASE_URL% + favicon — resolveAsset() (src/lib/assets.ts, BASE_URL-aware); favicon now `%BASE_URL%favicon.svg` in index.html AND exercise-showcase.html (bug #28 closed); `base` reads process.env.BASE_URL in vite.config.ts, so `BASE_URL=/course/ bun run build` feeds bundle + prerender together
 [ ] 33 Mark repo as GitHub "template repo"
 ```
 

@@ -32,7 +32,8 @@ Verified toolchain (macOS, 2026-06-16):
 | [GitHub CLI](https://cli.github.com) `gh` | ≥ 2.0         | 2.94.0  |
 
 **Bun** is the package manager and runtime; **Vitest** is the test runner (`bun run test`).
-**Node** is only a tooling fallback. Vite builds. (Bun installs/runs · Vitest tests · Vite builds.)
+**Node** is only a tooling fallback. (Bun installs/runs · Vitest tests · Vite bundles ·
+Bun prerenders the static pages.)
 
 ## Setup
 
@@ -60,6 +61,28 @@ headings fall back to Open Sans. Full details (incl. optional `.woff2`
 optimisation): [`public/fonts/feijoa/README.md`](public/fonts/feijoa/README.md).
 
 _(More steps added as the template grows.)_
+
+## Build
+
+```bash
+bun run build     # type-check, bundle, then prerender one HTML file per LO
+bun run preview   # serve the built output locally
+```
+
+The build emits **one real HTML file per folder in `lo-config/`** (`lo-00-example` →
+`dist/example.html`). Each page's body is already rendered, so a course reads and
+navigates with JavaScript disabled, and hydrates into the interactive app when
+JavaScript runs. Exercises need JavaScript and say so on the static page.
+
+Serving from a sub-path takes one env var, which feeds both the bundle and the
+prerender pass:
+
+```bash
+BASE_URL=/course/ bun run build
+```
+
+Why each tool was chosen: [`docs/TOOLING.md`](docs/TOOLING.md). How to work in the
+repo: [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## License
 

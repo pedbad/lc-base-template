@@ -161,7 +161,7 @@ verbatim** rather than guessed at — it is far more likely to be an author writ
   `lo-config/lo-00-example/modals/tuvous/modal.json: unknown tag <storng> …`
 - `AssembledLo` carries `RichTextNode[]`, never raw strings, so renderers cannot
   accidentally re-introduce an injection path.
-- Part D's `renderToStaticMarkup` pre-render gets the same validated tree with no
+- Part D's `renderToString` pre-render gets the same validated tree with no
   browser APIs involved — the parser is plain string work, no `DOMParser`.
 
 `AssembledLo` gains `modals: Readonly<Record<string, ModalContent>>`, keyed by id.
@@ -367,7 +367,7 @@ Extension points, listed so they are added as decisions rather than drift:
 
 - **Sanitised `dangerouslySetInnerHTML` + DOMPurify.** Closest to the reference. Rejected
   because audio icons then cannot be React components — they would need a post-mount DOM
-  hydration walk, which cannot run under Part D's `renderToStaticMarkup` — plus a ~20kb
+  hydration walk, which cannot run under Part D's `renderToString` — plus a ~20kb
   dep, a JSDOM shim for Node, and reversing a deliberate repo-wide decision.
 - **Typed inline-node array as the authoring format** (`[{kind:'strong',…}]`). Safest and
   smallest to build, but authors write verbose JSON instead of markup. Rejected on

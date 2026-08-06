@@ -31,17 +31,39 @@ below is active immediately, no manual `git config` step.
 
 ## Everyday commands
 
-| Command                | What it does                                    |
-| ---------------------- | ----------------------------------------------- |
-| `bun run dev`          | Vite dev server with hot reload                 |
-| `bun run build`        | Type-check (`tsc -b`) + production build        |
-| `bun run preview`      | Serve the production build locally              |
-| `bun run test`         | Run the test suite (Vitest, one-shot)           |
-| `bun run test:watch`   | Vitest in watch mode                            |
-| `bun run lint`         | ESLint over the repo                            |
-| `bun run lint:css`     | Stylelint over `src/**/*.css`                   |
-| `bun run format`       | Prettier — rewrite all files to the house style |
-| `bun run format:check` | Prettier — verify formatting without writing    |
+| Command                | What it does                                               |
+| ---------------------- | ---------------------------------------------------------- |
+| `bun run dev`          | Vite dev server with hot reload                            |
+| `bun run build`        | Type-check (`tsc -b`) + bundle + prerender one HTML per LO |
+| `bun run preview`      | Serve the production build locally                         |
+| `bun run test`         | Run the test suite (Vitest, one-shot)                      |
+| `bun run test:watch`   | Vitest in watch mode                                       |
+| `bun run lint`         | ESLint over the repo                                       |
+| `bun run lint:css`     | Stylelint over `src/**/*.css`                              |
+| `bun run format`       | Prettier — rewrite all files to the house style            |
+| `bun run format:check` | Prettier — verify formatting without writing               |
+
+Serving from a sub-path (both deploy targets do) is one env var — it feeds the bundle
+and the prerender pass together, so hashed assets, the favicon and runtime audio/image
+URLs all resolve against the same base:
+
+```bash
+BASE_URL=/course/ bun run build
+```
+
+## Authoring a Learning Object
+
+An LO is a folder under `lo-config/`; it exists because the folder exists. Nothing in
+the app enumerates LOs.
+
+1. Copy `lo-config/lo-00-example/` to `lo-config/lo-NN-your-slug/` — the `lo-NN-`
+   ordinal fixes authoring order, and the URL drops it (`your-slug.html`).
+2. Edit `lo.json` (title, optional description, ordered sections) and each
+   `blocks/*/block.json` / `exercises/*/exercise.json`.
+3. `bun run dev` to preview, `bun run build` to emit the static page.
+
+A malformed LO fails the **build** with the offending file named — it never emits a
+half-rendered page. Two folders that derive the same slug fail too, naming both.
 
 ## Code quality & the commit gate
 
@@ -53,7 +75,9 @@ strongest (full rationale in [`docs/TOOLING.md`](docs/TOOLING.md#enforcement-lay
    and ESLint on JS/TS, Prettier and Stylelint on CSS, Prettier on JSON/MD/config.
    Auto-fixable issues are fixed and re-staged silently; an unfixable problem
    (e.g. an unused variable) **blocks the commit**.
-3. **CI** — re-runs the checks (later step). The unbypassable wall.
+3. **CI** — GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml))
+   re-runs `lint` · `lint:css` · `format:check` · `test` · `build` on every PR. The
+   unbypassable wall.
 
 You can bypass the local hook with `git commit --no-verify`, but CI will still catch
 it before merge. Don't rely on bypass.
@@ -83,7 +107,7 @@ keeps every course consistent — **add content as data; don't quietly change th
 
 **Green path (author freely, normal review):**
 
-- New LO content, fixtures, and (once Phase C lands) `lo-config/` JSON.
+- New LO content, fixtures, and `lo-config/` JSON.
 - Copy an existing exercise fixture, change the Spanish content, wire it into the showcase.
 - Docs and process notes.
 
@@ -117,8 +141,6 @@ These are locked spec decisions, documented here when each lands:
 - **Naming & render-mirror** _(spec §15)_ — `lo-01` not `lo1`, `images/` not `img/`,
   section-scoped ordinal+type folders (`01-fill-gaps/`). File structure mirrors the
   rendered page; a guard enforces folder↔config match.
-- **Per-LO authoring loop** _(spec §13)_ — copy the example LO JSON, edit content,
-  add assets, preview, commit.
 - **Exercise authoring contract** — the config shape each exercise type expects.
 - **The 7 guards** _(spec §11)_ — what each checks, what fails, and how to fix it.
 - **Theming & tokens** — single-theme-per-clone, tokens only (no raw hex/px),
