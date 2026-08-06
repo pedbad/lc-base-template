@@ -214,3 +214,92 @@ Two known hydration hazards in this codebase:
 > Use `src/lo/load-lo-disk.ts`, never `load-lo-glob.ts`. Settle §5's open questions as you
 > reach them and record the decisions in this file. TDD where there is logic to test (slug
 > derivation, manifest lookup); verify with a real no-JS browser pass over HTTP.
+
+---
+
+## 10. Progress log — §2 done (2026-08-06)
+
+**Status:** the §2 baby step is complete and verified. `bun run build` now emits
+`dist/example.html`, a real static page that reads without JavaScript and hydrates cleanly.
+The loop over `listLoSlugs()` is the next commit.
+
+### Commits
+
+| Commit    | Concern                                                                                    |
+| --------- | ------------------------------------------------------------------------------------------ |
+| `50629ae` | `src/lo/lo-slug.ts` — folder name → URL slug, TDD, 6 tests                                 |
+| `5408d8e` | `src/build/prerender-html.ts` — inject a rendered LO into the built template, TDD, 9 tests |
+| `f341d56` | hydration safety — `useTheme` rewrite, `useIsHydrated`, `ExerciseHost`                     |
+| `690ac7e` | `scripts/prerender.tsx` + the entry/base-URL changes it needs                              |
+
+### Decisions taken
+
+**§3 — the template is the BUILT `dist/index.html`, not the Vite manifest.** Vite has already
+rewritten that file's tags to the hashed URLs and resolved `%BASE_URL%`, so reusing it inherits
+the correct `<head>` for free. Reading `dist/.vite/manifest.json` would duplicate knowledge of
+the head — favicon, preloads, the pre-hydration theme script — and drift from it silently. The
+coupling is narrow and checked: exactly two anchors (`<title>`, an empty `<div id="root">`), and
+a missing anchor throws rather than emitting a stock-titled or app-less page.
+
+**`renderToString`, not `renderToStaticMarkup`** (a deliberate deviation from §2's wording):
+React documents static markup as non-hydratable, and these pages hydrate.
+
+**One `BASE_URL` env var drives both steps.** `vite.config.ts` reads `base` from
+`process.env.BASE_URL ?? '/'`, and Bun exposes `process.env` as `import.meta.env`, so
+`resolveAsset()` resolves audio and image URLs against the SAME base while prerendering.
+`vite build --base=…` would not reach the prerender pass, so `BASE_URL=/course/ bun run build`
+is the supported knob. Verified: every hashed asset and the favicon carry `/course/`.
+
+**Anti-pattern #28 fixed.** `index.html` and `exercise-showcase.html` now use
+`%BASE_URL%favicon.svg`. Note: do not write the token itself inside an HTML comment — Vite
+substitutes it there too.
+
+**§4 — hydration.** `main.tsx` reads `#root`'s `data-lo-folder` (the FOLDER, not the slug —
+that is what `loadLo` takes) and calls `hydrateRoot` when `#root` has children, `createRoot`
+when it is empty (the dev server). The showcase entry keeps `createRoot` outright.
+
+- `ModalProvider` was not a problem: a closed Base UI dialog renders nothing server-side.
+- `ThemeToggle` WAS: resolving the theme during render mismatched `aria-checked` for a
+  dark-theme reader. `useTheme` is now a `useSyncExternalStore` over localStorage + the `.dark`
+  class, with a separate server snapshot. No effects, no setState-in-an-effect.
+- Lazy exercise engines WERE a problem the handover did not anticipate: `renderToString` cannot
+  resolve them, so each boundary failed server-side and the client threw its HTML away (React
+  error #419, twice per page). `ExerciseHost` now gates the engine behind `useIsHydrated` and
+  the static page says "This exercise needs JavaScript to run." — which is the honest thing to
+  tell a no-JS reader anyway.
+
+**Theme flash — solved, with one documented residue.** An inline, module-free script in
+`index.html` stamps `.dark` before first paint (a module import would be deferred, which is too
+late). It duplicates `resolveInitialTheme`'s rule by necessity; both sides carry a keep-in-sync
+note. Residue: on a dark-theme page the switch itself renders in its off position for one frame
+after hydration. Accepted — the page never flashes, only the control settles.
+
+**§5 — `dist/index.html`.** Unresolved by design for now: it stays the dev/SPA entry, pinned to
+`lo-00-example` via `data-lo-folder`, so `bun run dev` behaves exactly as before. Making it an
+index page listing every LO only becomes meaningful once the loop exists — decide it there.
+Path slugs remain the only content route; no `?lo=` fallback was added (anti-pattern #26).
+
+**§5 — where the prerender runs in CI.** Inside `bun run build`
+(`tsc -b && vite build && bun scripts/prerender.tsx`), so the existing `test + lint + build` CI
+covers it with no workflow change. `tsc -b` type-checks `scripts/` via `tsconfig.app.json`'s
+include.
+
+### Still open
+
+- **Loop every LO** — `listLoSlugs()` → one file each. The only remaining §2→§6 gap.
+- **Does the showcase ship in production?** Still shipping. Untouched.
+- **One bundle for all LOs, or per-LO chunks?** Still one bundle; every LO's JSON is inlined
+  into it. Measure at more than one LO before optimising.
+
+### Verification performed
+
+`bun run test` (548 pass) · `lint` · `lint:css` · `format:check` · `build` at both `/` and
+`/course/` bases. Browser pass over HTTP via `vite preview` (not `file://`):
+
+- **With JS:** fresh tab, zero console messages; opening an exercise accordion mounts the
+  engine (3 comboboxes + Check button, placeholder gone); modal and audio buttons are live.
+- **No JS:** served a copy with the module script stripped — `<h1>`, nav, all four sections
+  and their accordions render; a native `<details>` opens and shows its rich text, inline
+  modal-link text and audio icon; the `#exercises` nav anchor scrolls to the section.
+- **Dark theme:** with `lc-theme=dark`, dark background before paint, switch correct after
+  hydration, console clean.
