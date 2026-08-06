@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 import path from 'node:path';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
+import { loDevPages } from './src/build/lo-dev-pages';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -16,7 +17,14 @@ export default defineConfig({
   // `@import "tailwindcss"` in src/index.css and generates utilities on demand.
   // Faster than the v3 PostCSS path; no postcss.config / tailwind.config needed
   // (v4 is CSS-first — theme tokens live in CSS via @theme, added at Step 10).
-  plugins: [react(), tailwindcss()],
+  // loDevPages() is serve-only: it answers `/<slug>.html` on the DEV server by stamping
+  // that LO's folder onto the dev index.html, through the SAME injectRootDiv() the
+  // post-build prerender pass uses. Without it, dev has no `<slug>.html` file, Vite's
+  // SPA fallback returns the unstamped landing template, and a lesson card silently
+  // re-renders the landing page (Phase D decision A, revised 2026-08-06 — see
+  // docs/TOOLING.md). The LO list is read from lo-config/ per request, so there is no
+  // entry list here to drift from the folders on disk.
+  plugins: [react(), tailwindcss(), loDevPages()],
   // `@` → ./src so shadcn component imports resolve (e.g. `@/components/ui/button`).
   resolve: {
     alias: {

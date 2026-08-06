@@ -13,9 +13,12 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { assembleLo, type AssembledLo, type LoFileTree } from './assemble-lo';
+import { LO_CONFIG_DIR, listLoSlugs } from './lo-folders';
 
-/** Repo-root `lo-config/`, resolved from this file so the cwd is irrelevant. */
-const LO_CONFIG_DIR = path.resolve(import.meta.dirname, '../../lo-config');
+// Re-exported so this stays the one reader import for Node callers, while the listing
+// itself lives in lo-folders.ts — the dev-server plugin needs it without dragging in
+// the schemas (see that module's header).
+export { listLoSlugs };
 
 const readJson = (filePath: string): unknown => JSON.parse(readFileSync(filePath, 'utf-8'));
 
@@ -41,14 +44,6 @@ function readParts(
       .filter(([, filePath]) => existsSync(filePath))
       .map(([ref, filePath]) => [ref, readJson(filePath)]),
   );
-}
-
-/** Every LO folder name under `lo-config/`, alphabetically. */
-export function listLoSlugs(): readonly string[] {
-  return readdirSync(LO_CONFIG_DIR, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => entry.name)
-    .sort();
 }
 
 /**

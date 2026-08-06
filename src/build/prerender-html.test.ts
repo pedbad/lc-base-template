@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildPrerenderedHtml } from './prerender-html';
+import { buildPrerenderedHtml, injectRootDiv } from './prerender-html';
 
 /**
  * A stand-in for Vite's BUILT index.html: the hashed asset tags are what the real
@@ -31,6 +31,53 @@ const input = {
   title: 'Example Learning Object',
   description: 'An example LO.',
 };
+
+/**
+ * The shared root-div anchor. The dev-server middleware stamps `data-lo-folder`
+ * through this same function, so dev and the build cannot disagree about what a
+ * mounted LO page looks like — there is one place that knows the anchor.
+ */
+describe('injectRootDiv', () => {
+  it('stamps the LO folder with no markup, for the dev server', () => {
+    const html = injectRootDiv(TEMPLATE, { loFolder: 'lo-00-example' });
+
+    expect(html).toContain('<div id="root" data-lo-folder="lo-00-example"></div>');
+  });
+
+  it('stamps folder and markup together, for a prerendered page', () => {
+    const html = injectRootDiv(TEMPLATE, { loFolder: 'lo-00-example', appHtml: '<main></main>' });
+
+    expect(html).toContain('<div id="root" data-lo-folder="lo-00-example"><main></main></div>');
+  });
+
+  it('stamps no folder at all for the landing page', () => {
+    const html = injectRootDiv(TEMPLATE, {});
+
+    expect(html).toContain('<div id="root"></div>');
+    expect(html).not.toContain('data-lo-folder');
+  });
+
+  it('replaces a folder the template already carried', () => {
+    const template = TEMPLATE.replace(
+      '<div id="root"></div>',
+      '<div id="root" data-lo-folder="lo-99-dev"></div>',
+    );
+
+    expect(injectRootDiv(template, { loFolder: 'lo-00-example' })).not.toContain('lo-99-dev');
+  });
+
+  it('throws naming the anchor when the template has no empty root div', () => {
+    const template = TEMPLATE.replace('<div id="root"></div>', '<div id="app"></div>');
+
+    expect(() => injectRootDiv(template, { loFolder: 'lo-00-example' })).toThrow(/id="root"/);
+  });
+
+  it('escapes a folder name that carries HTML-significant characters', () => {
+    expect(injectRootDiv(TEMPLATE, { loFolder: 'lo-00-"x' })).toContain(
+      'data-lo-folder="lo-00-&quot;x"',
+    );
+  });
+});
 
 describe('buildPrerenderedHtml', () => {
   it('keeps the hashed script and stylesheet tags the build emitted', () => {
