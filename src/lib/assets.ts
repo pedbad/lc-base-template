@@ -21,6 +21,18 @@ const readBaseUrl = (): string => {
 };
 
 /**
+ * The course landing page's URL: the app's base path itself, always ending in `/`.
+ *
+ * Its own choke point rather than `resolveAsset('')`, which short-circuits on an
+ * empty path and would hand back `""` — an href that reloads the current page
+ * instead of going home.
+ */
+export const resolveHomeHref = (): string => {
+  const base = readBaseUrl();
+  return base.endsWith('/') ? base : `${base}/`;
+};
+
+/**
  * Resolve `path` to a URL served under the app's base path.
  * @param path Project-relative ("audio/q1.mp3") or root-relative ("/audio/q1.mp3")
  *   asset path, or an absolute `http(s)` URL (returned unchanged).

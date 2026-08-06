@@ -54,7 +54,13 @@ export default function LessonSideNav({ lessons }: LessonSideNavProps) {
     if (!isOpen) return;
 
     const panel = panelRef.current;
-    focusables(panel!)[0]?.focus();
+    if (panel === null) return;
+    // Both nodes are read HERE, not in the cleanup: a ref's `current` may have moved
+    // on by teardown time, and the elements this effect started with are the ones it
+    // must finish with (react-hooks/exhaustive-deps).
+    const toggle = toggleRef.current;
+
+    focusables(panel)[0]?.focus();
     document.documentElement.classList.add(SCROLL_LOCK_CLASS);
 
     function handleKeydown(event: KeyboardEvent) {
@@ -62,7 +68,7 @@ export default function LessonSideNav({ lessons }: LessonSideNavProps) {
         setIsOpen(false);
         return;
       }
-      if (event.key !== 'Tab' || panel === null) return;
+      if (event.key !== 'Tab') return;
 
       // Trap: the panel covers the page, so Tab must cycle within it rather than
       // walking into content the reader cannot see.
@@ -87,7 +93,7 @@ export default function LessonSideNav({ lessons }: LessonSideNavProps) {
       document.documentElement.classList.remove(SCROLL_LOCK_CLASS);
       // Focus is restored on the way OUT of open, so Escape, the close button, the
       // backdrop and a nav-link click all land back on the toggle by one route.
-      toggleRef.current?.focus();
+      toggle?.focus();
     };
   }, [isOpen]);
 

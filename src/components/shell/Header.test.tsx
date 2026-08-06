@@ -10,6 +10,7 @@
 import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import Header from './Header';
+import { resolveHomeHref } from '@/lib/assets';
 import type { NavSection } from './nav-section';
 /** Local section fixture. Sections come from an LO's lo.json in the real app; these
  *  tests exercise the FRAME, so they own a small list rather than importing one
@@ -29,10 +30,14 @@ describe('Header', () => {
     expect(html).toContain('aria-label="Main navigation"');
   });
 
-  test('renders a skip-to-main title link pointing at #content', () => {
+  // Phase D: the brand is the route back to the course landing page. It used to
+  // point at #content, duplicating PageLayout's skip link and leaving an LO page
+  // with no way back to the course.
+  test('renders a brand link home, through the base path', () => {
     const html = renderToStaticMarkup(<Header sections={SECTIONS} siteTitle="My Course" />);
-    expect(html).toContain('href="#content"');
+    expect(html).toContain(`href="${resolveHomeHref()}"`);
     expect(html).toContain('My Course');
+    expect(html).not.toContain('href="#content"');
   });
 
   test('derives one nav link per section, in page order, from the section list', () => {

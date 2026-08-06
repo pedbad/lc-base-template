@@ -25,6 +25,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Menu } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { courseConfig } from '@/config/course.config';
+import { resolveHomeHref } from '@/lib/assets';
 import type { NavSection } from './nav-section';
 
 interface HeaderProps {
@@ -99,8 +100,13 @@ export default function Header({
         aria-label="Main navigation"
         className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-3"
       >
+        {/* The brand links HOME, to the course landing page (Phase D) — not to
+            #content as it once did. That was a second skip link, and PageLayout
+            already renders a real one as the page's first focusable element; mean-
+            while an LO page had no route back to the course at all. Through
+            resolveHomeHref() so it survives a non-root base (anti-pattern #28). */}
         <a
-          href="#content"
+          href={resolveHomeHref()}
           className="mr-auto rounded-sm font-heading text-lg font-semibold tracking-tight text-foreground focus-visible:underline"
         >
           {siteTitle}

@@ -3,7 +3,14 @@
  * BASE_URL falls back to "/" — these assert the root-served behaviour.
  */
 import { expect, test } from 'vitest';
-import { resolveAsset } from './assets';
+import { resolveAsset, resolveHomeHref } from './assets';
+
+test('resolveHomeHref: is the base path itself, ending in a slash', () => {
+  // Root-served base under the test runner; the guarantee being locked is that it is
+  // never the empty string, which would re-load the current page instead of home.
+  expect(resolveHomeHref()).toBe('/');
+  expect(resolveHomeHref().endsWith('/')).toBe(true);
+});
 
 test('resolveAsset: empty path returns empty', () => {
   expect(resolveAsset('')).toBe('');
