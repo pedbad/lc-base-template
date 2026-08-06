@@ -9,12 +9,25 @@
  *     prefers-color-scheme.
  *   - no-window-safe: importing/rendering under SSR (renderToStaticMarkup) or a
  *     node test must not throw — it resolves to 'light' when there is no window.
+ *
+ * HYDRATION (Part D): prerendered HTML cannot know the reader's stored choice, so
+ * the first CLIENT render must match the server's — otherwise the toggle's
+ * aria-checked mismatches and React discards the markup. The real theme is adopted
+ * in a mount effect instead. That costs nothing visually for the PAGE, because
+ * index.html's pre-hydration script has already stamped the `.dark` class before
+ * first paint; the only cost is that the switch itself renders in its off position
+ * for one frame after hydration on a dark-theme page. Accepted: an inline script
+ * cannot import this module (it must run synchronously, pre-paint), so the two
+ * resolution rules are deliberately mirrored — keep them in sync.
  */
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 
 export type Theme = 'light' | 'dark';
 
 export const THEME_STORAGE_KEY = 'lc-theme';
+
+/** What renders with no window — and therefore what the first client render must be. */
+const SSR_THEME: Theme = 'light';
 
 /**
  * Pure resolution of the initial theme — extracted so it is unit-testable without
@@ -40,6 +53,32 @@ function readInitialTheme(): Theme {
   return resolveInitialTheme(stored, prefersDark);
 }
 
+/**
+ * The theme lives OUTSIDE React — localStorage plus the `.dark` class are the truth,
+ * and both are already set before React boots (index.html's pre-hydration script).
+ * So it is read with `useSyncExternalStore`, the API built for exactly this: a
+ * separate server snapshot makes the first client render match prerendered markup,
+ * and React re-reads the real value itself, with no setState-in-an-effect.
+ */
+const listeners = new Set<() => void>();
+
+/** Persist + apply a theme, then notify every mounted consumer. */
+function writeTheme(next: Theme): void {
+  try {
+    window.localStorage.setItem(THEME_STORAGE_KEY, next);
+  } catch {
+    // ignore write failures (private mode); the class swap below still applies
+  }
+  // Class-only swap (spec) — the token system re-skins entirely off this class.
+  document.documentElement.classList.toggle('dark', next === 'dark');
+  listeners.forEach((notify) => notify());
+}
+
+function subscribe(onStoreChange: () => void): () => void {
+  listeners.add(onStoreChange);
+  return () => listeners.delete(onStoreChange);
+}
+
 interface UseThemeResult {
   theme: Theme;
   isDark: boolean;
@@ -48,22 +87,10 @@ interface UseThemeResult {
 }
 
 export function useTheme(): UseThemeResult {
-  const [theme, setTheme] = useState<Theme>(readInitialTheme);
+  const theme = useSyncExternalStore(subscribe, readInitialTheme, () => SSR_THEME);
 
-  // Apply the class + persist whenever the theme changes. Class-only swap (spec).
-  useEffect(() => {
-    if (typeof document === 'undefined') return;
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-    try {
-      window.localStorage.setItem(THEME_STORAGE_KEY, theme);
-    } catch {
-      // ignore write failures (private mode); the class swap still applied
-    }
-  }, [theme]);
-
-  const toggle = useCallback(() => {
-    setTheme((current) => (current === 'dark' ? 'light' : 'dark'));
-  }, []);
+  const setTheme = useCallback((next: Theme) => writeTheme(next), []);
+  const toggle = useCallback(() => writeTheme(theme === 'dark' ? 'light' : 'dark'), [theme]);
 
   return { theme, isDark: theme === 'dark', setTheme, toggle };
 }

@@ -17,6 +17,7 @@ import { Suspense } from 'react';
 
 import { type ExerciseType } from '@/config/exercise-types';
 import { getExercise } from '@/exercises/lazyRegistry';
+import { useIsHydrated } from '@/hooks/useIsHydrated';
 import { ExerciseInstructions } from './ExerciseInstructions';
 import { resolveInstructions } from './instructions';
 
@@ -42,15 +43,25 @@ export function ExerciseHost({ type, config }: ExerciseHostProps) {
   // it is not created per render, so the static-components rule is a false positive.
   const Engine = getExercise(type);
   const instructions = resolveInstructions(type, readInstructionsOverride(config));
+  // Engines are lazy imports, which cannot resolve during a static render: the
+  // boundary would fail server-side and the client would throw its HTML away (React
+  // error #419). So the static page carries the honest statement instead — which is
+  // also exactly what a reader with JavaScript off needs to be told, since no
+  // exercise can work without it. Non-hydrating roots never see this branch.
+  const isHydrated = useIsHydrated();
 
   return (
     <>
       <ExerciseInstructions text={instructions} />
       {Engine ? (
-        <Suspense fallback={<p className="text-muted-foreground">Loading…</p>}>
-          {/* eslint-disable-next-line react-hooks/static-components */}
-          <Engine config={config} />
-        </Suspense>
+        isHydrated ? (
+          <Suspense fallback={<p className="text-muted-foreground">Loading…</p>}>
+            {/* eslint-disable-next-line react-hooks/static-components */}
+            <Engine config={config} />
+          </Suspense>
+        ) : (
+          <p className="text-muted-foreground">This exercise needs JavaScript to run.</p>
+        )
       ) : (
         <p className="text-destructive">
           No engine registered for type <code>{type}</code>.
