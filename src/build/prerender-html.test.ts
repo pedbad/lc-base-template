@@ -94,6 +94,50 @@ describe('buildPrerenderedHtml', () => {
     expect(html).not.toContain('lo-99-dev');
   });
 
+  // The landing page is not an LO: it has no folder to name, and stamping one would
+  // make the client entry hydrate a lesson over the course index (Phase D).
+  describe('with no loFolder — the course landing page', () => {
+    const landing = {
+      template: TEMPLATE,
+      appHtml: '<main id="content"><h1>Bienvenido</h1></main>',
+      title: 'Cambridge Spanish — Level 1',
+      description: 'Start your Spanish journey',
+    };
+
+    it('mounts the page without stamping a data-lo-folder', () => {
+      const html = buildPrerenderedHtml(landing);
+
+      expect(html).toContain('<div id="root"><main id="content"><h1>Bienvenido</h1></main></div>');
+      expect(html).not.toContain('data-lo-folder');
+    });
+
+    it("drops the template's own data-lo-folder rather than inheriting it", () => {
+      const template = TEMPLATE.replace(
+        '<div id="root"></div>',
+        '<div id="root" data-lo-folder="lo-99-dev"></div>',
+      );
+
+      const html = buildPrerenderedHtml({ ...landing, template });
+
+      expect(html).not.toContain('data-lo-folder');
+      expect(html).not.toContain('lo-99-dev');
+    });
+
+    it('still replaces the title and description, and keeps the hashed assets', () => {
+      const html = buildPrerenderedHtml(landing);
+
+      expect(html).toContain('<title>Cambridge Spanish — Level 1</title>');
+      expect(html).toContain('content="Start your Spanish journey"');
+      expect(html).toContain('src="/base/assets/main-DKLXWUsE.js"');
+    });
+
+    it('still throws on a reshaped template', () => {
+      const template = TEMPLATE.replace('<div id="root"></div>', '<div id="app"></div>');
+
+      expect(() => buildPrerenderedHtml({ ...landing, template })).toThrow(/id="root"/);
+    });
+  });
+
   it('throws naming the missing anchor when the template has no root div', () => {
     const template = TEMPLATE.replace('<div id="root"></div>', '<div id="app"></div>');
 

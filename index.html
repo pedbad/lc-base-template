@@ -35,10 +35,13 @@
     </script>
   </head>
   <body>
-    <!-- data-lo-folder names the LO this page renders; main.tsx reads it instead of
-         hardcoding a slug, so one bundle serves every LO. Part D's prerender pass
-         stamps it per generated page. -->
-    <div id="root" data-lo-folder="lo-00-example"></div>
+    <!-- Empty and UNSTAMPED: no data-lo-folder here means "the course landing page"
+         (Phase D). main.tsx branches on that attribute, so this one template serves
+         both pages — the dev server renders the landing page from it, and the
+         post-build prerender pass stamps a folder onto each generated LO page. It
+         used to pin lo-00-example, which made `/` a duplicate of example.html and
+         left any second LO an orphan nothing linked to. -->
+    <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

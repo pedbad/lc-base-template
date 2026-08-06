@@ -1,5 +1,6 @@
 /**
- * prerender-html.ts — inject one rendered LO into the BUILT index.html (Part D).
+ * prerender-html.ts — inject one rendered page into the BUILT index.html (Part D;
+ * extended in Phase D to the course landing page as well as each LO).
  *
  * WHY the built index.html is the template (Part D §3 decision, 2026-08-06):
  * `renderToString` hands back `<body>` markup, not a `<head>`, and a prerendered
@@ -20,8 +21,8 @@
 
 /**
  * The empty root div the app mounts into; the injection anchor. Attributes are
- * matched and DISCARDED, not preserved: index.html carries its own
- * `data-lo-folder` for the dev server, and a generated page must name its own LO.
+ * matched and DISCARDED, not preserved: a generated page must name its own LO (or,
+ * for the landing page, name none) rather than inherit whatever the template said.
  */
 const ROOT_DIV_PATTERN = /<div id="root"[^>]*><\/div>/;
 const TITLE_PATTERN = /<title>[\s\S]*?<\/title>/i;
@@ -46,16 +47,22 @@ export interface PrerenderPageInput {
    * The LO's folder name (`lo-00-example`), stamped on the root div so the client
    * entry hydrates the SAME LO this page was rendered from. The FOLDER, not the
    * slug: the folder name is what `loadLo` takes (design spec §15).
+   *
+   * OMITTED for the course landing page (Phase D), which is not an LO: `main.tsx`
+   * branches on this attribute's presence, so stamping one would hydrate a lesson
+   * over the course index. One function serves both pages rather than two that could
+   * drift, because the ONLY difference is this attribute — the two-anchor guarantee
+   * below is identical either way.
    */
-  loFolder: string;
-  /** The LO manifest's `title` — the page `<title>`. */
+  loFolder?: string;
+  /** The page `<title>` — an LO's manifest title, or the course title. */
   title: string;
-  /** The LO manifest's `description`; omitted when the author declared none. */
+  /** The page description; omitted when neither the LO nor the course declares one. */
   description?: string;
 }
 
 /**
- * Build one LO's static HTML page from the built template plus its rendered markup.
+ * Build one static HTML page from the built template plus its rendered markup.
  *
  * @throws Error naming the missing anchor when the template's shape has changed
  */
@@ -85,10 +92,13 @@ export function buildPrerenderedHtml({
           `    <meta name="description" content="${escapeHtml(description)}" />\n`,
         );
 
+  // The attribute is written from THIS page's input, never carried over from the
+  // template's own (which exists for the dev server) — so a landing page cannot
+  // inherit a folder and an LO page cannot inherit the wrong one.
+  const loFolderAttribute =
+    loFolder === undefined ? '' : ` data-lo-folder="${escapeHtml(loFolder)}"`;
+
   return withDescription
     .replace(TITLE_PATTERN, `<title>${escapeHtml(title)}</title>`)
-    .replace(
-      ROOT_DIV_PATTERN,
-      `<div id="root" data-lo-folder="${escapeHtml(loFolder)}">${appHtml}</div>`,
-    );
+    .replace(ROOT_DIV_PATTERN, `<div id="root"${loFolderAttribute}>${appHtml}</div>`);
 }
