@@ -157,17 +157,22 @@ Also recorded in `docs/BRANCH_PROTECTION.md`: with one collaborator, `Require ap
 plus `Do not allow bypassing` locks the sole maintainer out permanently, because GitHub
 forbids self-approval. The solo-safe subset is PR required + status checks only.
 
-### 5.2 The exercise showcase still ships to production
+### 5.2 The exercise showcase — CLOSED 2026-09-03
 
-`dist/exercise-showcase.html` is in every build. It is a debug gallery of the 12
-engines, unlinked from anywhere (Phase D decision D declined to link it), but publicly
-reachable by URL on a deployed course. Open since Phase C · Part D §5.
+Resolved by making the entry **opt-in**: `bun run build` emits the course only,
+`SHOWCASE=1 bun run build` adds `dist/exercise-showcase.html` back. The decision rule
+lives in `src/build/build-entries.ts` (`isShowcaseRequested`), which fails CLOSED —
+absent, empty, `0`, `false` or anything unrecognised all mean "do not build it", because
+a truthiness check on the raw string would read `SHOWCASE=0` as ON and publish the
+gallery. 5 tests cover those edges.
 
-Options: gate the entry out of prod builds (`vite.config.ts` `rollupOptions.input`
-conditional on an env flag or mode); keep it and accept a stray public page; or move it
-behind the debug sandbox when that lands (§5.5). Trade-off: gating is small but touches
-the build config, and the showcase is genuinely useful when authoring content — losing
-it in preview builds would hurt.
+The trade-off that kept this open turned out not to exist: **the dev server was never
+affected.** Vite serves any root-level `.html` regardless of `rollupOptions.input`, so
+`bun run dev` still answers `/exercise-showcase.html` (verified: HTTP 200, correct title
+and entry script). Only the deployed artefact loses it, and `SHOWCASE=1` gets it back for
+a preview build when the gallery's own production behaviour is what needs checking.
+
+Still true: the showcase remains unlinked from the landing page (Phase D decision D).
 
 ### 5.3 Guards b–h (six of seven still open — buildlist steps 20–26)
 

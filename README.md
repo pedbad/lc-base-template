@@ -69,6 +69,15 @@ bun run build     # type-check, bundle, then prerender the landing page + one HT
 bun run preview   # serve the built output locally
 ```
 
+A build emits the **course only**. The exercise showcase — the debug gallery of all 12
+engines at `/exercise-showcase.html` — is opt-in, so it never lands on a deployed course:
+
+```bash
+SHOWCASE=1 bun run build   # add dist/exercise-showcase.html to this build
+```
+
+`bun run dev` serves the showcase either way; the flag only affects what a build emits.
+
 The build emits **one real HTML file per folder in `lo-config/`** (`lo-00-example` →
 `dist/example.html`) plus **`dist/index.html`, the course landing page** — hero copy
 from `src/config/course.config.ts` and one card per LO, linking to that LO's page.

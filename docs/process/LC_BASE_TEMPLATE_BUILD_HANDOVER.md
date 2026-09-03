@@ -175,6 +175,11 @@ CONTENT ENGINE
 DEV ARTIFACTS
 [ ] 16 Debug sandbox (palette/fonts/SVG/preview)
 [x] 17 Exercise showcase (built ahead of checklist during Phase B — src/showcase/{Showcase.tsx,fixtures.ts}; 12 engines, 18 fixtures)
+    [x] 17b Showcase OPT-IN per build (2026-09-03) — it shipped to every deploy as an
+        unlinked but public URL since Phase C · Part D §5. src/build/build-entries.ts
+        (isShowcaseRequested, fail-closed, 5 tests) gates rollupOptions.input:
+        `bun run build` = course only, `SHOWCASE=1 bun run build` = + showcase. Dev
+        unaffected — Vite serves root-level .html regardless of the input list.
 [ ] 18 Sandbox renders docs as HTML
 GUARDS (each: failing fixture → block → green)
 [x] 19 a config-schema   [ ] 20 b naming+render-mirror   [ ] 21 c asset-path
