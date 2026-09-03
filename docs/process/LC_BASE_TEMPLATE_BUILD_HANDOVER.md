@@ -183,7 +183,7 @@ GUARDS (each: failing fixture → block → green)
 ENGINES
 [x] 27 Port remaining 12 exercises (superseded by step 14 Phase B — all 12 ported there, see log above)
 DOCS + CI + DEPLOY
-[ ] 28 README + LICENSE (MIT + CC-BY-4.0 + disclaimer)
+[x] 28 README + LICENSE (MIT code + CC-BY-4.0 content + brand/Feijoa disclaimer; copyright The Language Centre, University of Cambridge; README License section rewritten to link it)
 [ ] 29 CONTRIBUTING / DESIGNER / STRUCTURE / AGENTS.md
 [ ] 30 STRUCTURE tree auto-gen (bun run docs:tree)
 [~] 31 GitHub Actions CI (oven-sh/setup-bun) — .github/workflows/ci.yml runs lint · lint:css · format:check · test · build; guards b–h join as they land

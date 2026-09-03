@@ -1,0 +1,99 @@
+# License
+
+`lc-base-template` is dual-licensed: **the code is MIT, the learning content is
+CC BY 4.0.** Brand assets and the Feijoa typeface are licensed under neither —
+see "Brand assets and typeface" below.
+
+Copyright holder for both licenses:
+**The Language Centre, University of Cambridge.**
+
+---
+
+## Which license covers what
+
+| Part of the repo                                                    | License                 |
+| ------------------------------------------------------------------- | ----------------------- |
+| `src/`, `scripts/`, build and tooling config, tests                 | MIT                     |
+| `lo-config/` — Learning Object manifests, blocks, exercises, modals | CC BY 4.0               |
+| `public/audio/`, `public/images/` — authored learning media         | CC BY 4.0               |
+| `docs/` — specs, handovers, process notes                           | CC BY 4.0               |
+| Cambridge logos, wordmarks and visual-language imagery              | **neither** — see below |
+| `public/fonts/feijoa/` (never committed; git-ignored)               | **neither** — see below |
+
+Third-party dependencies are covered by their own licenses. Open Sans, the
+public default typeface, is Apache-2.0.
+
+---
+
+## Code — MIT License
+
+Copyright (c) 2026 The Language Centre, University of Cambridge
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## Learning content — Creative Commons Attribution 4.0 International
+
+Learning content in this repository © 2026 The Language Centre, University of
+Cambridge, and is licensed under CC BY 4.0.
+
+Full license text: <https://creativecommons.org/licenses/by/4.0/legalcode>
+Plain-language summary: <https://creativecommons.org/licenses/by/4.0/>
+
+**You are free to** share the content (copy and redistribute it in any medium
+or format, including on your own servers) and adapt it (remix, transform and
+build upon it), for any purpose, including commercially.
+
+**On one condition — attribution.** You must give appropriate credit to
+The Language Centre, University of Cambridge, provide a link to this license,
+and indicate if you made changes. You may do so in any reasonable manner, but
+not in any way that suggests the Language Centre endorses you or your use.
+
+Attribution is satisfied by, for example:
+
+> Learning content from `lc-base-template` © The Language Centre, University of
+> Cambridge, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+> Modified from the original.
+
+CC BY 4.0 does **not** transfer ownership. Copyright in the content remains
+with The Language Centre, University of Cambridge.
+
+---
+
+## Brand assets and typeface — not licensed for reuse
+
+Cambridge branding (logos, marks, imagery) and the Feijoa typeface are the
+property of the University of Cambridge and Klim Type Foundry respectively, and
+are **not** licensed for reuse. Forks must remove or replace them. Code is MIT;
+learning content is CC BY 4.0.
+
+Notes on how this repository handles them:
+
+- **Colours.** The Slate palette reflects the Cambridge brand. Colour values
+  themselves are not copyrightable and ship in `src/styles/palette.css`, but
+  re-theming is expected — see `CONTRIBUTING.md`.
+- **Feijoa.** A commercial typeface from Klim Type Foundry. The font files are
+  **never committed** (`public/fonts/feijoa/*` is git-ignored). A deploy that
+  holds a valid Klim license may drop them in locally. Without them, Open Sans
+  (Apache-2.0) renders as the fallback.
+- **Logos and wordmarks.** Any Cambridge mark that ships in this repository does
+  so for use by the University only, and is covered by the disclaimer above.
+
+Nothing in this file grants any trademark rights.
