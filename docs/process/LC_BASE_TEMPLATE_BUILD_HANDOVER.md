@@ -189,6 +189,13 @@ DOCS + CI + DEPLOY
 [~] 31 GitHub Actions CI (oven-sh/setup-bun) — .github/workflows/ci.yml runs lint · lint:css · format:check · test · build; guards b–h join as they land
 [x] 32 Env base path + resolveAsset()/%BASE_URL% + favicon — resolveAsset() (src/lib/assets.ts, BASE_URL-aware); favicon now `%BASE_URL%favicon.svg` in index.html AND exercise-showcase.html (bug #28 closed); `base` reads process.env.BASE_URL in vite.config.ts, so `BASE_URL=/course/ bun run build` feeds bundle + prerender together
 [ ] 33 Mark repo as GitHub "template repo"
+BEFORE SHARING WITH OTHER DEVELOPERS (pre-share gate — none of these block solo work)
+[ ] 34 Enable branch protection on main — docs/BRANCH_PROTECTION.md. DEFERRED BY DECISION
+    2026-09-03: main takes direct pushes while this is a single-maintainer build; the
+    verify gate is run by hand per commit. Trigger to enable = a second person gets push
+    access. Do NOT enable `Require approvals: 1` + `Do not allow bypassing` with one
+    collaborator — GitHub forbids self-approval, so the merge button locks forever.
+    Solo-safe subset if wanted early: PR required + status checks only.
 ```
 
 ---

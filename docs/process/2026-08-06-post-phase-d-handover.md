@@ -141,17 +141,21 @@ no-JS page that actually deploys.** Both are documented in README and CONTRIBUTI
 Ordered roughly by "what stops a real course shipping", not by size. Each item states
 the options and the trade-off; none is chosen.
 
-### 5.1 Branch protection: the docs and the remote disagree
+### 5.1 Branch protection — SETTLED 2026-09-03: stays off, deferred to pre-share
 
-`docs/BRANCH_PROTECTION.md` and CONTRIBUTING both say `main` is protected — PR + green
-CI to merge, no direct pushes. A direct push of ten commits to `main` was accepted on
-2026-08-06. So the rule is documented but not enforced.
+Resolved as _leave `main` open, fix the docs_. `main` accepts direct pushes while this is
+a single-maintainer build; the verify gate is run by hand before each commit. Enabling
+protection is now tracked as buildlist item **34**, gated on the repo being shared with
+other developers.
 
-Options: enforce it on GitHub (then this repo's own workflow becomes PR-based, which
-also exercises the path a course author will use), or delete the claim from both docs.
-Trade-off: enforcing costs a PR per change on a single-maintainer template; leaving the
-claim costs a doc that lies, which is the exact failure mode this template exists to
-prevent.
+Correction to this section as originally written: `docs/BRANCH_PROTECTION.md` did **not**
+claim protection was on — it carried a `NOT yet enabled` status line all along. The single
+false claim was one sentence in CONTRIBUTING (`main` is protected — no direct pushes),
+which has been rewritten to describe the real workflow.
+
+Also recorded in `docs/BRANCH_PROTECTION.md`: with one collaborator, `Require approvals: 1`
+plus `Do not allow bypassing` locks the sole maintainer out permanently, because GitHub
+forbids self-approval. The solo-safe subset is PR required + status checks only.
 
 ### 5.2 The exercise showcase still ships to production
 

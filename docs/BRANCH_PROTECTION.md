@@ -1,11 +1,18 @@
-# Branch Protection — pre-handover checklist
+# Branch Protection — DO BEFORE SHARING WITH OTHER DEVELOPERS
 
-**Do this once, in the GitHub UI, before/at handover to the developer team.** It is the
+**Do this once, in the GitHub UI, before the repo is shared with anyone else.** It is the
 piece that makes the in-repo guardrails (`.github/CODEOWNERS`, the PR template, CI) actually
 **block** a bad merge instead of merely _suggesting_ review. Nothing in the repo can enable
 this for you — branch protection is a GitHub repo setting, not a file.
 
-> Status: ⬜ **NOT yet enabled** — tick to ✅ once configured.
+> Status: ⬜ **NOT enabled — deliberately, for now.**
+>
+> **Decided 2026-09-03:** while this is a single-maintainer build, `main` accepts direct
+> pushes and the verify gate (`format · lint · lint:css · test · build`) is run by hand
+> before each commit. This is a considered choice, not a missed step — CONTRIBUTING says
+> the same. **The trigger to switch it on is a second person getting push access.**
+>
+> Tick to ✅ once configured.
 
 ---
 
@@ -20,6 +27,28 @@ Without protection on `main`:
 With it: every change goes through a PR, CI must be green, and a code owner must approve
 changes to tokens / schemas / engine wiring / build. That's the wall that keeps a shared
 template from rotting as many authors add Learning Objects.
+
+---
+
+## ⚠ Do not enable approvals while there is only one collaborator
+
+`Require approvals: 1` + `Do not allow bypassing` (admins included) **locks a solo
+maintainer out of their own repo.** GitHub will not let you approve your own pull request,
+so the merge button stays disabled forever, waiting on an approval that cannot arrive.
+
+As of 2026-09-03 the only collaborator is `pedbad`. So:
+
+| If the repo has…          | Enable                                                  |
+| ------------------------- | ------------------------------------------------------- |
+| one collaborator          | PR required + **status checks only** — no approval rows |
+| two or more collaborators | the full table below, approvals included                |
+
+The status-check half is what actually protects `main` (nothing red can merge). The
+approval half only becomes meaningful once there is someone else to do the approving —
+which is exactly the "sharing with other developers" moment this checklist is gated on.
+
+Cost to know before flipping it: CI on this repo runs ~8m30s, so every merge — typo fixes
+included — waits that long.
 
 ---
 
@@ -47,7 +76,11 @@ If `Lint, test, build` isn't selectable, open one throwaway PR, let CI run, then
 
 ## Alternative — gh CLI (classic protection)
 
-If you prefer the terminal (requires `gh auth login` with admin on the repo):
+If you prefer the terminal (requires `gh auth login` with admin on the repo).
+
+**Do not paste this as-is with one collaborator** — the two
+`required_pull_request_reviews` lines and `enforce_admins=true` are the lockout combination
+described above. Drop those three lines for the solo-maintainer version.
 
 ```bash
 gh api -X PUT repos/pedbad/lc-base-template/branches/main/protection \
