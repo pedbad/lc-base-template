@@ -1,8 +1,8 @@
 # License
 
 `lc-base-template` is dual-licensed: **the code is MIT, the learning content is
-CC BY 4.0.** Brand assets and the Feijoa typeface are licensed under neither —
-see "Brand assets and typeface" below.
+CC BY-NC 4.0.** Brand assets and the Feijoa typeface are licensed under neither
+— see "Brand assets and typeface" below.
 
 Copyright holder for both licenses:
 **The Language Centre, University of Cambridge.**
@@ -14,9 +14,9 @@ Copyright holder for both licenses:
 | Part of the repo                                                    | License                 |
 | ------------------------------------------------------------------- | ----------------------- |
 | `src/`, `scripts/`, build and tooling config, tests                 | MIT                     |
-| `lo-config/` — Learning Object manifests, blocks, exercises, modals | CC BY 4.0               |
-| `public/audio/`, `public/images/` — authored learning media         | CC BY 4.0               |
-| `docs/` — specs, handovers, process notes                           | CC BY 4.0               |
+| `lo-config/` — Learning Object manifests, blocks, exercises, modals | CC BY-NC 4.0            |
+| `public/audio/`, `public/images/` — authored learning media         | CC BY-NC 4.0            |
+| `docs/` — specs, handovers, process notes                           | CC BY-NC 4.0            |
 | Cambridge logos, wordmarks and visual-language imagery              | **neither** — see below |
 | `public/fonts/feijoa/` (never committed; git-ignored)               | **neither** — see below |
 
@@ -49,31 +49,45 @@ SOFTWARE.
 
 ---
 
-## Learning content — Creative Commons Attribution 4.0 International
+## Learning content — Creative Commons Attribution-NonCommercial 4.0 International
 
 Learning content in this repository © 2026 The Language Centre, University of
-Cambridge, and is licensed under CC BY 4.0.
+Cambridge, and is licensed under CC BY-NC 4.0.
 
-Full license text: <https://creativecommons.org/licenses/by/4.0/legalcode>
-Plain-language summary: <https://creativecommons.org/licenses/by/4.0/>
+Full license text: <https://creativecommons.org/licenses/by-nc/4.0/legalcode>
+Plain-language summary: <https://creativecommons.org/licenses/by-nc/4.0/>
 
 **You are free to** share the content (copy and redistribute it in any medium
 or format, including on your own servers) and adapt it (remix, transform and
-build upon it), for any purpose, including commercially.
+build upon it) — **for non-commercial purposes only.**
 
-**On one condition — attribution.** You must give appropriate credit to
-The Language Centre, University of Cambridge, provide a link to this license,
-and indicate if you made changes. You may do so in any reasonable manner, but
-not in any way that suggests the Language Centre endorses you or your use.
+**Two conditions.**
+
+1. **Attribution.** You must give appropriate credit to The Language Centre,
+   University of Cambridge, provide a link to this license, and indicate if you
+   made changes. You may do so in any reasonable manner, but not in any way
+   that suggests the Language Centre endorses you or your use.
+2. **NonCommercial.** You may not use the content for commercial purposes. In
+   the words of the license, a commercial use is one "primarily intended for or
+   directed toward commercial advantage or monetary compensation."
 
 Attribution is satisfied by, for example:
 
 > Learning content from `lc-base-template` © The Language Centre, University of
-> Cambridge, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+> Cambridge, licensed under
+> [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/).
 > Modified from the original.
 
-CC BY 4.0 does **not** transfer ownership. Copyright in the content remains
+**If you want to use the content commercially,** the NonCommercial term does
+not forbid it outright — it means you need separate permission. Ask The Language
+Centre, University of Cambridge.
+
+CC BY-NC 4.0 does **not** transfer ownership. Copyright in the content remains
 with The Language Centre, University of Cambridge.
+
+Note that the **code is MIT**, which does permit commercial use. The
+NonCommercial term applies to the learning content, not to the template
+machinery that renders it.
 
 ---
 
@@ -82,7 +96,7 @@ with The Language Centre, University of Cambridge.
 Cambridge branding (logos, marks, imagery) and the Feijoa typeface are the
 property of the University of Cambridge and Klim Type Foundry respectively, and
 are **not** licensed for reuse. Forks must remove or replace them. Code is MIT;
-learning content is CC BY 4.0.
+learning content is CC BY-NC 4.0.
 
 Notes on how this repository handles them:
 

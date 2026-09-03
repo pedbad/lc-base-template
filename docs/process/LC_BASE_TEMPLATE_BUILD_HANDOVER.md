@@ -52,7 +52,7 @@ KEY CONSTRAINTS (do not drift):
 - Render-mirror naming: ordinal+type, section-scoped. Naming lo-01/ images/ semantic folders.
 - Asset paths: resolveAsset() runtime, %BASE_URL% static head. Env-driven base path.
 - Brand: Cambridge Slate palette baked in; logos w/ trademark disclaimer; Feijoa git-ignored
-  (commercial), Open Sans default; README/LICENSE dual MIT+CC-BY-4.0 + disclaimer.
+  (commercial), Open Sans default; README/LICENSE dual MIT+CC-BY-NC-4.0 + disclaimer.
 - Semantic DOM: header>nav → main → section → <article> per accordion. a11y CI-gated.
 - 5 docs (README/CONTRIBUTING/DESIGNER/STRUCTURE/AGENTS); sandbox renders them; AGENTS.md as
   AI drift-guard.
@@ -183,7 +183,7 @@ GUARDS (each: failing fixture → block → green)
 ENGINES
 [x] 27 Port remaining 12 exercises (superseded by step 14 Phase B — all 12 ported there, see log above)
 DOCS + CI + DEPLOY
-[x] 28 README + LICENSE (MIT code + CC-BY-4.0 content + brand/Feijoa disclaimer; copyright The Language Centre, University of Cambridge; README License section rewritten to link it)
+[x] 28 README + LICENSE (MIT code + CC-BY-NC-4.0 content + brand/Feijoa disclaimer; copyright The Language Centre, University of Cambridge; README License section rewritten to link it. NonCommercial chosen 2026-09-03 over plain BY: content is Language Centre property, commercial reuse needs its permission)
 [ ] 29 CONTRIBUTING / DESIGNER / STRUCTURE / AGENTS.md
 [ ] 30 STRUCTURE tree auto-gen (bun run docs:tree)
 [~] 31 GitHub Actions CI (oven-sh/setup-bun) — .github/workflows/ci.yml runs lint · lint:css · format:check · test · build; guards b–h join as they land

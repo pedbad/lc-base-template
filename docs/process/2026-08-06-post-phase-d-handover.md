@@ -196,8 +196,9 @@ reads every manifest).
 
 - **16** debug sandbox (palette / fonts / SVG preview) — never started.
 - **18** sandbox renders docs as HTML.
-- **28** LICENSE — MIT + CC-BY-4.0 + trademark disclaimer. **The repo is public and has
-  no LICENSE file.**
+- **28** LICENSE — **DONE 2026-09-03** (`6c62d6d` + follow-up): MIT code + CC-BY-NC-4.0
+  content + brand/Feijoa disclaimer, copyright The Language Centre, University of
+  Cambridge.
 - **29** DESIGNER / STRUCTURE / AGENTS.md (README and CONTRIBUTING exist and are current).
 - **30** `bun run docs:tree` — auto-generated STRUCTURE tree.
 - **31** CI is partial by design: guards b–h join as they land.

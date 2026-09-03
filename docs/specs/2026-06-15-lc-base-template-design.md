@@ -42,7 +42,7 @@ The template ships with three dev tools (debug sandbox, exercise showcase, examp
 | 12  | Course identity       | One Zod-validated `course.config.ts` — single source of course identity.                                                                                                                                                                                                                                                                                       |
 | 13  | UI-chrome strings     | Global `ui-strings.ts` (complete, Zod-required) **+** optional per-exercise `labels` override (partial). Override wins.                                                                                                                                                                                                                                        |
 | 14  | Repo home             | **Public** GitHub template repo `lc-base-template`. "Use this template" flow. Collaborators gate template edits.                                                                                                                                                                                                                                               |
-| 15  | License               | **MIT for code + CC-BY-4.0 for content** + brand/trademark disclaimer (see §12).                                                                                                                                                                                                                                                                               |
+| 15  | License               | **MIT for code + CC-BY-NC-4.0 for content** + brand/trademark disclaimer (see §12).                                                                                                                                                                                                                                                                            |
 | 16  | Designer role         | **Hands-off.** Designer defines look (palette/type/spacing/icons); does not touch code/JSON/guards. Output = theme spec the dev applies. Confirmed visually in the debug sandbox.                                                                                                                                                                              |
 | 17  | Out-of-box brand      | Clone ships **pre-branded as a Cambridge course** — full Cambridge Slate palette + logos/imagery baked in. Designer rebrands later by editing token values (one place), not find-replace.                                                                                                                                                                      |
 | 18  | Brand asset licensing | **Colours** baked in (not copyrightable). **Logos/imagery** baked in + trademark disclaimer. **Font:** Feijoa is commercial (Klim) → **NOT shipped**; git-ignored, local/deploy-only. Public default = **Open Sans** (Apache-2.0). Cascade falls back automatically.                                                                                           |
@@ -180,7 +180,9 @@ ClozeTyping bugs from french-lo-1 (missing audio icon, unstyled check button, sh
 
 - **Public** GitHub **template repo** `lc-base-template` ("Use this template" → fresh repo, clean history, no fork back-link).
 - Cloning/using = open to anyone. **Push access to the template itself = collaborators only** (gates who edits the base).
-- **License:** MIT for code + CC-BY-4.0 for content. Both stated in `LICENSE` + README.
+- **License:** MIT for code + CC-BY-NC-4.0 for content (NonCommercial settled 2026-09-03;
+  the content is Language Centre property and commercial reuse needs its permission).
+  Both stated in `LICENSE` + README.
 
 ---
 
@@ -201,7 +203,7 @@ ClozeTyping bugs from french-lo-1 (missing audio icon, unstyled check button, sh
 | Logos / wordmark / visual-language imagery | ✅ yes                | **Trademark disclaimer** in README + LICENSE: marks are University property; remove/replace before reuse. Shifts responsibility to forker.                                                                     |
 | Feijoa font file                           | ❌ no                 | Commercial (Klim Type Foundry). Git-ignored; never pushed. `@font-face` references `public/fonts/feijoa/` (local/deploy only). Public default = Open Sans (Apache-2.0). CONTRIBUTING.md documents the drop-in. |
 
-**README/LICENSE disclaimer (required):** "Cambridge branding (logos, marks, imagery) and the Feijoa typeface are the property of the University of Cambridge / Klim Type Foundry respectively, and are **not** licensed for reuse. Forks must remove or replace them. Code is MIT; learning content is CC-BY-4.0."
+**README/LICENSE disclaimer (required):** "Cambridge branding (logos, marks, imagery) and the Feijoa typeface are the property of the University of Cambridge / Klim Type Foundry respectively, and are **not** licensed for reuse. Forks must remove or replace them. Code is MIT; learning content is CC-BY-NC-4.0."
 
 ---
 
