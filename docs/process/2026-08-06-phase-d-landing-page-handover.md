@@ -237,7 +237,8 @@ answers this — follow it, and note the answer here.
 > The reference's collapsed-rail social links were not ported either — this template has
 > no social-links config.
 
-**D. Does the landing page list only LOs?** The exercise showcase still ships in production
+**D. Does the landing page list only LOs?** _(Shipping closed 2026-09-03, `ef9ec8f` — the
+showcase is now opt-in per build. Historical record below left as written.)_ The exercise showcase still ships in production
 builds (`exercise-showcase.html`, still unresolved from Part D §5). Decide whether it appears
 on the landing page, stays unlinked, or is finally gated out of prod builds.
 

@@ -8,6 +8,10 @@ How to work in this repo: setup, everyday commands, the commit gate, and convent
 > `docs/specs/2026-06-15-lc-base-template-design.md` §14 for the full planned scope.
 >
 > For **why** each tool was chosen (not how to use it), see [`docs/TOOLING.md`](docs/TOOLING.md).
+>
+> For **what is still open on the template itself**, see
+> [`docs/process/TODO.md`](docs/process/TODO.md) — the live worklist, ordered, with the
+> constraints and the verify gate at the top. Start there in a new session.
 
 ---
 

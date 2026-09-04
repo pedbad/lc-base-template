@@ -107,6 +107,9 @@ bun run build         # (once build exists) succeeds
 
 ---
 
+> **For the ordered live worklist, read `docs/process/TODO.md`.** This checklist is the
+> numbered build history and the tick record; TODO.md says what to do next and why.
+
 ## Task checklist (carry forward, tick as you go)
 
 ```
@@ -181,7 +184,7 @@ DEV ARTIFACTS
         `bun run build` = course only, `SHOWCASE=1 bun run build` = + showcase. Dev
         unaffected — Vite serves root-level .html regardless of the input list.
 [ ] 18 Sandbox renders docs as HTML
-GUARDS (each: failing fixture → block → green)
+GUARDS (each: failing fixture → block → green) — 7 of 8 open; do c + d first, see TODO.md §A
 [x] 19 a config-schema   [ ] 20 b naming+render-mirror   [ ] 21 c asset-path
 [ ] 22 d asset-existence [ ] 23 e registry               [ ] 24 f token-integrity
 [ ] 25 g css-layers      [ ] 26 h w3c/a11y

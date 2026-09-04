@@ -6,8 +6,13 @@
 **Suite:** 77 files · 605 tests green. `lint` · `lint:css` · `format:check` · `build` green locally.
 
 **This document takes no decisions.** §5 lists the open work with options and trade-offs
-laid out and deliberately unchosen — that is the next session's first job. §1–4 are the
-state of the template as verified at `c3f840f`.
+laid out and deliberately unchosen. §1–4 are the state of the template as verified at
+`c3f840f`.
+
+> **For what is open NOW, read `docs/process/TODO.md`** — the live worklist. This file is
+> a snapshot at the end of Phase D plus the §5 decision log; several §5 items have since
+> been settled and are marked so inline. Suite counts below are as of `c3f840f`
+> (77 files · 605 tests); at `ef9ec8f` it is 78 files · 610 tests.
 
 ---
 
@@ -17,8 +22,9 @@ A course is now navigable end to end. `/` is a real landing page (hero + one car
 Learning Object + a left sliding lesson nav), each LO has its own static page, the LO
 page links back home, and both dev and the build serve all of it. An author adds a
 folder under `lo-config/` and gets a page, a card and a nav entry with no code change.
-What is NOT done: six of the seven config/asset guards, the debug sandbox, LICENSE, and
-the exercise showcase still ships to production.
+What is NOT done: seven of the eight config/asset guards, the debug sandbox, and the
+three missing docs. **Since settled:** LICENSE exists (`6c62d6d`, `2104d13`) and the
+exercise showcase no longer ships (`ef9ec8f`).
 
 ---
 
@@ -47,7 +53,7 @@ Full decision record with the reference deviations:
 | A   | Dev serves LO pages via `loDevPages()`. First answered build-then-preview, **reversed the same day**. |
 | B   | The `lo-NN-` folder ordinal is the ONLY source of course order. `loOrder` deleted, absence asserted.  |
 | C   | The sliding nav lists every LO (course-wide index), landing page only — as the reference does.        |
-| D   | Landing page lists LOs only. The exercise showcase stays unlinked — and still ships (§5.2).           |
+| D   | Landing page lists LOs only. Showcase stays unlinked; shipping it was closed 2026-09-03 (§5.2).       |
 | E   | `image` added to the LO manifest now, with a placeholder wired into `lo-00-example`.                  |
 
 ---
@@ -174,7 +180,7 @@ a preview build when the gallery's own production behaviour is what needs checki
 
 Still true: the showcase remains unlinked from the landing page (Phase D decision D).
 
-### 5.3 Guards b–h (six of seven still open — buildlist steps 20–26)
+### 5.3 Guards b–h (SEVEN of eight still open — buildlist steps 20–26)
 
 Guard **a** (config-schema, Zod at load) is active. Remaining:
 
@@ -239,7 +245,7 @@ built.
 > on `main`: Phase D is complete — `/` is the course landing page (hero + one card per
 > LO + a left sliding lesson nav), each LO has a static page, dev and the build both
 > serve all of it, and adding a folder under `lo-config/` adds a page, a card and a nav
-> entry with no code change. 605 tests green.
+> entry with no code change. 610 tests green at `ef9ec8f`.
 >
 > Pick up from §5, which lists the open work with options and trade-offs and
 > deliberately takes no decisions. Tell me what you'd do first and why before starting,
