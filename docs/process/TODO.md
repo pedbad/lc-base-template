@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-09-03 · **HEAD:** see `git log` · **Suite:** 79 files · 631 tests green
+**Last updated:** 2026-09-03 · **HEAD:** see `git log` · **Suite:** 80 files · 642 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -30,32 +30,25 @@ bun run format && bun run lint && bun run lint:css && bun run test && bun run bu
 
 ---
 
-## A. Guards — 6 of 8 still open (the main body of work)
+## A. Guards — 5 of 8 still open (the main body of work)
 
-Guards **a** (config-schema, buildlist 19) and **c** (asset-path, buildlist 21) are done.
-The other six are one commit each, and each follows the same ritual: **write a deliberately-broken fixture
+Guards **a** (config-schema, 19), **c** (asset-path, 21) and **d** (asset-existence, 22)
+are done. The other five are one commit each, and each follows the same ritual: **write a deliberately-broken fixture
 first, prove the guard blocks it, then make the real repo green.** A guard that was never
 seen to fail is a guard that might be asleep.
 
-Recommended order — **d next.** c is done; d is its other half (c checks a path is built
-so it resolves at any page depth, d checks the file it points at exists). Together they
-cover the family of bug that actually bit french-lo-1 twice. The rest are tidiness
-guards; nothing has broken from them yet.
-
-**d should be cheap now.** `src/guards/asset-path.ts` already owns the "what counts as an
-asset path" question (`looksLikeAssetPath`, plus the extension and asset-directory
-lists), and `showcase-audio-assets.test.ts` and `example-lo.test.ts` already do
-`existsSync` checks on authored paths. d is mostly collecting authored paths out of LO
-JSON and fixtures and pointing them at `public/`.
+Recommended order — **b next.** c and d are done, and they were the pair that mattered:
+they cover the family of bug that actually bit french-lo-1 twice. What is left is
+tidiness enforcement — real, but nothing has broken from it yet, so pick the order that
+suits you. b is next only because it is the one with a seed already written.
 
 | Order | Buildlist | Guard | Checks                                       | Head start already in repo                                |
 | ----- | --------- | ----- | -------------------------------------------- | --------------------------------------------------------- |
-| 1     | 22        | **d** | every authored asset path exists on disk     | seeded by the card-image test in `example-lo.test.ts`     |
-| 2     | 20        | **b** | folder name ↔ config contents agree          | `example-lo.test.ts` already does this for one LO         |
-| 3     | 23        | **e** | every `type` resolves to a registered engine | seeded by the per-type schema map in `example-lo.test.ts` |
-| 4     | 24        | **f** | no raw hex or px                             | `public/images/lo-placeholder.svg` is the one exception   |
-| 5     | 25        | **g** | CSS all in `@layer`, no `!important`         | —                                                         |
-| 6     | 26        | **h** | w3c + a11y over rendered pages               | landing page + sliding nav are new, unvalidated surface   |
+| 1     | 20        | **b** | folder name ↔ config contents agree          | `example-lo.test.ts` already does this for one LO         |
+| 2     | 23        | **e** | every `type` resolves to a registered engine | seeded by the per-type schema map in `example-lo.test.ts` |
+| 3     | 24        | **f** | no raw hex or px                             | `public/images/lo-placeholder.svg` is the one exception   |
+| 4     | 25        | **g** | CSS all in `@layer`, no `!important`         | —                                                         |
+| 5     | 26        | **h** | w3c + a11y over rendered pages               | landing page + sliding nav are new, unvalidated surface   |
 
 ### A8 — wire the guards up (buildlist 31, currently `[~]`)
 

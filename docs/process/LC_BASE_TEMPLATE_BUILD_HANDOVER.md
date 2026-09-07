@@ -184,7 +184,7 @@ DEV ARTIFACTS
         `bun run build` = course only, `SHOWCASE=1 bun run build` = + showcase. Dev
         unaffected — Vite serves root-level .html regardless of the input list.
 [ ] 18 Sandbox renders docs as HTML
-GUARDS (each: failing fixture → block → green) — 6 of 8 open; do d next, see TODO.md §A
+GUARDS (each: failing fixture → block → green) — 5 of 8 open; do b next, see TODO.md §A
     [x] 21c DONE 2026-09-03 — src/guards/asset-path.ts + 21 tests. Source scan: an
         asset-looking string literal in a URL sink (src/href/poster/srcSet attr, or
         AudioManager.play/new Audio/fetch arg) without resolveAsset() fails the suite;
@@ -193,8 +193,17 @@ GUARDS (each: failing fixture → block → green) — 6 of 8 open; do d next, s
         which are data and must stay bare — from being flagged. Comments stripped first
         (string-aware, so the // in a URL is not mistaken for one). Repo was already
         clean; verified by planting a violation in Footer.tsx and watching it block.
+    [x] 22d DONE 2026-09-03 — src/guards/asset-existence.ts + 11 tests. Collects every
+        value under an asset KEY (audio, image) from lo-config/**/*.json and every
+        showcase fixture, then asserts a file exists under public/. Collects by key, not
+        by string shape — the opposite call to guard c, because this reads DATA
+        describing a URL while c reads CODE building one, and `title: "audio/x.mp3"` is
+        a title. Both NFC and NFD spellings are tried (Mac filenames are NFD, which is
+        why resolveAsset normalises). The sweep asserts a find-count floor so a schema
+        field rename fails loudly instead of silently disabling the guard. Verified by
+        pointing lo.json at a missing image and watching it block.
 [x] 19 a config-schema   [ ] 20 b naming+render-mirror   [x] 21 c asset-path
-[ ] 22 d asset-existence [ ] 23 e registry               [ ] 24 f token-integrity
+[x] 22 d asset-existence [ ] 23 e registry               [ ] 24 f token-integrity
 [ ] 25 g css-layers      [ ] 26 h w3c/a11y
 ENGINES
 [x] 27 Port remaining 12 exercises (superseded by step 14 Phase B — all 12 ported there, see log above)
