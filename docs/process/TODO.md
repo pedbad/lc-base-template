@@ -125,3 +125,4 @@ Not forgotten. Decided.
 | 2026-09-03 | `c239fa8` | **guard c — asset-path** (buildlist 21): `src/guards/` created, 21 tests |
 | 2026-09-03 | `4367d31` | **guard d — asset-existence** (buildlist 22), 11 tests                   |
 | 2026-09-07 | `891511c` | **guard b — naming + render-mirror** (buildlist 20), 17 tests            |
+| 2026-09-07 | `22757f5` | **guard e — registry completeness** (buildlist 23), 30 tests             |
