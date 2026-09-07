@@ -6,8 +6,10 @@
  * `lazy()` so a page only downloads the engines it actually uses. The showcase and
  * (later) the LO renderer both resolve components through `getExercise(type)`.
  *
- * Guard e (registry completeness, later step) will assert every `type` used in a
- * config is registered here, and every registered type has a showcase fixture.
+ * Guard e (`src/guards/registry-completeness.ts`) enforces this: every canonical key
+ * in `EXERCISE_TYPE_KEYS` must have an entry here, a showcase fixture and a per-type
+ * Zod schema, and every `type` authored under `lo-config/` must resolve to an entry.
+ * `Partial` keeps the hole possible in the type system; guard e is what closes it.
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §8;
  *       docs/specs/2026-06-15-lc-base-template-design.md §5 (guard e).

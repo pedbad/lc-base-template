@@ -184,7 +184,7 @@ DEV ARTIFACTS
         `bun run build` = course only, `SHOWCASE=1 bun run build` = + showcase. Dev
         unaffected — Vite serves root-level .html regardless of the input list.
 [ ] 18 Sandbox renders docs as HTML
-GUARDS (each: failing fixture → block → green) — 4 of 8 open; do e next, see TODO.md §A
+GUARDS (each: failing fixture → block → green) — 3 of 8 open; do f next, see TODO.md §A
     [x] 20b DONE 2026-09-07 — src/guards/render-mirror.ts + 17 tests. An LO exists
         because its FOLDER exists; its page structure exists because lo.json NAMES it.
         Two registries, so two silent drifts: a ref with no folder behind it (the page
@@ -222,8 +222,34 @@ GUARDS (each: failing fixture → block → green) — 4 of 8 open; do e next, s
         why resolveAsset normalises). The sweep asserts a find-count floor so a schema
         field rename fails loudly instead of silently disabling the guard. Verified by
         pointing lo.json at a missing image and watching it block.
+    [x] 23e DONE 2026-09-07 — src/guards/registry-completeness.ts + 30 tests. Unlike
+        b/c/d this guards a LOUD failure that ships anyway: both renderers already
+        handle an unknown type by printing a red "No engine/renderer registered for
+        type X", so the build passes, the suite stays green, and the learner meets the
+        error. Two halves. (1) THE AUTHORING CONTRACT over EXERCISE_TYPE_KEYS — spec
+        §223 says a new type is register-in-lazyRegistry + showcase-fixture + Zod
+        schema and guard e fails if any step is skipped; every skipped step is
+        reported, not just the first. The schema step is a CONVENTION check
+        (src/exercises/<type>/<type>-schema.ts) rather than a central map, because a
+        map could only live in the guard, making "add yourself to the guard" a fourth
+        uncheckable step; the test then imports each file and asserts it exports a real
+        Zod schema, so a renamed-but-empty file cannot pass. (2) AUTHORED TYPES RESOLVE
+        — every type in lo-config/**/{block,exercise}.json resolves in its own
+        registry. Exercise types have the Zod enum behind them; BLOCK types have
+        NOTHING (BlockConfigSchema.type is a bare string, BLOCK_RENDERERS is keyed by
+        free string), so for blocks this guard is the only backstop that exists.
+        Compile-enforced facts are deliberately not re-asserted (Partial<Record<
+        ExerciseType>>, ShowcaseFixture.type, the exhaustive EXERCISE_INSTRUCTIONS),
+        and content PARSING is explicitly out of scope — guard e proves a schema
+        exists, guard a's family proves content fits it. Corrected two stale claims
+        while here: lazyRegistry's "guard e will…" header, and lo-schema.ts, which
+        wrongly said per-type content tightening was guard e's job. Repo was already
+        clean; verified by adding an unbacked engine key (all three steps reported),
+        typo'ing a block type (81 other test files stayed green — the block side had
+        zero protection), renaming a schema file, unregistering an engine, and gutting
+        a schema file's exports.
 [x] 19 a config-schema   [x] 20 b naming+render-mirror   [x] 21 c asset-path
-[x] 22 d asset-existence [ ] 23 e registry               [ ] 24 f token-integrity
+[x] 22 d asset-existence [x] 23 e registry               [ ] 24 f token-integrity
 [ ] 25 g css-layers      [ ] 26 h w3c/a11y
 ENGINES
 [x] 27 Port remaining 12 exercises (superseded by step 14 Phase B — all 12 ported there, see log above)
@@ -233,9 +259,9 @@ DOCS + CI + DEPLOY
 [ ] 30 STRUCTURE tree auto-gen (bun run docs:tree)
 [~] 31 GitHub Actions CI (oven-sh/setup-bun) — .github/workflows/ci.yml runs lint ·
     lint:css · format:check · test · build. NOTE: guards are Vitest tests, so each one
-    joins CI automatically the moment it lands — `test` already enforces a, b, c and d. What
-    is still missing is a `bun run guards` script (a named subset for a fast local check);
-    31 closes when that exists, not when the guards do.
+    joins CI automatically the moment it lands — `test` already enforces a, b, c, d and
+    e. What is still missing is a `bun run guards` script (a named subset for a fast
+    local check); 31 closes when that exists, not when the guards do.
 [x] 32 Env base path + resolveAsset()/%BASE_URL% + favicon — resolveAsset() (src/lib/assets.ts, BASE_URL-aware); favicon now `%BASE_URL%favicon.svg` in index.html AND exercise-showcase.html (bug #28 closed); `base` reads process.env.BASE_URL in vite.config.ts, so `BASE_URL=/course/ bun run build` feeds bundle + prerender together
 [ ] 33 Mark repo as GitHub "template repo"
 BEFORE SHARING WITH OTHER DEVELOPERS (pre-share gate — none of these block solo work)

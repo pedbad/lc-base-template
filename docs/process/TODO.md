@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-09-07 · **HEAD:** see `git log` · **Suite:** 81 files · 659 tests green
+**Last updated:** 2026-09-07 · **HEAD:** see `git log` · **Suite:** 82 files · 689 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -30,30 +30,30 @@ bun run format && bun run lint && bun run lint:css && bun run test && bun run bu
 
 ---
 
-## A. Guards — 4 of 8 still open (the main body of work)
+## A. Guards — 3 of 8 still open (the main body of work)
 
-Guards **a** (config-schema, 19), **b** (naming + render-mirror, 20), **c** (asset-path, 21) and **d** (asset-existence, 22) are done. The other four are one commit each, and each
-follows the same ritual: **write a deliberately-broken fixture first, prove the guard
-blocks it, then make the real repo green.** A guard that was never seen to fail is a guard
-that might be asleep.
+Guards **a** (config-schema, 19), **b** (naming + render-mirror, 20), **c** (asset-path,
+21), **d** (asset-existence, 22) and **e** (registry, 23) are done. The other three are one
+commit each, and each follows the same ritual: **write a deliberately-broken fixture first,
+prove the guard blocks it, then make the real repo green.** A guard that was never seen to
+fail is a guard that might be asleep.
 
-Recommended order — **e next.** b, c and d were the ones that mattered: c and d cover the
-family of bug that actually bit french-lo-1 twice, and b closed the only silent gap left in
-LO structure (a folder no manifest names). What remains is tidiness enforcement — real, but
-nothing has broken from it yet, so pick the order that suits you. e is next only because it
-is the one with a seed already written.
+Recommended order — **f next.** Everything load-bearing is now guarded: c and d cover the
+bug family that bit french-lo-1 twice, b closed the last silent gap in LO structure, and e
+stops an unresolvable `type` reaching a learner as a red error box. What remains is
+presentation discipline — real, but nothing has broken from it yet, so pick the order that
+suits you. f is next only because it is the most mechanical.
 
-| Order | Buildlist | Guard | Checks                                       | Head start already in repo                                |
-| ----- | --------- | ----- | -------------------------------------------- | --------------------------------------------------------- |
-| 1     | 23        | **e** | every `type` resolves to a registered engine | seeded by the per-type schema map in `example-lo.test.ts` |
-| 2     | 24        | **f** | no raw hex or px                             | `public/images/lo-placeholder.svg` is the one exception   |
-| 3     | 25        | **g** | CSS all in `@layer`, no `!important`         | —                                                         |
-| 4     | 26        | **h** | w3c + a11y over rendered pages               | landing page + sliding nav are new, unvalidated surface   |
+| Order | Buildlist | Guard | Checks                               | Head start already in repo                              |
+| ----- | --------- | ----- | ------------------------------------ | ------------------------------------------------------- |
+| 1     | 24        | **f** | no raw hex or px                     | `public/images/lo-placeholder.svg` is the one exception |
+| 2     | 25        | **g** | CSS all in `@layer`, no `!important` | —                                                       |
+| 3     | 26        | **h** | w3c + a11y over rendered pages       | landing page + sliding nav are new, unvalidated surface |
 
 ### A8 — wire the guards up (buildlist 31, currently `[~]`)
 
 There is no `bun run guards` script yet, and CI is partial **by design** — guards join as
-they land. Once e–h exist: add the script, add the CI step, close 31.
+they land. Once f–h exist: add the script, add the CI step, close 31.
 
 ---
 

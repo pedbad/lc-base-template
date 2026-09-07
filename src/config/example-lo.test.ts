@@ -9,10 +9,10 @@
  *      ids, non-empty labels (the schema enforces the last two; the assertions
  *      below prove the shipped example exercises them).
  *   2. Every `block.json` parses against `BlockConfigSchema`.
- *   3. Every `exercise.json` parses against its per-`type` engine schema (guard e
- *      seed: the `type` must resolve to a shipped engine schema, and `content` must
- *      satisfy that engine's tightened shape — not just the loose envelope) AND
- *      carries the accordion title the LO-facing envelope requires.
+ *   3. Every `exercise.json` parses against its per-`type` engine schema — `content`
+ *      must satisfy that engine's tightened shape, not just the loose envelope — AND
+ *      carries the accordion title the LO-facing envelope requires. Guard e proves
+ *      every engine HAS a schema; this proves the shipped example SATISFIES its own.
  *
  * REF ↔ FOLDER EXISTENCE HAS MOVED OUT. This test's original check 2 was the guard b
  * seed — it walked the manifest and asserted every named folder was on disk. Guard b
@@ -37,7 +37,9 @@ const LO_DIR = path.resolve(import.meta.dirname, '../../lo-config/lo-00-example'
 
 /**
  * Per-`type` exercise schema lookup. Only the engines the example LO actually uses
- * need an entry — an unmapped `type` fails the test loudly (guard e seed).
+ * need an entry — an unmapped `type` fails the test loudly. This is a local lookup
+ * for the content parse below, NOT a registry: registry completeness is guard e's,
+ * which checks the conventional schema file per engine rather than any central map.
  */
 const EXERCISE_SCHEMA_BY_TYPE: Record<string, z.ZodTypeAny> = {
   select: SelectExerciseConfigSchema,
