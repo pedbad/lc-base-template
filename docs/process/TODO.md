@@ -25,6 +25,10 @@ nothing reachable from `vite.config.ts` may use `@/…` imports; never import
 bun run format && bun run lint && bun run lint:css && bun run test && bun run build
 ```
 
+`bun run guards` (`vitest run src/guards`) is the fast subset — 79 tests in ~0.5s — for
+when you only want to know whether you broke a repo-wide invariant. It is a subset of
+`bun run test`, never a replacement for the gate above.
+
 `bun run test` (Vitest), **not** `bun test` — Bun's own runner throws on the
 `import.meta.glob` in `load-lo-glob.ts` and reports a false failure.
 
@@ -106,10 +110,26 @@ written-down scope exclusion (`_.test._`, `_.fixture._`). Recommend exempt, with
 one `bun run guards`, so Vitest keeps all eight in one place — but the CSS half is a genuine
 choice, not a foregone one.
 
-### A8 — wire the guards up (buildlist 31, currently `[~]`)
+### A8 — wire the guards up (buildlist 31) — **DONE 2026-09-07**
 
-There is no `bun run guards` script yet, and CI is partial **by design** — guards join as
-they land. Once f–h exist: add the script, add the CI step, close 31.
+`bun run guards` = `vitest run src/guards`. 79 tests in ~0.5s against the full suite's
+~2s. It did NOT need to wait for f–h: a path glob picks up a new guard the moment its
+file lands, so nothing has to be edited when one does. A hand-kept list is the thing that
+goes stale — the same argument guard e makes for a schema convention over a central map.
+
+Two things settled while closing it, both written up in `docs/TOOLING.md`:
+
+- **Guard a is deliberately outside the script.** Config-schema is not a sweep — the Zod
+  schemas run inside `assembleLo` on every load, in the app itself. Its contract tests
+  are colocated (`src/config/lo-schema.test.ts`), and every LO on disk is parsed
+  end-to-end by `lo-rich-text.test.ts`, which loads them all through `loadLo`.
+  `bun run test` covers both; `bun run guards` covers the four sweeps.
+- **No CI step was added**, contrary to what this section used to say. CI runs
+  `bun run test`, a strict superset — a guards step would re-run the same 79 tests for
+  no extra signal.
+
+**Convention to keep:** every guard's scanner module lives in `src/guards/`. That is what
+makes the glob honest, so put guard f, g and h there too.
 
 ---
 
@@ -177,3 +197,4 @@ Not forgotten. Decided.
 | 2026-09-07 | `22757f5` | **guard e — registry completeness** (buildlist 23), 30 tests             |
 | 2026-09-07 | `0891e27` | guard f **survey** banked in §A-f — the rule, not the guard yet          |
 | 2026-09-07 | —         | GitHub **template repository** box ticked (buildlist 33), verified       |
+| 2026-09-07 | see A8    | `bun run guards` fast subset added (buildlist 31 closed)                 |

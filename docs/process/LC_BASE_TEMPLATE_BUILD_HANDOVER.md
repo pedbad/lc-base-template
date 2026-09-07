@@ -257,11 +257,17 @@ DOCS + CI + DEPLOY
 [x] 28 README + LICENSE (MIT code + CC-BY-NC-4.0 content + brand/Feijoa disclaimer; copyright The Language Centre, University of Cambridge; README License section rewritten to link it. NonCommercial chosen 2026-09-03 over plain BY: content is Language Centre property, commercial reuse needs its permission)
 [ ] 29 CONTRIBUTING / DESIGNER / STRUCTURE / AGENTS.md
 [ ] 30 STRUCTURE tree auto-gen (bun run docs:tree)
-[~] 31 GitHub Actions CI (oven-sh/setup-bun) — .github/workflows/ci.yml runs lint ·
-    lint:css · format:check · test · build. NOTE: guards are Vitest tests, so each one
-    joins CI automatically the moment it lands — `test` already enforces a, b, c, d and
-    e. What is still missing is a `bun run guards` script (a named subset for a fast
-    local check); 31 closes when that exists, not when the guards do.
+[x] 31 GitHub Actions CI (oven-sh/setup-bun) — .github/workflows/ci.yml runs lint ·
+    lint:css · format:check · test · build. Guards are Vitest tests, so each one joins
+    CI automatically the moment it lands — `test` already enforces a, b, c, d and e.
+    CLOSED 2026-09-07 with `bun run guards` (`vitest run src/guards`), the fast local
+    subset: 79 tests in ~0.5s vs the suite's ~2s. A path glob, not a list, so a new
+    guard joins when its file lands (a hand-kept list is what goes stale — guard e's
+    convention-over-map argument). Guard a is deliberately outside it: config-schema is
+    not a sweep, it is Zod running inside assembleLo on every load, with contract tests
+    colocated at src/config/lo-schema.test.ts and every on-disk LO parsed by
+    lo-rich-text.test.ts. No separate CI step added — `test` is a strict superset, so a
+    guards step would re-run the same 79 tests for no extra signal.
 [x] 32 Env base path + resolveAsset()/%BASE_URL% + favicon — resolveAsset() (src/lib/assets.ts, BASE_URL-aware); favicon now `%BASE_URL%favicon.svg` in index.html AND exercise-showcase.html (bug #28 closed); `base` reads process.env.BASE_URL in vite.config.ts, so `BASE_URL=/course/ bun run build` feeds bundle + prerender together
 [x] 33 Mark repo as GitHub "template repo" — DONE 2026-09-07, verified
     `isTemplate: true`. Adds the "Use this template" button, so a new course starts

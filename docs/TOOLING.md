@@ -99,7 +99,24 @@ Layer 1 is the carrot; layers 2–3 are the stick.
      travels with the repo matters.
 - **Config:** `vite.config.ts` → `test` block (node env — the suite renders via
   `renderToStaticMarkup`, and the two storage tests stub `window`/`localStorage`
-  themselves, so no jsdom). 73 files · 551 tests.
+  themselves, so no jsdom). 82 files · 689 tests.
+- **`bun run guards` — the fast subset** (`vitest run src/guards`). The guards are
+  ordinary Vitest tests, so `bun run test` already enforces every one of them; this is
+  the pre-commit check you run when you only want to know whether you broke a repo-wide
+  invariant. 79 tests in ~0.5s against the full suite's ~2s.
+  - **Why a path glob and not a list:** every guard's scanner module lives in
+    `src/guards/`, so a new guard joins the script the moment its file exists. A
+    hand-maintained list is the thing that silently goes stale — the same argument
+    guard e makes for checking a schema convention instead of a central map.
+  - **Guard a is deliberately not in it.** Guard a (config-schema) is not a scan: the
+    Zod schemas run inside `assembleLo` on every load, in the app itself, so it is
+    enforced at runtime rather than by a sweep. Its contract tests are colocated unit
+    tests of the schemas (`src/config/lo-schema.test.ts`), and every LO on disk is
+    parsed end-to-end by `lo-rich-text.test.ts`, which loads them all through
+    `loadLo`. `bun run test` covers both; `bun run guards` covers the four sweeps.
+  - **No separate CI step, on purpose.** CI runs `bun run test`, which is a strict
+    superset — a `guards` step would run the same 79 tests a second time for no extra
+    signal.
 - **Migration note (2026-07-12):** moved off `bun test`. Purely mechanical — every
   test imported only `test/expect/describe/afterEach` (zero Bun-specific mock/spy
   APIs), so only the import source changed (`bun:test` → `vitest`).

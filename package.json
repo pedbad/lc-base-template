@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
+    "guards": "vitest run src/guards",
     "test:watch": "vitest",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
