@@ -92,7 +92,7 @@ Eight checks. Each maps to a real bug that already hurt the prior project. All r
 | e   | **Registry completeness**              | Every exercise `type` in configs is registered in `lazyRegistry`; every registered type has a showcase fixture.                                                                                                                                                                                                                                                                                         |
 | f   | **Theme-token integrity**              | No hardcoded hex/px in components — colors/spacing pull from CSS tokens only (Stylelint).                                                                                                                                                                                                                                                                                                               |
 | g   | **CSS layer discipline**               | Build fails on any unlayered custom CSS rule and on stray `!important` (Stylelint). Prevents reintroducing the cascade debt (rules #27/#39).                                                                                                                                                                                                                                                            |
-| h   | **W3C / accessibility**                | `jsx-a11y` eslint + automated a11y check (axe/pa11y). **CI fails on the a11y gate** (mirrors FUTURE_PROJECTS `check:a11y:branch`). Enforces semantic landmarks, accessible names, no `<table>` for layout. See §17.                                                                                                                                                                                     |
+| h   | **W3C / accessibility**                | `jsx-a11y` eslint + an automated check over rendered output. **CI fails on the a11y gate** (mirrors FUTURE_PROJECTS `check:a11y:branch`). Enforces semantic landmarks, accessible names, no `<table>` for layout. See §17. Built 2026-09-07 as `src/guards/semantic-dom.ts` — **not** axe/pa11y; see §17 Tooling.                                                                                       |
 
 **Enforcement (Option C):**
 
@@ -306,7 +306,15 @@ footer
 - **Native interactive elements first** (`button`, `a`, `input`) before ARIA role fallbacks.
 - Visible focus, full keyboard support, `prefers-reduced-motion` respected.
 
-**Tooling (guard h):** `eslint-plugin-jsx-a11y` + an automated checker (axe-core / pa11y) over the pre-rendered pages. CI fails on any gate violation (mirrors `bun run check:a11y:branch`).
+**Tooling (guard h):** `eslint-plugin-jsx-a11y` (wired into `eslint.config.js`) + an automated checker over rendered output (`src/guards/semantic-dom.ts`). CI fails on any gate violation via `bun run lint` and `bun run test` (mirrors `bun run check:a11y:branch`).
+
+_Resolved at build time, 2026-09-07 — this section originally specified axe-core / pa11y over the pre-rendered pages, and all three parts of that were changed deliberately:_
+
+- _**Not axe-core or pa11y.** Both need a DOM. The suite runs `environment: 'node'` and renders to HTML strings (`docs/TOOLING.md`), and hosting a11y rules would reverse that for the whole suite. A string is all a checker of the contract above needs. axe's broader WCAG rule coverage remains available as a separate later decision._
+- _**Not a dependency at all.** There is zero `dangerouslySetInnerHTML` in the repo, so every byte of markup is React-emitted and the malformed-markup class a W3C validator exists to catch cannot occur — the "W3C" half is guaranteed by construction. What remains is the semantic contract above, and no off-the-shelf ruleset expresses "one `<article>` per accordion" or "`section` count == `h2` count"._
+- _**Not "the pre-rendered pages" alone.** A default build prerenders only `select` and `radio-quiz`; the other thirteen engines live behind `SHOWCASE=1`. The guard renders all 15 engines' fixtures plus both pages — 26 documents — and needs no `dist/`, because it renders the pages in process from the same component trees `scripts/prerender.tsx` uses (byte-identical output, verified)._
+
+_See `src/guards/semantic-dom.ts` and `docs/process/TODO.md` §A-h for the full reasoning and the false-positive cases it deliberately allows._
 
 ---
 

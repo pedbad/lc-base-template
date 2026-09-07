@@ -194,13 +194,17 @@ These are locked spec decisions, documented here when each lands:
   section-scoped ordinal+type folders (`01-fill-gaps/`). File structure mirrors the
   rendered page; a guard enforces folder↔config match.
 - **Exercise authoring contract** — the config shape each exercise type expects.
-- **The 8 guards** (a–h) — what each checks, what fails, and how to fix it. Seven are
-  live: **a** config-schema (Zod at load), plus **b** naming + render-mirror, **c**
+- **The 8 guards** (a–h) — what each checks, what fails, and how to fix it. **All eight
+  are live:** **a** config-schema (Zod at load), plus **b** naming + render-mirror, **c**
   asset-path, **d** asset-existence, **e** registry completeness, **f** token integrity
-  (no raw hex/px bypassing the token chain) and **g** CSS layer discipline (every rule
-  in `@layer`, no `!important`) — those six in `src/guards/`. They are Vitest tests, so
-  `bun run test` already enforces them, and `bun run guards` runs the six sweeps on
-  their own in under half a second. Remaining: **h** (w3c + a11y over rendered pages) —
-  see [`docs/process/TODO.md`](docs/process/TODO.md) §A.
+  (no raw hex/px bypassing the token chain), **g** CSS layer discipline (every rule in
+  `@layer`, no `!important`) and **h** semantic DOM (the spec §17 contract over rendered
+  output) — those seven in `src/guards/`. They are Vitest tests, so `bun run test`
+  already enforces them, and `bun run guards` runs the seven sweeps on their own in under
+  a second. Guard h has a second half that is not in `src/guards/` at all:
+  `eslint-plugin-jsx-a11y` in `eslint.config.js`, which lints the JSX as you write it —
+  so an a11y mistake can fail either `bun run lint` or `bun run test`, depending on
+  whether it is visible in one file or only in the assembled page. See
+  [`docs/process/TODO.md`](docs/process/TODO.md) §A.
 - **Theming & tokens** — single-theme-per-clone, tokens only (no raw hex/px),
   CSS in `@layer`, no `!important`.

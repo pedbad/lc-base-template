@@ -185,7 +185,7 @@ DEV ARTIFACTS
         `bun run build` = course only, `SHOWCASE=1 bun run build` = + showcase. Dev
         unaffected — Vite serves root-level .html regardless of the input list.
 [ ] 18 Sandbox renders docs as HTML
-GUARDS (each: failing fixture → block → green) — 1 of 8 open; h is all that is left, see TODO.md §A
+GUARDS (each: failing fixture → block → green) — 0 of 8 open; ALL EIGHT LIVE, see TODO.md §A
     [x] 20b DONE 2026-09-07 — src/guards/render-mirror.ts + 17 tests. An LO exists
         because its FOLDER exists; its page structure exists because lo.json NAMES it.
         Two registries, so two silent drifts: a ref with no folder behind it (the page
@@ -310,9 +310,70 @@ GUARDS (each: failing fixture → block → green) — 1 of 8 open; h is all tha
         `999px !important` in word-order.css: both blocked with truthful file:line while
         83 other test files stayed green, and `bun run lint:css` passed CLEAN on both —
         stylelint offers no coverage here, which settles the mechanism choice for g too.
+    [x] 26h DONE 2026-09-07 — src/guards/semantic-dom.ts + html-source.ts (the
+        rendered-markup reader) + rendered-markup.tsx (the 26 documents it validates),
+        84 tests. The last guard, and the second half of spec guard h: the FIRST half
+        was already live and CI-enforced before any of this — eslint-plugin-jsx-a11y is
+        wired into eslint.config.js. What was missing is what §95/§309 name, a checker
+        over RENDERED output, and the reason it cannot be a lint rule is that jsx-a11y
+        reads one JSX file at a time while every §17 clause is a property of the
+        ASSEMBLED page: that LoAccordion renders inside a section LoPage labelled, that
+        the h2 above it came from a section title and the h3 inside it from a block
+        title, that the nav toggle's aria-controls resolves to a panel another component
+        renders. Checks the heading outline, header > nav[aria-label], labelled sections,
+        one <article> per accordion, layout tables, accessible names, decorative icons,
+        id references, <strong>/<em>, interactive ARIA roles that cannot take focus or
+        have no name, and <html lang> in the source template. THE SURFACE WAS ALREADY
+        CLEAN — both pages match §17 exactly, all 15 engines are clean, and the one real
+        defect (SpeakerSvg with no aria-hidden) was fixed in 1ce0275 before the guard
+        existed — so, as with f and g, the expensive half was NOT FLAGGING CORRECT CODE.
+        Five narrowings, each a pattern the repo genuinely uses that a first-guess rule
+        reports: a control can be named by a <label for>, and 17 are (shadcn's select
+        trigger has no text of its own, and select/line-match give it an sr-only label,
+        legal because <button> is labelable); an aria-hidden control needs no name (Base
+        UI's five mirror inputs exist so a styled select submits with a form); a <table>
+        is judged by its headers, not its looks (dictation's two <th>s are sr-only, which
+        reads as a layout table and is the opposite, so the check is "has a <th> or
+        <caption> and is not role=presentation"); tabindex="-1" is not a defect — it is
+        on main and all four section h2s deliberately; and a fragment is not a page — 24
+        of the 26 documents are single engines with no h1 and no landmarks, and
+        conjugation legitimately opens at h3, so the page-scope rules apply only to
+        pages. Three decisions all taken AGAINST the obvious answer: no jsdom, so no
+        axe-core (it would reverse the deliberate node-env choice for the whole suite,
+        and the suite already renders to strings — a string is all a §17 checker needs;
+        axe's WCAG coverage stays a separate later decision); no new dependency either,
+        which reversed the survey's first answer of html-validate, because there is ZERO
+        dangerouslySetInnerHTML in the repo — all four grep hits are comments saying so —
+        so every byte of markup is React-emitted and the "w3c" half of "w3c + a11y" is
+        guaranteed by construction, leaving only semantics no off-the-shelf ruleset
+        expresses ("one <article> per accordion", "section count == h2 count"); and ALL
+        15 ENGINES, not the 2 a default build prerenders, because the other thirteen live
+        behind SHOWCASE=1 and appear in no built page, so a guard over the pages alone
+        would have covered 2 of 15 while reading as though it covered the lot (guard d's
+        staleness lesson). NEEDS NO dist/, which is why it passes on a clean checkout:
+        the pages are rendered in process from the same component trees
+        scripts/prerender.tsx uses, with the same loader, and the result is
+        BYTE-IDENTICAL to the body it writes (23007 and 7324 bytes, verified against a
+        fresh build). Reading dist/ would be strictly worse even when it exists — a stale
+        dist/ validates last week's markup and passes. Native-first was narrowed to what
+        rendered output can decide, and the lint route was TRIED and rejected:
+        jsx-a11y/prefer-tag-over-role is not in flatConfigs.recommended, and enabling it
+        fires 16 times, every hit <p role="status"> wanted as <output> — a swap that
+        changes nothing an assistive technology does. Verified by re-planting the 1ce0275
+        defect: `bun run lint` passed CLEAN on it, so jsx-a11y offers no coverage there,
+        and 84 other test files stayed green — the proof the failure was otherwise
+        silent — while it fired on 5 engine fragments no test had ever covered, which is
+        decision 3 paying for itself. Two other plants (a section h2 → h4, the nav
+        toggle's aria-label stripped) were caught by guard h AND by the colocated
+        PageLayout.test.tsx / Header.test.tsx, so they are not evidence for h: the shell
+        is well covered, the engines' markup was not. Floors assert both pages, all 15
+        engine keys against EXERCISE_TYPE_KEYS, 24+ fixtures and plausible
+        control/icon/id/heading totals, so a rename fails loudly. eslint.config.js: the
+        Fast-Refresh rule is off under src/guards/ (test-only, not an HMR boundary), and
+        its header no longer promises an axe/pa11y half that was deliberately not built.
 [x] 19 a config-schema   [x] 20 b naming+render-mirror   [x] 21 c asset-path
 [x] 22 d asset-existence [x] 23 e registry               [x] 24 f token-integrity
-[x] 25 g css-layers      [ ] 26 h w3c/a11y
+[x] 25 g css-layers      [x] 26 h w3c/a11y
 ENGINES
 [x] 27 Port remaining 12 exercises (superseded by step 14 Phase B — all 12 ported there, see log above)
 DOCS + CI + DEPLOY
@@ -323,7 +384,7 @@ DOCS + CI + DEPLOY
     lint:css · format:check · test · build. Guards are Vitest tests, so each one joins
     CI automatically the moment it lands — `test` already enforces a, b, c, d and e.
     CLOSED 2026-09-07 with `bun run guards` (`vitest run src/guards`), the fast local
-    subset: 127 tests in ~0.4s vs the suite's ~2s (79 when it closed; f and g have
+    subset: 211 tests in ~0.7s vs the suite's ~2s (79 when it closed; f, g and h have
     since joined). A path glob, not a list, so a new
     guard joins when its file lands (a hand-kept list is what goes stale — guard e's
     convention-over-map argument). Guard a is deliberately outside it: config-schema is

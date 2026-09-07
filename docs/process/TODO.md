@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-09-07 · **HEAD:** see `git log` · **Suite:** 84 files · 737 tests green
+**Last updated:** 2026-09-07 · **HEAD:** see `git log` · **Suite:** 85 files · 821 tests green
 · CI green · `main` unprotected by decision (job D1).
 
 Non-negotiable constraints for every job below live in
@@ -25,7 +25,7 @@ nothing reachable from `vite.config.ts` may use `@/…` imports; never import
 bun run format && bun run lint && bun run lint:css && bun run test && bun run build
 ```
 
-`bun run guards` (`vitest run src/guards`) is the fast subset — 127 tests in ~0.4s — for
+`bun run guards` (`vitest run src/guards`) is the fast subset — 211 tests in ~0.7s — for
 when you only want to know whether you broke a repo-wide invariant. It is a subset of
 `bun run test`, never a replacement for the gate above.
 
@@ -34,113 +34,93 @@ when you only want to know whether you broke a repo-wide invariant. It is a subs
 
 ---
 
-## A. Guards — 1 of 8 still open (the main body of work)
+## A. Guards — 0 of 8 open — all eight guards live
 
 Guards **a** (config-schema, 19), **b** (naming + render-mirror, 20), **c** (asset-path,
-21), **d** (asset-existence, 22), **e** (registry, 23), **f** (token integrity, 24) and
-**g** (CSS layer discipline, 25) are done. Only **h** is left, and it follows the same
-ritual: **write a deliberately-broken fixture first, prove the guard blocks it, then make
-the real repo green.** A guard that was never seen to fail is a guard that might be asleep.
+21), **d** (asset-existence, 22), **e** (registry, 23), **f** (token integrity, 24),
+**g** (CSS layer discipline, 25) and **h** (semantic DOM, 26) are all done. **Section A is
+closed** — nothing here is open, and the per-guard notes below are kept only because each
+records a rule that is narrower than the spec sentence it came from, and that is worth
+reading before touching the guard or the code it protects.
 
-**Expect h to be different in kind.** Every guard so far reads SOURCE; h is the only one
-that validates RENDERED output. The landing page and the sliding nav have never been
-validated by anything, so h will probably find real problems — plan for a guard plus a fix
-campaign, not one commit.
+The ritual every one of them followed, in case a ninth is ever added: **write a
+deliberately-broken fixture first, prove the guard blocks it, then make the real repo
+green** — and plant a real violation in source once, to see how many other test files stay
+quiet. A guard that was never seen to fail is a guard that might be asleep.
 
-| Order | Buildlist | Guard | Checks                         | Head start already in repo              |
-| ----- | --------- | ----- | ------------------------------ | --------------------------------------- |
-| 1     | 26        | **h** | w3c + a11y over rendered pages | **surveyed 2026-09-07 — see A-h below** |
+**Guards a–g read SOURCE; h reads RENDERED output** and is the only one that does. It
+still needs no `dist/` — see §A-h.
 
-### A-h — guard h survey (done 2026-09-07, read this before building it)
+### A-h — guard h (semantic DOM) — **DONE 2026-09-07, `99cd77d`**
 
-**HALF OF GUARD h IS ALREADY LIVE AND CI-ENFORCED.** `eslint-plugin-jsx-a11y` is
-installed and `jsxA11y.flatConfigs.recommended` is wired into `eslint.config.js`, so it
-runs in `bun run lint` and in CI today. That file's own comment says so. Two rules are
-deliberately off, with the reason written down — `jsx-a11y/heading-has-content` and
-`jsx-a11y/label-has-associated-control` false-positive on shadcn primitives, the same
-kind of documented exemption guard f makes for `src/components/ui/`.
+`src/guards/semantic-dom.ts` + `html-source.ts` (the rendered-markup reader) +
+`rendered-markup.tsx` (the 26 documents it validates), 84 tests. Half of guard h was
+already live and CI-enforced before any of it: `eslint-plugin-jsx-a11y` is wired into
+`eslint.config.js`. What this added is the half spec §95/§309 names — a checker over
+rendered output — because jsx-a11y reads one JSX file at a time and every §17 clause is a
+property of the ASSEMBLED page.
 
-So guard h's REMAINING scope is only the second half spec §95 and §309 name: an
-automated checker over rendered output. Do not re-derive the JSX half.
+**The surface was already clean.** Both pages match §17 exactly, all 15 engines are clean,
+and the one real defect (`SpeakerSvg` with no `aria-hidden`) was fixed in `1ce0275` before
+the guard existed. So the expensive half was NOT flagging correct code:
 
-**The rendered surface is already clean — same story as f and g.** Surveyed both
-prerendered pages against the spec §17 DOM contract:
+- **A control can be named by a `<label for>`, and 17 are.** shadcn's select trigger is a
+  `<button>` with a placeholder and no text; `select` and `line-match` give it an
+  `sr-only` label, which is legal because `<button>` is labelable. A name rule that knows
+  only `aria-label` and text content flags every blank in the repo.
+- **An `aria-hidden` control needs no name** — Base UI's five visually-hidden mirror
+  `<input>`s exist so a styled select submits with a form.
+- **A `<table>` is judged by its headers, not its looks.** `dictation`'s two `<th>`s are
+  `sr-only`, which reads as a layout table and is the opposite. The check is "has a `<th>`
+  or `<caption>`, and is not `role="presentation"`".
+- **`tabindex="-1"` is not a defect** — it is on `main` (skip-link target) and all four
+  section `h2`s (lesson-nav focus targets), deliberately.
+- **A fragment is not a page.** 24 of the 26 documents are single engines with no `h1` and
+  no landmarks; `conjugation` legitimately opens at `h3`. The page-scope rules apply only
+  to pages.
 
-| Check                          | `index.html` | `example.html` |
-| ------------------------------ | ------------ | -------------- |
-| `header`/`nav`/`main`/`footer` | 1 each       | 1 each         |
-| `section` == `h2`              | 1 / 1        | 4 / 4          |
-| `article` == `h3`              | 0 / 1        | 5 / 5          |
-| `h4`–`h6`                      | 0            | 0              |
-| `table`                        | 0            | 0              |
+**Three decisions, all taken against the obvious answer:**
 
-Heading order is `h1`→`h2`→`h3` with no skips, and the zero `h4` count is `GrammarLabel`
-doing its job (§17's "no `<h4>` used as a visual label"). No layout tables.
+1. **No jsdom, so no axe-core.** It would reverse the deliberate node-env choice recorded
+   in `docs/TOOLING.md` for the whole suite, and the suite already renders to strings. A
+   string is all a §17 checker needs. axe's WCAG rule coverage remains a separate later
+   decision, not a side effect of this one.
+2. **No new dependency either** (this reversed the survey's first answer, which preferred
+   `html-validate`). There is **zero `dangerouslySetInnerHTML` in the repo** — all four
+   grep hits are comments saying so — so every byte of markup is React-emitted and the
+   "w3c" half of "w3c + a11y" is guaranteed by construction: React cannot emit unclosed
+   tags or invalid nesting. What is left is bad SEMANTICS, and no off-the-shelf ruleset
+   expresses "one `<article>` per accordion" or "`section` count == `h2` count".
+3. **All 15 engines, not the 2 a default build prerenders.** `example.html` prerenders
+   `select` and `radio-quiz`; the other thirteen live behind `SHOWCASE=1` and appear in no
+   built page. A guard over the pages alone would have covered 2 of 15 while reading as
+   though it covered the lot — guard d's staleness lesson exactly.
 
-**The sliding nav — flagged here as unvalidated surface — is well built.** Both toggles
-carry `aria-expanded` + `aria-controls`, and the classic failure is absent:
-`lesson-nav-panel` and `mobile-nav-panel` are each referenced once AND defined once in
-the prerendered DOM, so neither `aria-controls` dangles. Every `<button>` has an
-accessible name — visible text (`Lessons`, `open the example popup`) or an `aria-label`.
-The placeholder `<img>` is correctly `alt="" aria-hidden="true"`.
+**It needs no `dist/`, which is why it passes on a clean checkout.** The pages are rendered
+in process from the same component trees `scripts/prerender.tsx` uses, with the same loader
+— and the result is BYTE-IDENTICAL to the body it writes into `dist/` (23007 and 7324
+bytes, verified against a fresh build). Reading `dist/` would be strictly worse even when
+it exists, because a stale `dist/` validates last week's markup and passes. The `<head>`
+is the only thing `dist/` adds and it carries no §17 surface; `<html lang>` is checked in
+the source `index.html`.
 
-**ONE real defect was found, and is already fixed** (`1ce0275`): `SpeakerSvg` in
-`CircularAudioProgressAnimatedSpeakerDisplay.tsx` was the only inline SVG in the
-prerendered output without `aria-hidden` — 24 of the other 25 had it, including the two
-player icons in `SequenceAudioController.tsx`. Decorative icon inside a control that
-already carries `aria-label`. Exactly the class of defect guard h exists to catch.
+**Native-first was narrowed to what rendered output can decide**, and the lint route was
+tried and rejected rather than assumed: `jsx-a11y/prefer-tag-over-role` is not in
+`flatConfigs.recommended`, and enabling it fires 16 times — every hit `<p role="status">`,
+the result slot every engine renders, which it wants as `<output>`. That swap changes
+nothing an assistive technology does. What guard h keeps is the real defect: an
+interactive ARIA role that cannot take focus, or has no name.
 
-**Net: expect a guard, NOT the fix campaign this section used to predict.** One
-attribute was the whole backlog.
+**Verified by re-planting the `1ce0275` defect.** `bun run lint` passed CLEAN on it — so
+jsx-a11y offers no coverage there — and **84 other test files stayed green**, which is the
+proof the failure was otherwise silent. It fired on 5 engine fragments no test had ever
+covered, which is decision 3 paying for itself. Two other plants (a section `h2` → `h4`,
+and the nav toggle's `aria-label` stripped) were caught by guard h AND by the colocated
+`PageLayout.test.tsx` / `Header.test.tsx`, so they are not evidence for h — worth knowing:
+the shell is well covered, the engines' markup was not.
 
-**Three decisions the survey settled — these are the expensive half:**
-
-1. **NO jsdom. Stay in node env.** The obvious route (axe-core) needs a DOM, which would
-   reverse the deliberate node-env decision recorded in `docs/TOOLING.md` ("the suite
-   renders via `renderToStaticMarkup` … so no jsdom"). It is not needed: the suite
-   already renders to HTML STRINGS, and a string is all a checker needs. If you ever do
-   want axe's WCAG rule coverage, make it a separate decision and its own commit.
-2. **NO NEW DEPENDENCY EITHER — hand-write the §17 contract sweep.** This REVERSES the
-   first version of this survey, which said to prefer `html-validate`. The reason is a
-   fact found afterwards: **there is zero `dangerouslySetInnerHTML` in the repo.** All
-   four grep hits are comments saying it is not used, and `src/lo/rich-text/RichText.tsx`
-   parses authored rich text into real React nodes rather than injecting a string. So
-   EVERY byte of markup is React-emitted, and React cannot produce the malformed-markup
-   class a W3C validator exists to catch — no unclosed tags, no invalid nesting, no
-   unescaped text. **The "w3c" half of "w3c + a11y" is guaranteed by construction.**
-   What React CAN still emit is bad SEMANTICS, and that is the §17 contract: an `h4` as
-   a visual label, a second `h1`, a skipped heading level, `<table>` for layout, a
-   dangling `aria-controls`, a duplicate id, an icon-only control with no accessible
-   name, a decorative SVG without `aria-hidden`, `<b>`/`<i>` for `<strong>`/`<em>`. No
-   off-the-shelf ruleset expresses "one `<article>` per accordion" or "`section` count ==
-   `h2` count" — they are repo-specific — and `eslint-plugin-jsx-a11y` already covers the
-   generic JSX-level rules in `bun run lint` and CI. A dep would buy a guarantee the
-   renderer already gives, and still leave the repo-specific half to hand-write. Keep
-   guard h dep-free and consistent with the other seven. State this reasoning in the
-   module header, the way f and g state their mechanism choice.
-3. **DO NOT validate only the two prerendered pages — that would cover 2 of 15 engines.**
-   `example.html` prerenders `select` and `radio-quiz` only; the other thirteen engines'
-   markup appears nowhere in a default build (they live in the showcase, `SHOWCASE=1`).
-   A guard over the two pages alone would silently skip thirteen engines — precisely the
-   staleness failure guard d taught. Guard h should render every showcase fixture through
-   `renderToStaticMarkup` and validate each one, plus the two prerendered pages. Same
-   fixtures the showcase uses, all 15 engines, still node env. Assert a FLOOR on the
-   number of fixtures validated so a renamed fixture file cannot empty the sweep.
-
-**`renderToStaticMarkup` needs no new infrastructure** — it is already the established
-pattern across many test files (`CourseHome.test.tsx`, `LoAccordion.test.tsx`,
-`ReadingExercise.test.tsx`, and more).
-
-**NOTE THE ENGINE COUNT: 15, not 12.** `src/showcase/fixtures.ts` aggregates 15 fixture
-sets (select, inline-choice, radio-quiz, inline-gap, typed-transform, dictation,
-line-match, word-spot, memory-match, word-order, phrase-reorder, drag-fill-gaps,
-flashcards, conjugation, reading). The "12 engines" figure in the buildlist is a
-historical count from when they were ported and should not be used as guard h's floor.
-
-**Still unsurveyed, in case it matters:** thirteen of the fifteen engines' own markup has
-not been read — only the two types the example LO happens to use. That is where any
-remaining defect would be, and building the guard as decision 3 describes is what will
-surface it. Budget for a small fix campaign there; the two pages themselves are clean.
+Floors assert both pages, all 15 engine keys against `EXERCISE_TYPE_KEYS`, 24+ fixtures and
+plausible control/icon/id/heading totals, so a renamed fixture or a moved page fails loudly.
 
 ### A-f — guard f (token integrity) — **DONE 2026-09-07, `df6c987`**
 
@@ -315,3 +295,4 @@ Not forgotten. Decided.
 | 2026-09-07 | see A8    | `bun run guards` fast subset added (buildlist 31 closed)                 |
 | 2026-09-07 | `df6c987` | **guard f — token integrity** (buildlist 24), 27 tests + shared reader   |
 | 2026-09-07 | `69c254b` | **guard g — CSS layer discipline** (buildlist 25), 21 tests              |
+| 2026-09-07 | `99cd77d` | **guard h — semantic DOM over rendered output** (buildlist 26), 84 tests |

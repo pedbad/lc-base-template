@@ -99,11 +99,11 @@ Layer 1 is the carrot; layers 2–3 are the stick.
      travels with the repo matters.
 - **Config:** `vite.config.ts` → `test` block (node env — the suite renders via
   `renderToStaticMarkup`, and the two storage tests stub `window`/`localStorage`
-  themselves, so no jsdom). 84 files · 737 tests.
+  themselves, so no jsdom). 85 files · 821 tests.
 - **`bun run guards` — the fast subset** (`vitest run src/guards`). The guards are
   ordinary Vitest tests, so `bun run test` already enforces every one of them; this is
   the pre-commit check you run when you only want to know whether you broke a repo-wide
-  invariant. 127 tests in ~0.4s against the full suite's ~2s.
+  invariant. 211 tests in ~0.7s against the full suite's ~2s.
   - **Why a path glob and not a list:** every guard's scanner module lives in
     `src/guards/`, so a new guard joins the script the moment its file exists. A
     hand-maintained list is the thing that silently goes stale — the same argument
@@ -113,7 +113,7 @@ Layer 1 is the carrot; layers 2–3 are the stick.
     enforced at runtime rather than by a sweep. Its contract tests are colocated unit
     tests of the schemas (`src/config/lo-schema.test.ts`), and every LO on disk is
     parsed end-to-end by `lo-rich-text.test.ts`, which loads them all through
-    `loadLo`. `bun run test` covers both; `bun run guards` covers the six sweeps.
+    `loadLo`. `bun run test` covers both; `bun run guards` covers the seven sweeps.
   - **No separate CI step, on purpose.** CI runs `bun run test`, which is a strict
     superset — a `guards` step would run the same tests a second time for no extra
     signal.
@@ -181,7 +181,12 @@ Layer 1 is the carrot; layers 2–3 are the stick.
 - **Why:** accessibility is **non-negotiable and CI-gated** (spec guard **h**).
   `jsx-a11y` is the _lint half_ of that guard — it catches a11y bugs **as you
   type a component**, so every ported exercise is accessible from birth. The
-  static-page half (axe/pa11y over rendered pages) lands in a later guard step.
+  other half is now live as well: `src/guards/semantic-dom.ts` renders both pages
+  and all 15 engines and checks the spec §17 contract over the **assembled** DOM,
+  which is where the composition questions a per-file lint rule cannot ask have
+  answers. It is **not** axe or pa11y, as spec §309 predicted — both need a DOM,
+  which would reverse the node-env decision above, and neither can express "one
+  `<article>` per accordion". See that file's header, and `TODO.md` §A-h.
 - **How it helps:** `bun run lint` must pass before commit (Step 7) and in CI.
 - **Choice:** `recommended` ruleset, not `strict` — lightweight now; stricter
   rules can be layered later without churn (avoids over-engineering a bare repo).
