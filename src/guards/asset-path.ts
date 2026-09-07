@@ -43,6 +43,11 @@
  * header would otherwise trip the guard by quoting the very example it warns about. The
  * stripper is string-aware — a naive one would mangle the `//` inside an `https://` URL
  * and either miss a violation or invent one.
+ *
+ * `stripComments()` and `lineAt()` ARE EXPORTED, not private. Guards f and g turn on the
+ * same trick, and three hand-rolled strippers in one directory would be three chances to
+ * get the string-awareness subtly different. They take a `lineComments` option because
+ * CSS has no `//` comment — see `css-source.ts`.
  */
 import { readdirSync } from 'node:fs';
 import path from 'node:path';
@@ -113,13 +118,24 @@ function looksLikeAssetPath(value: string): boolean {
   return ASSET_DIR_PREFIXES.some((prefix) => withoutLeadingSlash.startsWith(prefix));
 }
 
+/** Dialect knobs for `stripComments()`. */
+export interface StripCommentsOptions {
+  /**
+   * Treat `//` as starting a line comment. TRUE for TS/TSX, FALSE for CSS — CSS has no
+   * `//` comment, so honouring one there would blank the tail of any line holding an
+   * unquoted `url(https://…)` and silently blind the caller to everything after it.
+   */
+  readonly lineComments?: boolean;
+}
+
 /**
  * Blank out comments, preserving every offset so line numbers stay truthful.
  *
  * Walks the source tracking string and template state, because `//` appears inside URLs
  * far more often than it starts a comment in this codebase.
  */
-function stripComments(source: string): string {
+export function stripComments(source: string, options: StripCommentsOptions = {}): string {
+  const { lineComments = true } = options;
   const out = source.split('');
   let index = 0;
   let quote = '';
@@ -166,7 +182,7 @@ function stripComments(source: string): string {
       index += 1;
       continue;
     }
-    if (char === '/' && next === '/') {
+    if (lineComments && char === '/' && next === '/') {
       blankAt(index);
       blankAt(index + 1);
       inLine = true;
@@ -187,7 +203,7 @@ function stripComments(source: string): string {
 }
 
 /** 1-based line number of an offset, for a message someone can act on. */
-function lineAt(source: string, index: number): number {
+export function lineAt(source: string, index: number): number {
   return source.slice(0, index).split('\n').length;
 }
 
