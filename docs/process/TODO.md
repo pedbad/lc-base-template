@@ -46,9 +46,65 @@ suits you. f is next only because it is the most mechanical.
 
 | Order | Buildlist | Guard | Checks                               | Head start already in repo                              |
 | ----- | --------- | ----- | ------------------------------------ | ------------------------------------------------------- |
-| 1     | 24        | **f** | no raw hex or px                     | `public/images/lo-placeholder.svg` is the one exception |
+| 1     | 24        | **f** | no raw hex or px                     | **surveyed 2026-09-07 — see A-f below**                 |
 | 2     | 25        | **g** | CSS all in `@layer`, no `!important` | —                                                       |
 | 3     | 26        | **h** | w3c + a11y over rendered pages       | landing page + sliding nav are new, unvalidated surface |
+
+### A-f — guard f survey (done 2026-09-07, read this before building it)
+
+The rule was the expensive part and it is now settled. **Guard f is a rule-definition job,
+not a fix-the-repo job**: the repo is already compliant. Its value is stopping the first
+author who writes `padding: 24px` instead of a token — which nothing catches today.
+
+**Hex is already clean. Do not write a blanket ban.**
+
+| Where                    | Count | Verdict                                                                      |
+| ------------------------ | ----- | ---------------------------------------------------------------------------- |
+| `src/styles/palette.css` | 17    | **Correct** — Layer 1 primitives, "the ONLY place real colour literals live" |
+| `tokens-variant-a/b/c`   | 4     | **False positives** — all inside comment bodies naming the brand colour      |
+| everywhere else          | 0     | —                                                                            |
+
+Guard c's lesson repeats exactly: **strip comments first**, or guard f flags the
+documentation that explains guard f.
+
+**px is not a token bypass anywhere.** 52 real sites in component CSS, grouped by the
+property they set:
+
+```
+box-shadow 10 · outline-offset 9 · outline 9 · border 8 · border-radius 6
+border-top 4 · perspective 2 · transform 1 · border-left 1
+border-inline-end 1 · backdrop-filter 1
+```
+
+ZERO on `font-size`, `padding`, `margin`, `gap`, `width`, `height`, `inset`. 44 of the 52
+are 1–4px hairlines and focus rings, where px is the CORRECT unit and rem would be wrong.
+So spec §138's "no raw px in components" **cannot be a blanket ban** — the real rule is a
+PROPERTY ALLOWLIST.
+
+**The TSX surface.** 11 Tailwind arbitrary values: 9 in `src/components/ui/`
+(shadcn-generated — `switch`, `tabs`, `sidebar`, `tooltip`, `badge`), 2 first-party in
+`LineMatchExercise.tsx:497,500` (`[980px]`). 4 inline `style={{}}`, all computed and all
+clean (`animationDelay` from a constant, `accentColor: 'var(--primary)'`, a transition
+string, a `ch` width) — none hardcodes a colour or a px. Both entry HTML files are clean.
+
+**Four decisions to make before writing assertions** (state each in the module header, the
+way c and d did — deciding the rule was the real work there and the code fell out after):
+
+1. **Exempt `src/components/ui/**`?** 9 of the 11 violations live there and `shadcn add`
+would re-break the build on every regeneration. Guard c set the precedent for a
+written-down scope exclusion (`_.test._`, `_.fixture._`). Recommend exempt, with reason.
+2. **Is `border-radius` in px a violation?** 6 sites, and `--radius: 0.625rem` exists in the
+   token layer. The one genuinely contestable category — the token chain arguably owns
+   radius.
+3. **Confirm the property allowlist.** Proposed: px legitimate on `border*`, `outline*`,
+   `box-shadow`, `backdrop-filter`, `perspective`, `transform` and `@media`; everything else
+   must be a token or a relative unit.
+4. **`[980px]` in `LineMatchExercise.tsx`** — first-party, needs an actual look before ruling.
+
+**Mechanism note.** Stylelint already runs and could own the CSS half via
+`declaration-property-unit-allowed-list`. Guards a–e are all Vitest, and buildlist 31 wants
+one `bun run guards`, so Vitest keeps all eight in one place — but the CSS half is a genuine
+choice, not a foregone one.
 
 ### A8 — wire the guards up (buildlist 31, currently `[~]`)
 
