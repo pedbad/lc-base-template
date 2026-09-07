@@ -59,6 +59,10 @@ function SpeakerSvg({
       width={size}
       height={size}
       viewBox={`0 0 ${VIEWBOX} ${VIEWBOX}`}
+      /* Decorative: the accessible name lives on the wrapping control's aria-label
+         (spec §17 — decorative icons are aria-hidden). Matches the two player icons
+         in SequenceAudioController.tsx, which already carry it. */
+      aria-hidden="true"
     >
       {/* Background ring */}
       <circle
