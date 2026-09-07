@@ -10,7 +10,7 @@ session, on either machine.
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
 **Last updated:** 2026-09-07 · **HEAD:** see `git log` · **Suite:** 82 files · 689 tests green
-· CI green · `main` unprotected by decision (job E1).
+· CI green · `main` unprotected by decision (job D1).
 
 Non-negotiable constraints for every job below live in
 `2026-08-06-post-phase-d-handover.md` §3. Read them before touching the build. In short:
@@ -130,16 +130,9 @@ they land. Once f–h exist: add the script, add the CI step, close 31.
   exercise showcase, which is now opt-in per build (`SHOWCASE=1 bun run build`).
 - **C2 — sandbox renders docs as HTML (18).** Depends on C1.
 
-## D. Repo setup (buildlist 33)
+## D. Before sharing with other developers
 
-- **D1 — tick the GitHub "template repository" box.** Verified `is_template: false` on
-  2026-09-03. One checkbox in Settings; adds the "Use this template" button so a new
-  course starts from a clean history instead of a fork. This repo is _called_ a template
-  and GitHub does not know it.
-
-## E. Before sharing with other developers
-
-- **E1 — branch protection (buildlist 34).** **Deferred by decision 2026-09-03**: `main`
+- **D1 — branch protection (buildlist 34).** **Deferred by decision 2026-09-03**: `main`
   takes direct pushes while this is a single-maintainer build. Trigger = a second person
   gets push access. Setup and the solo-lockout to avoid: `docs/BRANCH_PROTECTION.md`.
   Do **not** enable `Require approvals: 1` + `Do not allow bypassing` with one
@@ -182,3 +175,5 @@ Not forgotten. Decided.
 | 2026-09-03 | `4367d31` | **guard d — asset-existence** (buildlist 22), 11 tests                   |
 | 2026-09-07 | `891511c` | **guard b — naming + render-mirror** (buildlist 20), 17 tests            |
 | 2026-09-07 | `22757f5` | **guard e — registry completeness** (buildlist 23), 30 tests             |
+| 2026-09-07 | `0891e27` | guard f **survey** banked in §A-f — the rule, not the guard yet          |
+| 2026-09-07 | —         | GitHub **template repository** box ticked (buildlist 33), verified       |

@@ -263,7 +263,12 @@ DOCS + CI + DEPLOY
     e. What is still missing is a `bun run guards` script (a named subset for a fast
     local check); 31 closes when that exists, not when the guards do.
 [x] 32 Env base path + resolveAsset()/%BASE_URL% + favicon — resolveAsset() (src/lib/assets.ts, BASE_URL-aware); favicon now `%BASE_URL%favicon.svg` in index.html AND exercise-showcase.html (bug #28 closed); `base` reads process.env.BASE_URL in vite.config.ts, so `BASE_URL=/course/ bun run build` feeds bundle + prerender together
-[ ] 33 Mark repo as GitHub "template repo"
+[x] 33 Mark repo as GitHub "template repo" — DONE 2026-09-07, verified
+    `isTemplate: true`. Adds the "Use this template" button, so a new course starts
+    from a single initial commit instead of a fork. Fork was the only route before,
+    which dragged this repo's whole build history into every course AND linked the
+    two, so a new author's pull requests would have defaulted to targeting here.
+    Reversible, and changes nothing about this repo — it only adds an option.
 BEFORE SHARING WITH OTHER DEVELOPERS (pre-share gate — none of these block solo work)
 [ ] 34 Enable branch protection on main — docs/BRANCH_PROTECTION.md. DEFERRED BY DECISION
     2026-09-03: main takes direct pushes while this is a single-maintainer build; the
