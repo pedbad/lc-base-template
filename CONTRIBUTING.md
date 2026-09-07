@@ -194,11 +194,13 @@ These are locked spec decisions, documented here when each lands:
   section-scoped ordinal+type folders (`01-fill-gaps/`). File structure mirrors the
   rendered page; a guard enforces folder↔config match.
 - **Exercise authoring contract** — the config shape each exercise type expects.
-- **The 8 guards** (a–h) — what each checks, what fails, and how to fix it. Five are
+- **The 8 guards** (a–h) — what each checks, what fails, and how to fix it. Seven are
   live: **a** config-schema (Zod at load), plus **b** naming + render-mirror, **c**
-  asset-path, **d** asset-existence and **e** registry completeness (those four in
-  `src/guards/`). They are Vitest tests, so `bun run test` already enforces them, and
-  `bun run guards` runs the four sweeps on their own in about half a second. Remaining:
-  f, g, h — see [`docs/process/TODO.md`](docs/process/TODO.md) §A.
+  asset-path, **d** asset-existence, **e** registry completeness, **f** token integrity
+  (no raw hex/px bypassing the token chain) and **g** CSS layer discipline (every rule
+  in `@layer`, no `!important`) — those six in `src/guards/`. They are Vitest tests, so
+  `bun run test` already enforces them, and `bun run guards` runs the six sweeps on
+  their own in under half a second. Remaining: **h** (w3c + a11y over rendered pages) —
+  see [`docs/process/TODO.md`](docs/process/TODO.md) §A.
 - **Theming & tokens** — single-theme-per-clone, tokens only (no raw hex/px),
   CSS in `@layer`, no `!important`.

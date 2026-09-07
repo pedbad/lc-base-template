@@ -185,7 +185,7 @@ DEV ARTIFACTS
         `bun run build` = course only, `SHOWCASE=1 bun run build` = + showcase. Dev
         unaffected — Vite serves root-level .html regardless of the input list.
 [ ] 18 Sandbox renders docs as HTML
-GUARDS (each: failing fixture → block → green) — 3 of 8 open; do f next, see TODO.md §A
+GUARDS (each: failing fixture → block → green) — 1 of 8 open; h is all that is left, see TODO.md §A
     [x] 20b DONE 2026-09-07 — src/guards/render-mirror.ts + 17 tests. An LO exists
         because its FOLDER exists; its page structure exists because lo.json NAMES it.
         Two registries, so two silent drifts: a ref with no folder behind it (the page
@@ -249,9 +249,70 @@ GUARDS (each: failing fixture → block → green) — 3 of 8 open; do f next, s
         typo'ing a block type (81 other test files stayed green — the block side had
         zero protection), renaming a schema file, unregistering an engine, and gutting
         a schema file's exports.
+    [x] 24f DONE 2026-09-07 — src/guards/token-integrity.ts + 27 tests, plus
+        src/guards/css-source.ts, the stylesheet reader f and g share. Protects the
+        token chain's VALUES: palette.css holds raw values, tokens.css names meanings,
+        components read tokens, so a hex written into a component is invisible from the
+        top of the chain and a re-skin silently misses it. Repo was already fully
+        compliant, which INVERTS the job — the work is not detecting violations but not
+        flagging correct code, and the survey found three ways a naive rule fires on
+        something right. So px is a PROPERTY ALLOWLIST, not the blanket ban spec §138
+        reads as: legitimate on border*/outline*/box-shadow/backdrop-filter/perspective/
+        transform, where 44 of the 52 sites are hairlines and focus rings and rem would
+        actively be wrong. A px inside a token-referencing calc() is allowed — the four
+        `calc(var(--radius) ± 4px)` sites go THROUGH the token, a derivative not a
+        bypass, and that was the survey's biggest reversal. A px in a custom property is
+        allowed (naming a raw value is what a token IS); a hex in one is not (Layer 1 is
+        palette.css alone). Hex banned everywhere but palette.css. src/components/ui/ is
+        exempt from the markup half — shadcn regenerates it, so nine of the eleven
+        arbitrary-value hits are code no author here can keep clean; guard c set the
+        precedent for a written-down scope exclusion. A bracket group followed by `:` is
+        a Tailwind VARIANT, so `min-[980px]:hidden` reads as the media query it is.
+        Mechanism was DECIDED, not inherited: stylelint's
+        declaration-property-unit-allowed-list cannot express the calc() exemption and
+        cannot see TSX at all, and a split rule would make `bun run guards` a half-truth.
+        stripComments()/lineAt() exported from guard c rather than copied — three guards
+        running are only correct because comments are stripped first — and gained a
+        `lineComments` flag because CSS has no `//` and honouring one would blank the
+        tail of any unquoted url(https://…). Verified by planting `padding: 24px` in
+        home.css and `color: #cdd2d8` in flashcards.css (82 other test files stayed
+        green — proof it was silent), then `p-[24px]` and `style={{ color: '#ff0000' }}`
+        in LineMatchExercise.tsx, with min-[980px]:block on the same line correctly
+        ignored. Floors assert 15 stylesheets, 100+ markup files, 50+ px sites and
+        palette.css's own 17 primitives, so a rename fails loudly.
+    [x] 25g DONE 2026-09-07 — src/guards/layer-discipline.ts + 21 tests. Where f
+        protects the chain's values, g protects its ability to be overridden at all:
+        both banned structures win the cascade unconditionally, not by specificity but
+        by sitting outside the ordering the layers establish. An unlayered rule beats
+        every layered one; one !important inverts layer order on top (inside a layer the
+        FIRST layer's important declaration wins), making the order mean the opposite of
+        what it reads as. "The file contains @layer" was never the check — all 15 files
+        already grep positive, and a file can open a layer, close it, and carry on with
+        bare rules. So g tracks brace depth and the enclosing at-rule per block. That
+        assertion is the one thing the §A-g survey could not make; it now holds — 169
+        selector rules, every one layered, zero real !important. No live bug found. Four
+        structures a naive depth counter gets wrong, each decided in the header:
+        statement at-rules are legal unlayered (@import is REQUIRED first, so index.css's
+        five could not be layered even in principle; @charset/@custom-variant/`@layer a,
+        b;` have no block); descriptor at-rules are legal unlayered AND their inner
+        blocks are not rules (@font-face and @theme inline are what index.css holds at
+        top level, and a @keyframes `0% { … }` step is the trap); :root blocks ARE
+        ordinary rules and ARE checked, because custom properties cascade by layer too —
+        an unlayered :root beats a layered one, so the token files wrapping theirs in
+        @layer base is load-bearing, not habit; @media is transparent to the cascade and
+        must be looked THROUGH both ways — nested in a layer its rules stay layered (all
+        nine in the repo, and flagging them would flag correct code), at top level it
+        layers nothing. Comment stripping is the whole !important half: all six matches
+        are engine file headers PROMISING "no raw hex, no !important". Scope is CSS only
+        — Tailwind's trailing-! in src/components/ui/ is generated utility precedence
+        inside Tailwind's own layer, so extending to markup buys an exemption and no
+        signal. Verified by planting an unlayered `.lo-shell` rule in shell.css and
+        `999px !important` in word-order.css: both blocked with truthful file:line while
+        83 other test files stayed green, and `bun run lint:css` passed CLEAN on both —
+        stylelint offers no coverage here, which settles the mechanism choice for g too.
 [x] 19 a config-schema   [x] 20 b naming+render-mirror   [x] 21 c asset-path
-[x] 22 d asset-existence [x] 23 e registry               [ ] 24 f token-integrity
-[ ] 25 g css-layers      [ ] 26 h w3c/a11y
+[x] 22 d asset-existence [x] 23 e registry               [x] 24 f token-integrity
+[x] 25 g css-layers      [ ] 26 h w3c/a11y
 ENGINES
 [x] 27 Port remaining 12 exercises (superseded by step 14 Phase B — all 12 ported there, see log above)
 DOCS + CI + DEPLOY
@@ -262,13 +323,14 @@ DOCS + CI + DEPLOY
     lint:css · format:check · test · build. Guards are Vitest tests, so each one joins
     CI automatically the moment it lands — `test` already enforces a, b, c, d and e.
     CLOSED 2026-09-07 with `bun run guards` (`vitest run src/guards`), the fast local
-    subset: 79 tests in ~0.5s vs the suite's ~2s. A path glob, not a list, so a new
+    subset: 127 tests in ~0.4s vs the suite's ~2s (79 when it closed; f and g have
+    since joined). A path glob, not a list, so a new
     guard joins when its file lands (a hand-kept list is what goes stale — guard e's
     convention-over-map argument). Guard a is deliberately outside it: config-schema is
     not a sweep, it is Zod running inside assembleLo on every load, with contract tests
     colocated at src/config/lo-schema.test.ts and every on-disk LO parsed by
     lo-rich-text.test.ts. No separate CI step added — `test` is a strict superset, so a
-    guards step would re-run the same 79 tests for no extra signal.
+    guards step would re-run the same tests for no extra signal.
 [x] 32 Env base path + resolveAsset()/%BASE_URL% + favicon — resolveAsset() (src/lib/assets.ts, BASE_URL-aware); favicon now `%BASE_URL%favicon.svg` in index.html AND exercise-showcase.html (bug #28 closed); `base` reads process.env.BASE_URL in vite.config.ts, so `BASE_URL=/course/ bun run build` feeds bundle + prerender together
 [x] 33 Mark repo as GitHub "template repo" — DONE 2026-09-07, verified
     `isTemplate: true`. Adds the "Use this template" button, so a new course starts

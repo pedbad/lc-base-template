@@ -99,11 +99,11 @@ Layer 1 is the carrot; layers 2–3 are the stick.
      travels with the repo matters.
 - **Config:** `vite.config.ts` → `test` block (node env — the suite renders via
   `renderToStaticMarkup`, and the two storage tests stub `window`/`localStorage`
-  themselves, so no jsdom). 82 files · 689 tests.
+  themselves, so no jsdom). 84 files · 737 tests.
 - **`bun run guards` — the fast subset** (`vitest run src/guards`). The guards are
   ordinary Vitest tests, so `bun run test` already enforces every one of them; this is
   the pre-commit check you run when you only want to know whether you broke a repo-wide
-  invariant. 79 tests in ~0.5s against the full suite's ~2s.
+  invariant. 127 tests in ~0.4s against the full suite's ~2s.
   - **Why a path glob and not a list:** every guard's scanner module lives in
     `src/guards/`, so a new guard joins the script the moment its file exists. A
     hand-maintained list is the thing that silently goes stale — the same argument
@@ -113,9 +113,9 @@ Layer 1 is the carrot; layers 2–3 are the stick.
     enforced at runtime rather than by a sweep. Its contract tests are colocated unit
     tests of the schemas (`src/config/lo-schema.test.ts`), and every LO on disk is
     parsed end-to-end by `lo-rich-text.test.ts`, which loads them all through
-    `loadLo`. `bun run test` covers both; `bun run guards` covers the four sweeps.
+    `loadLo`. `bun run test` covers both; `bun run guards` covers the six sweeps.
   - **No separate CI step, on purpose.** CI runs `bun run test`, which is a strict
-    superset — a `guards` step would run the same 79 tests a second time for no extra
+    superset — a `guards` step would run the same tests a second time for no extra
     signal.
 - **Migration note (2026-07-12):** moved off `bun test`. Purely mechanical — every
   test imported only `test/expect/describe/afterEach` (zero Bun-specific mock/spy
@@ -206,10 +206,16 @@ Layer 1 is the carrot; layers 2–3 are the stick.
 
 - **What:** lints CSS files (`src/**/*.css`) for errors and bad patterns —
   ESLint's role, but for stylesheets.
-- **Why:** the foundation for **guard f** (no raw hex/px in components — use
-  tokens) and **guard g** (every rule inside `@layer`, zero `!important`), the
-  template's CSS bulletproofing. Linting from the first stylesheet means no
-  retrofit later.
+- **Why:** ordinary CSS bulletproofing from the first stylesheet, so there is no
+  retrofit later. It was originally planned as the foundation for **guard f** (no raw
+  hex/px bypassing the tokens) and **guard g** (every rule inside `@layer`, zero
+  `!important`), but both landed as Vitest guards in `src/guards/` instead —
+  `declaration-property-unit-allowed-list` cannot express guard f's real rule (px IS
+  the correct unit on `border*`/`outline*`/`box-shadow`, and is allowed inside a
+  token-referencing `calc()`), Stylelint cannot see guard f's TSX half at all, and
+  `bun run guards` globs `src/guards/`, so a Stylelint-owned half would silently not
+  be in it. Planting a real `!important` and an unlayered rule confirmed it:
+  `bun run lint:css` passed clean on both.
 - **How it helps:** `bun run lint:css` (joins the pre-commit hook + CI later).
 - **No Prettier truce needed:** Stylelint 16+ dropped stylistic rules, so it
   never fights Prettier over CSS layout (the old `stylelint-config-prettier` is
@@ -345,9 +351,11 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   Tailwind colour utilities (via the `@theme inline` bridge in `index.css`).
   Full guide for devs: **`src/styles/README.md`**.
 - **Why:** one edit point. Change a value in `palette.css` and every shadcn
-  component reskins — no find-replace, no per-component colour. Sets up
-  **guard f** (no raw hex/px in components) and **guard g** (every rule layered,
-  zero `!important`).
+  component reskins — no find-replace, no per-component colour. **Guard f**
+  (`src/guards/token-integrity.ts`) now enforces it: a colour literal outside
+  `palette.css` fails the suite, as does raw px on any property where a token belongs.
+  **Guard g** (`src/guards/layer-discipline.ts`) keeps the chain overridable — every
+  rule inside `@layer`, zero `!important`.
 - **Brand source:** official University of Cambridge guidelines (colour +
   typography) — **not** french-lo-1's teal (a per-course locale fossil,
   deliberately not ported). Cambridge Slate greyscale (Slate 4 = text, not pure

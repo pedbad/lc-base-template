@@ -7,7 +7,7 @@
    utilities (bg-primary, text-foreground, …), so all 19 shadcn components
    re-skin from here automatically (spec §7.1, reconcile not bulldoze).
 
-   Components read THESE roles, never raw hex (guard f, later).
+   Components read THESE roles, never raw hex — guard f enforces it.
 
    Accessibility (Cambridge brand rules, WCAG-verified):
      light --primary = Dark Blue + white text  → 12.5:1, strong CTA on white

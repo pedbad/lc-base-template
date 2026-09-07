@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-09-07 · **HEAD:** see `git log` · **Suite:** 82 files · 689 tests green
+**Last updated:** 2026-09-07 · **HEAD:** see `git log` · **Suite:** 84 files · 737 tests green
 · CI green · `main` unprotected by decision (job D1).
 
 Non-negotiable constraints for every job below live in
@@ -25,7 +25,7 @@ nothing reachable from `vite.config.ts` may use `@/…` imports; never import
 bun run format && bun run lint && bun run lint:css && bun run test && bun run build
 ```
 
-`bun run guards` (`vitest run src/guards`) is the fast subset — 79 tests in ~0.5s — for
+`bun run guards` (`vitest run src/guards`) is the fast subset — 127 tests in ~0.4s — for
 when you only want to know whether you broke a repo-wide invariant. It is a subset of
 `bun run test`, never a replacement for the gate above.
 
@@ -34,129 +34,109 @@ when you only want to know whether you broke a repo-wide invariant. It is a subs
 
 ---
 
-## A. Guards — 3 of 8 still open (the main body of work)
+## A. Guards — 1 of 8 still open (the main body of work)
 
 Guards **a** (config-schema, 19), **b** (naming + render-mirror, 20), **c** (asset-path,
-21), **d** (asset-existence, 22) and **e** (registry, 23) are done. The other three are one
-commit each, and each follows the same ritual: **write a deliberately-broken fixture first,
-prove the guard blocks it, then make the real repo green.** A guard that was never seen to
-fail is a guard that might be asleep.
+21), **d** (asset-existence, 22), **e** (registry, 23), **f** (token integrity, 24) and
+**g** (CSS layer discipline, 25) are done. Only **h** is left, and it follows the same
+ritual: **write a deliberately-broken fixture first, prove the guard blocks it, then make
+the real repo green.** A guard that was never seen to fail is a guard that might be asleep.
 
-Recommended order — **f next.** Everything load-bearing is now guarded: c and d cover the
-bug family that bit french-lo-1 twice, b closed the last silent gap in LO structure, and e
-stops an unresolvable `type` reaching a learner as a red error box. What remains is
-presentation discipline — real, but nothing has broken from it yet, so pick the order that
-suits you. f is next only because it is the most mechanical.
+**Expect h to be different in kind.** Every guard so far reads SOURCE; h is the only one
+that validates RENDERED output. The landing page and the sliding nav have never been
+validated by anything, so h will probably find real problems — plan for a guard plus a fix
+campaign, not one commit.
 
-| Order | Buildlist | Guard | Checks                               | Head start already in repo                              |
-| ----- | --------- | ----- | ------------------------------------ | ------------------------------------------------------- |
-| 1     | 24        | **f** | no raw hex or px                     | **surveyed 2026-09-07 — see A-f below**                 |
-| 2     | 25        | **g** | CSS all in `@layer`, no `!important` | **surveyed 2026-09-07 — see A-g below**                 |
-| 3     | 26        | **h** | w3c + a11y over rendered pages       | landing page + sliding nav are new, unvalidated surface |
+| Order | Buildlist | Guard | Checks                         | Head start already in repo                              |
+| ----- | --------- | ----- | ------------------------------ | ------------------------------------------------------- |
+| 1     | 26        | **h** | w3c + a11y over rendered pages | landing page + sliding nav are new, unvalidated surface |
 
-### A-f — guard f survey (done 2026-09-07, read this before building it)
+### A-f — guard f (token integrity) — **DONE 2026-09-07, `df6c987`**
 
-The rule was the expensive part and it is now settled. **Guard f is a rule-definition job,
-not a fix-the-repo job**: the repo is already compliant. Its value is stopping the first
-author who writes `padding: 24px` instead of a token — which nothing catches today.
+`src/guards/token-integrity.ts` + 27 tests, plus `src/guards/css-source.ts` — the
+stylesheet reader f and g share. The survey banked in this section was the expensive
+half; the code fell out of it.
 
-**Hex is already clean. Do not write a blanket ban.**
+What the rule turned out to be, since the naive reading is wrong three separate ways:
 
-| Where                    | Count | Verdict                                                                      |
-| ------------------------ | ----- | ---------------------------------------------------------------------------- |
-| `src/styles/palette.css` | 17    | **Correct** — Layer 1 primitives, "the ONLY place real colour literals live" |
-| `tokens-variant-a/b/c`   | 4     | **False positives** — all inside comment bodies naming the brand colour      |
-| everywhere else          | 0     | —                                                                            |
+- **px is a PROPERTY ALLOWLIST, not the blanket ban spec §138 reads as.** Legitimate on
+  `border*`, `outline*`, `box-shadow`, `backdrop-filter`, `perspective`, `transform`,
+  and in a `@media` prelude. 44 of the repo's 52 sites are 1–4px hairlines and focus
+  rings where rem would actively be wrong.
+- **A px inside a token-referencing `calc()` is allowed.** The four
+  `calc(var(--radius) ± 4px)` sites go THROUGH the token — a derivative offset, not a
+  bypass. This was the survey's biggest reversal, and a guard without it would have
+  flagged four correct sites on day one.
+- **A px in a custom property is allowed; a hex in one is not.** Naming a raw value is
+  what a token IS, so `--hairline: 1px` is a component-level token (§136). Layer 1 is
+  `palette.css` alone, so `--card-tint: #f0f0f0` is still the drift this guards.
+- **Hex is banned everywhere except `src/styles/palette.css`.** One file-scoped
+  exemption matching that file's own header, not a per-value allowlist.
+- **`src/components/ui/` is exempt from the markup half.** shadcn regenerates it. A
+  bracket group followed by `:` is a Tailwind VARIANT, so `min-[980px]:hidden` reads as
+  the media query it is.
 
-Guard c's lesson repeats exactly: **strip comments first**, or guard f flags the
-documentation that explains guard f.
+**Mechanism was decided, not inherited: Vitest.** Stylelint's
+`declaration-property-unit-allowed-list` cannot express the token-referencing `calc()`
+exemption and cannot see the TSX half at all, and a split rule would have made
+`bun run guards` a half-truth. Nothing was added to `stylelint.config.mjs`; its comment
+now records why, so nobody re-adds it.
 
-**px is not a token bypass anywhere.** 52 real sites in component CSS, grouped by the
-property they set:
+**Repo was already clean**, as surveyed. Verified by planting `padding: 24px` in
+`home.css` and `color: #cdd2d8` in `flashcards.css` — 82 other test files stayed green,
+which is the proof the failure was otherwise silent — then `p-[24px]` and
+`style={{ color: '#ff0000' }}` in `LineMatchExercise.tsx`, with `min-[980px]:block` on
+the same line correctly ignored. Floors assert 15 stylesheets, 100+ markup files, 50+ px
+sites and `palette.css`'s own 17 primitives, so a rename fails loudly (guard d's lesson).
 
-```
-box-shadow 10 · outline-offset 9 · outline 9 · border 8 · border-radius 6
-border-top 4 · perspective 2 · transform 1 · border-left 1
-border-inline-end 1 · backdrop-filter 1
-```
+### A-g — guard g (CSS layer discipline) — **DONE 2026-09-07, `69c254b`**
 
-ZERO on `font-size`, `padding`, `margin`, `gap`, `width`, `height`, `inset`. 44 of the 52
-are 1–4px hairlines and focus rings, where px is the CORRECT unit and rem would be wrong.
-So spec §138's "no raw px in components" **cannot be a blanket ban** — the real rule is a
-PROPERTY ALLOWLIST.
+`src/guards/layer-discipline.ts` + 21 tests. Where f protects the chain's VALUES, g
+protects its ability to be overridden at all: an unlayered rule beats every layered one
+whatever its specificity, and one `!important` inverts layer order on top of that, making
+the order mean the opposite of what it reads as.
 
-**The TSX surface.** 11 Tailwind arbitrary values: 9 in `src/components/ui/`
-(shadcn-generated — `switch`, `tabs`, `sidebar`, `tooltip`, `badge`), 2 first-party in
-`LineMatchExercise.tsx:497,500` (`[980px]`). 4 inline `style={{}}`, all computed and all
-clean (`animationDelay` from a constant, `accentColor: 'var(--primary)'`, a transition
-string, a `ch` width) — none hardcodes a colour or a px. Both entry HTML files are clean.
+**The `@layer` half — the one thing the survey could not verify — now holds.** "The file
+contains `@layer`" was never the check: all 15 files already grep positive, and a file can
+open a layer, close it, and carry on with bare rules underneath. Guard g tracks brace depth
+and the enclosing at-rule per block, and finds **169 selector rules, every one inside a
+layer, and zero real `!important`**. No live bug found.
 
-**All four decisions are now ANSWERED** (2026-09-07). State each in the module header
-anyway, the way c and d did — deciding the rule was the real work there and the code fell
-out after.
+Four structures a naive depth counter gets wrong, each decided in the module header:
 
-1. **Exempt `src/components/ui/`** — yes. Nine of the eleven arbitrary-value hits live
-   there and they are shadcn-generated; `shadcn add` would re-break the build on every
-   regeneration. Guard c set the precedent for a written-down scope exclusion (it skips
-   `*.test.*` and `*.fixture.*`). Exempt it, with the reason in the header.
-2. **`border-radius` in px is NOT a violation** — the earlier concern was wrong. Four of
-   the six sites go THROUGH the token: `calc(var(--radius) + 4px)` in `home.css` and
-   `flashcards.css`, `calc(var(--radius) - 4px)` in `drag-fill-gaps.css` and
-   `word-spot.css`. That is the chain working as designed — a derivative offset, not a
-   bypass. The other two are `border-radius: 999px`, the standard pill idiom.
-   **Consequence for the guard: the allowlist must permit a `calc()` that references a
-   token, or it flags correct code.**
-3. **Property allowlist — confirmed.** px is legitimate on `border*`, `outline*`,
-   `box-shadow`, `backdrop-filter`, `perspective`, `transform` and inside `@media`.
-   Everything else must be a token or a relative unit. The 52 real sites are all in the
-   allowed set, so the repo passes.
-4. **`[980px]` in `LineMatchExercise.tsx` is NOT a violation** — it is
-   `min-[980px]:hidden` / `min-[980px]:block`, a Tailwind arbitrary BREAKPOINT, i.e. a
-   media query, which rule 3 already allows.
+- **Statement at-rules are legal unlayered.** `@import` is REQUIRED to come first, so
+  `index.css`'s five could not be layered even in principle; `@charset`,
+  `@custom-variant` and a bare `@layer a, b;` have no block, so none is a rule.
+- **Descriptor at-rules are legal unlayered AND their inner blocks are not rules.**
+  `@font-face` and `@theme inline` are exactly what `index.css` holds at top level.
+  `@keyframes` is the trap — a `0% { … }` step has a percentage where a selector goes.
+- **`:root` blocks ARE ordinary rules and ARE checked.** Custom properties cascade by
+  layer too, so an unlayered `:root` beats a layered one. `palette.css` and all four
+  token files wrapping theirs in `@layer base` is load-bearing, not habit. This is the
+  case most likely to be waved through as "just variables"; it is not.
+- **`@media` is transparent to the cascade and must be looked THROUGH, both ways.**
+  Nested inside a layer its rules stay layered (all nine in the repo — flagging them
+  would flag correct code); at top level it layers nothing.
 
-**Net: the repo is fully compliant and guard f fixes nothing.** Its whole value is
-stopping the first author who writes `padding: 24px` instead of a token. The real work is
-avoiding FALSE POSITIVES on correct code — comment bodies and token-referencing `calc()`.
+**Comment stripping is the whole `!important` half** — all six matches in the repo are
+exercise-engine file headers PROMISING "no raw hex, no `!important`". Third guard in a
+row to turn on this (c, f, g), which is why `stripComments()` is now exported from
+`asset-path.ts` rather than copied a fourth time.
 
-**Mechanism note.** Stylelint already runs and could own the CSS half via
-`declaration-property-unit-allowed-list`. Guards a–e are all Vitest and `bun run guards`
-globs `src/guards/`, so Vitest keeps all eight in one place and in that script — but the
-CSS half is a genuine choice, not a foregone one.
+**Scope is CSS only.** Tailwind's trailing-`!` modifier appears in `src/components/ui/`
+(`top-1/2!` in `tooltip.tsx`), but that is generated shadcn expressing utility precedence
+inside Tailwind's own layer — not a rule escaping the layer system — so extending g to
+markup would buy an exemption and no signal.
 
-### A-g — guard g survey (done 2026-09-07, read this before building it)
-
-Same shape as f: **the repo is already clean, and the naive rule produces false
-positives.**
-
-**`!important` — zero real ones.** Six files match a grep, and all six matches are in the
-COMMENT HEADER of the file, each saying "no raw hex, no `!important`":
-
-```
-flashcards.css:4 · word-spot.css:4 · memory-match.css:4
-drag-fill-gaps.css:3 · phrase-reorder.css:3 · word-order.css:3
-```
-
-That is the THIRD guard in a row whose correctness turns on stripping comments first (c,
-f, now g). Guard c's `stripComments()` is string-aware and offset-preserving so line
-numbers stay truthful — **reuse it, do not write a second one.** It already lives in
-`src/guards/asset-path.ts`; export it rather than copying it.
-
-**`@layer` — every one of the 15 CSS files contains at least one `@layer`.** But that is
-NOT the check. A file having `@layer` once does not prove every RULE sits inside a layer
-block, and an unlayered rule beats every layered one in the cascade regardless of
-specificity — which is the whole reason spec §5 demands layering. **This is the one thing
-the survey did not verify, so it is guard g's first real job:** parse each file's brace
-depth and assert no selector rule sits outside an `@layer` block. Expect `@import`,
-`@charset`, `:root` custom-property blocks and `@media` inside a layer to need thinking
-about; a naive depth counter will get at least one of them wrong.
-
-**Shared work between f and g.** Both walk the same 15 CSS files, both need the same
-comment-stripping, both report `file:line`. Build the reader ONCE — a shared helper in
-`src/guards/` used by both — then two scanner modules and two commits, one concern each.
+Verified by planting an unlayered `.lo-shell` rule in `shell.css` and
+`border-radius: 999px !important` in `word-order.css`. Both blocked with truthful
+`file:line` while 83 other test files stayed green — and **`bun run lint:css` passed CLEAN
+on both**, so stylelint offers no coverage here at all, which settles the mechanism
+question for g as well as f.
 
 ### A8 — wire the guards up (buildlist 31) — **DONE 2026-09-07**
 
-`bun run guards` = `vitest run src/guards`. 79 tests in ~0.5s against the full suite's
+`bun run guards` = `vitest run src/guards`. 127 tests in ~0.4s against the full suite's
 ~2s. It did NOT need to wait for f–h: a path glob picks up a new guard the moment its
 file lands, so nothing has to be edited when one does. A hand-kept list is the thing that
 goes stale — the same argument guard e makes for a schema convention over a central map.
@@ -167,13 +147,13 @@ Two things settled while closing it, both written up in `docs/TOOLING.md`:
   schemas run inside `assembleLo` on every load, in the app itself. Its contract tests
   are colocated (`src/config/lo-schema.test.ts`), and every LO on disk is parsed
   end-to-end by `lo-rich-text.test.ts`, which loads them all through `loadLo`.
-  `bun run test` covers both; `bun run guards` covers the four sweeps.
+  `bun run test` covers both; `bun run guards` covers the six sweeps.
 - **No CI step was added**, contrary to what this section used to say. CI runs
-  `bun run test`, a strict superset — a guards step would re-run the same 79 tests for
+  `bun run test`, a strict superset — a guards step would re-run the same tests for
   no extra signal.
 
 **Convention to keep:** every guard's scanner module lives in `src/guards/`. That is what
-makes the glob honest, so put guard f, g and h there too.
+makes the glob honest — f and g joined with no edit to the script, and h goes there too.
 
 ---
 
@@ -242,3 +222,5 @@ Not forgotten. Decided.
 | 2026-09-07 | `0891e27` | guard f **survey** banked in §A-f — the rule, not the guard yet          |
 | 2026-09-07 | —         | GitHub **template repository** box ticked (buildlist 33), verified       |
 | 2026-09-07 | see A8    | `bun run guards` fast subset added (buildlist 31 closed)                 |
+| 2026-09-07 | `df6c987` | **guard f — token integrity** (buildlist 24), 27 tests + shared reader   |
+| 2026-09-07 | `69c254b` | **guard g — CSS layer discipline** (buildlist 25), 21 tests              |

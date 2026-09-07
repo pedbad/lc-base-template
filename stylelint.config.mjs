@@ -4,9 +4,15 @@
 // errors and bad patterns. Prettier still owns CSS *layout* — Stylelint 16+
 // dropped all stylistic rules, so the two no longer conflict (no truce package).
 //
-// This base config is the foundation for two spec guards, added in later steps:
-//   guard f (token-integrity)     — forbid raw hex/px in components; use tokens.
-//   guard g (css-layer-discipline) — every rule inside @layer; zero !important.
+// The two CSS spec guards it was meant to seed landed as Vitest instead, and the
+// reason is worth keeping here so nobody re-adds them:
+//   guard f (src/guards/token-integrity.ts)  — no raw hex/px bypassing the tokens.
+//   guard g (src/guards/layer-discipline.ts) — every rule in @layer; no !important.
+// declaration-property-unit-allowed-list cannot express guard f's real rule (px IS
+// correct on border*/outline*/box-shadow, and is allowed inside a token-referencing
+// calc()), Stylelint cannot see the TSX half at all, and `bun run guards` globs
+// src/guards/ — so a stylelint-owned half would silently not be in it. This config's
+// job is the ordinary CSS linting below.
 //
 // Tailwind v4 (Step 8) adds CSS at-rules (@theme, @utility, @apply, …) that
 // `config-standard` flags as "unknown at-rule". We allow them via an at-rule

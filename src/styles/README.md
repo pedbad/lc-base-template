@@ -24,8 +24,9 @@ imported; the variant files sit beside it as switchable presets.
 ## Re-skin the brand (change the colours)
 
 Edit the values in **`palette.css` only**. The semantic layer and all 19
-components follow automatically. Never put hex in `tokens.css` or in components
-(guard f, later).
+components follow automatically. Never put hex in `tokens.css` or in components —
+**guard f enforces this**, and the suite fails on a colour literal anywhere outside
+this file.
 
 To rebrand from Cambridge to another institution: replace the `--slate-*` and
 `--cam-*` hex values in `palette.css`. One file, done.
@@ -55,10 +56,16 @@ bun run dev
 `index.css` already imports `tokens.css`, so nothing else changes. Re-run
 `bun run lint:css` to confirm it's clean.
 
-## Rules (enforced later by guards f + g)
+## Rules (enforced by guards f + g)
 
-- Every rule inside `@layer base`; zero `!important`.
-- Raw hex/px lives **only** in `palette.css` — never in `tokens.css` or components.
+- Every rule inside `@layer base`; zero `!important` — **guard g**
+  (`src/guards/layer-discipline.ts`). An unlayered rule beats every layered one
+  whatever its specificity, so this is a cascade rule, not a tidiness one.
+- Raw hex lives **only** in `palette.css` — never in `tokens.css` or components —
+  **guard f** (`src/guards/token-integrity.ts`). Raw px is allowed only on the
+  properties where it is the correct unit (`border*`, `outline*`, `box-shadow`,
+  `backdrop-filter`, `perspective`, `transform`), inside a `calc()` that references a
+  token, and in a `@media` breakpoint.
 - Light + dark both defined (`:root` + `.dark`); dark inverts the Slate ramp,
   with `color-mix` lifting dark surfaces (card/popover/muted) off the Slate-4 base.
 
