@@ -122,4 +122,5 @@ Not forgotten. Decided.
 | 2026-09-03 | `f3f432e` | `main` stays open by decision; protection reframed as a pre-share gate   |
 | 2026-09-03 | `ef9ec8f` | exercise showcase **opt-in per build** — no longer ships (buildlist 17b) |
 | 2026-09-03 | `2e3e4bd` | this TODO.md added as the live worklist; stale claims corrected          |
-| 2026-09-03 | (this)    | **guard c — asset-path** (buildlist 21): `src/guards/` created, 21 tests |
+| 2026-09-03 | `c239fa8` | **guard c — asset-path** (buildlist 21): `src/guards/` created, 21 tests |
+| 2026-09-03 | `4367d31` | **guard d — asset-existence** (buildlist 22), 11 tests                   |

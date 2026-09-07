@@ -12,7 +12,8 @@ laid out and deliberately unchosen. §1–4 are the state of the template as ver
 > **For what is open NOW, read `docs/process/TODO.md`** — the live worklist. This file is
 > a snapshot at the end of Phase D plus the §5 decision log; several §5 items have since
 > been settled and are marked so inline. Suite counts below are as of `c3f840f`
-> (77 files · 605 tests); at `ef9ec8f` it is 78 files · 610 tests.
+> (77 files · 605 tests). For the current figure see `docs/process/TODO.md`, which is
+> updated with each commit; at `4367d31` it is 80 files · 642 tests.
 
 ---
 
@@ -245,9 +246,10 @@ built.
 > on `main`: Phase D is complete — `/` is the course landing page (hero + one card per
 > LO + a left sliding lesson nav), each LO has a static page, dev and the build both
 > serve all of it, and adding a folder under `lo-config/` adds a page, a card and a nav
-> entry with no code change. 610 tests green at `ef9ec8f`.
+> entry with no code change. 642 tests green at `4367d31`.
 >
-> Pick up from §5, which lists the open work with options and trade-offs and
+> **Read `docs/process/TODO.md` first — it is the live worklist.** Then §5 below for the
+> decision log; §5.1 and §5.2 are settled and marked so. §5 lists options and trade-offs and
 > deliberately takes no decisions. Tell me what you'd do first and why before starting,
 > and settle any §5 choice with me rather than for me. The constraints in §3 are not
 > negotiable — in particular: nothing reachable from `vite.config.ts` may use `@/…`

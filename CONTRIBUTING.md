@@ -193,6 +193,9 @@ These are locked spec decisions, documented here when each lands:
   section-scoped ordinal+type folders (`01-fill-gaps/`). File structure mirrors the
   rendered page; a guard enforces folder↔config match.
 - **Exercise authoring contract** — the config shape each exercise type expects.
-- **The 7 guards** _(spec §11)_ — what each checks, what fails, and how to fix it.
+- **The 8 guards** (a–h) — what each checks, what fails, and how to fix it. Three are
+  live: **a** config-schema (Zod at load), **c** asset-path and **d** asset-existence
+  (both in `src/guards/`). They are Vitest tests, so `bun run test` already enforces
+  them. Remaining: b, e, f, g, h — see [`docs/process/TODO.md`](docs/process/TODO.md) §A.
 - **Theming & tokens** — single-theme-per-clone, tokens only (no raw hex/px),
   CSS in `@layer`, no `!important`.
