@@ -93,27 +93,54 @@ already carries `aria-label`. Exactly the class of defect guard h exists to catc
 **Net: expect a guard, NOT the fix campaign this section used to predict.** One
 attribute was the whole backlog.
 
-**Two decisions the survey settled — these are the expensive half:**
+**Three decisions the survey settled — these are the expensive half:**
 
 1. **NO jsdom. Stay in node env.** The obvious route (axe-core) needs a DOM, which would
    reverse the deliberate node-env decision recorded in `docs/TOOLING.md` ("the suite
    renders via `renderToStaticMarkup` … so no jsdom"). It is not needed: the suite
-   already renders to HTML STRINGS, and a string is all a validator needs.
-   `html-validate` runs on strings and expresses the §17 contract directly (one `h1`, no
-   skipped levels, landmark structure, no layout `<table>`). Prefer it over axe+jsdom,
-   and if you do want axe's WCAG rules later, make that a separate decision and commit.
-2. **DO NOT validate only the two prerendered pages — that would cover 2 of 12 engines.**
-   `example.html` prerenders `select` and `radio-quiz` only; the other ten engines'
+   already renders to HTML STRINGS, and a string is all a checker needs. If you ever do
+   want axe's WCAG rule coverage, make it a separate decision and its own commit.
+2. **NO NEW DEPENDENCY EITHER — hand-write the §17 contract sweep.** This REVERSES the
+   first version of this survey, which said to prefer `html-validate`. The reason is a
+   fact found afterwards: **there is zero `dangerouslySetInnerHTML` in the repo.** All
+   four grep hits are comments saying it is not used, and `src/lo/rich-text/RichText.tsx`
+   parses authored rich text into real React nodes rather than injecting a string. So
+   EVERY byte of markup is React-emitted, and React cannot produce the malformed-markup
+   class a W3C validator exists to catch — no unclosed tags, no invalid nesting, no
+   unescaped text. **The "w3c" half of "w3c + a11y" is guaranteed by construction.**
+   What React CAN still emit is bad SEMANTICS, and that is the §17 contract: an `h4` as
+   a visual label, a second `h1`, a skipped heading level, `<table>` for layout, a
+   dangling `aria-controls`, a duplicate id, an icon-only control with no accessible
+   name, a decorative SVG without `aria-hidden`, `<b>`/`<i>` for `<strong>`/`<em>`. No
+   off-the-shelf ruleset expresses "one `<article>` per accordion" or "`section` count ==
+   `h2` count" — they are repo-specific — and `eslint-plugin-jsx-a11y` already covers the
+   generic JSX-level rules in `bun run lint` and CI. A dep would buy a guarantee the
+   renderer already gives, and still leave the repo-specific half to hand-write. Keep
+   guard h dep-free and consistent with the other seven. State this reasoning in the
+   module header, the way f and g state their mechanism choice.
+3. **DO NOT validate only the two prerendered pages — that would cover 2 of 15 engines.**
+   `example.html` prerenders `select` and `radio-quiz` only; the other thirteen engines'
    markup appears nowhere in a default build (they live in the showcase, `SHOWCASE=1`).
-   A guard over the two pages alone would silently skip ten engines — precisely the
+   A guard over the two pages alone would silently skip thirteen engines — precisely the
    staleness failure guard d taught. Guard h should render every showcase fixture through
    `renderToStaticMarkup` and validate each one, plus the two prerendered pages. Same
-   fixtures the showcase uses, all 12 engines, still node env. Assert a FLOOR on the
+   fixtures the showcase uses, all 15 engines, still node env. Assert a FLOOR on the
    number of fixtures validated so a renamed fixture file cannot empty the sweep.
 
-**Still unsurveyed, in case it matters:** the 12 engines' own markup has not been read —
-only the two types the example LO happens to use. That is where any remaining defect
-would be, and building the guard as decision 2 describes is what will surface it.
+**`renderToStaticMarkup` needs no new infrastructure** — it is already the established
+pattern across many test files (`CourseHome.test.tsx`, `LoAccordion.test.tsx`,
+`ReadingExercise.test.tsx`, and more).
+
+**NOTE THE ENGINE COUNT: 15, not 12.** `src/showcase/fixtures.ts` aggregates 15 fixture
+sets (select, inline-choice, radio-quiz, inline-gap, typed-transform, dictation,
+line-match, word-spot, memory-match, word-order, phrase-reorder, drag-fill-gaps,
+flashcards, conjugation, reading). The "12 engines" figure in the buildlist is a
+historical count from when they were ported and should not be used as guard h's floor.
+
+**Still unsurveyed, in case it matters:** thirteen of the fifteen engines' own markup has
+not been read — only the two types the example LO happens to use. That is where any
+remaining defect would be, and building the guard as decision 3 describes is what will
+surface it. Budget for a small fix campaign there; the two pages themselves are clean.
 
 ### A-f — guard f (token integrity) — **DONE 2026-09-07, `df6c987`**
 
