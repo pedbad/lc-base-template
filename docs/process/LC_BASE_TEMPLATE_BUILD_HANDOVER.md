@@ -184,8 +184,16 @@ DEV ARTIFACTS
         `bun run build` = course only, `SHOWCASE=1 bun run build` = + showcase. Dev
         unaffected — Vite serves root-level .html regardless of the input list.
 [ ] 18 Sandbox renders docs as HTML
-GUARDS (each: failing fixture → block → green) — 7 of 8 open; do c + d first, see TODO.md §A
-[x] 19 a config-schema   [ ] 20 b naming+render-mirror   [ ] 21 c asset-path
+GUARDS (each: failing fixture → block → green) — 6 of 8 open; do d next, see TODO.md §A
+    [x] 21c DONE 2026-09-03 — src/guards/asset-path.ts + 21 tests. Source scan: an
+        asset-looking string literal in a URL sink (src/href/poster/srcSet attr, or
+        AudioManager.play/new Audio/fetch arg) without resolveAsset() fails the suite;
+        plus every <link> href in index.html / exercise-showcase.html must carry
+        %BASE_URL% (#28). Requiring a SINK is what keeps authored LO/fixture paths —
+        which are data and must stay bare — from being flagged. Comments stripped first
+        (string-aware, so the // in a URL is not mistaken for one). Repo was already
+        clean; verified by planting a violation in Footer.tsx and watching it block.
+[x] 19 a config-schema   [ ] 20 b naming+render-mirror   [x] 21 c asset-path
 [ ] 22 d asset-existence [ ] 23 e registry               [ ] 24 f token-integrity
 [ ] 25 g css-layers      [ ] 26 h w3c/a11y
 ENGINES

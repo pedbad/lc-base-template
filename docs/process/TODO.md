@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-09-03 · **HEAD:** `ef9ec8f` · **Suite:** 78 files · 610 tests green
+**Last updated:** 2026-09-03 · **HEAD:** see `git log` · **Suite:** 79 files · 631 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -30,27 +30,32 @@ bun run format && bun run lint && bun run lint:css && bun run test && bun run bu
 
 ---
 
-## A. Guards — 7 of 8 still open (the main body of work)
+## A. Guards — 6 of 8 still open (the main body of work)
 
-Guard **a** (config-schema, Zod at load) is done — buildlist 19. The other seven are one
-commit each, and each follows the same ritual: **write a deliberately-broken fixture
+Guards **a** (config-schema, buildlist 19) and **c** (asset-path, buildlist 21) are done.
+The other six are one commit each, and each follows the same ritual: **write a deliberately-broken fixture
 first, prove the guard blocks it, then make the real repo green.** A guard that was never
 seen to fail is a guard that might be asleep.
 
-Recommended order — **c and d first.** Two of the three bugs carried over from
-french-lo-1 were asset paths under a non-root base (#28 favicon, #35 runtime fetch), so
-those two catch the family of bug that has actually bitten. The rest are tidiness guards;
-nothing has broken from them yet.
+Recommended order — **d next.** c is done; d is its other half (c checks a path is built
+so it resolves at any page depth, d checks the file it points at exists). Together they
+cover the family of bug that actually bit french-lo-1 twice. The rest are tidiness
+guards; nothing has broken from them yet.
+
+**d should be cheap now.** `src/guards/asset-path.ts` already owns the "what counts as an
+asset path" question (`looksLikeAssetPath`, plus the extension and asset-directory
+lists), and `showcase-audio-assets.test.ts` and `example-lo.test.ts` already do
+`existsSync` checks on authored paths. d is mostly collecting authored paths out of LO
+JSON and fixtures and pointing them at `public/`.
 
 | Order | Buildlist | Guard | Checks                                       | Head start already in repo                                |
 | ----- | --------- | ----- | -------------------------------------------- | --------------------------------------------------------- |
-| 1     | 21        | **c** | every URL goes through `resolveAsset()`      | `src/lib/assets.ts` is already the single choke point     |
-| 2     | 22        | **d** | every authored asset path exists on disk     | seeded by the card-image test in `example-lo.test.ts`     |
-| 3     | 20        | **b** | folder name ↔ config contents agree          | `example-lo.test.ts` already does this for one LO         |
-| 4     | 23        | **e** | every `type` resolves to a registered engine | seeded by the per-type schema map in `example-lo.test.ts` |
-| 5     | 24        | **f** | no raw hex or px                             | `public/images/lo-placeholder.svg` is the one exception   |
-| 6     | 25        | **g** | CSS all in `@layer`, no `!important`         | —                                                         |
-| 7     | 26        | **h** | w3c + a11y over rendered pages               | landing page + sliding nav are new, unvalidated surface   |
+| 1     | 22        | **d** | every authored asset path exists on disk     | seeded by the card-image test in `example-lo.test.ts`     |
+| 2     | 20        | **b** | folder name ↔ config contents agree          | `example-lo.test.ts` already does this for one LO         |
+| 3     | 23        | **e** | every `type` resolves to a registered engine | seeded by the per-type schema map in `example-lo.test.ts` |
+| 4     | 24        | **f** | no raw hex or px                             | `public/images/lo-placeholder.svg` is the one exception   |
+| 5     | 25        | **g** | CSS all in `@layer`, no `!important`         | —                                                         |
+| 6     | 26        | **h** | w3c + a11y over rendered pages               | landing page + sliding nav are new, unvalidated surface   |
 
 ### A8 — wire the guards up (buildlist 31, currently `[~]`)
 
@@ -123,3 +128,5 @@ Not forgotten. Decided.
 | 2026-09-03 | `2104d13` | content licence changed to **CC BY-NC 4.0**, swept through every doc     |
 | 2026-09-03 | `f3f432e` | `main` stays open by decision; protection reframed as a pre-share gate   |
 | 2026-09-03 | `ef9ec8f` | exercise showcase **opt-in per build** — no longer ships (buildlist 17b) |
+| 2026-09-03 | `2e3e4bd` | this TODO.md added as the live worklist; stale claims corrected          |
+| 2026-09-03 | (this)    | **guard c — asset-path** (buildlist 21): `src/guards/` created, 21 tests |
