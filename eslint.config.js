@@ -12,8 +12,18 @@
 //   jsxA11y.flatConfigs.recommended      ACCESSIBILITY — lints the JSX markup in
 //                                         .tsx files (missing alt, unreachable
 //                                         click handlers, bad ARIA, …). The lint
-//                                         half of spec guard h (W3C/a11y); the
-//                                         static-page axe/pa11y half lands later.
+//                                         half of spec guard h (W3C/a11y). The
+//                                         other half is now LIVE too, as
+//                                         src/guards/semantic-dom.ts: it renders
+//                                         the pages and all 15 engines and checks
+//                                         the spec §17 contract over the assembled
+//                                         DOM — the composition questions a
+//                                         per-file lint rule cannot ask. NOT
+//                                         axe/pa11y, as spec §309 predicted: both
+//                                         need a DOM, which would reverse the
+//                                         node-env decision, and neither expresses
+//                                         "one <article> per accordion". See that
+//                                         file's header.
 //   eslintConfigPrettier                 LAST. Disables every ESLint rule that
 //                                         overlaps with Prettier. Adds no rules.
 //
@@ -57,6 +67,17 @@ export default defineConfig([
     rules: {
       'react-refresh/only-export-components': 'off',
       'jsx-a11y/label-has-associated-control': 'off',
+    },
+  },
+  // Guards are test-only sweeps (`bun run guards`), never part of the app graph, so a
+  // .tsx guard helper is not an HMR boundary and the Fast-Refresh rule has nothing to
+  // protect. `rendered-markup.tsx` renders the pages and fixtures guard h validates and
+  // exports render FUNCTIONS rather than components, which is exactly what the rule
+  // objects to.
+  {
+    files: ['src/guards/**'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
     },
   },
   // MUST stay last: turns off ESLint rules that conflict with Prettier.
