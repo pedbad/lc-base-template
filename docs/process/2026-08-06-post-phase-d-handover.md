@@ -13,7 +13,7 @@ laid out and deliberately unchosen. §1–4 are the state of the template as ver
 > a snapshot at the end of Phase D plus the §5 decision log; several §5 items have since
 > been settled and are marked so inline. Suite counts below are as of `c3f840f`
 > (77 files · 605 tests). For the current figure see `docs/process/TODO.md`, which is
-> updated with each commit; at `4367d31` it is 80 files · 642 tests.
+> updated with each commit; at `905cf70` it is 82 files · 689 tests.
 
 ---
 

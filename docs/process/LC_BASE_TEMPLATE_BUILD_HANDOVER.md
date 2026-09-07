@@ -100,8 +100,9 @@ Each is its own step + commit. Stop and test after every one.
 bun run format        # Prettier clean
 bun run lint          # ESLint + jsx-a11y green
 bun run lint:css      # Stylelint green
-bun test              # tests green
-bun run guards        # (once guards exist) all green
+bun run test          # tests green (Vitest — NOT `bun test`, which throws on
+                      #   the import.meta.glob in load-lo-glob.ts)
+bun run guards        # the fast guard subset (vitest run src/guards)
 bun run build         # (once build exists) succeeds
 ```
 
@@ -336,7 +337,7 @@ THE RULE (do not deviate):
 
 WORK STYLE (matches how the 12 engines were originally built — see the same file,
 Phase B log): ONE ENGINE PER STEP, one commit each. Verify gate every step:
-`bun run format && bun run lint && bun run lint:css && bun test && bun run build`.
+`bun run format && bun run lint && bun run lint:css && bun run test && bun run build`.
 No batching multiple engines into one commit.
 
 STEP 0 (once, before any engine):

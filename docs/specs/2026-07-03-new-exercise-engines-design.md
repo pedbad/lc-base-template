@@ -177,7 +177,7 @@ Each engine adds/edits, in order:
 5. `src/exercises/lib/instructions.ts` — add `EXERCISE_INSTRUCTIONS` entry.
 6. `src/showcase/fixtures.ts` — showcase card(s).
 7. ui-strings/labels for any new chrome text.
-8. Tests (`bun test`) + tsc clean + showcase a11y verify.
+8. Tests (`bun run test` — Vitest, not `bun test`) + tsc clean + showcase a11y verify.
 
 ## 8. Pointer
 

@@ -242,8 +242,9 @@ Each engine is ported the same way — this is the loop we repeat 12 times:
 - audio (`SequenceAudioController`, `useExerciseAudio`)
 - answer normalization (`normalizeAnswer`, `normalizeForDictation`)
 
-**Verify per engine before the next:** `bun run format · lint · lint:css · bun test
-· build`, plus the engine visible and working in the showcase.
+**Verify per engine before the next:** `bun run format · lint · lint:css · test
+· build`, plus the engine visible and working in the showcase. (`bun run test` — Vitest
+since 2026-07-12; Bun's own runner throws on `load-lo-glob.ts`.)
 
 ---
 

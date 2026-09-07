@@ -51,7 +51,7 @@ suits you. f is next only because it is the most mechanical.
 | Order | Buildlist | Guard | Checks                               | Head start already in repo                              |
 | ----- | --------- | ----- | ------------------------------------ | ------------------------------------------------------- |
 | 1     | 24        | **f** | no raw hex or px                     | **surveyed 2026-09-07 — see A-f below**                 |
-| 2     | 25        | **g** | CSS all in `@layer`, no `!important` | —                                                       |
+| 2     | 25        | **g** | CSS all in `@layer`, no `!important` | **surveyed 2026-09-07 — see A-g below**                 |
 | 3     | 26        | **h** | w3c + a11y over rendered pages       | landing page + sliding nav are new, unvalidated surface |
 
 ### A-f — guard f survey (done 2026-09-07, read this before building it)
@@ -91,24 +91,68 @@ PROPERTY ALLOWLIST.
 clean (`animationDelay` from a constant, `accentColor: 'var(--primary)'`, a transition
 string, a `ch` width) — none hardcodes a colour or a px. Both entry HTML files are clean.
 
-**Four decisions to make before writing assertions** (state each in the module header, the
-way c and d did — deciding the rule was the real work there and the code fell out after):
+**All four decisions are now ANSWERED** (2026-09-07). State each in the module header
+anyway, the way c and d did — deciding the rule was the real work there and the code fell
+out after.
 
-1. **Exempt `src/components/ui/**`?** 9 of the 11 violations live there and `shadcn add`
-would re-break the build on every regeneration. Guard c set the precedent for a
-written-down scope exclusion (`_.test._`, `_.fixture._`). Recommend exempt, with reason.
-2. **Is `border-radius` in px a violation?** 6 sites, and `--radius: 0.625rem` exists in the
-   token layer. The one genuinely contestable category — the token chain arguably owns
-   radius.
-3. **Confirm the property allowlist.** Proposed: px legitimate on `border*`, `outline*`,
-   `box-shadow`, `backdrop-filter`, `perspective`, `transform` and `@media`; everything else
-   must be a token or a relative unit.
-4. **`[980px]` in `LineMatchExercise.tsx`** — first-party, needs an actual look before ruling.
+1. **Exempt `src/components/ui/`** — yes. Nine of the eleven arbitrary-value hits live
+   there and they are shadcn-generated; `shadcn add` would re-break the build on every
+   regeneration. Guard c set the precedent for a written-down scope exclusion (it skips
+   `*.test.*` and `*.fixture.*`). Exempt it, with the reason in the header.
+2. **`border-radius` in px is NOT a violation** — the earlier concern was wrong. Four of
+   the six sites go THROUGH the token: `calc(var(--radius) + 4px)` in `home.css` and
+   `flashcards.css`, `calc(var(--radius) - 4px)` in `drag-fill-gaps.css` and
+   `word-spot.css`. That is the chain working as designed — a derivative offset, not a
+   bypass. The other two are `border-radius: 999px`, the standard pill idiom.
+   **Consequence for the guard: the allowlist must permit a `calc()` that references a
+   token, or it flags correct code.**
+3. **Property allowlist — confirmed.** px is legitimate on `border*`, `outline*`,
+   `box-shadow`, `backdrop-filter`, `perspective`, `transform` and inside `@media`.
+   Everything else must be a token or a relative unit. The 52 real sites are all in the
+   allowed set, so the repo passes.
+4. **`[980px]` in `LineMatchExercise.tsx` is NOT a violation** — it is
+   `min-[980px]:hidden` / `min-[980px]:block`, a Tailwind arbitrary BREAKPOINT, i.e. a
+   media query, which rule 3 already allows.
+
+**Net: the repo is fully compliant and guard f fixes nothing.** Its whole value is
+stopping the first author who writes `padding: 24px` instead of a token. The real work is
+avoiding FALSE POSITIVES on correct code — comment bodies and token-referencing `calc()`.
 
 **Mechanism note.** Stylelint already runs and could own the CSS half via
-`declaration-property-unit-allowed-list`. Guards a–e are all Vitest, and buildlist 31 wants
-one `bun run guards`, so Vitest keeps all eight in one place — but the CSS half is a genuine
-choice, not a foregone one.
+`declaration-property-unit-allowed-list`. Guards a–e are all Vitest and `bun run guards`
+globs `src/guards/`, so Vitest keeps all eight in one place and in that script — but the
+CSS half is a genuine choice, not a foregone one.
+
+### A-g — guard g survey (done 2026-09-07, read this before building it)
+
+Same shape as f: **the repo is already clean, and the naive rule produces false
+positives.**
+
+**`!important` — zero real ones.** Six files match a grep, and all six matches are in the
+COMMENT HEADER of the file, each saying "no raw hex, no `!important`":
+
+```
+flashcards.css:4 · word-spot.css:4 · memory-match.css:4
+drag-fill-gaps.css:3 · phrase-reorder.css:3 · word-order.css:3
+```
+
+That is the THIRD guard in a row whose correctness turns on stripping comments first (c,
+f, now g). Guard c's `stripComments()` is string-aware and offset-preserving so line
+numbers stay truthful — **reuse it, do not write a second one.** It already lives in
+`src/guards/asset-path.ts`; export it rather than copying it.
+
+**`@layer` — every one of the 15 CSS files contains at least one `@layer`.** But that is
+NOT the check. A file having `@layer` once does not prove every RULE sits inside a layer
+block, and an unlayered rule beats every layered one in the cascade regardless of
+specificity — which is the whole reason spec §5 demands layering. **This is the one thing
+the survey did not verify, so it is guard g's first real job:** parse each file's brace
+depth and assert no selector rule sits outside an `@layer` block. Expect `@import`,
+`@charset`, `:root` custom-property blocks and `@media` inside a layer to need thinking
+about; a naive depth counter will get at least one of them wrong.
+
+**Shared work between f and g.** Both walk the same 15 CSS files, both need the same
+comment-stripping, both report `file:line`. Build the reader ONCE — a shared helper in
+`src/guards/` used by both — then two scanner modules and two commits, one concern each.
 
 ### A8 — wire the guards up (buildlist 31) — **DONE 2026-09-07**
 

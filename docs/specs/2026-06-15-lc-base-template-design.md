@@ -59,7 +59,10 @@ The template ships with three dev tools (debug sandbox, exercise showcase, examp
 
 **React + Vite + Bun + TypeScript + Zod + Tailwind + shadcn + Lucide.**
 
-- **Bun** = package manager, runtime, test runner (`bun test`). Setup = `git clone && bun install`.
+- **Bun** = package manager and runtime. Setup = `git clone && bun install`. **Vitest** is
+  the test runner (`bun run test`) — changed 2026-07-12; Bun's own runner throws on the
+  `import.meta.glob` in `load-lo-glob.ts` and tdd-guard ships no reporter for it. See
+  `docs/TOOLING.md`.
 - **Vite** = dev server + bundler (react plugin, multi-page debug entries, static pre-render build). Bun is NOT the bundler.
 - **Husky** self-installs via the `prepare` script on `bun install`. Dev configures nothing.
 - `bun.lockb` committed.

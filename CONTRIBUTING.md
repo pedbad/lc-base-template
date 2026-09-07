@@ -41,6 +41,7 @@ below is active immediately, no manual `git config` step.
 | `bun run build`        | Type-check + bundle + prerender the landing page and one HTML per LO |
 | `bun run preview`      | Serve the production build locally                                   |
 | `bun run test`         | Run the test suite (Vitest, one-shot)                                |
+| `bun run guards`       | Just the repo-wide guard sweeps — fast pre-commit check              |
 | `bun run test:watch`   | Vitest in watch mode                                                 |
 | `bun run lint`         | ESLint over the repo                                                 |
 | `bun run lint:css`     | Stylelint over `src/**/*.css`                                        |
@@ -193,9 +194,11 @@ These are locked spec decisions, documented here when each lands:
   section-scoped ordinal+type folders (`01-fill-gaps/`). File structure mirrors the
   rendered page; a guard enforces folder↔config match.
 - **Exercise authoring contract** — the config shape each exercise type expects.
-- **The 8 guards** (a–h) — what each checks, what fails, and how to fix it. Three are
-  live: **a** config-schema (Zod at load), **c** asset-path and **d** asset-existence
-  (both in `src/guards/`). They are Vitest tests, so `bun run test` already enforces
-  them. Remaining: b, e, f, g, h — see [`docs/process/TODO.md`](docs/process/TODO.md) §A.
+- **The 8 guards** (a–h) — what each checks, what fails, and how to fix it. Five are
+  live: **a** config-schema (Zod at load), plus **b** naming + render-mirror, **c**
+  asset-path, **d** asset-existence and **e** registry completeness (those four in
+  `src/guards/`). They are Vitest tests, so `bun run test` already enforces them, and
+  `bun run guards` runs the four sweeps on their own in about half a second. Remaining:
+  f, g, h — see [`docs/process/TODO.md`](docs/process/TODO.md) §A.
 - **Theming & tokens** — single-theme-per-clone, tokens only (no raw hex/px),
   CSS in `@layer`, no `!important`.
