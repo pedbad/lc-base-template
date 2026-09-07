@@ -184,7 +184,27 @@ DEV ARTIFACTS
         `bun run build` = course only, `SHOWCASE=1 bun run build` = + showcase. Dev
         unaffected — Vite serves root-level .html regardless of the input list.
 [ ] 18 Sandbox renders docs as HTML
-GUARDS (each: failing fixture → block → green) — 5 of 8 open; do b next, see TODO.md §A
+GUARDS (each: failing fixture → block → green) — 4 of 8 open; do e next, see TODO.md §A
+    [x] 20b DONE 2026-09-07 — src/guards/render-mirror.ts + 17 tests. An LO exists
+        because its FOLDER exists; its page structure exists because lo.json NAMES it.
+        Two registries, so two silent drifts: a ref with no folder behind it (the page
+        renders short, saying nothing), and a folder no ref names (the author writes an
+        exercise, it parses, it never appears). The mechanism is a SET DIFF per kind
+        (blocks/exercises/modals) — neither a URL sink like c nor a key like d would
+        work, because a ref is only wrong RELATIVE to the folders and vice versa.
+        Unreferenced is an ERROR, not a warning: lo-schema.ts decision D1 already
+        declares refs rather than globbing them precisely so an undeclared file is
+        detectable, a Vitest warning has no reader, and the drafting escape hatch is to
+        declare the ref. The NAMING half is here too — loSlug() is called through (never
+        re-implemented) so every lo-config/ folder is provably lo-NN-<slug>; that was
+        already loud at build time via loOrdinal(), but NO test asserted it, so a
+        malformed folder survived a green `bun run test` and died at `bun run build`.
+        Manifest read raw and defensively, with find-count floors, so a lo.json reshape
+        fails loudly instead of silently disabling the guard. Thinned the now-duplicated
+        existsSync half out of example-lo.test.ts, which was written as this guard's
+        seed. Repo was already clean; verified by renaming a referenced folder, adding
+        an unreferenced one (80 other test files stayed green — proof it was silent),
+        and adding a valid LO whose only fault was its folder name.
     [x] 21c DONE 2026-09-03 — src/guards/asset-path.ts + 21 tests. Source scan: an
         asset-looking string literal in a URL sink (src/href/poster/srcSet attr, or
         AudioManager.play/new Audio/fetch arg) without resolveAsset() fails the suite;
@@ -202,7 +222,7 @@ GUARDS (each: failing fixture → block → green) — 5 of 8 open; do b next, s
         why resolveAsset normalises). The sweep asserts a find-count floor so a schema
         field rename fails loudly instead of silently disabling the guard. Verified by
         pointing lo.json at a missing image and watching it block.
-[x] 19 a config-schema   [ ] 20 b naming+render-mirror   [x] 21 c asset-path
+[x] 19 a config-schema   [x] 20 b naming+render-mirror   [x] 21 c asset-path
 [x] 22 d asset-existence [ ] 23 e registry               [ ] 24 f token-integrity
 [ ] 25 g css-layers      [ ] 26 h w3c/a11y
 ENGINES
@@ -213,7 +233,7 @@ DOCS + CI + DEPLOY
 [ ] 30 STRUCTURE tree auto-gen (bun run docs:tree)
 [~] 31 GitHub Actions CI (oven-sh/setup-bun) — .github/workflows/ci.yml runs lint ·
     lint:css · format:check · test · build. NOTE: guards are Vitest tests, so each one
-    joins CI automatically the moment it lands — `test` already enforces a, c and d. What
+    joins CI automatically the moment it lands — `test` already enforces a, b, c and d. What
     is still missing is a `bun run guards` script (a named subset for a fast local check);
     31 closes when that exists, not when the guards do.
 [x] 32 Env base path + resolveAsset()/%BASE_URL% + favicon — resolveAsset() (src/lib/assets.ts, BASE_URL-aware); favicon now `%BASE_URL%favicon.svg` in index.html AND exercise-showcase.html (bug #28 closed); `base` reads process.env.BASE_URL in vite.config.ts, so `BASE_URL=/course/ bun run build` feeds bundle + prerender together

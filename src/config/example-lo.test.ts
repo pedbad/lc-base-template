@@ -8,13 +8,18 @@
  *   1. `lo.json` parses against `LoManifestSchema` — ordered `sections[]`, unique
  *      ids, non-empty labels (the schema enforces the last two; the assertions
  *      below prove the shipped example exercises them).
- *   2. Every folder named in a section's `blocks[]` / `exercises[]` exists on disk
- *      (guard b seed: the manifest ref ↔ render-mirror folder match).
- *   3. Every `block.json` parses against `BlockConfigSchema`.
- *   4. Every `exercise.json` parses against its per-`type` engine schema (guard e
+ *   2. Every `block.json` parses against `BlockConfigSchema`.
+ *   3. Every `exercise.json` parses against its per-`type` engine schema (guard e
  *      seed: the `type` must resolve to a shipped engine schema, and `content` must
  *      satisfy that engine's tightened shape — not just the loose envelope) AND
  *      carries the accordion title the LO-facing envelope requires.
+ *
+ * REF ↔ FOLDER EXISTENCE HAS MOVED OUT. This test's original check 2 was the guard b
+ * seed — it walked the manifest and asserted every named folder was on disk. Guard b
+ * (`src/guards/render-mirror.ts`) now does that for EVERY LO folder, in both
+ * directions, so re-asserting it for this one LO would be pure duplication. What is
+ * left here is the part guard b does not do: whether the shipped example an author
+ * copies from actually satisfies its schemas.
  *
  * Spec: docs/specs/lo-semantic-structure.md §1a;
  *       docs/process/2026-08-04-phase-c-part-c-loader-handover.md §3.
@@ -95,17 +100,16 @@ describe('example LO (lo-00-example)', () => {
     expect(exerciseRefs.length).toBeGreaterThan(0);
   });
 
-  it.each(blockRefs)('section "%s" block "%s" folder exists and parses', (_sectionId, ref) => {
+  // Folder existence is guard b's, repo-wide (see the header) — only the parse is here.
+  it.each(blockRefs)('section "%s" block "%s" parses against BlockConfigSchema', (_s, ref) => {
     const file = path.join(LO_DIR, 'blocks', ref, 'block.json');
-    expect(existsSync(file), `missing ${file}`).toBe(true);
     expect(() => BlockConfigSchema.parse(readJson(file))).not.toThrow();
   });
 
   it.each(exerciseRefs)(
-    'section "%s" exercise "%s" folder exists and parses against its engine schema',
+    'section "%s" exercise "%s" parses against its engine schema',
     (_sectionId, ref) => {
       const file = path.join(LO_DIR, 'exercises', ref, 'exercise.json');
-      expect(existsSync(file), `missing ${file}`).toBe(true);
       const raw = readJson(file) as { type?: string };
       const schema = raw.type ? EXERCISE_SCHEMA_BY_TYPE[raw.type] : undefined;
       expect(schema, `no schema mapped for exercise type "${raw.type}"`).toBeDefined();
