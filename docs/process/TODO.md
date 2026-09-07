@@ -47,9 +47,73 @@ that validates RENDERED output. The landing page and the sliding nav have never 
 validated by anything, so h will probably find real problems — plan for a guard plus a fix
 campaign, not one commit.
 
-| Order | Buildlist | Guard | Checks                         | Head start already in repo                              |
-| ----- | --------- | ----- | ------------------------------ | ------------------------------------------------------- |
-| 1     | 26        | **h** | w3c + a11y over rendered pages | landing page + sliding nav are new, unvalidated surface |
+| Order | Buildlist | Guard | Checks                         | Head start already in repo              |
+| ----- | --------- | ----- | ------------------------------ | --------------------------------------- |
+| 1     | 26        | **h** | w3c + a11y over rendered pages | **surveyed 2026-09-07 — see A-h below** |
+
+### A-h — guard h survey (done 2026-09-07, read this before building it)
+
+**HALF OF GUARD h IS ALREADY LIVE AND CI-ENFORCED.** `eslint-plugin-jsx-a11y` is
+installed and `jsxA11y.flatConfigs.recommended` is wired into `eslint.config.js`, so it
+runs in `bun run lint` and in CI today. That file's own comment says so. Two rules are
+deliberately off, with the reason written down — `jsx-a11y/heading-has-content` and
+`jsx-a11y/label-has-associated-control` false-positive on shadcn primitives, the same
+kind of documented exemption guard f makes for `src/components/ui/`.
+
+So guard h's REMAINING scope is only the second half spec §95 and §309 name: an
+automated checker over rendered output. Do not re-derive the JSX half.
+
+**The rendered surface is already clean — same story as f and g.** Surveyed both
+prerendered pages against the spec §17 DOM contract:
+
+| Check                          | `index.html` | `example.html` |
+| ------------------------------ | ------------ | -------------- |
+| `header`/`nav`/`main`/`footer` | 1 each       | 1 each         |
+| `section` == `h2`              | 1 / 1        | 4 / 4          |
+| `article` == `h3`              | 0 / 1        | 5 / 5          |
+| `h4`–`h6`                      | 0            | 0              |
+| `table`                        | 0            | 0              |
+
+Heading order is `h1`→`h2`→`h3` with no skips, and the zero `h4` count is `GrammarLabel`
+doing its job (§17's "no `<h4>` used as a visual label"). No layout tables.
+
+**The sliding nav — flagged here as unvalidated surface — is well built.** Both toggles
+carry `aria-expanded` + `aria-controls`, and the classic failure is absent:
+`lesson-nav-panel` and `mobile-nav-panel` are each referenced once AND defined once in
+the prerendered DOM, so neither `aria-controls` dangles. Every `<button>` has an
+accessible name — visible text (`Lessons`, `open the example popup`) or an `aria-label`.
+The placeholder `<img>` is correctly `alt="" aria-hidden="true"`.
+
+**ONE real defect was found, and is already fixed** (`1ce0275`): `SpeakerSvg` in
+`CircularAudioProgressAnimatedSpeakerDisplay.tsx` was the only inline SVG in the
+prerendered output without `aria-hidden` — 24 of the other 25 had it, including the two
+player icons in `SequenceAudioController.tsx`. Decorative icon inside a control that
+already carries `aria-label`. Exactly the class of defect guard h exists to catch.
+
+**Net: expect a guard, NOT the fix campaign this section used to predict.** One
+attribute was the whole backlog.
+
+**Two decisions the survey settled — these are the expensive half:**
+
+1. **NO jsdom. Stay in node env.** The obvious route (axe-core) needs a DOM, which would
+   reverse the deliberate node-env decision recorded in `docs/TOOLING.md` ("the suite
+   renders via `renderToStaticMarkup` … so no jsdom"). It is not needed: the suite
+   already renders to HTML STRINGS, and a string is all a validator needs.
+   `html-validate` runs on strings and expresses the §17 contract directly (one `h1`, no
+   skipped levels, landmark structure, no layout `<table>`). Prefer it over axe+jsdom,
+   and if you do want axe's WCAG rules later, make that a separate decision and commit.
+2. **DO NOT validate only the two prerendered pages — that would cover 2 of 12 engines.**
+   `example.html` prerenders `select` and `radio-quiz` only; the other ten engines'
+   markup appears nowhere in a default build (they live in the showcase, `SHOWCASE=1`).
+   A guard over the two pages alone would silently skip ten engines — precisely the
+   staleness failure guard d taught. Guard h should render every showcase fixture through
+   `renderToStaticMarkup` and validate each one, plus the two prerendered pages. Same
+   fixtures the showcase uses, all 12 engines, still node env. Assert a FLOOR on the
+   number of fixtures validated so a renamed fixture file cannot empty the sweep.
+
+**Still unsurveyed, in case it matters:** the 12 engines' own markup has not been read —
+only the two types the example LO happens to use. That is where any remaining defect
+would be, and building the guard as decision 2 describes is what will surface it.
 
 ### A-f — guard f (token integrity) — **DONE 2026-09-07, `df6c987`**
 
