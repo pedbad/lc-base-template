@@ -839,6 +839,41 @@ them". 14 tests cover the edges.
   `2026-08-06-post-phase-d-handover.md` §5.2) or the dev server. This extends the rule
   to a second artifact; it does not revisit it.
 
+### markdown-it — the docs hub's renderer _(buildlist 18, spec §14)_
+
+**Decision:** `markdown-it` as a **devDependency**, called from
+`src/build/docs-markdown.ts` at dev-server and build time. It is the only new runtime
+dependency the debug sandbox introduces, and it never reaches a bundle — verified: no
+`dist/assets/*.js` contains it.
+
+- **Build time, not runtime.** The two runtime shapes both break something §14 asks for.
+  `fetch('DESIGNER.md')` needs the docs COPIED into `public/`, which is a second copy of
+  the single source. `import '../../DESIGNER.md?raw'` avoids the copy but puts the raw
+  markdown AND a parser in the browser for a debug page. Rendering in Node and handing
+  the page finished HTML costs the client nothing and works identically in `bun run dev`
+  and `bun run build`, because a Vite plugin generates the module either way.
+- **A virtual module, not a prerender step.** `scripts/prerender.tsx` runs only after
+  `vite build`, so a prerender-based hub would be blank in dev — and dev is where a
+  designer reads it. `src/build/sandbox-docs-plugin.ts` serves `virtual:sandbox-docs`
+  instead, registers the four `.md` files with `addWatchFile`, and watches them so a
+  saved doc reaches the page on the next reload rather than after a server restart.
+- **`html: false` — sanitised by default.** markdown-it ESCAPES raw HTML at that setting,
+  which is sanitising in the parser rather than a second dependency: no DOM-based
+  sanitiser, no post-pass. The docs are repo-authored so today's risk is nil, but
+  provenance is an argument about today's content and markdown permits raw HTML by spec.
+  It costs nothing — the three rendered docs contain no raw HTML at all.
+- **Why markdown-it over `marked`.** `marked` deprecated its own sanitise option and
+  points at DOMPurify, which needs a DOM — awkward in a Node build step and a second
+  dependency for a promise markdown-it keeps with a flag. markdown-it's default preset
+  also ships GFM tables, and these docs are mostly tables.
+- **Heading ids and link rewriting are OURS, not a plugin's.** ~40 lines of renderer
+  rules instead of `markdown-it-anchor` + a link plugin: the hub needs anchors
+  namespaced per doc (four docs on one page = four chances at a duplicate
+  `#the-files`), cross-doc `.md` links turned into in-page anchors, and unrenderable
+  repo paths DE-LINKED rather than pointed at a hardcoded upstream GitHub URL — this
+  repo is a template, and a clone's sandbox must not link to somebody else's
+  repository. No off-the-shelf plugin does that third one.
+
 ---
 
 _Append a new section here as each tool lands._

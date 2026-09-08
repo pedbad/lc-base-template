@@ -92,12 +92,12 @@ work. **Guard c** checks the form; **guard d** checks the file is actually there
 | `src/config/`     | **The content contract** — Zod schemas, course config, UI strings.                                         |
 | `src/styles/`     | **The theme** — the token chain. See [`DESIGNER.md`](DESIGNER.md).                                         |
 | `src/guards/`     | **The eight repo-wide invariant sweeps.** Vitest tests; `bun run guards` runs them.                        |
-| `src/build/`      | Build-time helpers importable by Vite — prerender HTML, dev-server LO pages.                               |
+| `src/build/`      | Build-time helpers importable by Vite — prerender HTML, dev-server LO pages, docs→HTML.                    |
 | `src/lib/`        | Small pure utilities — asset paths, heading ids, language tagging.                                         |
 | `src/hooks/`      | React hooks — theme, hydration state, viewport.                                                            |
 | `src/audio/`      | Audio playback manager and its hook.                                                                       |
 | `src/showcase/`   | The opt-in debug gallery of every engine with sample content.                                              |
-| `src/sandbox/`    | The opt-in debug sandbox — theme tokens, type specimens and the icon sprite.                               |
+| `src/sandbox/`    | The opt-in debug sandbox — tokens, type, the icon sprite and the docs hub.                                 |
 | `src/docs/`       | Documentation checks — the `STRUCTURE.md` tree generator, its freshness test, and the markdown link check. |
 
 ### Inside `src/exercises/`

@@ -71,8 +71,8 @@ bun run preview   # serve the built output locally
 
 A build emits the **course only**. Both debug pages — the exercise showcase
 (`/exercise-showcase.html`, every engine with sample content) and the debug sandbox
-(`/debug-sandbox.html`, theme tokens, type specimens and the icon sprite) — are
-opt-in behind one flag, so neither ever lands on a deployed course:
+(`/debug-sandbox.html`, theme tokens, type specimens, the icon sprite, and the project
+docs rendered from their markdown) — are opt-in behind one flag, so neither ever lands on a deployed course:
 
 ```bash
 DEBUG=1 bun run build   # add dist/exercise-showcase.html + dist/debug-sandbox.html

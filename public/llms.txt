@@ -18,7 +18,9 @@ A build emits a static course: a landing page plus one page per Learning Object.
 Two debug pages exist and are **not part of a deployed course**. The exercise
 showcase (`/exercise-showcase.html`) is a gallery of every engine driven by
 fixtures; the debug sandbox (`/debug-sandbox.html`) is a theme-token, typography
-and icon reference for the designer. Both are **opt-in per build** behind one fail-closed flag (`DEBUG=1 bun run build`,
+and icon reference for the designer that also renders `DESIGNER.md`,
+`CONTRIBUTING.md`, `STRUCTURE.md` and `AGENTS.md` as HTML. Both are
+**opt-in per build** behind one fail-closed flag (`DEBUG=1 bun run build`,
 or the older name `SHOWCASE=1`), so a deployed course contains neither unless
 that flag was set. They are listed here so their absence is not mistaken for a
 broken link; do not treat either as a page of the course.

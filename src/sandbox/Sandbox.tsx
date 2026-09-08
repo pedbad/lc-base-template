@@ -26,12 +26,14 @@ import ThemeToggle from '@/components/shell/ThemeToggle';
 import PaletteSection from './PaletteSection';
 import TypographySection from './TypographySection';
 import IconsSection from './IconsSection';
+import DocsSection from './DocsSection';
 
 /** In-page nav. Ids match the `id` on each section below. */
 const SECTIONS = [
   { id: 'palette', label: 'Colour' },
   { id: 'type', label: 'Typography' },
   { id: 'icons', label: 'Icons' },
+  { id: 'docs', label: 'Docs' },
 ] as const;
 
 export default function Sandbox() {
@@ -84,11 +86,13 @@ export default function Sandbox() {
         <PaletteSection />
         <TypographySection />
         <IconsSection />
+        <DocsSection />
       </main>
 
       <footer className="border-t border-border px-6 py-8 text-center text-sm text-muted-foreground">
-        Built from <code>src/styles/palette.css</code>, <code>src/styles/tokens.css</code> and{' '}
-        <code>public/icons.svg</code>. Change those, not this page.
+        Built from <code>src/styles/palette.css</code>, <code>src/styles/tokens.css</code>,{' '}
+        <code>public/icons.svg</code> and the markdown docs in the repo root. Change those, not this
+        page.
       </footer>
     </div>
   );

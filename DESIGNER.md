@@ -107,11 +107,13 @@ It is one page, built from the same files you edit, so it can never be out of da
 Nothing on it is hand-written: every square, specimen and icon is generated from
 `palette.css`, `tokens.css` and `public/icons.svg` as they are **right now**.
 
-| Section        | What it shows                                                        | Read it when…                                        |
-| -------------- | -------------------------------------------------------------------- | ---------------------------------------------------- |
-| **Colour**     | Every colour token as a swatch, in its three layers                  | you need a token's name, or want to check a re-skin  |
-| **Typography** | Both font families as specimens, plus the four sizes the course uses | you changed fonts, or want to know if Feijoa is live |
-| **Icons**      | Every icon in the sprite, with its id                                | you need an icon's name                              |
+| Section        | What it shows                                                                     | Read it when…                                        |
+| -------------- | --------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| **Colour**     | Every colour token as a swatch, in its three layers                               | you need a token's name, or want to check a re-skin  |
+| **Typography** | Both font families as specimens, plus the four sizes the course uses              | you changed fonts, or want to know if Feijoa is live |
+| **Icons**      | Every icon in the sprite, with its id                                             | you need an icon's name                              |
+| **Docs**       | This guide, plus CONTRIBUTING, STRUCTURE and AGENTS, rendered from their markdown | you would rather read the docs in the browser        |
+| **Docs**       | This guide, plus CONTRIBUTING, STRUCTURE and AGENTS, rendered from their markdown | you want the docs without leaving the browser        |
 
 Three things worth knowing before you trust it:
 
@@ -125,6 +127,14 @@ Three things worth knowing before you trust it:
 - **If the two type specimens look identical, Feijoa is not installed.** That is
   correct behaviour, not a bug — the font is commercial and never committed, so it
   falls back to Open Sans. See "Feijoa is never committed" below.
+- **The Docs section is this file, not a copy of it.** It is rendered from the
+  markdown as you save it, so it cannot fall behind. A link there to a repo file
+  the hub does not render shows as plain grey text rather than a dead click — open
+  that path in the repo instead.
+- **The Docs section is this file, not a copy of it.** It is rendered from the
+  markdown as you save it, so it cannot fall behind. A link there to a repo file
+  the hub does not render shows as plain grey text rather than a dead click — open
+  that path in the repo.
 
 The sandbox is a **debug page, not part of the course**. It is absent from anything
 deployed unless a build explicitly asks for it (`DEBUG=1 bun run build`), so

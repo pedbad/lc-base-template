@@ -1,0 +1,147 @@
+/* ==========================================================================
+   sandbox.css — prose styling for the docs hub (buildlist 18, spec §14)
+   ==========================================================================
+   The hub renders markdown the repo already owns, so its HTML is <h2>, <table>,
+   <pre> and <li> with no classes to hang utilities on — the one place in this
+   repo where element selectors are the right tool rather than a shortcut.
+
+   SCOPED TO `.doc-prose`, so nothing here can reach the rest of the app. Inside
+   that scope the rules are ordinary: every colour is a token, every length is
+   `rem` (which scales with the reader's browser font size; `px` does not), and
+   the whole file is in `@layer components` so a Tailwind utility can still win.
+   Guards f and g check all three.
+   ========================================================================== */
+
+@layer components {
+  .doc-prose {
+    max-width: 68ch;
+    line-height: 1.65;
+  }
+
+  .doc-prose > * + * {
+    margin-top: 0.9rem;
+  }
+
+  .doc-prose h1,
+  .doc-prose h2,
+  .doc-prose h3,
+  .doc-prose h4 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    line-height: 1.25;
+    scroll-margin-top: 1.5rem;
+  }
+
+  .doc-prose h1 {
+    font-size: 1.6rem;
+  }
+
+  .doc-prose h2 {
+    font-size: 1.3rem;
+  }
+
+  .doc-prose h3 {
+    font-size: 1.1rem;
+  }
+
+  .doc-prose h4 {
+    font-size: 1rem;
+  }
+
+  .doc-prose > h2,
+  .doc-prose > h3,
+  .doc-prose > h4 {
+    margin-top: 2rem;
+  }
+
+  .doc-prose a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.2rem;
+  }
+
+  .doc-prose a:hover {
+    text-decoration: none;
+  }
+
+  /* A repo path the hub cannot open: readable, and visibly not a link. */
+  .doc-prose .doc-path {
+    font-family: monospace;
+    color: var(--color-muted-foreground);
+  }
+
+  .doc-prose code {
+    padding: 0.1rem 0.3rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-muted);
+    font-size: 0.9em;
+  }
+
+  .doc-prose pre {
+    overflow-x: auto;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-muted);
+  }
+
+  .doc-prose pre code {
+    padding: 0;
+    background: none;
+  }
+
+  .doc-prose ul,
+  .doc-prose ol {
+    padding-left: 1.4rem;
+  }
+
+  .doc-prose ul {
+    list-style: disc;
+  }
+
+  .doc-prose ol {
+    list-style: decimal;
+  }
+
+  .doc-prose li + li {
+    margin-top: 0.35rem;
+  }
+
+  .doc-prose blockquote {
+    padding-left: 1rem;
+    border-left: 0.2rem solid var(--color-border);
+    color: var(--color-muted-foreground);
+  }
+
+  /* Wide tables scroll inside their own wrapper rather than the page. */
+  .doc-prose table {
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .doc-prose th,
+  .doc-prose td {
+    padding: 0.4rem 0.7rem;
+    border: 1px solid var(--color-border);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .doc-prose th {
+    background: var(--color-muted);
+    font-weight: 600;
+  }
+
+  .doc-prose hr {
+    border: 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .doc-prose img {
+    max-width: 100%;
+    height: auto;
+  }
+}

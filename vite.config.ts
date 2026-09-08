@@ -4,6 +4,7 @@ import path from 'node:path';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { loDevPages } from './src/build/lo-dev-pages';
+import { sandboxDocs } from './src/build/sandbox-docs-plugin';
 import { debugEntries } from './src/build/build-entries';
 
 // https://vite.dev/config/
@@ -25,7 +26,11 @@ export default defineConfig({
   // re-renders the landing page (Phase D decision A, revised 2026-08-06 — see
   // docs/TOOLING.md). The LO list is read from lo-config/ per request, so there is no
   // entry list here to drift from the folders on disk.
-  plugins: [react(), tailwindcss(), loDevPages()],
+  // sandboxDocs() renders the markdown docs into `virtual:sandbox-docs` at dev-server
+  // and build time, so the debug sandbox's Docs hub shows the real `.md` files with no
+  // copy to drift and no markdown parser in any bundle (spec §14, buildlist 18). It is
+  // inert for every entry that does not import that module.
+  plugins: [react(), tailwindcss(), loDevPages(), sandboxDocs(import.meta.dirname)],
   // `@` → ./src so shadcn component imports resolve (e.g. `@/components/ui/button`).
   resolve: {
     alias: {
