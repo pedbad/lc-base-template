@@ -16,8 +16,12 @@ jobs:
     name: Lint, test, build
     runs-on: ubuntu-latest
     steps:
+      # v5+ declares `using: node24`. v4 declared node20, which GitHub is retiring
+      # from its runners — it kept working only because runners force node20 actions
+      # onto Node 24 anyway, i.e. on a runtime the action never claimed to support.
+      # This pins the declaration to the runtime it actually runs on.
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
