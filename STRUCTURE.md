@@ -97,6 +97,7 @@ work. **Guard c** checks the form; **guard d** checks the file is actually there
 | `src/hooks/`      | React hooks — theme, hydration state, viewport.                                                            |
 | `src/audio/`      | Audio playback manager and its hook.                                                                       |
 | `src/showcase/`   | The opt-in debug gallery of every engine with sample content.                                              |
+| `src/sandbox/`    | The opt-in debug sandbox — theme tokens, type specimens and the icon sprite.                               |
 | `src/docs/`       | Documentation checks — the `STRUCTURE.md` tree generator, its freshness test, and the markdown link check. |
 
 ### Inside `src/exercises/`
@@ -242,6 +243,7 @@ as far as the tree is concerned.
     │   ├── blocks/
     │   └── rich-text/
     │       └── modal/
+    ├── sandbox/
     ├── showcase/
     └── styles/
 ```

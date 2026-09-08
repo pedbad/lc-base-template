@@ -150,8 +150,8 @@ describe('the repo itself obeys guard c', () => {
   });
 
   it('prefixes every static <head> asset with %BASE_URL%', () => {
-    const violations = ['index.html', 'exercise-showcase.html'].flatMap((name) =>
-      findRelativeHeadAssets(readFileSync(path.join(REPO_ROOT, name), 'utf-8'), name),
+    const violations = ['index.html', 'exercise-showcase.html', 'debug-sandbox.html'].flatMap(
+      (name) => findRelativeHeadAssets(readFileSync(path.join(REPO_ROOT, name), 'utf-8'), name),
     );
     expect(
       violations,

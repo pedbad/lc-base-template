@@ -168,7 +168,9 @@ forbids self-approval. The solo-safe subset is PR required + status checks only.
 
 Resolved by making the entry **opt-in**: `bun run build` emits the course only,
 `SHOWCASE=1 bun run build` adds `dist/exercise-showcase.html` back. The decision rule
-lives in `src/build/build-entries.ts` (`isShowcaseRequested`), which fails CLOSED —
+lives in `src/build/build-entries.ts` (`isShowcaseRequested` — renamed to
+`isDebugRequested` on 2026-09-08 when the debug sandbox landed behind the same flag;
+`SHOWCASE=1` still works, see `docs/TOOLING.md`), which fails CLOSED —
 absent, empty, `0`, `false` or anything unrecognised all mean "do not build it", because
 a truthiness check on the raw string would read `SHOWCASE=0` as ON and publish the
 gallery. 5 tests cover those edges.

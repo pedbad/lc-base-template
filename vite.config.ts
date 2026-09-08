@@ -4,7 +4,7 @@ import path from 'node:path';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { loDevPages } from './src/build/lo-dev-pages';
-import { isShowcaseRequested } from './src/build/build-entries';
+import { debugEntries } from './src/build/build-entries';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -32,19 +32,19 @@ export default defineConfig({
       '@': path.resolve(import.meta.dirname, './src'),
     },
   },
-  // Multi-page build. The course (index.html) always builds. The debug-only exercise
-  // showcase is OPT-IN — `SHOWCASE=1 bun run build` — because an unconditional entry
-  // put `dist/exercise-showcase.html` on every deploy: unlinked, but a public URL on a
-  // live course (Phase C · Part D §5, closed 2026-09-03). See src/build/build-entries.ts
-  // for the fail-closed rule. The DEV server is unaffected: Vite serves any root-level
-  // .html regardless of this list, so /exercise-showcase.html still works in `bun run dev`.
+  // Multi-page build. The course (index.html) always builds. The two debug-only pages —
+  // the exercise showcase and the designer's sandbox — are OPT-IN behind one flag,
+  // `DEBUG=1 bun run build`, because an unconditional entry put
+  // `dist/exercise-showcase.html` on every deploy: unlinked, but a public URL on a live
+  // course (Phase C · Part D §5, closed 2026-09-03). See src/build/build-entries.ts for
+  // the fail-closed rule, the entry list, and why `SHOWCASE=1` still works. The DEV
+  // server is unaffected: Vite serves any root-level .html regardless of this list, so
+  // /exercise-showcase.html and /debug-sandbox.html still work in `bun run dev`.
   build: {
     rollupOptions: {
       input: {
         main: path.resolve(import.meta.dirname, 'index.html'),
-        ...(isShowcaseRequested(process.env)
-          ? { showcase: path.resolve(import.meta.dirname, 'exercise-showcase.html') }
-          : {}),
+        ...debugEntries(process.env, import.meta.dirname),
       },
     },
   },

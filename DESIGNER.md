@@ -94,6 +94,46 @@ All five are in **`src/styles/`**. `index.css` imports `palette.css` then
 
 ---
 
+## How to read the sandbox
+
+The table above says which file to open. The **sandbox** shows you what is in it.
+With `bun run dev` running, open:
+
+```text
+http://localhost:5173/debug-sandbox.html
+```
+
+It is one page, built from the same files you edit, so it can never be out of date.
+Nothing on it is hand-written: every square, specimen and icon is generated from
+`palette.css`, `tokens.css` and `public/icons.svg` as they are **right now**.
+
+| Section        | What it shows                                                        | Read it when…                                        |
+| -------------- | -------------------------------------------------------------------- | ---------------------------------------------------- |
+| **Colour**     | Every colour token as a swatch, in its three layers                  | you need a token's name, or want to check a re-skin  |
+| **Typography** | Both font families as specimens, plus the four sizes the course uses | you changed fonts, or want to know if Feijoa is live |
+| **Icons**      | Every icon in the sprite, with its id                                | you need an icon's name                              |
+
+Three things worth knowing before you trust it:
+
+- **Layer 1 is what you edit; Layer 2 is what you check.** The primitives come
+  first because they are the one-file re-skin. The semantic pairs below them are
+  the result — a surface with the text colour it guarantees contrast for. Change a
+  primitive, save, and every pair updates in front of you.
+- **Use the theme switch at the top right.** Half of what the page shows is a
+  light/dark pair, and the two are set independently in `tokens.css`. A re-skin is
+  not finished until both look right.
+- **If the two type specimens look identical, Feijoa is not installed.** That is
+  correct behaviour, not a bug — the font is commercial and never committed, so it
+  falls back to Open Sans. See "Feijoa is never committed" below.
+
+The sandbox is a **debug page, not part of the course**. It is absent from anything
+deployed unless a build explicitly asks for it (`DEBUG=1 bun run build`), so
+nothing you do there can reach a learner. The exercise showcase — every exercise
+type with sample content — sits behind the same flag and is linked from the
+sandbox's own nav.
+
+---
+
 ## Job 1 — re-skin the brand (change the colours)
 
 Open **`src/styles/palette.css`** and change the hex values. That is the whole job.

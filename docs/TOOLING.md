@@ -817,6 +817,28 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   (not `hidden`, which cannot slide), Escape/focus-trap/focus-restore/scroll-lock in
   ~50 lines, motion in CSS so `prefers-reduced-motion` is honoured without JS.
 
+### Debug artifacts — one `DEBUG` flag, not two _(buildlist 16, spec §14)_
+
+**Decision:** the repo has two debug pages — `exercise-showcase.html` and
+`debug-sandbox.html` — and ONE env flag emits both: `DEBUG=1 bun run build`. The rule
+lives in `src/build/build-entries.ts` (`isDebugRequested`, `debugEntries`) and fails
+CLOSED: absent, empty, `0`, `false` or anything unrecognised all mean "do not build
+them". 14 tests cover the edges.
+
+- **Why one flag and not two.** The dev server serves both pages regardless of
+  `rollupOptions.input`, so nobody needs a deploy carrying one debug page and not the
+  other. Two flags would be two fail-closed rules to keep in step for no gain. One name,
+  one decision, one place a mistake can be made — and the mistake this guards against
+  publishes a debug page on a live course, so the surface is worth minimising.
+- **Why `SHOWCASE` still works.** It was the flag's name before the sandbox existed and
+  it is documented in dated handover records and in the spec. Rewriting historical
+  records to match a renamed variable is worse than accepting an alias, so both names go
+  through the same list and the same check: `DEBUG_ENV_VARS = ['DEBUG', 'SHOWCASE']`. It
+  is an alias, not a second code path, and either name turning on emits both entries.
+- **What did not change:** the fail-closed reasoning from 2026-09-03 (see
+  `2026-08-06-post-phase-d-handover.md` §5.2) or the dev server. This extends the rule
+  to a second artifact; it does not revisit it.
+
 ---
 
 _Append a new section here as each tool lands._

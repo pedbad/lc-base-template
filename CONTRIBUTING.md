@@ -41,19 +41,20 @@ below is active immediately, no manual `git config` step.
 
 ## Everyday commands
 
-| Command                | What it does                                                         |
-| ---------------------- | -------------------------------------------------------------------- |
-| `bun run dev`          | Vite dev server, hot reload — landing page and every LO page         |
-| `bun run build`        | Type-check + bundle + prerender the landing page and one HTML per LO |
-| `bun run preview`      | Serve the production build locally                                   |
-| `bun run test`         | Run the test suite (Vitest, one-shot)                                |
-| `bun run guards`       | Just the repo-wide guard sweeps — fast pre-commit check              |
-| `bun run test:watch`   | Vitest in watch mode                                                 |
-| `bun run lint`         | ESLint over the repo                                                 |
-| `bun run lint:css`     | Stylelint over `src/**/*.css`                                        |
-| `bun run format`       | Prettier — rewrite all files to the house style                      |
-| `bun run format:check` | Prettier — verify formatting without writing                         |
-| `bun run docs:tree`    | Regenerate the folder tree in `STRUCTURE.md`                         |
+| Command                 | What it does                                                         |
+| ----------------------- | -------------------------------------------------------------------- |
+| `bun run dev`           | Vite dev server, hot reload — landing page and every LO page         |
+| `bun run build`         | Type-check + bundle + prerender the landing page and one HTML per LO |
+| `bun run preview`       | Serve the production build locally                                   |
+| `bun run test`          | Run the test suite (Vitest, one-shot)                                |
+| `bun run guards`        | Just the repo-wide guard sweeps — fast pre-commit check              |
+| `bun run test:watch`    | Vitest in watch mode                                                 |
+| `bun run lint`          | ESLint over the repo                                                 |
+| `bun run lint:css`      | Stylelint over `src/**/*.css`                                        |
+| `bun run format`        | Prettier — rewrite all files to the house style                      |
+| `bun run format:check`  | Prettier — verify formatting without writing                         |
+| `bun run docs:tree`     | Regenerate the folder tree in `STRUCTURE.md`                         |
+| `DEBUG=1 bun run build` | Build, plus the two debug pages — showcase and sandbox               |
 
 Serving from a sub-path (both deploy targets do) is one env var — it feeds the bundle
 and the prerender pass together, so hashed assets, the favicon and runtime audio/image
@@ -206,8 +207,8 @@ These are locked spec decisions, documented here when each lands:
   asset-path, **d** asset-existence, **e** registry completeness, **f** token integrity
   (no raw hex/px bypassing the token chain), **g** CSS layer discipline (every rule in
   `@layer`, no `!important`) and **h** semantic DOM (the spec §17 contract over rendered
-  output) — those seven in `src/guards/`. They are Vitest tests, so `bun run test`
-  already enforces them, and `bun run guards` runs the seven sweeps on their own in under
+  output) — those eight in `src/guards/`. They are Vitest tests, so `bun run test`
+  already enforces them, and `bun run guards` runs the eight sweeps on their own in under
   a second. Guard h has a second half that is not in `src/guards/` at all:
   `eslint-plugin-jsx-a11y` in `eslint.config.js`, which lints the JSX as you write it —
   so an a11y mistake can fail either `bun run lint` or `bun run test`, depending on

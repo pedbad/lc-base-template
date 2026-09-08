@@ -69,14 +69,19 @@ bun run build     # type-check, bundle, then prerender the landing page + one HT
 bun run preview   # serve the built output locally
 ```
 
-A build emits the **course only**. The exercise showcase — the debug gallery of every
-engine at `/exercise-showcase.html` — is opt-in, so it never lands on a deployed course:
+A build emits the **course only**. Both debug pages — the exercise showcase
+(`/exercise-showcase.html`, every engine with sample content) and the debug sandbox
+(`/debug-sandbox.html`, theme tokens, type specimens and the icon sprite) — are
+opt-in behind one flag, so neither ever lands on a deployed course:
 
 ```bash
-SHOWCASE=1 bun run build   # add dist/exercise-showcase.html to this build
+DEBUG=1 bun run build   # add dist/exercise-showcase.html + dist/debug-sandbox.html
 ```
 
-`bun run dev` serves the showcase either way; the flag only affects what a build emits.
+The flag fails closed: absent, empty, `0`, `false` or anything unrecognised all mean
+"do not build them". `SHOWCASE=1` still works as the older name for the same flag.
+
+`bun run dev` serves both pages either way; the flag only affects what a build emits.
 
 The build emits **one real HTML file per folder in `lo-config/`** (`lo-00-example` →
 `dist/example.html`) plus **`dist/index.html`, the course landing page** — hero copy

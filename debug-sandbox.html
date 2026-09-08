@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Head asset hrefs go through Vite's BASE_URL token, never a relative or
+         root-absolute path (carry-forward anti-pattern #28) — guard c checks this file
+         alongside index.html. (Don't write the token itself in a comment: Vite
+         substitutes it there too.) -->
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta
+      name="description"
+      content="Debug sandbox for lc-base-template — every theme token, both font families, the icon sprite, and the project docs rendered from their markdown."
+    />
+    <title>Debug Sandbox — lc-base-template</title>
+    <script>
+      // Pre-hydration theme, mirroring index.html: the sandbox is the page where the
+      // theme matters MOST (half of what it shows is a light/dark pair), and without
+      // this every dark-theme reader gets a flash of the light theme. Deliberately
+      // inline and module-free — an imported module is deferred, which is too late.
+      // Mirrors resolveInitialTheme() in src/hooks/useTheme.ts; keep the three in sync.
+      (function () {
+        try {
+          var stored = localStorage.getItem('lc-theme');
+          var isDark =
+            stored === 'dark' ||
+            (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) document.documentElement.classList.add('dark');
+        } catch (error) {
+          // storage or matchMedia unavailable — the light default stands
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <!-- Debug artifact, not course content: this page is OPT-IN per build
+         (`DEBUG=1 bun run build`) and absent from a deployed course. See
+         src/build/build-entries.ts. Not prerendered either — it is a reference for
+         whoever is running the repo, so requiring JavaScript is fine here and nowhere
+         else. -->
+    <div id="root"></div>
+    <script type="module" src="/src/sandbox/main.tsx"></script>
+  </body>
+</html>
