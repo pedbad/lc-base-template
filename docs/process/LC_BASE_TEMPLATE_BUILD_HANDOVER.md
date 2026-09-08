@@ -177,14 +177,81 @@ CONTENT ENGINE
     public/images/lo-placeholder.svg shipped and wired into lo-00-example.
     Full record: docs/process/2026-08-06-phase-d-landing-page-handover.md §5.
 DEV ARTIFACTS
-[ ] 16 Debug sandbox (palette/fonts/SVG/preview)
+[x] 16 DONE 2026-09-08 — debug sandbox, `c5dd291`. debug-sandbox.html +
+    src/sandbox/{Sandbox,PaletteSection,TypographySection,IconsSection}.tsx +
+    sandbox-catalog.ts, 10 tests. The designer-facing page spec §14 names: every colour
+    token as a swatch in its three layers, both font families as specimens, every
+    <symbol> in public/icons.svg with its id.
+    NOTHING ON IT IS HAND-WRITTEN. sandbox-catalog.ts holds token NAMES only — not one
+    hex or length — and every swatch renders var(--token), so the page shows whatever
+    palette.css/tokens.css currently hold and cannot go stale. That is the same
+    one-file-re-skin promise DESIGNER.md makes, one layer up.
+    THE CATALOG IS CHECKED IN BOTH DIRECTIONS: sandbox-catalog.test.ts joins the names
+    back to palette.css, tokens.css and icons.svg, so a renamed token fails the suite
+    AND a newly added one fails until it is listed. The second direction is the one that
+    matters — a primitive no swatch shows is a colour the designer never edits. Filed in
+    src/sandbox/, NOT src/guards/ (that glob is `bun run guards` = the eight spec guards
+    a–h; it stayed at 211), following the src/docs/ precedent.
+    ONE FLAG NOW GATES BOTH DEBUG PAGES. build-entries.ts grew from isShowcaseRequested
+    to isDebugRequested + debugEntries + DEBUG_ENTRY_FILES: `DEBUG=1 bun run build`
+    emits showcase + sandbox, a plain build emits neither (verified — default dist/ is
+    index.html + example.html only). Two flags would have been two fail-closed rules to
+    keep in step for no gain, since dev serves both regardless. SHOWCASE=1 stays
+    recognised as an alias so the dated records that document it stay true.
+    Also: sprite URLs go through resolveAsset() (verified under BASE_URL=/course/),
+    debug-sandbox.html joined guard c's static-<link> sweep so the new root HTML is not
+    unchecked, robots noindex + index.html's pre-hydration theme script are both on it,
+    and it is deliberately NOT prerendered — an audience of one can afford to need JS,
+    which also keeps it out of guard h's rendered-output set.
+    Docs: DESIGNER.md "How to read the sandbox" (spec §14 names that file as its home),
+    STRUCTURE.md row + regenerated tree, README build section, CONTRIBUTING command
+    table, public/llms.txt, TOOLING.md one-flag decision.
 [x] 17 Exercise showcase (built ahead of checklist during Phase B — src/showcase/{Showcase.tsx,fixtures.ts}; 12 engines, 18 fixtures)
+    NOTE 2026-09-08: "12 engines, 18 fixtures" is the Phase B count and is kept as the
+    historical record. Counted today: 15 engines (lazyRegistry.ts) and 24 fixtures
+    across src/exercises/*/*.fixture.ts. Do not quote the old numbers as current.
     [x] 17b Showcase OPT-IN per build (2026-09-03) — it shipped to every deploy as an
         unlinked but public URL since Phase C · Part D §5. src/build/build-entries.ts
         (isShowcaseRequested, fail-closed, 5 tests) gates rollupOptions.input:
         `bun run build` = course only, `SHOWCASE=1 bun run build` = + showcase. Dev
         unaffected — Vite serves root-level .html regardless of the input list.
-[ ] 18 Sandbox renders docs as HTML
+[x] 18 DONE 2026-09-08 — sandbox docs hub, `4029c9a`. src/build/docs-markdown.ts +
+    sandbox-docs-plugin.ts + src/sandbox/{DocsSection.tsx,sandbox.css,sandbox-docs.d.ts},
+    26 tests. Spec §14's constraint held exactly: the .md files are the single source and
+    the hub RENDERS them — DESIGNER, CONTRIBUTING, STRUCTURE, AGENTS. No copied prose
+    exists anywhere in src/sandbox/.
+    BUILD TIME, NOT RUNTIME, and that was the one decision worth settling first.
+    markdown-it is a devDependency called in Node; a Vite plugin serves the result as
+    `virtual:sandbox-docs`. fetch() would need the docs COPIED into public/ — a second
+    copy of the single source, which §14 forbids — and ?raw would ship the markdown plus
+    a parser to the browser. Verified: no dist/assets/*.js contains markdown-it.
+    A VIRTUAL MODULE, NOT A PRERENDER STEP: scripts/prerender.tsx runs only after `vite
+    build`, so a prerender-based hub is blank under `bun run dev` — and dev is where a
+    designer reads it. The plugin registers the four docs with addWatchFile and watches
+    them, so a saved .md reaches the page on the next reload (verified live: an edit to
+    DESIGNER.md appeared with no dev-server restart).
+    SANITISED BY DEFAULT via `html: false` — raw HTML in a doc is escaped, not passed
+    through. Repo-authored content makes today's risk nil, but provenance is an argument
+    about today's content and markdown permits raw HTML by spec. Costs nothing: the four
+    rendered docs contain no raw HTML at all. Escaping in the PARSER also avoids a second
+    dependency (no DOM-based sanitiser, no post-pass) — which is why markdown-it over
+    marked, whose sanitise option is deprecated in favour of DOMPurify.
+    ANCHORS AND LINKS ARE ~40 LINES OF RENDERER RULES, not two plugins: anchors are
+    namespaced per doc (four docs on one page = four chances at a duplicate #the-files),
+    cross-doc .md links become in-page anchors, and repo paths the hub cannot open are
+    DE-LINKED to plain text rather than pointed at a hardcoded GitHub URL — this repo is
+    a TEMPLATE and a clone's sandbox must not link to somebody else's repository. One
+    test asserts every in-page anchor the hub emits resolves to an id it also emits,
+    which is md-links.ts's check applied to rendered output. Verified on the live page:
+    4 docs, 13 tables, zero broken anchors, zero script tags.
+    README IS NOT IN THE HUB: §14 casts it as the GitHub front door, so here it is the
+    one doc with nothing to say — and it opens with a raw <div align="center"> banner.
+    sandbox.css is the only new stylesheet — element selectors scoped under .doc-prose,
+    the one place in this repo where they are right (rendered markdown has no classes),
+    tokens only, rem only, inside @layer components, so guards f and g still hold.
+    Docs: TOOLING.md markdown-it decision; AGENTS.md two new house rules (debug pages
+    opt-in + fail closed; the docs are the single source the sandbox renders);
+    DESIGNER.md, STRUCTURE.md, README.md, public/llms.txt.
 GUARDS (each: failing fixture → block → green) — 0 of 8 open; ALL EIGHT LIVE, see TODO.md §A
     [x] 20b DONE 2026-09-07 — src/guards/render-mirror.ts + 17 tests. An LO exists
         because its FOLDER exists; its page structure exists because lo.json NAMES it.

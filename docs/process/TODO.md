@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-09-08 · **HEAD:** see `git log` · **Suite:** 86 files · 829 tests green
+**Last updated:** 2026-09-08 · **HEAD:** see `git log` · **Suite:** 90 files · 883 tests green
 · CI green · `main` unprotected by decision (job D1).
 
 Non-negotiable constraints for every job below live in
@@ -94,7 +94,8 @@ the guard existed. So the expensive half was NOT flagging correct code:
    tags or invalid nesting. What is left is bad SEMANTICS, and no off-the-shelf ruleset
    expresses "one `<article>` per accordion" or "`section` count == `h2` count".
 3. **All 15 engines, not the 2 a default build prerenders.** `example.html` prerenders
-   `select` and `radio-quiz`; the other thirteen live behind `SHOWCASE=1` and appear in no
+   `select` and `radio-quiz`; the other thirteen live behind `DEBUG=1` (the flag was named
+   `SHOWCASE` until 2026-09-08; both names still work) and appear in no
    built page. A guard over the pages alone would have covered 2 of 15 while reading as
    though it covered the lot — guard d's staleness lesson exactly.
 
@@ -242,8 +243,8 @@ session would otherwise re-derive or repeat.
 the other machine or under another path — it was not located. `AGENTS.md` was therefore
 written from this repo's own conventions and
 `2026-08-06-post-phase-d-handover.md` §3, and **nothing in it is attributed to that
-repo**. The same claim appears in §C1 about `debug-sandbox.html`; **verify it before
-trusting it there too.**
+repo**. The same claim appeared in §C1 about `debug-sandbox.html` and was **wrong there
+too** — see §C.
 
 **Correction 2 — `public/llms.txt` already existed, and §B never mentioned it.** It
 already ships in the build as `dist/llms.txt`. Two AI-facing files with overlapping
@@ -257,13 +258,55 @@ it and does not ship. Update `llms.txt` when the site's pages or engines change;
 `src/styles/README.md`, not a fresh document — that file is now a pointer stub, so there
 is one copy of the theming rules. Do not re-expand the stub.
 
-## C. Dev artifacts (buildlist 16, 18)
+## C. Dev artifacts — 0 of 2 open — closed 2026-09-08
 
-- **C1 — debug sandbox (16).** Never started. Debug-flag-gated page showing palette,
-  fonts and SVG preview, for the designer. `French-Basic-2026` already ships one
-  (`debug-sandbox.html`) — copy the shape rather than inventing it. Natural home for the
-  exercise showcase, which is now opt-in per build (`SHOWCASE=1 bun run build`).
-- **C2 — sandbox renders docs as HTML (18).** Depends on C1.
+Both jobs are done: **C1** the debug sandbox (16, `c5dd291`) and **C2** the docs hub
+(18, `4029c9a`). **Section C is closed** — nothing here is open. What is kept below is
+the two claims the old §C made that turned out to be wrong, plus the four decisions
+worth not re-litigating.
+
+**Correction 1 — `French-Basic-2026` is still NOT on this machine.** §C1 said it "already
+ships one (`debug-sandbox.html`) — copy the shape rather than inventing it". `ls
+../French-Basic-2026` finds nothing here, exactly as in §B. The sandbox was therefore
+designed from this repo's own conventions — `src/showcase/` for the page shape,
+`DESIGNER.md` for what a designer needs, spec §14 for the docs hub — and **nothing in it
+is attributed to that repo**. Two sections in a row have now carried this claim; treat
+any future reference to that repo as unverified until an `ls` says otherwise.
+
+**Correction 2 — buildlist 17's "12 engines, 18 fixtures" is not current.** Counted
+2026-09-08: **15 engines** (`src/exercises/lazyRegistry.ts`) and **24 fixtures** across
+`src/exercises/*/*.fixture.ts`. The buildlist line is a Phase B historical record and
+stays as written, with a dated note beside it. Do not quote the old numbers as current.
+
+**Four decisions worth not re-litigating:**
+
+- **One flag, not two.** `DEBUG=1 bun run build` emits BOTH debug pages; a plain build
+  emits neither. The dev server serves both regardless of `rollupOptions.input`, so a
+  deploy carrying one debug page and not the other has no use case, and two fail-closed
+  rules would be two things to keep in step. `SHOWCASE=1` stays recognised as an alias so
+  the dated records that document it stay true. Rule and tests:
+  `src/build/build-entries.ts`.
+- **Markdown renders at BUILD time.** `markdown-it` is a devDependency and never reaches
+  a bundle. `fetch()` would need the docs copied into `public/` — a second copy of the
+  single source §14 forbids — and `?raw` would ship a parser to the browser. A Vite
+  plugin (`sandbox-docs-plugin.ts`) serves the rendered docs as `virtual:sandbox-docs`,
+  so dev and build render the same way. Full write-up: `docs/TOOLING.md`.
+- **`html: false`, so raw HTML in a doc is escaped.** The docs are repo-authored, so the
+  risk today is nil — the default is sanitised anyway, because provenance is an argument
+  about today's content and a renderer outlives it.
+- **`src/sandbox/`, not `src/showcase/`.** The showcase is one thing: fixtures through
+  `ExerciseHost`. Folding a token reference, a type specimen, an icon sprite and a docs
+  hub into it would leave a folder whose name described a quarter of its contents. The
+  two pages link to each other instead.
+
+**The sandbox is not in `public/llms.txt`'s Pages list, deliberately** — it is not a page
+of the deployed course. Both debug pages ARE named in that file's Notes, with their
+opt-in status, so an agent reading it does not mistake their absence for a broken link.
+
+**Where its docs live:** `DESIGNER.md` "How to read the sandbox" (spec §14 names that
+file as its home), `STRUCTURE.md`'s `src/sandbox/` row, README's build section,
+CONTRIBUTING's command table, `AGENTS.md`'s two new house rules, `docs/TOOLING.md`'s two
+new decision entries.
 
 ## D. Before sharing with other developers
 
@@ -319,3 +362,6 @@ Not forgotten. Decided.
 | 2026-09-08 | `8c95085` | **DESIGNER / STRUCTURE / AGENTS** written (buildlist 29); §B closed      |
 | 2026-09-08 | `f06295a` | **`bun run docs:tree`** + freshness test (buildlist 30), 8 tests         |
 | 2026-09-08 | `99825af` | README + CONTRIBUTING now link the three new books                       |
+| 2026-09-08 | `0bcd7d7` | markdown **link-existence check** added (`src/docs/md-links.ts`)         |
+| 2026-09-08 | `c5dd291` | **debug sandbox** — palette / type / icons (buildlist 16), 10 tests      |
+| 2026-09-08 | `4029c9a` | **sandbox docs hub** — markdown→HTML (buildlist 18), 26 tests            |
