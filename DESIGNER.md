@@ -219,7 +219,9 @@ A px value on a spacing or sizing property (`padding`, `margin`, `gap`, `width`,
 **Fix:** use a spacing token instead. Note that px is **legitimate** and will not
 be flagged on `border*`, `outline*`, `box-shadow`, `backdrop-filter`,
 `perspective` and `transform` — a 1px hairline must not scale with font size —
-and inside a `calc()` that references a token, like `calc(var(--radius) + 4px)`.
+inside a `calc()` that references a token, like `calc(var(--radius) + 4px)`, and
+in a `@media` breakpoint like `@media (width >= 980px)`, which is a condition
+rather than a value.
 
 ### "unlayered rule" or "!important"
 

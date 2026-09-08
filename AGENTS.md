@@ -58,8 +58,8 @@ bun run format && bun run lint && bun run lint:css && bun run test && bun run bu
 
 - **Tokens only.** No raw hex outside `src/styles/palette.css`. No raw px on
   spacing/sizing properties — px is legitimate on `border*`, `outline*`,
-  `box-shadow`, `backdrop-filter`, `perspective`, `transform`, and inside a
-  `calc()` that references a token.
+  `box-shadow`, `backdrop-filter`, `perspective`, `transform`, inside a `calc()`
+  that references a token, and in a `@media` breakpoint.
 - **Every CSS rule inside `@layer`. No `!important`.**
 - **Semantic HTML**, per spec §17. Decorative icons get `aria-hidden`.
 - **A new exercise engine follows the recipe:** schema + pure grading +
