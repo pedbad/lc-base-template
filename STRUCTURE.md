@@ -173,4 +173,60 @@ built from this template. Those paths are owned in
 ## The tree
 
 <!-- docs:tree:start -->
+
+```text
+.
+├── .claude/
+├── .github/
+│   └── workflows/
+├── .husky/
+├── .vscode/
+├── docs/
+│   ├── process/
+│   └── specs/
+├── lo-config/…
+├── public/
+│   ├── audio/…
+│   ├── fonts/…
+│   └── images/…
+├── scripts/
+└── src/
+    ├── audio/
+    ├── build/
+    ├── components/
+    │   ├── audio/
+    │   ├── home/
+    │   ├── shell/
+    │   └── ui/
+    ├── config/
+    ├── docs/
+    ├── exercises/
+    │   ├── conjugation/
+    │   ├── dictation/
+    │   ├── drag-fill-gaps/
+    │   ├── flashcards/
+    │   ├── inline-choice/
+    │   ├── inline-gap/
+    │   ├── lib/
+    │   ├── line-match/
+    │   ├── memory-match/
+    │   ├── phrase-reorder/
+    │   ├── radio-quiz/
+    │   ├── reading/
+    │   ├── select/
+    │   ├── text-entry/
+    │   ├── typed-transform/
+    │   ├── word-order/
+    │   └── word-spot/
+    ├── guards/
+    ├── hooks/
+    ├── lib/
+    ├── lo/
+    │   ├── blocks/
+    │   └── rich-text/
+    │       └── modal/
+    ├── showcase/
+    └── styles/
+```
+
 <!-- docs:tree:end -->
