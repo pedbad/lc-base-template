@@ -2,10 +2,11 @@
 
 How to work in this repo: setup, everyday commands, the commit gate, and conventions.
 
-> **Living document.** This is a stub. It grows one section per build step as features
-> land (guards, per-LO authoring loop, exercise contract, theming). Sections marked
+> **Living document.** It grows one section per build step as features land
+> (guards, per-LO authoring loop, exercise contract, theming). Sections marked
 > _“Coming”_ below are placeholders for locked spec decisions not yet built — see
-> `docs/specs/2026-06-15-lc-base-template-design.md` §14 for the full planned scope.
+> `docs/specs/2026-06-15-lc-base-template-design.md` for the full planned scope.
+> §14's docs hub is no longer among them: all five docs now exist (below).
 >
 > For **why** each tool was chosen (not how to use it), see [`docs/TOOLING.md`](docs/TOOLING.md).
 >

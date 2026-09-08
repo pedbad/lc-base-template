@@ -100,7 +100,7 @@ Open **`src/styles/palette.css`** and change the hex values. That is the whole j
 
 The palette is two ramps: `--slate-*` (the neutral greys the interface is built
 from) and `--cam-*` (the Cambridge brand accents). Replace those values with
-another institution's and the entire course follows — all 19 components, light
+another institution's and the entire course follows — every component, light
 mode and dark mode.
 
 ```bash
@@ -172,7 +172,7 @@ variant files — switching the `--primary` preset must never change the fonts:
 ```
 
 `index.css` maps Tailwind's `--font-sans → --font-body` and
-`--font-heading → --font-display`, which re-types all 19 components at once.
+`--font-heading → --font-display`, which re-types every component at once.
 
 **To re-font a clone:** edit those two tokens, and swap the npm font package or
 the `@font-face` files. Never set `font-family` on an individual component.

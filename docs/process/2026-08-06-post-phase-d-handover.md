@@ -215,8 +215,11 @@ reads every manifest).
 - **28** LICENSE — **DONE 2026-09-03** (`6c62d6d` + follow-up): MIT code + CC-BY-NC-4.0
   content + brand/Feijoa disclaimer, copyright The Language Centre, University of
   Cambridge.
-- **29** DESIGNER / STRUCTURE / AGENTS.md (README and CONTRIBUTING exist and are current).
-- **30** `bun run docs:tree` — auto-generated STRUCTURE tree.
+- **29** DESIGNER / STRUCTURE / AGENTS.md — **DONE 2026-09-08** (`8c95085` + `99825af`):
+  CONTRIBUTING was already current and was ticked as satisfied, not rewritten; DESIGNER.md
+  is a promotion of `src/styles/README.md`, which is now a pointer stub.
+- **30** `bun run docs:tree` — **DONE 2026-09-08** (`f06295a`): generator plus a
+  freshness test in `src/docs/`, deliberately not in `src/guards/`.
 - **31** CI is partial by design: guards b–h join as they land.
 - **33** mark the repo as a GitHub "template repo".
 

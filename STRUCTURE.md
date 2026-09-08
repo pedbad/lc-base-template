@@ -97,6 +97,7 @@ work. **Guard c** checks the form; **guard d** checks the file is actually there
 | `src/hooks/`      | React hooks — theme, hydration state, viewport.                                             |
 | `src/audio/`      | Audio playback manager and its hook.                                                        |
 | `src/showcase/`   | The opt-in debug gallery of every engine with sample content.                               |
+| `src/docs/`       | Documentation tooling — the `STRUCTURE.md` tree generator and its freshness test.           |
 
 ### Inside `src/exercises/`
 
@@ -136,6 +137,7 @@ Run by `bun`, outside the Vite bundle. Two rules apply here and nowhere else:
 | Script                  | Does                                                          |
 | ----------------------- | ------------------------------------------------------------- |
 | `scripts/prerender.tsx` | After `vite build`: writes the landing page + one HTML per LO |
+| `scripts/docs-tree.ts`  | Regenerates the tree in this file (`bun run docs:tree`)       |
 
 ## `docs/` — the written record
 
@@ -170,7 +172,22 @@ built from this template. Those paths are owned in
 
 ---
 
-## The tree
+## Keeping the tree honest
+
+The tree below is written by `bun run docs:tree` and **checked by a test**
+(`src/docs/docs-tree.test.ts`), which regenerates it and fails if what is
+committed here no longer matches the repo. So it cannot quietly go stale, and CI
+catches it — the same argument every guard is built on, applied to docs.
+
+If that test fails, you added or removed a folder. Run:
+
+```bash
+bun run docs:tree
+```
+
+…and commit the result alongside your change. The generator reads `git ls-files`,
+so **stage the new folder first** — an unstaged file is not yet part of the repo
+as far as the tree is concerned.
 
 <!-- docs:tree:start -->
 
