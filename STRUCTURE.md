@@ -84,20 +84,20 @@ work. **Guard c** checks the form; **guard d** checks the file is actually there
 
 ## `src/` — the application
 
-| Folder            | Owns                                                                                        |
-| ----------------- | ------------------------------------------------------------------------------------------- |
-| `src/exercises/`  | **The engines.** One folder per exercise type, plus `lib/` (shared shell) and the registry. |
-| `src/lo/`         | **The loader.** Reads an LO folder, validates it, assembles it into a page.                 |
-| `src/components/` | **The page shell** — header, footer, nav, landing page, audio players, `ui/` primitives.    |
-| `src/config/`     | **The content contract** — Zod schemas, course config, UI strings.                          |
-| `src/styles/`     | **The theme** — the token chain. See [`DESIGNER.md`](DESIGNER.md).                          |
-| `src/guards/`     | **The eight repo-wide invariant sweeps.** Vitest tests; `bun run guards` runs them.         |
-| `src/build/`      | Build-time helpers importable by Vite — prerender HTML, dev-server LO pages.                |
-| `src/lib/`        | Small pure utilities — asset paths, heading ids, language tagging.                          |
-| `src/hooks/`      | React hooks — theme, hydration state, viewport.                                             |
-| `src/audio/`      | Audio playback manager and its hook.                                                        |
-| `src/showcase/`   | The opt-in debug gallery of every engine with sample content.                               |
-| `src/docs/`       | Documentation tooling — the `STRUCTURE.md` tree generator and its freshness test.           |
+| Folder            | Owns                                                                                                       |
+| ----------------- | ---------------------------------------------------------------------------------------------------------- |
+| `src/exercises/`  | **The engines.** One folder per exercise type, plus `lib/` (shared shell) and the registry.                |
+| `src/lo/`         | **The loader.** Reads an LO folder, validates it, assembles it into a page.                                |
+| `src/components/` | **The page shell** — header, footer, nav, landing page, audio players, `ui/` primitives.                   |
+| `src/config/`     | **The content contract** — Zod schemas, course config, UI strings.                                         |
+| `src/styles/`     | **The theme** — the token chain. See [`DESIGNER.md`](DESIGNER.md).                                         |
+| `src/guards/`     | **The eight repo-wide invariant sweeps.** Vitest tests; `bun run guards` runs them.                        |
+| `src/build/`      | Build-time helpers importable by Vite — prerender HTML, dev-server LO pages.                               |
+| `src/lib/`        | Small pure utilities — asset paths, heading ids, language tagging.                                         |
+| `src/hooks/`      | React hooks — theme, hydration state, viewport.                                                            |
+| `src/audio/`      | Audio playback manager and its hook.                                                                       |
+| `src/showcase/`   | The opt-in debug gallery of every engine with sample content.                                              |
+| `src/docs/`       | Documentation checks — the `STRUCTURE.md` tree generator, its freshness test, and the markdown link check. |
 
 ### Inside `src/exercises/`
 
