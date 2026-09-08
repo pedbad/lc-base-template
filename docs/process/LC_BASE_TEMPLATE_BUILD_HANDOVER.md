@@ -378,8 +378,62 @@ ENGINES
 [x] 27 Port remaining 12 exercises (superseded by step 14 Phase B — all 12 ported there, see log above)
 DOCS + CI + DEPLOY
 [x] 28 README + LICENSE (MIT code + CC-BY-NC-4.0 content + brand/Feijoa disclaimer; copyright The Language Centre, University of Cambridge; README License section rewritten to link it. NonCommercial chosen 2026-09-03 over plain BY: content is Language Centre property, commercial reuse needs its permission)
-[ ] 29 CONTRIBUTING / DESIGNER / STRUCTURE / AGENTS.md
-[ ] 30 STRUCTURE tree auto-gen (bun run docs:tree)
+[x] 29 CONTRIBUTING / DESIGNER / STRUCTURE / AGENTS.md — DONE 2026-09-08, `8c95085`
+    (+ `99825af` cross-links). CONTRIBUTING already existed and was current, so it was
+    TICKED AS SATISFIED, not rewritten. DESIGNER.md is a PROMOTION, not a new document:
+    src/styles/README.md already covered the token chain, the three presets and the
+    fonts correctly, so that content moved to the repo root and src/styles/README.md
+    became a pointer stub — two full copies of the theming rules is exactly the drift
+    guards f and g exist to prevent. What the promotion ADDED is what a styles README
+    could not carry: no assumed terminal fluency, and an "if a test goes red" section.
+    That section is the point of the file — guard f fails a commit on a hex outside
+    palette.css, and a designer who meets a red test with no explanation concludes the
+    tooling is broken and stops, which silently costs the template its core promise.
+    STRUCTURE.md is prose plus a "where does my change go?" table pointing its second
+    half at CODEOWNERS; it shipped with EMPTY docs:tree markers and no claim that a
+    generator existed, because that landed in 30. AGENTS.md is machine-facing and short,
+    carrying handover §3's five hard constraints plus `bun run test` NOT `bun test`, and
+    LINKING CONTRIBUTING's guard list rather than forking a second one.
+    TWO §B CLAIMS WERE WRONG AND WERE CORRECTED RATHER THAN TRUSTED: (1)
+    French-Basic-2026 is NOT on this machine (`ls ../French-Basic-2026` finds nothing),
+    so AGENTS.md was written from this repo's own conventions and handover §3 — nothing
+    is attributed to that repo. (2) public/llms.txt ALREADY EXISTED and already ships as
+    dist/llms.txt; §B never mentioned it. Two AI-facing files with overlapping purpose
+    and no stated boundary is the drift the guards exist for, so AGENTS.md states the
+    split in a callout: llms.txt describes the DEPLOYED SITE to agents consuming it and
+    ships in the build; AGENTS.md describes the REPOSITORY to agents editing it and does
+    not ship.
+[x] 30 STRUCTURE tree auto-gen (bun run docs:tree) — DONE 2026-09-08, `f06295a`.
+    src/docs/docs-tree.ts (logic) + scripts/docs-tree.ts (thin CLI) +
+    src/docs/docs-tree.test.ts, 8 tests. THE REAL DECISION WAS NOT HOW TO PRINT A TREE.
+    A hand-written tree lies the moment someone adds a folder — guard d's lesson applied
+    to docs — but A GENERATOR NOBODY RUNS IS EXACTLY AS STALE: generating only moves the
+    staleness from "forgot to edit the doc" to "forgot to run the script". Three ways to
+    close that, and this takes the first: (1) a TEST that regenerates and asserts
+    equality — CHOSEN, because it fails loudly in CI in the same shape as the eight
+    guards and `bun run test` is already what CI runs, so no new CI step and no way to
+    skip it; (2) a lint-staged pre-commit step — rejected, bypassable with --no-verify
+    and it would silently rewrite a file the author never staged; (3) on demand, accept
+    staleness — rejected, that is the hand-written tree with extra steps.
+    THE TEST IS DELIBERATELY NOT IN src/guards/. That glob IS `bun run guards`, and that
+    command means "the eight spec guards a–h"; a docs-freshness check is not one of them
+    and filing it there would make the command's own name a half-truth. Verified: guards
+    stayed at 211 while the suite went 821 → 829.
+    LOGIC IN src/, SCRIPT THIN: Vitest only collects src/**/*.test.{ts,tsx}, so a test
+    beside a script in scripts/ would never run and the freshness check would be dead on
+    arrival. Same split as src/build/prerender-html.ts + scripts/prerender.tsx.
+    SOURCE OF TRUTH IS `git ls-files`, not readdir + a skip list — a hand-kept ignore
+    list is a second copy of .gitignore, free to drift (guard e's convention-over-map
+    argument). It reads the INDEX, so a staged new folder is already visible, which is
+    what makes the pre-commit ordering work.
+    CONTENT FOLDERS ARE COLLAPSED (lo-config, public/audio|fonts|images): expanding them
+    would force every content PR — the green path CONTRIBUTING keeps frictionless — to
+    regenerate the tree or fail CI. THE TREE IS UNANNOTATED, because a generated
+    annotation needs a path→description map this test could not check: it would catch a
+    MISSING folder but never a WRONG description, a surface nothing verifies.
+    Verified by the usual ritual — two planted violations, each blocked with the
+    remediation named while 85 other test files stayed green: a folder deleted from the
+    committed tree, and a real new src/plantedfolder/ staged without regenerating.
 [x] 31 GitHub Actions CI (oven-sh/setup-bun) — .github/workflows/ci.yml runs lint ·
     lint:css · format:check · test · build. Guards are Vitest tests, so each one joins
     CI automatically the moment it lands — `test` already enforces a, b, c, d and e.

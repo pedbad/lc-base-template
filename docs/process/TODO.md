@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-09-07 · **HEAD:** see `git log` · **Suite:** 85 files · 821 tests green
+**Last updated:** 2026-09-08 · **HEAD:** see `git log` · **Suite:** 86 files · 829 tests green
 · CI green · `main` unprotected by decision (job D1).
 
 Non-negotiable constraints for every job below live in
@@ -27,7 +27,9 @@ bun run format && bun run lint && bun run lint:css && bun run test && bun run bu
 
 `bun run guards` (`vitest run src/guards`) is the fast subset — 211 tests in ~0.7s — for
 when you only want to know whether you broke a repo-wide invariant. It is a subset of
-`bun run test`, never a replacement for the gate above.
+`bun run test`, never a replacement for the gate above. It stayed at 211 when §B landed
+**on purpose**: the docs-freshness test lives in `src/docs/`, not `src/guards/`, because
+that glob means "the eight spec guards" and a stale-tree check is not one of them.
 
 `bun run test` (Vitest), **not** `bun test` — Bun's own runner throws on the
 `import.meta.glob` in `load-lo-glob.ts` and reports a false failure.
@@ -228,14 +230,32 @@ makes the glob honest — f and g joined with no edit to the script, and h goes 
 
 ---
 
-## B. Docs (buildlist 29, 30)
+## B. Docs — 0 of 2 open — closed 2026-09-08
 
-- **B1 — the three missing books (29).** README and CONTRIBUTING exist and are current.
-  Never written: `DESIGNER.md` (change colours/fonts without touching code),
-  `STRUCTURE.md` (what every folder is for), `AGENTS.md` (for AI helpers).
-  `French-Basic-2026` has a working `AGENTS.md` to crib from.
-- **B2 — `bun run docs:tree` (30).** Auto-generate the STRUCTURE tree so it cannot go
-  stale. Do after B1, so it has a file to write into. Script does not exist yet.
+Both jobs are done: **B1** the three missing books (29) and **B2** `bun run docs:tree`
+(30). **Section B is closed** — nothing here is open. Kept only for the two claims the
+old §B made that turned out to be wrong, because both are the kind of thing a future
+session would otherwise re-derive or repeat.
+
+**Correction 1 — `French-Basic-2026` is NOT on this machine.** §B said it "has a working
+`AGENTS.md` to crib from"; `ls ../French-Basic-2026` finds nothing here. It may exist on
+the other machine or under another path — it was not located. `AGENTS.md` was therefore
+written from this repo's own conventions and
+`2026-08-06-post-phase-d-handover.md` §3, and **nothing in it is attributed to that
+repo**. The same claim appears in §C1 about `debug-sandbox.html`; **verify it before
+trusting it there too.**
+
+**Correction 2 — `public/llms.txt` already existed, and §B never mentioned it.** It
+already ships in the build as `dist/llms.txt`. Two AI-facing files with overlapping
+purpose and no stated boundary is exactly the drift the guards exist to prevent, so the
+split is now written down in `AGENTS.md`: **`llms.txt` describes the DEPLOYED SITE** to
+agents consuming it and ships; **`AGENTS.md` describes the REPOSITORY** to agents editing
+it and does not ship. Update `llms.txt` when the site's pages or engines change; update
+`AGENTS.md` when a repo rule changes.
+
+**One decision worth not re-litigating:** `DESIGNER.md` was a **promotion** of
+`src/styles/README.md`, not a fresh document — that file is now a pointer stub, so there
+is one copy of the theming rules. Do not re-expand the stub.
 
 ## C. Dev artifacts (buildlist 16, 18)
 
@@ -296,3 +316,6 @@ Not forgotten. Decided.
 | 2026-09-07 | `df6c987` | **guard f — token integrity** (buildlist 24), 27 tests + shared reader   |
 | 2026-09-07 | `69c254b` | **guard g — CSS layer discipline** (buildlist 25), 21 tests              |
 | 2026-09-07 | `99cd77d` | **guard h — semantic DOM over rendered output** (buildlist 26), 84 tests |
+| 2026-09-08 | `8c95085` | **DESIGNER / STRUCTURE / AGENTS** written (buildlist 29); §B closed      |
+| 2026-09-08 | `f06295a` | **`bun run docs:tree`** + freshness test (buildlist 30), 8 tests         |
+| 2026-09-08 | `99825af` | README + CONTRIBUTING now link the three new books                       |
