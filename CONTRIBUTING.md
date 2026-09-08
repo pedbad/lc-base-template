@@ -9,6 +9,11 @@ How to work in this repo: setup, everyday commands, the commit gate, and convent
 >
 > For **why** each tool was chosen (not how to use it), see [`docs/TOOLING.md`](docs/TOOLING.md).
 >
+> Three sibling docs cover the audiences this one does not:
+> [`DESIGNER.md`](DESIGNER.md) (change colours and fonts without touching code),
+> [`STRUCTURE.md`](STRUCTURE.md) (what every folder is for) and
+> [`AGENTS.md`](AGENTS.md) (house rules for AI coding agents).
+>
 > For **what is still open on the template itself**, see
 > [`docs/process/TODO.md`](docs/process/TODO.md) — the live worklist, ordered, with the
 > constraints and the verify gate at the top. Start there in a new session.
@@ -47,6 +52,7 @@ below is active immediately, no manual `git config` step.
 | `bun run lint:css`     | Stylelint over `src/**/*.css`                                        |
 | `bun run format`       | Prettier — rewrite all files to the house style                      |
 | `bun run format:check` | Prettier — verify formatting without writing                         |
+| `bun run docs:tree`    | Regenerate the folder tree in `STRUCTURE.md`                         |
 
 Serving from a sub-path (both deploy targets do) is one env var — it feeds the bundle
 and the prerender pass together, so hashed assets, the favicon and runtime audio/image
@@ -206,5 +212,6 @@ These are locked spec decisions, documented here when each lands:
   so an a11y mistake can fail either `bun run lint` or `bun run test`, depending on
   whether it is visible in one file or only in the assembled page. See
   [`docs/process/TODO.md`](docs/process/TODO.md) §A.
-- **Theming & tokens** — single-theme-per-clone, tokens only (no raw hex/px),
-  CSS in `@layer`, no `!important`.
+- **Theming & tokens** — **landed**: single-theme-per-clone, tokens only (no raw
+  hex/px), CSS in `@layer`, no `!important`. Full guide, written for a designer:
+  [`DESIGNER.md`](DESIGNER.md).

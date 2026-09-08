@@ -115,8 +115,16 @@ prerender pass:
 BASE_URL=/course/ bun run build
 ```
 
-Why each tool was chosen: [`docs/TOOLING.md`](docs/TOOLING.md). How to work in the
-repo: [`CONTRIBUTING.md`](CONTRIBUTING.md).
+## The docs
+
+| File                                           | For                                                        |
+| ---------------------------------------------- | ---------------------------------------------------------- |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md)           | developers — setup, authoring loop, the commit gate        |
+| [`DESIGNER.md`](DESIGNER.md)                   | designers — change colours and fonts without touching code |
+| [`STRUCTURE.md`](STRUCTURE.md)                 | anyone new — what every folder is for                      |
+| [`AGENTS.md`](AGENTS.md)                       | AI coding agents working in this repo                      |
+| [`docs/TOOLING.md`](docs/TOOLING.md)           | why each tool was chosen, and every build decision         |
+| [`docs/process/TODO.md`](docs/process/TODO.md) | what is still open — start here in a new session           |
 
 ## License
 
