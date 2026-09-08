@@ -344,7 +344,8 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
      `stylelint --fix` normalised them to `98.5%`/`0deg` (config-standard's `lightness-notation`
      / `hue-degree-notation`). The pre-commit hook auto-fixes this going forward.
 - **Verified (Step 9, headless — preview MCP mis-targets from a french-lo-1-rooted session):**
-  all 19 components added; `bun run build` ships the Button (`data-slot`, `.inline-flex`) and
+  all 19 components added (18 today — `accordion.tsx` was removed in `c631c93` for the
+  native-`details` LoAccordion); `bun run build` ships the Button (`data-slot`, `.inline-flex`) and
   the Lucide Rocket (exact icon path in JS); `lint`/`lint:css`/`test`/`build` all exit 0.
 
 ---
@@ -367,7 +368,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   black) + Cambridge Blue family + secondary accents for data viz / states.
 - **Reconcile, not bulldoze:** shadcn's `init` (Step 9) had merged placeholder
   oklch vars + an `@theme inline` map into `index.css`. Step 10 **kept** the map
-  (it skins all 19 components), **moved** the values out into `palette.css` /
+  (it skins every shadcn component), **moved** the values out into `palette.css` /
   `tokens.css` swapped to Cambridge brand, and **stripped** the leftover
   Vite-demo CSS (`#root` width, demo `h1/h2/p/code`, `--text/--bg/--accent`,
   `prefers-color-scheme` block).
@@ -410,7 +411,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
     system fallback.
   - `index.css` `@theme inline`: `--font-sans: var(--font-body)` and
     `--font-heading: var(--font-display)`. **These two lines re-skin the type of
-    all 19 shadcn components** — the structure is kept intact, only the values swap.
+    every shadcn component** — the structure is kept intact, only the values swap.
 - **Type baseline — researched decisions (the _why_, for future devs):**
   - **Set on `<html>`, not `<body>`** — `rem` units anchor to `<html>`, and
     `line-height` set here inherits globally (including React portals / shadow DOM,

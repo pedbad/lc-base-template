@@ -69,8 +69,8 @@ bun run build     # type-check, bundle, then prerender the landing page + one HT
 bun run preview   # serve the built output locally
 ```
 
-A build emits the **course only**. The exercise showcase — the debug gallery of all 12
-engines at `/exercise-showcase.html` — is opt-in, so it never lands on a deployed course:
+A build emits the **course only**. The exercise showcase — the debug gallery of every
+engine at `/exercise-showcase.html` — is opt-in, so it never lands on a deployed course:
 
 ```bash
 SHOWCASE=1 bun run build   # add dist/exercise-showcase.html to this build

@@ -218,7 +218,7 @@ Use this as a hard "do not repeat" list.
 
 ### Component Rendering Architecture (Carry Forward)
 
-> 📐 **Diagrams:** see [docs/ARCHITECTURE.md](../ARCHITECTURE.md) for Mermaid diagrams of the four layers, render flow, activity contract, theme cascade, and the new-course / new-activity workflows — the developer-facing version of these rules.
+> 📐 **Diagrams:** see `docs/ARCHITECTURE.md` **in the French LO project** (not in this repo) for Mermaid diagrams of the four layers, render flow, activity contract, theme cascade, and the new-course / new-activity workflows — the developer-facing version of these rules.
 
 Config-driven content apps (a JSON schema naming components to render) must map type → component through a **registry**, never a switch, and must keep the app shell thin.
 
@@ -265,7 +265,7 @@ The companion to the registry rule above: the **content JSON is a typed, nested 
 
 ### CSS Cascade Layers (Carry Forward)
 
-> 📐 **Project-specific detail:** see [docs/process/TAILWIND_V4.md](./TAILWIND_V4.md) for the French LO debt table, all fixes applied, and the future-project checklist.
+> 📐 **Project-specific detail:** see `docs/process/TAILWIND_V4.md` **in the French LO project** (not in this repo) for the French LO debt table, all fixes applied, and the future-project checklist.
 
 Tailwind-first means utilities must always be able to win. The mechanism that guarantees this is **cascade layers**, not specificity.
 

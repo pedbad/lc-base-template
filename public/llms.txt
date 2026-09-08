@@ -6,17 +6,35 @@
 
 ## Pages
 
-- [Home](/index.html): Vite + React starter entry point for the template.
-- [Exercise showcase](/exercise-showcase.html): Live gallery rendering every exercise engine with sample content.
+A build emits a static course: a landing page plus one page per Learning Object.
+
+- [Home](/index.html): the course landing page — hero copy plus one card per
+  Learning Object, linking to that LO's page.
+- `/<slug>.html`: one page per LO folder in `lo-config/`, named after the folder
+  with its `lo-NN-` ordinal dropped (`lo-00-example` → `/example.html`). Each
+  page's body is prerendered, so it reads and navigates without JavaScript, and
+  hydrates into the interactive app when JavaScript runs.
+
+The exercise showcase (`/exercise-showcase.html`) is a debug gallery of every
+engine. It is **opt-in per build** (`SHOWCASE=1 bun run build`) and is absent
+from a deployed course unless that flag was set.
 
 ## Engines
 
-Flashcards, dictation, memory match, drag-to-fill gaps, word order, word spot,
-line match, phrase reorder, radio quiz, and reading comprehension. Each lives under
-`src/exercises/<engine>/` with a pure grader plus a thin React view.
+Fifteen engines ship. Each lives under `src/exercises/<engine>/` with a pure
+grader plus a thin React view, and is registered in
+`src/exercises/lazyRegistry.ts`.
+
+- Choice: select, inline-choice, radio-quiz
+- Typing: inline-gap, typed-transform, dictation, text entry within engines
+- Matching: line-match, memory-match, word-spot
+- Ordering: word-order, phrase-reorder, drag-fill-gaps
+- Study and reading: flashcards, reading, conjugation
 
 ## Notes
 
 - UI chrome strings resolve through `src/config/ui-strings.ts` (English by default);
   authored content carries the target language via `lang` attributes.
 - Design tokens and theme colours live in `src/styles/`.
+- This file describes the **built site**. Repository-level house rules for AI
+  agents editing the source live in `AGENTS.md`, which is not shipped.
