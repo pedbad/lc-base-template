@@ -87,8 +87,15 @@ so speed is **not** an argument against enabling them.
 | ☐ **Do not allow bypassing the above settings**                                 | rule applies to admins too (recommended for handoff)                                                                        |
 | ☐ **Require linear history** _(optional)_                                       | matches the fast-forward-merge workflow                                                                                     |
 
-**Gotcha:** the status-check picker only lists a check **after CI has run at least once**.
-If `Lint, test, build` isn't selectable, open one throwaway PR, let CI run, then it appears.
+**Gotcha — already cleared here.** The status-check picker only lists a check **after CI
+has run at least once**, so on a fresh repo you would open a throwaway PR, let CI run, then
+find it. Not needed on this repo: `Lint, test, build` has run dozens of times on `main`
+(`gh run list`), so it appears in the picker straight away. The step is kept only for
+whoever clones this template into a repo whose CI has never run.
+
+The name in the picker must match the job name in `.github/workflows/ci.yml` — currently
+`Lint, test, build` (line 16). **Rename that job and every merge blocks forever** on a
+required check that no longer reports, so the rename and this doc go in the same commit.
 
 ---
 
