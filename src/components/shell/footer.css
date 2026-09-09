@@ -125,24 +125,40 @@
   }
 
   /* --- Lockup and marks -------------------------------------------------
-     One width token drives the lockup box and the mark row so they agree at
-     every breakpoint; the reference repeated the value in both places. */
+     BOTH ARE HEIGHT-DRIVEN, FROM ONE SCALE. This was the bug: the lockup used to
+     be width-driven (`width: min(26rem, 100%)`), which at 1440 resolved to 416px
+     wide and — through the 1200:173 aspect — only 60px TALL, while the marks were
+     height-driven at 72px. So the subordinate imprint marks outweighed the primary
+     institutional lockup, and the hierarchy read backwards.
+
+     The reference never has this problem because it sizes both by height
+     (`.uclogo a { height: 80px; width: auto }` beside `img.logo { height: 80px }`).
+     Mixing a width constraint with a height constraint is what inverts them.
+
+     The scale now steps together and keeps a deliberate order at every width:
+     lockup > marks > social icon (64 > 48 > 22 at 1440). */
   .footer-marks {
-    --footer-mark-height: 2.75rem;
+    --footer-lockup-height: 2.25rem;
+    --footer-mark-height: 1.75rem;
 
     display: contents;
   }
 
   .footer-lockup {
-    display: inline-block;
-    width: min(20rem, 100%);
+    display: block;
+    max-width: 100%;
     border-radius: var(--radius);
   }
 
+  /* `max-width` with `object-fit` rather than height alone: at 320px a 2.25rem-tall
+     lockup wants ~250px of width, which fits, but a narrower box would otherwise
+     overflow rather than scale. This degrades by shrinking, never by clipping. */
   .footer-lockup-image {
     display: block;
-    width: 100%;
-    height: auto;
+    width: auto;
+    height: var(--footer-lockup-height);
+    max-width: 100%;
+    object-fit: contain;
   }
 
   .footer-mark-row {
@@ -223,7 +239,7 @@
 
   /* The largest text mass in the footer, and the reason the contrast pass had to
      name it: at this size it is normal text and needs 4.5:1, not the 3:1 a large
-     heading would take. Slate-4 on Cambridge Light Blue is 13.06:1; at the 88%
+     heading would take. Slate-4 on Cambridge Blue is 10.35:1; at the 88%
      mix below it is still comfortably clear. */
   .footer-licence {
     grid-area: licence;
@@ -297,7 +313,7 @@
      under guard f, but agreeing with the neighbouring stylesheet matters more. */
   @media (width >= 30rem) {
     .footer-marks {
-      --footer-mark-height: 3.25rem;
+      --footer-mark-height: 2rem;
     }
 
     .footer-mark-row {
@@ -335,19 +351,22 @@
     }
   }
 
+  @media (width >= 48rem) {
+    .footer-marks {
+      --footer-lockup-height: 3rem;
+    }
+  }
+
   @media (width >= 64rem) {
     .footer-marks {
-      --footer-mark-height: 3.5rem;
+      --footer-mark-height: 2.5rem;
     }
   }
 
   @media (width >= 90rem) {
     .footer-marks {
-      --footer-mark-height: 4.5rem;
-    }
-
-    .footer-lockup {
-      width: min(26rem, 100%);
+      --footer-lockup-height: 4rem;
+      --footer-mark-height: 3rem;
     }
   }
 }
