@@ -26,6 +26,7 @@ import { footerConfig } from '@/config/footer.config';
 import FooterLink from './FooterLink';
 import FooterMarks from './FooterMarks';
 import FooterSocial from './FooterSocial';
+import './footer.css';
 
 export default function Footer() {
   const { lockup, copyrightHolder, marks, social, licence, links } = footerConfig;

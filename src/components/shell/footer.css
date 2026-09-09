@@ -1,0 +1,353 @@
+/**
+ * footer.css — the footer colophon (§D · D1). Co-located with the shell components
+ * and imported by Footer.tsx, the same pattern as shell.css and home.css.
+ *
+ * Plain CSS + semantic tokens only. Everything sits inside @layer components so
+ * Tailwind utilities still override where a component needs them (guard g), and no
+ * raw hex or raw px appears outside the property allowlist guard f permits —
+ * `rem` throughout, because a logo height in px does not grow when the reader
+ * raises their browser font size and the band's type would scale away from its marks.
+ *
+ * DIRECTION: editorial masthead → the footer is the colophon. home.css already
+ * commits to that ("reads as a cover rather than a card dump"), and a cover implies a
+ * closing plate: a distinct band rather than a hairline rule, the crest as the deckle
+ * edge between page block and colophon, the marks as an imprint cluster, the licence
+ * as prose.
+ *
+ * SELECTORS ARE FLAT, one class each. The reference reached five levels deep
+ * (`footer .footer-container .footer-links .footer-link-button`), which this repo does
+ * not do — specificity that high cannot be overridden by a utility.
+ */
+
+@layer components {
+  /* --- The band ----------------------------------------------------------
+     `isolation: isolate` gives the crest pseudo-elements their own stacking
+     context, so their z-index cannot fight anything on the page above. The
+     margin clears the crest, which is drawn OUTSIDE the footer's own box. */
+  .footer {
+    position: relative;
+    margin-top: 6rem;
+    background-color: var(--footer);
+    color: var(--footer-foreground);
+    isolation: isolate;
+  }
+
+  /* The deckle edge: a torn silhouette of the band itself, sitting above it.
+     `background: inherit` rather than a pinned colour is what lets one rule serve
+     both themes — the reference set `display: none` in dark and shipped half a
+     design. Percentages in the clip-path, so nothing here is a raw px. */
+  .footer::before {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 4rem;
+    transform: translateY(-100%);
+    background: inherit;
+    clip-path: polygon(
+      0 100%,
+      0 16%,
+      14% 78%,
+      34% 22%,
+      52% 84%,
+      71% 28%,
+      87% 74%,
+      100% 18%,
+      100% 100%
+    );
+    pointer-events: none;
+  }
+
+  /* A soft wash above the tear, so the edge reads as paper rather than as a shape.
+     Every stop is a token derived from --footer, so a re-skin moves the wash with
+     the band and dark mode needs no override. */
+  .footer::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 2.625rem;
+    transform: translateY(-86%);
+    background:
+      conic-gradient(
+        from 210deg at 8% 100%,
+        var(--footer-crest-a-start) 0deg,
+        var(--footer-crest-a-mid) 58deg,
+        transparent 125deg
+      ),
+      conic-gradient(
+        from -30deg at 92% 100%,
+        var(--footer-crest-b-start) 0deg,
+        var(--footer-crest-b-mid) 62deg,
+        transparent 128deg
+      ),
+      linear-gradient(
+        180deg,
+        var(--footer-crest-linear-start) 0%,
+        var(--footer-crest-linear-mid) 58%,
+        transparent 100%
+      );
+    pointer-events: none;
+  }
+
+  /* --- Layout -----------------------------------------------------------
+     Mobile-first single column; the named areas make the 48rem two-column
+     rearrangement one declaration rather than a reordering of the markup. */
+  .footer-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    max-width: 64rem;
+    margin-inline: auto;
+    padding: 2.5rem 1.5rem 3.75rem;
+    gap: 1.5rem;
+    grid-template-areas:
+      'identity'
+      'cluster'
+      'licence'
+      'links';
+  }
+
+  .footer-identity {
+    grid-area: identity;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .footer-cluster {
+    grid-area: cluster;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  /* --- Lockup and marks -------------------------------------------------
+     One width token drives the lockup box and the mark row so they agree at
+     every breakpoint; the reference repeated the value in both places. */
+  .footer-marks {
+    --footer-mark-height: 2.75rem;
+
+    display: contents;
+  }
+
+  .footer-lockup {
+    display: inline-block;
+    width: min(20rem, 100%);
+    border-radius: var(--radius);
+  }
+
+  .footer-lockup-image {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .footer-mark-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .footer-mark {
+    display: block;
+    border-radius: var(--radius);
+    transition: opacity 180ms ease;
+  }
+
+  .footer-mark:hover {
+    opacity: 0.72;
+  }
+
+  /* Height-driven, width auto: the three marks are NOT square despite the
+     reference calling them "square logos" — cc is 1:1, elearning 0.98:1, lc
+     0.72:1 portrait. Constraining height is what makes them share a baseline. */
+  .footer-mark-image {
+    display: block;
+    width: auto;
+    height: var(--footer-mark-height);
+  }
+
+  /* --- Social row -------------------------------------------------------
+     No dark-mode rules at all: the brand-* sprite symbols are
+     fill="currentColor", so they take --footer-foreground by inheritance. The
+     reference needed `filter: invert(1)` here only because it loaded the same
+     SVGs through <img>, which cannot inherit colour. */
+  .footer-social {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .footer-social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.125rem;
+    height: 2.125rem;
+    border-radius: var(--radius);
+    color: var(--footer-foreground);
+    opacity: 0.82;
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease,
+      color 180ms ease;
+  }
+
+  .footer-social-link:hover {
+    color: var(--primary);
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+
+  .footer-social-link:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+    opacity: 1;
+  }
+
+  .footer-social-icon {
+    display: block;
+    width: 1.375rem;
+    height: 1.375rem;
+  }
+
+  /* --- Type ------------------------------------------------------------- */
+  .footer-copyright {
+    margin: 0;
+    font-size: 0.8125rem;
+  }
+
+  /* The largest text mass in the footer, and the reason the contrast pass had to
+     name it: at this size it is normal text and needs 4.5:1, not the 3:1 a large
+     heading would take. Slate-4 on Cambridge Light Blue is 13.06:1; at the 88%
+     mix below it is still comfortably clear. */
+  .footer-licence {
+    grid-area: licence;
+    max-width: 68ch;
+    margin: 0;
+    color: color-mix(in oklab, var(--footer-foreground) 88%, transparent);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  .footer-licence-link,
+  .footer-link {
+    color: inherit;
+    font-weight: 600;
+    text-decoration-line: underline;
+
+    /* `from-font` rather than a length: it takes the typeface's own underline
+       metric, so it scales with the reader's font size for free. Guard f rejected
+       the reference's `1px` here, and rightly — a hairline underline that does not
+       grow with the text is the same class of bug as a px logo height. */
+    text-decoration-thickness: from-font;
+    text-underline-offset: 0.1875rem;
+    transition: color 180ms ease;
+  }
+
+  .footer-licence-link:hover,
+  .footer-link:hover {
+    color: var(--primary);
+  }
+
+  .footer-licence-link:focus-visible,
+  .footer-link:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  .footer-links {
+    grid-area: links;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.25rem;
+    font-size: 0.8125rem;
+  }
+
+  /* --- Reduced motion ---------------------------------------------------
+     The `reduce` override shape, matching home.css and shell.css. The
+     `no-preference` opt-in is safer (it fails closed on a user agent without the
+     query) but introducing a second motion idiom in one new file is worse than
+     either used consistently — that sweep is logged as §D · D3.
+
+     Note this is the OPPOSITE of the reference, which ADDS declarations inside
+     `reduce` (narrowing a transition from 180ms to 120ms). Motion does not belong
+     in the reduce branch. */
+  @media (prefers-reduced-motion: reduce) {
+    .footer-mark,
+    .footer-social-link,
+    .footer-licence-link,
+    .footer-link {
+      transition: none;
+    }
+
+    .footer-social-link:hover {
+      transform: none;
+    }
+  }
+
+  /* --- Breakpoints ------------------------------------------------------
+     Range syntax and rem, matching home.css. px is legal in a media prelude
+     under guard f, but agreeing with the neighbouring stylesheet matters more. */
+  @media (width >= 30rem) {
+    .footer-marks {
+      --footer-mark-height: 3.25rem;
+    }
+
+    .footer-mark-row {
+      gap: 2.5rem;
+    }
+  }
+
+  @media (width >= 48rem) {
+    .footer-inner {
+      padding-inline: 2.25rem;
+      grid-template-areas:
+        'identity cluster'
+        'licence licence'
+        'links links';
+      grid-template-columns: 3fr 2fr;
+    }
+
+    .footer-identity {
+      align-items: flex-start;
+    }
+
+    .footer-cluster {
+      align-items: flex-end;
+    }
+
+    .footer-mark-row,
+    .footer-social {
+      justify-content: flex-end;
+    }
+
+    .footer-licence,
+    .footer-links {
+      text-align: start;
+      justify-content: flex-start;
+    }
+  }
+
+  @media (width >= 64rem) {
+    .footer-marks {
+      --footer-mark-height: 3.5rem;
+    }
+  }
+
+  @media (width >= 90rem) {
+    .footer-marks {
+      --footer-mark-height: 4.5rem;
+    }
+
+    .footer-lockup {
+      width: min(26rem, 100%);
+    }
+  }
+}
