@@ -47,8 +47,11 @@ The status-check half is what actually protects `main` (nothing red can merge). 
 approval half only becomes meaningful once there is someone else to do the approving —
 which is exactly the "sharing with other developers" moment this checklist is gated on.
 
-Cost to know before flipping it: CI on this repo runs ~8m30s, so every merge — typo fixes
-included — waits that long.
+Cost to know before flipping it: every merge waits for CI. That wait is **~45s** — the
+last five runs on `main` took 42s, 45s, 47s, 48s and 49s (`gh run list`). An earlier
+version of this file said ~8m30s, which was never measured against this repo's CI and is
+corrected here on 2026-09-09: the real cost of requiring status checks is under a minute,
+so speed is **not** an argument against enabling them.
 
 ---
 
