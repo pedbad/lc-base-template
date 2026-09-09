@@ -69,6 +69,24 @@
     --sidebar-accent-foreground: var(--slate-4);
     --sidebar-border: var(--slate-2);
     --sidebar-ring: var(--cam-warm-blue);
+
+    /* Footer colophon band (§D · D1). The page is white and the band is soft
+       Cambridge Blue, so the footer reads as a separate closing plate rather than
+       the last paragraph. Slate-4 on Cambridge Light Blue is 13.06:1 — computed,
+       not eyeballed. */
+    --footer: var(--cam-light-blue);
+    --footer-foreground: var(--slate-4);
+
+    /* The crest that edges the band. DERIVED from --footer and --background, so the
+       dark block below overrides only those two and every stop re-resolves: a custom
+       property is substituted where it is USED, not where it is declared. That is why
+       there is no .dark copy of these six. */
+    --footer-crest-a-start: color-mix(in oklab, var(--footer) 68%, var(--background));
+    --footer-crest-a-mid: color-mix(in oklab, var(--footer) 24%, transparent);
+    --footer-crest-b-start: color-mix(in oklab, var(--footer) 66%, var(--background));
+    --footer-crest-b-mid: color-mix(in oklab, var(--footer) 22%, transparent);
+    --footer-crest-linear-start: color-mix(in oklab, var(--footer) 50%, var(--background));
+    --footer-crest-linear-mid: color-mix(in oklab, var(--footer) 18%, transparent);
   }
 
   .dark {
@@ -112,5 +130,10 @@
     --sidebar-accent-foreground: var(--slate-1);
     --sidebar-border: color-mix(in oklab, var(--white) 12%, transparent);
     --sidebar-ring: var(--cam-warm-blue);
+
+    /* Dark: the raised card surface, NOT a pale teal band — Cambridge Light Blue on
+       a dark page would glare. The crest stops re-derive from these automatically. */
+    --footer: var(--card);
+    --footer-foreground: var(--slate-1);
   }
 }
