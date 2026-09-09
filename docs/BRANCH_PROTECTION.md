@@ -36,7 +36,8 @@ template from rotting as many authors add Learning Objects.
 maintainer out of their own repo.** GitHub will not let you approve your own pull request,
 so the merge button stays disabled forever, waiting on an approval that cannot arrive.
 
-As of 2026-09-03 the only collaborator is `pedbad`. So:
+As of 2026-09-03 the only collaborator is `pedbad` — re-verified 2026-09-09, still one
+(`gh api repos/pedbad/lc-base-template/collaborators --jq '.[].login'`). So:
 
 | If the repo has…          | Enable                                                  |
 | ------------------------- | ------------------------------------------------------- |
@@ -46,6 +47,20 @@ As of 2026-09-03 the only collaborator is `pedbad`. So:
 The status-check half is what actually protects `main` (nothing red can merge). The
 approval half only becomes meaningful once there is someone else to do the approving —
 which is exactly the "sharing with other developers" moment this checklist is gated on.
+
+### ⚠ `CODEOWNERS` is a SECOND lockout, by a different route
+
+**Adding a collaborator is not enough. Fix `.github/CODEOWNERS` first.** Every one of its
+15 rules currently names `@pedbad` and nobody else, so **Require review from Code Owners**
+demands a code-owner review on your own PR — which, being your own, you cannot give. That
+is the same dead merge button as the approvals trap above, reached without ever touching
+the approvals row, and it survives adding a second collaborator because CODEOWNERS still
+names only you.
+
+So the enablement order is: **(1)** add the collaborator, **(2)** commit a `CODEOWNERS`
+that names a reviewer who is not the author on every protected path, **(3)** only then
+enable the approval and code-owner rows. Noted 2026-09-09, when all 15 rules were still
+sole-owner.
 
 Cost to know before flipping it: every merge waits for CI. That wait is **~45s** — the
 last five runs on `main` took 42s, 45s, 47s, 48s and 49s (`gh run list`). An earlier
@@ -60,17 +75,17 @@ so speed is **not** an argument against enabling them.
 **github.com/pedbad/lc-base-template → Settings → Branches → Add branch ruleset**
 (or classic "Add rule"). Target branch: **`main`**. Enable:
 
-| Toggle                                                                          | Why                                                                |
-| ------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| ☐ **Require a pull request before merging**                                     | kills direct pushes to `main`                                      |
-| ☐ &nbsp;&nbsp;→ **Require approvals: 1**                                        | a human reviews every change                                       |
-| ☐ &nbsp;&nbsp;→ **Require review from Code Owners**                             | activates `.github/CODEOWNERS` enforcement (else it only requests) |
-| ☐ &nbsp;&nbsp;→ **Dismiss stale approvals on new commits**                      | re-review after changes                                            |
-| ☐ **Require status checks to pass** → select the **`Lint, test, build`** CI job | no merge on red CI                                                 |
-| ☐ &nbsp;&nbsp;→ **Require branches to be up to date before merging**            | CI ran against latest `main`                                       |
-| ☐ **Require conversation resolution before merging**                            | no merging over unresolved comments                                |
-| ☐ **Do not allow bypassing the above settings**                                 | rule applies to admins too (recommended for handoff)               |
-| ☐ **Require linear history** _(optional)_                                       | matches the fast-forward-merge workflow                            |
+| Toggle                                                                          | Why                                                                                                                         |
+| ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| ☐ **Require a pull request before merging**                                     | kills direct pushes to `main`                                                                                               |
+| ☐ &nbsp;&nbsp;→ **Require approvals: 1**                                        | a human reviews every change                                                                                                |
+| ☐ &nbsp;&nbsp;→ **Require review from Code Owners**                             | activates `.github/CODEOWNERS` enforcement (else it only requests). **Fix CODEOWNERS first** — see the second warning above |
+| ☐ &nbsp;&nbsp;→ **Dismiss stale approvals on new commits**                      | re-review after changes                                                                                                     |
+| ☐ **Require status checks to pass** → select the **`Lint, test, build`** CI job | no merge on red CI                                                                                                          |
+| ☐ &nbsp;&nbsp;→ **Require branches to be up to date before merging**            | CI ran against latest `main`                                                                                                |
+| ☐ **Require conversation resolution before merging**                            | no merging over unresolved comments                                                                                         |
+| ☐ **Do not allow bypassing the above settings**                                 | rule applies to admins too (recommended for handoff)                                                                        |
+| ☐ **Require linear history** _(optional)_                                       | matches the fast-forward-merge workflow                                                                                     |
 
 **Gotcha:** the status-check picker only lists a check **after CI has run at least once**.
 If `Lint, test, build` isn't selectable, open one throwaway PR, let CI run, then it appears.
