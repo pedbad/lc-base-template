@@ -183,4 +183,20 @@ export const SANDBOX_ICON_IDS: readonly string[] = [
   'github-icon',
   'social-icon',
   'x-icon',
+  // The five social marks the footer's colophon links (§D · D1).
+  //
+  // PREFIXED `brand-`, not `social-`, and not following the `<name>-icon` convention
+  // above, because both alternatives collide. `social-*` also matches the generic
+  // `social-icon` already in this list; `x-icon` is taken by a different drawing that
+  // carries a hardcoded fill. The collision is not cosmetic — the theme test below
+  // selects these marks BY PREFIX, so a prefix that also catches `social-icon` makes
+  // that test fail on a symbol it was never about. It did, on its first run.
+  //
+  // These five are `fill="currentColor"`, so they follow the theme wherever they are
+  // placed. That is asserted rather than trusted — see sandbox-catalog.test.ts.
+  'brand-facebook',
+  'brand-x',
+  'brand-youtube',
+  'brand-linkedin',
+  'brand-instagram',
 ] as const;

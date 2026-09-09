@@ -111,4 +111,41 @@ describe('icon ids', () => {
   it('cover every symbol the sprite defines', () => {
     expect(Array.from(symbolIds).filter((id) => !SANDBOX_ICON_IDS.includes(id))).toEqual([]);
   });
+
+  /**
+   * The `brand-*` marks are the footer colophon's icons (§D · D1) and are the only
+   * symbols here that MUST follow the theme: they sit on the footer band, which is
+   * light in one theme and dark in the other.
+   *
+   * WHY THIS IS A TEST AND NOT A CONVENTION. The source SVGs carry
+   * `fill="currentColor"` on the ROOT <svg>, and rewriting <svg> into <symbol> drops
+   * root attributes unless they are carried across deliberately. Verified in
+   * Chrome 152 by screenshotting three sprite variants on hosts with known colours:
+   * fill on <symbol> and fill on <path> both inherit, and a DROPPED fill paints
+   * BLACK. It does not throw. A black icon on the dark band is near-invisible, it
+   * renders, and it passes every other assertion in this file — so the failure mode
+   * is silent, and silence is what a test is for.
+   */
+  it('give every brand mark fill="currentColor" so it follows the theme', () => {
+    const socialSymbols = Array.from(
+      icons.matchAll(/<symbol[^>]*\bid="(brand-[^"]+)"[^>]*>([\s\S]*?)<\/symbol>/g),
+    );
+    expect(socialSymbols.length).toBeGreaterThan(0);
+
+    const notThemeable = socialSymbols
+      .filter(([whole]) => !/<symbol[^>]*fill="currentColor"/.test(whole))
+      .map(([, id]) => id);
+    expect(notThemeable).toEqual([]);
+  });
+
+  // A hardcoded fill BENEATH the symbol would win over the symbol's currentColor,
+  // which is the same silent-black bug wearing a different hat.
+  it('let no brand mark override the symbol fill from inside', () => {
+    const overriding = Array.from(
+      icons.matchAll(/<symbol[^>]*\bid="(brand-[^"]+)"[^>]*>([\s\S]*?)<\/symbol>/g),
+    )
+      .filter(([, , inner]) => /fill="(?!currentColor)/.test(inner))
+      .map(([, id]) => id);
+    expect(overriding).toEqual([]);
+  });
 });
