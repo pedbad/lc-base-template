@@ -10,7 +10,7 @@ session, on either machine.
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
 **Last updated:** 2026-09-08 · **HEAD:** see `git log` · **Suite:** 90 files · 883 tests green
-· CI green · `main` unprotected by decision (job D1).
+· CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
 `2026-08-06-post-phase-d-handover.md` §3. Read them before touching the build. In short:
@@ -308,9 +308,34 @@ file as its home), `STRUCTURE.md`'s `src/sandbox/` row, README's build section,
 CONTRIBUTING's command table, `AGENTS.md`'s two new house rules, `docs/TOOLING.md`'s two
 new decision entries.
 
-## D. Before sharing with other developers
+## D. Design & accessibility polish — 1 of 3 open
 
-- **D1 — branch protection (buildlist 34).** **Deferred by decision 2026-09-03**: `main`
+Design and a11y come before branch protection **by decision 2026-09-09**: a footer that
+ships internal build chatter and two dead links is a defect on every page of a live
+course, and adding collaborators does not fix it. Branch protection is now §E.
+
+- **D1 — the footer colophon.** Spec:
+  `docs/specs/2026-09-09-footer-colophon-design.md` (r2). Ports the french-lo-1
+  institutional footer — UCam Language Centre lockup, LC/CC/eLearning imprint marks,
+  social row, licence line — into this template's token chain, and closes the first of
+  the three §5.7 known edges below. The footer's content becomes
+  `src/config/footer.config.ts`, Zod-validated, whose `href` refine rejects any bare
+  fragment: `href: '#'` fails the build and cannot be reintroduced. Also ports
+  `BackToTopButton`, corrected (built and tested, wired nowhere — see D2).
+  Verify: `bun run test` and both pages at 320 · 375 · 768 · 1024 · 1440 in both themes.
+- **D2 — nav + landing-page polish.** Not started, no spec yet. Owns where
+  `BackToTopButton` mounts, because that touches `PageLayout`'s section loop and
+  `CourseHome`, both of which guard h re-renders.
+- **D3 — the `no-preference` motion sweep.** Candidate, not agreed. `home.css`,
+  `shell.css` and `footer.css` all use the `reduce` override shape; the
+  `no-preference` opt-in fails closed on a user agent without the query. One commit
+  across all three files, or none — a mixed idiom is worse than either.
+
+---
+
+## E. Before sharing with other developers
+
+- **E1 — branch protection (buildlist 34).** **Deferred by decision 2026-09-03**: `main`
   takes direct pushes while this is a single-maintainer build. Trigger = a second person
   gets push access. Setup and the solo-lockout to avoid: `docs/BRANCH_PROTECTION.md`.
   Do **not** enable `Require approvals: 1` + `Do not allow bypassing` with one
