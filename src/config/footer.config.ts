@@ -125,8 +125,76 @@ export type FooterSocial = z.infer<typeof FooterSocialSchema>;
  * empty — see the schema note above.
  */
 const raw = {
+  lockup: {
+    href: 'https://www.langcen.cam.ac.uk/',
+    src: 'images/footer/ucam-lockup-light.png',
+    srcDark: 'images/footer/ucam-lockup-dark.png',
+    alt: 'University of Cambridge Language Centre',
+    // Both files are padded to one common extent, so a theme toggle cannot change
+    // the box shape — see the asset commit for why the artwork was not re-exported.
+    width: 1200,
+    height: 173,
+  },
   copyrightHolder: 'University of Cambridge',
+  marks: [
+    {
+      href: 'https://www.langcen.cam.ac.uk/culp/culp-index.html',
+      src: 'images/footer/lc-logo-black.svg',
+      srcDark: 'images/footer/lc-logo-white.svg',
+      alt: 'Language Centre — CULP course index',
+      // Not square, despite the reference calling these "square logos": the LC mark
+      // is 0.72:1 portrait. Stating each mark's real ratio is why width AND height
+      // are taken rather than a single height.
+      width: 595,
+      height: 831,
+    },
+    {
+      href: 'https://creativecommons.org/licenses/by-nc/4.0/',
+      src: 'images/footer/cc-logo-black.svg',
+      srcDark: 'images/footer/cc-logo-white.svg',
+      // Names where the link GOES, not what the picture is. The reference said
+      // "Creative Commons", which tells a screen-reader user nothing about which
+      // licence they are about to read.
+      alt: 'Licence: CC BY-NC 4.0',
+      width: 64,
+      height: 64,
+    },
+    {
+      href: 'https://www.langcen.cam.ac.uk/opencourseware',
+      src: 'images/footer/elearning-logo-black.svg',
+      srcDark: 'images/footer/elearning-logo-white.svg',
+      alt: 'Language Centre eLearning — open courseware',
+      width: 385,
+      height: 394,
+    },
+  ],
+  // `icon` is a `brand-*` symbol id in public/icons.svg. Prefixed `brand-`, not
+  // `social-`, because `social-*` collides with the sprite's existing `social-icon`.
+  social: [
+    { href: 'https://www.facebook.com/uclangcen/', label: 'Facebook', icon: 'brand-facebook' },
+    { href: 'https://x.com/uclangcen', label: 'X (Twitter)', icon: 'brand-x' },
+    {
+      href: 'https://www.youtube.com/cambridgeuniversity',
+      label: 'YouTube',
+      icon: 'brand-youtube',
+    },
+    {
+      // The reference's href carried a trailing `/posts/?feedView=all`, which is a
+      // view state rather than the account. Linked to the company page instead.
+      href: 'https://www.linkedin.com/company/university-of-cambridge-language-centre/',
+      label: 'LinkedIn',
+      icon: 'brand-linkedin',
+    },
+    {
+      href: 'https://www.instagram.com/cambridgeuniversity/',
+      label: 'Instagram',
+      icon: 'brand-instagram',
+    },
+  ],
   licence: {
+    // CC BY-NC 4.0, matching LICENSE. The reference says BY-NC-ND; that is the French
+    // course's licence, not this template's, so the wording is NOT copied across —
+    // and the CC mark above links to the by-nc deed to match.
     text: 'This work is licensed under the Creative Commons Attribution-NonCommercial 4.0 International Licence. To view a copy of this licence, visit',
     href: 'https://creativecommons.org/licenses/by-nc/4.0/',
     linkLabel: 'creativecommons.org',
