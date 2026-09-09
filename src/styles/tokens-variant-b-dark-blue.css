@@ -68,13 +68,17 @@
     --sidebar-border: var(--slate-2);
     --sidebar-ring: var(--cam-dark-blue);
 
-    /* Footer colophon band (§D · D1). The page is white and the band is Cambridge
-       Blue, so the footer reads as a separate closing plate rather than the last
-       paragraph. Slate-4 on Cambridge Blue is 10.35:1 — computed, not eyeballed.
-       This is --accent's primitive, chosen deliberately over the paler
-       --cam-light-blue to match the french-lo-1 footer's muted teal
-       (oklch(0.851 0.089 178.8)), which --cam-blue is the nearest brand value to. */
-    --footer: var(--cam-blue);
+    /* Footer colophon band (§D · D1). The page is white and the band is soft
+       Cambridge Blue, so the footer reads as a separate closing plate rather than
+       the last paragraph. Slate-4 on Cambridge Light Blue is 13.06:1 — computed,
+       not eyeballed.
+
+       --cam-light-blue, NOT --cam-blue, decided 2026-09-09 after trying both. The
+       saturated --cam-blue matches french-lo-1's muted teal more closely, but it is
+       also --accent's primitive, so the band ends up sharing a colour with every
+       accent rule and hover state on the page. The paler mint keeps the colophon
+       tonally its own thing. */
+    --footer: var(--cam-light-blue);
     --footer-foreground: var(--slate-4);
 
     /* The crest that edges the band. DERIVED from --footer and --background, so the

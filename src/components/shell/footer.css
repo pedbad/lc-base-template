@@ -116,12 +116,15 @@
     gap: 1rem;
   }
 
+  /* `gap` MATCHES .footer-identity deliberately. These are the two halves of one
+     row, so a different gap on each side offsets their second rows by exactly the
+     difference — 1.25rem here against 1rem there was 4px of drift on its own. */
   .footer-cluster {
     grid-area: cluster;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.25rem;
+    gap: 1rem;
   }
 
   /* --- Lockup and marks -------------------------------------------------
@@ -161,10 +164,20 @@
     object-fit: contain;
   }
 
+  /* The row box is as tall as the LOCKUP, not as tall as its marks, and the marks
+     sit on its bottom edge. That is what makes the two columns line up: row 1 is
+     the same height on both sides, so row 2 (the © line and the social row) starts
+     at the same y. Sizing the row to its contents instead left the marks 48px against
+     the lockup's 64px and pushed the second rows 12px out of step.
+
+     Ported from the reference's `.square-logo { height: 50px; align-items: flex-end }`
+     beside `img.logo { height: 45px }` — decoupling row height from mark height is
+     precisely why it can keep the marks small AND stay aligned. */
   .footer-mark-row {
     display: flex;
     align-items: flex-end;
     justify-content: center;
+    min-height: var(--footer-lockup-height);
     gap: 2rem;
   }
 
@@ -239,7 +252,7 @@
 
   /* The largest text mass in the footer, and the reason the contrast pass had to
      name it: at this size it is normal text and needs 4.5:1, not the 3:1 a large
-     heading would take. Slate-4 on Cambridge Blue is 10.35:1; at the 88%
+     heading would take. Slate-4 on Cambridge Light Blue is 13.06:1; at the 88%
      mix below it is still comfortably clear. */
   .footer-licence {
     grid-area: licence;
