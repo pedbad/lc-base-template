@@ -12,6 +12,7 @@ import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { courseConfig } from '@/config/course.config';
 import type { LoIndexEntry } from '@/lo/lo-index';
+import { headingId } from '@/lib/headingId';
 import CourseHome from './CourseHome';
 
 const LESSONS: readonly LoIndexEntry[] = [
@@ -87,5 +88,17 @@ describe('CourseHome', () => {
 
     expect(html).not.toContain('<h3');
     expect(html).toMatch(/no lessons/i);
+  });
+
+  // §5: ONE heading-id scheme for the whole shell. This page hand-rolled
+  // 'lessons-heading' as a local constant, which happened to equal headingId(
+  // 'lessons') — so it agreed with the rest of the shell by coincidence rather than
+  // by construction, and a change to headingId() would have silently split them.
+  test('derives the Lessons heading id through headingId, not a local constant', () => {
+    const html = renderToStaticMarkup(<CourseHome lessons={LESSONS} />);
+    const hid = headingId('lessons');
+
+    expect(html).toMatch(new RegExp(`<section[^>]*aria-labelledby="${hid}"`));
+    expect(html).toMatch(new RegExp(`<h2[^>]*id="${hid}"`));
   });
 });

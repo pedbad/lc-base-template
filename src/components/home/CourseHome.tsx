@@ -21,6 +21,7 @@
  * on this page is the lesson nav; there are no in-page sections to link to.
  */
 import { courseConfig } from '@/config/course.config';
+import { headingId } from '@/lib/headingId';
 import Footer from '@/components/shell/Footer';
 import ThemeToggle from '@/components/shell/ThemeToggle';
 import type { LoIndexEntry } from '@/lo/lo-index';
@@ -33,7 +34,9 @@ interface CourseHomeProps {
   lessons: readonly LoIndexEntry[];
 }
 
-const LESSONS_HEADING_ID = 'lessons-heading';
+/** §5: the shell has ONE heading-id scheme, and it is this function. The literal
+ *  'lessons-heading' that used to sit here agreed with it only by coincidence. */
+const LESSONS_HEADING_ID = headingId('lessons');
 
 export default function CourseHome({ lessons }: CourseHomeProps) {
   return (
