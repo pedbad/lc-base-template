@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-09-08 · **HEAD:** see `git log` · **Suite:** 90 files · 883 tests green
+**Last updated:** 2026-09-10 · **HEAD:** see `git log` · **Suite:** 94 files · 928 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -308,21 +308,37 @@ file as its home), `STRUCTURE.md`'s `src/sandbox/` row, README's build section,
 CONTRIBUTING's command table, `AGENTS.md`'s two new house rules, `docs/TOOLING.md`'s two
 new decision entries.
 
-## D. Design & accessibility polish — 1 of 3 open
+## D. Design & accessibility polish — 4 of 5 open
 
 Design and a11y come before branch protection **by decision 2026-09-09**: a footer that
 ships internal build chatter and two dead links is a defect on every page of a live
 course, and adding collaborators does not fix it. Branch protection is now §E.
 
-- **D1 — the footer colophon.** Spec:
-  `docs/specs/2026-09-09-footer-colophon-design.md` (r2). Ports the french-lo-1
-  institutional footer — UCam Language Centre lockup, LC/CC/eLearning imprint marks,
-  social row, licence line — into this template's token chain, and closes the first of
-  the three §5.7 known edges below. The footer's content becomes
-  `src/config/footer.config.ts`, Zod-validated, whose `href` refine rejects any bare
-  fragment: `href: '#'` fails the build and cannot be reintroduced. Also ports
-  `BackToTopButton`, corrected (built and tested, wired nowhere — see D2).
-  Verify: `bun run test` and both pages at 320 · 375 · 768 · 1024 · 1440 in both themes.
+- **D1 — the footer colophon.** **DONE 2026-09-09/10** except `BackToTopButton`, which
+  moves to D4. Spec: `docs/specs/2026-09-09-footer-colophon-design.md` (r2). The
+  french-lo-1 footer is ported — lockup, LC/CC/eLearning imprint marks, social row,
+  licence line — all driven by `src/config/footer.config.ts`, whose `href` refine
+  rejects any bare fragment, so **`href: '#'` now fails the build** and the first §5.7
+  edge is closed by construction. Contrast measured from rendered pixels in both
+  themes (light 9.05 / 13.07 / 7.55, dark 7.15 / 8.71 / 6.48 — all clear AA 4.5:1);
+  no horizontal overflow at 320 · 375 · 768 · 1024 · 1440.
+- **D4 — `BackToTopButton`.** **Not built.** Fully spec'd in the D1 spec §3.4, which is
+  the thing to read first: the reference component is **not** what its name suggests
+  (`top-button-container` matches zero CSS rules, it mounts per-section at
+  `Section.jsx:169` rather than in the shell, and its IntersectionObserver watches its
+  own container, so it fades in on reveal rather than on scroll depth). Four defects to
+  correct on the way in: an unguarded smooth `scrollTo`, a `duration-[3600ms]` 3.6s
+  fade, an `opacity-0` hidden state that stays in the accessibility tree (this repo
+  already solved that with `hidden` in `Header.tsx` and `inert` in `LessonSideNav`), and
+  a redundant `Tooltip` over an already-labelled button. Needs
+  `src/lib/prefersReducedMotion.ts` extracted from `LoAccordion.tsx:60` first — that
+  helper is currently inline and this is its second consumer.
+- **D5 — the two budget breaches, measured 2026-09-09.** `main-*.js` is **95.85 kB
+  gzipped against a < 80 kB** microsite target, and CSS is **19.98 kB against < 15 kB**.
+  Both PRE-DATE §D — measured at baseline by stashing the footer work — and the §D
+  handover's "`main-*.js` is ~39kb raw today" is stale by roughly 7×. This also means
+  the deferred **per-LO chunking** trigger below ("~a dozen LOs") is already met at ONE
+  LO, by a different cause, so that row's wake-up condition is wrong as written.
 - **D2 — nav + landing-page polish.** Not started, no spec yet. Owns where
   `BackToTopButton` mounts, because that touches `PageLayout`'s section loop and
   `CourseHome`, both of which guard h re-renders.
@@ -353,10 +369,13 @@ Not forgotten. Decided.
 | Rich text in modals/engines | Someone actually needs it. Fully spec'd in `docs/specs/lo-rich-text-modals.md` §12, zero built.                                                              |
 | Conjugation v2 choice mode  | Someone wants tap-to-answer verb tables. Schema ready, view path unbuilt.                                                                                    |
 
-### Three small known edges (§5.7)
+### Two small known edges (§5.7)
 
-- `Footer.tsx` ships **placeholder links** — "Accessibility" and "Privacy" both `#`, plus
-  a stale "real links land in a later Phase C part" note.
+The footer-placeholder edge is **CLOSED** (2026-09-09, `d863465`): `Footer.tsx` no longer
+ships the "later Phase C part" note, the whole `FOOTER_LINKS` array is gone — all three
+rows, not only the two dead ones — and `footer.config.ts` makes `href: '#'` fail the
+build, so it cannot return. Two remain:
+
 - A **typo'd slug in dev** (`/greetigns.html`) renders the landing page rather than 404ing.
   Deliberate: owning that means owning Vite's dev 404 behaviour. Recorded in `TOOLING.md`.
 - Landing-page chrome words ("Lessons", "Start learning") are hardcoded in the components,
@@ -367,26 +386,36 @@ Not forgotten. Decided.
 
 ## Done recently (so a new session does not redo it)
 
-| Date       | Commit    | What                                                                     |
-| ---------- | --------- | ------------------------------------------------------------------------ |
-| 2026-09-03 | `6c62d6d` | LICENSE added — MIT code + CC-BY-4.0 content (buildlist 28)              |
-| 2026-09-03 | `2104d13` | content licence changed to **CC BY-NC 4.0**, swept through every doc     |
-| 2026-09-03 | `f3f432e` | `main` stays open by decision; protection reframed as a pre-share gate   |
-| 2026-09-03 | `ef9ec8f` | exercise showcase **opt-in per build** — no longer ships (buildlist 17b) |
-| 2026-09-03 | `2e3e4bd` | this TODO.md added as the live worklist; stale claims corrected          |
-| 2026-09-03 | `c239fa8` | **guard c — asset-path** (buildlist 21): `src/guards/` created, 21 tests |
-| 2026-09-03 | `4367d31` | **guard d — asset-existence** (buildlist 22), 11 tests                   |
-| 2026-09-07 | `891511c` | **guard b — naming + render-mirror** (buildlist 20), 17 tests            |
-| 2026-09-07 | `22757f5` | **guard e — registry completeness** (buildlist 23), 30 tests             |
-| 2026-09-07 | `0891e27` | guard f **survey** banked in §A-f — the rule, not the guard yet          |
-| 2026-09-07 | —         | GitHub **template repository** box ticked (buildlist 33), verified       |
-| 2026-09-07 | see A8    | `bun run guards` fast subset added (buildlist 31 closed)                 |
-| 2026-09-07 | `df6c987` | **guard f — token integrity** (buildlist 24), 27 tests + shared reader   |
-| 2026-09-07 | `69c254b` | **guard g — CSS layer discipline** (buildlist 25), 21 tests              |
-| 2026-09-07 | `99cd77d` | **guard h — semantic DOM over rendered output** (buildlist 26), 84 tests |
-| 2026-09-08 | `8c95085` | **DESIGNER / STRUCTURE / AGENTS** written (buildlist 29); §B closed      |
-| 2026-09-08 | `f06295a` | **`bun run docs:tree`** + freshness test (buildlist 30), 8 tests         |
-| 2026-09-08 | `99825af` | README + CONTRIBUTING now link the three new books                       |
-| 2026-09-08 | `0bcd7d7` | markdown **link-existence check** added (`src/docs/md-links.ts`)         |
-| 2026-09-08 | `c5dd291` | **debug sandbox** — palette / type / icons (buildlist 16), 10 tests      |
-| 2026-09-08 | `4029c9a` | **sandbox docs hub** — markdown→HTML (buildlist 18), 26 tests            |
+| Date       | Commit    | What                                                                                |
+| ---------- | --------- | ----------------------------------------------------------------------------------- |
+| 2026-09-03 | `6c62d6d` | LICENSE added — MIT code + CC-BY-4.0 content (buildlist 28)                         |
+| 2026-09-03 | `2104d13` | content licence changed to **CC BY-NC 4.0**, swept through every doc                |
+| 2026-09-03 | `f3f432e` | `main` stays open by decision; protection reframed as a pre-share gate              |
+| 2026-09-03 | `ef9ec8f` | exercise showcase **opt-in per build** — no longer ships (buildlist 17b)            |
+| 2026-09-03 | `2e3e4bd` | this TODO.md added as the live worklist; stale claims corrected                     |
+| 2026-09-03 | `c239fa8` | **guard c — asset-path** (buildlist 21): `src/guards/` created, 21 tests            |
+| 2026-09-03 | `4367d31` | **guard d — asset-existence** (buildlist 22), 11 tests                              |
+| 2026-09-07 | `891511c` | **guard b — naming + render-mirror** (buildlist 20), 17 tests                       |
+| 2026-09-07 | `22757f5` | **guard e — registry completeness** (buildlist 23), 30 tests                        |
+| 2026-09-07 | `0891e27` | guard f **survey** banked in §A-f — the rule, not the guard yet                     |
+| 2026-09-07 | —         | GitHub **template repository** box ticked (buildlist 33), verified                  |
+| 2026-09-07 | see A8    | `bun run guards` fast subset added (buildlist 31 closed)                            |
+| 2026-09-07 | `df6c987` | **guard f — token integrity** (buildlist 24), 27 tests + shared reader              |
+| 2026-09-07 | `69c254b` | **guard g — CSS layer discipline** (buildlist 25), 21 tests                         |
+| 2026-09-07 | `99cd77d` | **guard h — semantic DOM over rendered output** (buildlist 26), 84 tests            |
+| 2026-09-08 | `8c95085` | **DESIGNER / STRUCTURE / AGENTS** written (buildlist 29); §B closed                 |
+| 2026-09-08 | `f06295a` | **`bun run docs:tree`** + freshness test (buildlist 30), 8 tests                    |
+| 2026-09-08 | `99825af` | README + CONTRIBUTING now link the three new books                                  |
+| 2026-09-08 | `0bcd7d7` | markdown **link-existence check** added (`src/docs/md-links.ts`)                    |
+| 2026-09-08 | `c5dd291` | **debug sandbox** — palette / type / icons (buildlist 16), 10 tests                 |
+| 2026-09-08 | `4029c9a` | **sandbox docs hub** — markdown→HTML (buildlist 18), 26 tests                       |
+| 2026-09-09 | `23f1d15` | §D opened, branch protection renumbered to §E                                       |
+| 2026-09-09 | `d863465` | **footer defect fixed** — schema-validated config; `href: '#'` now fails the build  |
+| 2026-09-09 | `4c70955` | footer assets downscaled 264→52 KB, ratio-normalised, sprite marks themeable        |
+| 2026-09-09 | `dad0428` | **preset drift fixed** — `--success` back-ported to all three presets + parity test |
+| 2026-09-09 | `c06a595` | `--footer` surface + six derived crest tokens                                       |
+| 2026-09-09 | `6c6d429` | lockup, imprint marks and social row                                                |
+| 2026-09-09 | `999176c` | `footer.css` — editorial colophon, crest in both themes                             |
+| 2026-09-09 | `52e4ca4` | band kept mint; the two footer columns share a baseline                             |
+| 2026-09-10 | `40f4e1b` | mark and social rows share one width, so both edges flush                           |
+| 2026-09-10 | `8e8ec94` | icon ink flushed; marks get the social hover + a focus ring they lacked             |
