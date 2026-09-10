@@ -127,4 +127,51 @@ describe('BackToTopButton', () => {
     // nothing on the page draws a panel boundary for it to sit against.
     expect(css).toMatch(/margin-inline:\s*auto\s+0\.75rem/);
   });
+
+  // --- The scroll-driven entrance (§D4 reversed 2026-09-10) ----------------
+  // The fade is back, as CSS rather than the reference's IntersectionObserver. All
+  // three of these pin failure modes that look like tidying.
+
+  test('the entrance is CSS on a view timeline — no observer came back', () => {
+    expect(css).toContain('animation-timeline: view()');
+    expect(css).toMatch(/@keyframes back-to-top-enter/);
+    expect(html()).not.toContain('style=');
+  });
+
+  // THE ONE THAT MATTERS. The base rule must stay VISIBLE: the `from` frame supplies
+  // the transparency via fill-mode `both`. Hoist `opacity: 0` into the base rule and
+  // every reader who skips the animation — no view-timeline support, or reduced
+  // motion — gets a permanently invisible button, which is the reference's defect
+  // made worse.
+  test('the hidden state lives only in the keyframes, never in the base rule', () => {
+    const base = /\.back-to-top \{([\s\S]*?)\n {2}\}/.exec(css)?.[1] ?? '';
+    expect(base).not.toMatch(/opacity\s*:/);
+
+    const frames = /@keyframes back-to-top-enter \{([\s\S]*?)\n {6}\}/.exec(css)?.[1] ?? '';
+    expect(frames).toMatch(/opacity:\s*0/);
+    expect(css).toMatch(/animation:\s*back-to-top-enter linear both/);
+  });
+
+  test('the entrance is behind @supports AND opts in via no-preference', () => {
+    // @supports so unsupported browsers never see the `from` frame; no-preference
+    // rather than a `reduce` override so unknown query support fails CLOSED.
+    const guardIndex = css.indexOf('@supports (animation-timeline: view())');
+    const prefIndex = css.indexOf('@media (prefers-reduced-motion: no-preference)');
+    // The DECLARATION, not the @supports prelude — which contains the same string.
+    const animIndex = css.indexOf('animation-timeline: view();');
+
+    expect(guardIndex).toBeGreaterThan(-1);
+    expect(prefIndex).toBeGreaterThan(guardIndex);
+    expect(animIndex).toBeGreaterThan(prefIndex);
+  });
+
+  // Animating `transform` instead would silently kill the hover lift: a filled
+  // animation beats an ordinary declaration. `translate` is a separate property and
+  // composes with `transform`, so both survive.
+  test('keyframes animate translate, not transform, so the hover lift survives', () => {
+    const frames = /@keyframes back-to-top-enter \{([\s\S]*?)\n {6}\}/.exec(css)?.[1] ?? '';
+    expect(frames).toMatch(/translate:/);
+    expect(frames).not.toMatch(/transform:/);
+    expect(css).toMatch(/\.back-to-top:hover \{[^}]*transform:\s*translateY\(-2px\)/);
+  });
 });

@@ -6,11 +6,21 @@
  * flat class (§D1: the reference reached five levels deep, which no utility can
  * override).
  *
- * THERE IS NO ENTRANCE ANIMATION, AND THAT IS THE POINT. The reference faded this in
- * over 3600ms via an IntersectionObserver watching its own container — for an in-flow
- * element, machinery re-implementing scrolling. If an entrance is ever wanted, it
- * belongs here as a CSS animation, where `prefers-reduced-motion` is honoured without
- * a line of JS. Not in JS again.
+ * THE ENTRANCE IS SCROLL-DRIVEN CSS, WITH NO JAVASCRIPT. §D4 deleted the reference's
+ * IntersectionObserver and said that if the fade were ever wanted back it belonged
+ * here as a CSS animation; it was wanted back (2026-09-10), so this is that. A view
+ * timeline ties the fade to the element's own scroll position, which is what the
+ * observer was laboriously approximating — and it cannot regress into the reference's
+ * `duration-[3600ms]` reveal, because a scroll-linked animation has no duration to get
+ * wrong.
+ *
+ * THE HIDDEN STATE LIVES ONLY INSIDE THE KEYFRAMES. This is the whole safety
+ * argument, so do not "tidy" it by hoisting `opacity: 0` into the base rule. The base
+ * rule keeps the button VISIBLE, and the `from` frame supplies the transparency via
+ * `animation-fill-mode: both`. So every path that skips the animation — no
+ * `animation-timeline` support, or a reader who asked for reduced motion — lands on a
+ * plainly visible button. Declare `opacity: 0` in the base rule instead and those same
+ * readers get a permanently invisible control: the reference's defect, made worse.
  */
 
 @layer components {
@@ -109,10 +119,51 @@
     height: 1.25rem;
   }
 
+  /* --- The scroll-driven entrance ---------------------------------------
+     TWO GUARDS, both load-bearing.
+
+     `@supports` keeps the whole thing out of browsers without view timelines, so they
+     never see the `from` frame at all.
+
+     `no-preference` rather than this file's usual `reduce` override, and here that is
+     forced rather than stylistic (contrast §D3, which is about the other rules). The
+     `reduce` shape would mean declaring the animation unconditionally and cancelling
+     it with `animation: none` — but cancelling an animation whose `from` frame is the
+     only reason the button is transparent is fine, while a user agent that does not
+     understand the query would apply motion to someone who may have asked against it.
+     The opt-in fails closed: unknown support means no animation and a visible button.
+
+     KEYFRAMES ANIMATE `translate`, NOT `transform`. They are separate properties that
+     compose, so the hover's `transform: translateY(-2px)` still works. Animating
+     `transform` here would have silently killed the hover lift instead, because a
+     filled animation beats an ordinary declaration in the cascade. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      @keyframes back-to-top-enter {
+        from {
+          opacity: 0;
+          translate: 0 0.25rem;
+        }
+
+        to {
+          opacity: 1;
+          translate: 0 0;
+        }
+      }
+
+      .back-to-top {
+        animation: back-to-top-enter linear both;
+        animation-timeline: view();
+        animation-range: entry 15% entry 75%;
+      }
+    }
+  }
+
   /* --- Reduced motion ---------------------------------------------------
      The `reduce` override shape, matching footer.css, home.css and shell.css. The
-     scroll itself is guarded in JS (src/lib/scrollToTop.ts) because `scrollTo`'s
-     behaviour is not a CSS property; this covers the hover only. */
+     entrance above needs nothing here — it is opt-in, so `reduce` simply never gets
+     it. The scroll itself is guarded in JS (src/lib/scrollToTop.ts) because
+     `scrollTo`'s behaviour is not a CSS property; this covers the hover only. */
   @media (prefers-reduced-motion: reduce) {
     .back-to-top {
       transition: none;

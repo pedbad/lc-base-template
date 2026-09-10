@@ -7,15 +7,22 @@
  * accordion (collapsing one already returns the reader upward, and inside a closed one
  * the button is unreachable because Radix unmounts the content).
  *
- * WHAT WAS DELETED, AND WHY THAT WAS THE FIX. The reference faded this in with an
- * IntersectionObserver watching its OWN container, so `isIntersecting` meant "I am on
- * screen" — machinery re-implementing scrolling for an element that is visible when
- * you scroll to it. Deleting it removed two defects outright rather than fixing them:
- * a `duration-[3600ms]` reveal, and an `opacity-0` + `pointer-events-none` +
- * `tabIndex={-1}` hidden state that stayed in the accessibility tree the whole time.
- * It also removed the `inert` question, the `useState`/`useEffect`, and the prerender
- * question. `useIsHydrated` is deliberately NOT used: with the observer gone there is
- * no client-only state to gate.
+ * IT FADES IN AS IT SCROLLS INTO VIEW, AND NOT ONE LINE OF THAT IS HERE. The
+ * reference did it with an IntersectionObserver watching its OWN container, so
+ * `isIntersecting` only ever meant "I am on screen" — a script laboriously
+ * approximating scroll position. §D4 deleted that; the effect was wanted back
+ * (2026-09-10) and now lives in back-to-top.css as a scroll-driven animation on a
+ * view timeline. Read that file's header before touching the fade: the hidden state
+ * is inside the keyframes on purpose, so that skipping the animation leaves a VISIBLE
+ * button rather than an invisible one.
+ *
+ * What the observer took with it is still gone, and this is the part worth keeping:
+ * the `duration-[3600ms]` reveal (a scroll-linked animation has no duration to get
+ * wrong), and the `pointer-events-none` + `tabIndex={-1}` pair that left a control
+ * announced but unusable. This button is always focusable and always clickable, at
+ * any point in the fade. There is no `useState`, no `useEffect`, no `inert` question
+ * and no prerender question, and `useIsHydrated` is deliberately unused: there is no
+ * client-only state to gate.
  *
  * THREE MORE DEFECTS CORRECTED HERE:
  *   - `aria-describedby`, because about five of these render per LO and all of them
