@@ -113,6 +113,19 @@
   html {
     @apply font-sans;
 
+    /* IN-PAGE NAVIGATION ANIMATES. Every nav link, the skip link and each section
+       anchor is a plain `href="#id"`, and native anchor navigation is INSTANT by
+       default — the page simply appeared at the new position with no sense of travel.
+       One document-level declaration covers all of them, and it covers the focus move
+       in PageLayout's hashchange handler too, because focus-triggered scrolling uses
+       the scrolling box's own scroll-behavior.
+
+       NOT done in JS: a scripted smooth scroll would have to re-implement anchor
+       navigation and then honour prefers-reduced-motion by hand. Here the reduce
+       override below does it with no script at all — the same reasoning that kept
+       BackToTopButton's entrance out of JS (§D4). */
+    scroll-behavior: smooth;
+
     /* Type baseline lives on <html>, NOT <body>: rem units anchor to <html>,
        and line-height set here inherits globally (incl. portals/shadow DOM). */
     font-size: 100%; /* = 16px default, but SCALES with the user's browser font
@@ -127,5 +140,14 @@
     /* NB: iOS rotate-zoom is handled by `-webkit-text-size-adjust: 100%`, which
        Tailwind v4 Preflight already sets on <html>. We deliberately do NOT repeat
        it here (Stylelint property-no-vendor-prefix), to avoid a redundant prefix. */
+  }
+
+  /* The `reduce` override shape, matching shell.css, footer.css, home.css and
+     back-to-top.css. `auto` is the instant jump, which is what a reader who has asked
+     for less motion should get from an anchor. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 }
