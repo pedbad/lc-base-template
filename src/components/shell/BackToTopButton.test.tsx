@@ -98,4 +98,33 @@ describe('BackToTopButton', () => {
   test('every rule sits inside @layer components (guard g)', () => {
     expect(css).toContain('@layer components {');
   });
+
+  test('is mint from tokens in both themes, with no dark-mode rule at all', () => {
+    expect(css).toMatch(/background-color:\s*var\(--accent\)/);
+    expect(css).toMatch(/color:\s*var\(--accent-foreground\)/);
+    // --accent is --cam-blue in BOTH token blocks, so a `.dark` override would only
+    // be a chance to disagree with itself.
+    expect(css).not.toContain('.dark');
+  });
+
+  // THE BUG THIS PINS, found by measuring rather than reading. The hover first mixed
+  // toward --primary, which is --cam-dark-blue in light but --cam-blue in dark — the
+  // SAME primitive as --accent. So in dark mode the hover resolved to the rest colour
+  // exactly: 1.00:1, no hover at all. --foreground was tried next and was nearly as
+  // bad (1.05:1), because mint is already bright and the dark theme's --foreground is
+  // near-white. --accent-foreground is --slate-4 in both blocks, so it darkens by the
+  // same amount either side: measured #75bab0, 1.56:1 against rest, in both themes.
+  test('darkens on hover via a theme-invariant mix, not --primary or --foreground', () => {
+    const hover = /\.back-to-top:hover\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
+
+    expect(hover).toContain('color-mix(in oklab, var(--accent) 78%, var(--accent-foreground))');
+    expect(hover).not.toMatch(/var\(--primary\)/);
+    expect(hover).not.toMatch(/var\(--foreground\)/);
+  });
+
+  test('is inset from the content edge, not flush against it', () => {
+    // Flush (margin-inline: auto 0) read as hanging off the text block, because
+    // nothing on the page draws a panel boundary for it to sit against.
+    expect(css).toMatch(/margin-inline:\s*auto\s+0\.75rem/);
+  });
 });

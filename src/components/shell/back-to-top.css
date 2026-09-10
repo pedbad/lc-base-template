@@ -22,25 +22,49 @@
   .back-to-top {
     --back-to-top-size: 2.25rem;
 
-    /* Right-aligned in normal flow. `margin-inline: auto 0` is the footer cluster's
-       idiom for this and needs no wrapper element to hold a flex context — the
-       reference's `top-button-container` div matched zero CSS rules. */
+    /* Right-aligned in normal flow, then INSET from the column edge. `auto` on the
+       start side does the alignment — the footer cluster's idiom, and it needs no
+       wrapper to hold a flex context (the reference's `top-button-container` div
+       matched zero CSS rules).
+
+       The end inset is the point: flush with the content column's right edge, the
+       button read as hanging OFF the text block rather than belonging to it, because
+       nothing here draws a panel boundary for it to sit against. Pulling it in by the
+       same 0.75rem that separates it from the content above puts it inside the block
+       on both axes. */
     display: flex;
     align-items: center;
     justify-content: center;
     width: var(--back-to-top-size);
     height: var(--back-to-top-size);
     margin-block-start: 0.75rem;
-    margin-inline: auto 0;
-    border: 1px solid var(--border);
+    margin-inline: auto 0.75rem;
     border-radius: 50%;
-    background-color: var(--card);
-    color: var(--muted-foreground);
+
+    /* MINT IN BOTH THEMES, so there is no dark-mode rule in this file at all.
+       `--accent` is the saturated mint and `--accent-foreground` is the near-black
+       it is designed to pair with, in both the light and dark blocks of tokens.css.
+
+       NOT `--footer`: that is the PALER mint (`--cam-light-blue`) in light and a dark
+       surface (`--card`) in dark, so "mint like the footer" would have gone dark in
+       dark mode. tokens.css records why the band took the pale one — it deliberately
+       avoided sharing `--accent`'s primitive with every accent rule on the page. This
+       button is one of those accents, so here the saturated mint is correct. */
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+
+    /* A RIM, not decoration. The mint fill is only 1.43:1 against the light page, so
+       on white the disc's edge is nearly invisible. WCAG 2.2 SC 1.4.11 is arguably
+       already satisfied — the arrow glyph identifies the control at 10.36:1 — but a
+       36px disc with no discernible edge is poor regardless, and the previous slate
+       border was doing this job before the mint arrived. Derived from --foreground so
+       it darkens on the light page and lightens on the dark one. */
+    border: 1px solid color-mix(in oklab, var(--accent) 62%, var(--foreground));
     cursor: pointer;
     transition:
+      background-color 180ms ease,
       border-color 180ms ease,
-      transform 180ms ease,
-      color 180ms ease;
+      transform 180ms ease;
   }
 
   /* Declared AFTER the plain class on purpose: a `:hover` (0,2,0) before its (0,1,0)
@@ -50,9 +74,24 @@
 
      The treatment is the footer social row's, deliberately: a 2px lift plus a shift
      to `--primary`, so the two icon affordances in the shell behave the same way. */
+
+  /* DARKER TEAL ON THE LIGHT PAGE, LIGHTER ON THE DARK ONE — and the mix is toward
+     `--foreground` for a measured reason. The obvious choice, `--primary`, is
+     `--cam-dark-blue` in light but `--cam-blue` in dark: the SAME primitive as
+     `--accent`. So mixing toward it gave dark mode a hover identical to its rest
+     state (measured 1.00:1 — no hover at all). Every teal-ish semantic token
+     collapses to `--cam-blue` in the dark block, so there is no darker teal to name
+     there.
+
+     `--accent-foreground` is the way out: it is `--slate-4` in BOTH blocks, a
+     theme-invariant near-black, so mixing toward it darkens by the same amount either
+     side. `--foreground` was tried first and is wrong — mint is already bright, so
+     mixing it toward the dark theme's near-white `--foreground` moved luminance
+     hardly at all (measured 1.05:1 against rest, i.e. no perceptible hover).
+     A literal darker teal would mean a new token in all three variant presets plus
+     the generated tokens.css, which token-presets.test.ts enforces both ways. */
   .back-to-top:hover {
-    border-color: var(--primary);
-    color: var(--primary);
+    background-color: color-mix(in oklab, var(--accent) 78%, var(--accent-foreground));
     transform: translateY(-2px);
   }
 
