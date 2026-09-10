@@ -322,17 +322,21 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   edge is closed by construction. Contrast measured from rendered pixels in both
   themes (light 9.05 / 13.07 / 7.55, dark 7.15 / 8.71 / 6.48 — all clear AA 4.5:1);
   no horizontal overflow at 320 · 375 · 768 · 1024 · 1440.
-- **D4 — `BackToTopButton`.** **Not built.** Fully spec'd in the D1 spec §3.4, which is
-  the thing to read first: the reference component is **not** what its name suggests
-  (`top-button-container` matches zero CSS rules, it mounts per-section at
-  `Section.jsx:169` rather than in the shell, and its IntersectionObserver watches its
-  own container, so it fades in on reveal rather than on scroll depth). Four defects to
-  correct on the way in: an unguarded smooth `scrollTo`, a `duration-[3600ms]` 3.6s
-  fade, an `opacity-0` hidden state that stays in the accessibility tree (this repo
-  already solved that with `hidden` in `Header.tsx` and `inert` in `LessonSideNav`), and
-  a redundant `Tooltip` over an already-labelled button. Needs
-  `src/lib/prefersReducedMotion.ts` extracted from `LoAccordion.tsx:60` first — that
-  helper is currently inline and this is its second consumer.
+- **D4 — `BackToTopButton`.** **Not built.** Full handover:
+  `2026-09-10-backtotop-handover.md` — read that, not just the D1 spec §3.4, because it
+  reverses one of the spec's implied decisions. **Start by DELETING the reference's
+  IntersectionObserver:** for an in-flow element it re-implements scrolling, and
+  removing it kills two of the four defects outright (the `duration-[3600ms]` 3.6s fade
+  and the `opacity-0` hidden state that stays in the accessibility tree) rather than
+  fixing them. What remains is a plain `<button onClick>` of about 20 lines. Real
+  defects left: the unguarded smooth `scrollTo`, duplicate accessible names across ~5
+  buttons per LO (fix with `aria-describedby={headingId(section.id)}` — guard h does
+  NOT catch duplicate button names), a missing `:focus-visible` ring once you leave
+  shadcn's `Button`, and a redundant `Tooltip`. Needs
+  `src/lib/prefersReducedMotion.ts` extracted from `LoAccordion.tsx:60` first — its
+  second consumer. **Scope:** component + colocated tests, mounted NOWHERE; the
+  keyboard / both-themes / five-widths pass transfers to D2 with the mount, since you
+  cannot tab to a component that is not mounted.
 - **D5 — the two budget breaches, measured 2026-09-09.** `main-*.js` is **95.85 kB
   gzipped against a < 80 kB** microsite target, and CSS is **19.98 kB against < 15 kB**.
   Both PRE-DATE §D — measured at baseline by stashing the footer work — and the §D
