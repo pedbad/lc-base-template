@@ -199,14 +199,27 @@
     gap: 2rem;
   }
 
-  .footer-mark {
-    display: block;
+  /* MARKS AND SOCIAL LINKS SHARE ONE HOVER TREATMENT — same rest opacity, same
+     lift, same timing. They used to disagree in DIRECTION as well as in kind: the
+     marks rested at full opacity and FADED to 0.72 on hover while the social links
+     rested at 0.82 and BRIGHTENED to 1, so the two rows of the same cluster behaved
+     as opposites. Both now rest at 0.82 and brighten with a 2px lift.
+
+     `color` is in the shared transition but only the social links can use it — an
+     <img> mark cannot take currentColor, which is why the colour shift is declared
+     on the social rule alone rather than here. */
+  .footer-mark,
+  .footer-social-link {
     border-radius: var(--radius);
-    transition: opacity 180ms ease;
+    opacity: 0.82;
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease,
+      color 180ms ease;
   }
 
-  .footer-mark:hover {
-    opacity: 0.72;
+  .footer-mark {
+    display: block;
   }
 
   /* Height-driven, width auto: the three marks are NOT square despite the
@@ -224,42 +237,53 @@
      reference needed `filter: invert(1)` here only because it loaded the same
      SVGs through <img>, which cannot inherit colour. */
   .footer-social {
+    --footer-social-size: 1.75rem;
+
     display: flex;
     justify-content: space-between;
     gap: 1rem;
   }
 
+  /* THE BOX IS THE ICON. It used to be a 2.125rem box around a 1.375rem icon, so
+     each link carried ~6px of internal padding the marks did not have — the row
+     BOXES flushed while the INK sat 6px inside, which reads as a misalignment.
+
+     The box could not simply shrink to the old 1.375rem (22px) icon: WCAG 2.2
+     SC 2.5.8 (Target Size Minimum, AA) wants 24x24 CSS px. 1.75rem is 28px, so the
+     ink flushes and the hit target stays above the floor rather than exactly on it. */
   .footer-social-link {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.125rem;
-    height: 2.125rem;
-    border-radius: var(--radius);
+    width: var(--footer-social-size);
+    height: var(--footer-social-size);
     color: var(--footer-foreground);
-    opacity: 0.82;
-    transition:
-      opacity 180ms ease,
-      transform 180ms ease,
-      color 180ms ease;
   }
 
+  .footer-social-icon {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Placed after BOTH base rules on purpose: a `:hover` (0,2,0) declared before the
+     plain `.footer-social-link` (0,1,0) is descending specificity, which stylelint
+     flags because it makes the cascade read backwards even when it happens to work. */
+  .footer-mark:hover,
   .footer-social-link:hover {
-    color: var(--primary);
     opacity: 1;
     transform: translateY(-2px);
   }
 
+  .footer-mark:focus-visible,
   .footer-social-link:focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 3px;
     opacity: 1;
   }
 
-  .footer-social-icon {
-    display: block;
-    width: 1.375rem;
-    height: 1.375rem;
+  /* Only the social links can take this — an <img> mark cannot use currentColor,
+     which is why the colour shift is not in the shared hover above. */
+  .footer-social-link:hover {
+    color: var(--primary);
   }
 
   /* --- Type ------------------------------------------------------------- */
@@ -334,6 +358,7 @@
       transition: none;
     }
 
+    .footer-mark:hover,
     .footer-social-link:hover {
       transform: none;
     }
