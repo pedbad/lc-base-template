@@ -330,7 +330,15 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   container, so for an in-flow element it re-implemented scrolling, and removing it
   killed two defects outright (the `duration-[3600ms]` fade and the `opacity-0` +
   `pointer-events-none` + `tabIndex={-1}` hidden state that sat in the accessibility
-  tree). What shipped is a plain `<button onClick>`. Also fixed: the unguarded smooth
+  tree). What shipped is a plain `<button onClick>`.
+
+  **THE FADE WAS ASKED FOR BACK on 2026-09-10 and is now in `back-to-top.css`**
+  (`afe06af`), as this row's own advice said it should be if ever wanted: a CSS
+  scroll-driven animation on a `view()` timeline, no JS. That reverses the _effect_
+  decision, NOT the observer one — there is still no `IntersectionObserver`, no
+  `useState`, no `useEffect` and no prerender question. The three real defects stay
+  fixed: a scroll-linked animation has no duration to get wrong, and the button is
+  focusable and clickable at every point in the fade. Also fixed: the unguarded smooth
   `scrollTo` (now `src/lib/scrollToTop.ts`, `behavior: 'auto'` under reduced motion),
   duplicate accessible names across ~5 buttons per LO (a **required** `sectionId` prop
   feeds `aria-describedby` — guard h does not compare button names, but it DOES fail on
@@ -340,6 +348,16 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   The keyboard pass, both themes and the five widths transferred to D2 with the mount
   and are **done** there. The in-browser reduced-motion check is the one item neither
   job could complete — see D2's row for why, and what stands in for it.
+
+  **THE FADE ITSELF IS ALSO UNOBSERVED, for the same class of reason.** A hidden
+  Browser pane does not sample a `ViewTimeline` — computed opacity stays at 1 and
+  `getComputedTiming().progress` is `null` at every scroll position — so the visual
+  progression was never watched. What WAS verified at runtime: one animation attached,
+  `timeline` is a `ViewTimeline`, `fill` is `both`, the computed keyframes are
+  `opacity 0 / translate 0 4px` → `opacity 1 / translate 0`, and — the safety
+  property — cancelling the animation leaves computed opacity at **1**, so every path
+  that skips it shows a visible button.
+
 - **D5 — the two budget breaches, re-measured 2026-09-10 at `8e3c49f`.** `main-*.js`
   is **95.99 kB gzipped against a < 80 kB** microsite target, and CSS is **20.10 kB
   against < 15 kB**. §D's whole footer + back-to-top programme cost **+0.23 kB
@@ -370,6 +388,14 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   while the Browser pane is HIDDEN leaves the tab at **zero width** — `innerWidth: 0`,
   every section 0px wide — so geometry reads as nonsense (a 12px inset measured as
   -36px) without erroring. Always set an explicit width before measuring layout.
+  (3) A HIDDEN PANE DOES NOT SAMPLE A `ViewTimeline` either: computed opacity stays at
+  its end value and `getComputedTiming().progress` is `null` at every scroll position,
+  so a scroll-driven animation reads as "not working" when it is merely not being
+  drawn. Verify the animation's SHAPE through `getAnimations()` — timeline type, fill,
+  computed keyframes — and leave the visual progression to an eyeball. (4) Not a pane
+  trap but the same shape: `window.scrollTo({behavior: 'auto'})` means "use the
+  computed `scroll-behavior`", which is now `smooth` document-wide, so it silently
+  does nothing while rAF is frozen. Pass `'instant'` to move the scroll in a probe.
 
   **One check could NOT be made in-browser** — the Browser pane exposes no way to
   emulate the OS reduced-motion preference, so the `behavior: 'auto'` path rests on
