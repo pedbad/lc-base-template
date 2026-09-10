@@ -349,18 +349,34 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   handover's "`main-*.js` is ~39kb raw today" is stale by roughly 7×. This also means
   the deferred **per-LO chunking** trigger below ("~a dozen LOs") is already met at ONE
   LO, by a different cause, so that row's wake-up condition is wrong as written.
-- **D2 — the `BackToTopButton` mount.** **DONE 2026-09-10**, `97a5b4b` + `8e3c49f`.
+- **D2 — the `BackToTopButton` mount.** **DONE 2026-09-10**, `97a5b4b` + `8e3c49f` +
+  `1a5500b` (the mint restyle).
   **SCOPED DOWN BY DECISION on the day:** the row used to read "nav + landing-page
   polish", and the polish half was cut — D2 became the mount and nothing else, now §D6.
   One button per `<section>` in `PageLayout` (four on the example LO), one on
   `CourseHome`'s Lessons section and only when there are lessons. D4's deferred
-  verification is **done**: 320 / 375 / 768 / 1024 / 1440 with no overflow and flush
-  right at all five, both themes, keyboard reachable in natural tab order, every
-  `aria-describedby` resolving to a real heading. **One check could NOT be made
-  in-browser** — the Browser pane exposes no way to emulate the OS reduced-motion
-  preference, so the `behavior: 'auto'` path rests on `scrollToTop`'s unit tests plus
-  the confirmed presence of the `@media (prefers-reduced-motion: reduce)` block in the
-  CSSOM. Do that one by hand if you ever want it observed rather than inferred.
+  verification is **done**: 320 / 375 / 768 / 1024 / 1440 with no overflow and a 12px
+  inset from the content edge at all five, both themes, keyboard reachable in natural
+  tab order, every `aria-describedby` resolving to a real heading. Contrast computed
+  from rendered pixels: arrow 10.36:1 on the mint at rest, 6.64:1 on the hover, and a
+  3.22:1 rim against the light page — the fill itself is only 1.43:1 there, which is
+  why the rim exists.
+
+  **TWO MEASUREMENT TRAPS TO ADD TO D4's LIST, both of which produced confident wrong
+  numbers here.** (1) `color-mix` and `oklab()` come back from `getComputedStyle`
+  UNCONVERTED, so a naive `match(/[\d.]+/g)` reads `oklab(0.70 -0.07 -0.01)` as an RGB
+  triple and every contrast figure downstream is fiction. Paint the value on a 1x1
+  canvas and read `getImageData` instead. (2) `resize_window` with preset `desktop`
+  while the Browser pane is HIDDEN leaves the tab at **zero width** — `innerWidth: 0`,
+  every section 0px wide — so geometry reads as nonsense (a 12px inset measured as
+  -36px) without erroring. Always set an explicit width before measuring layout.
+
+  **One check could NOT be made in-browser** — the Browser pane exposes no way to
+  emulate the OS reduced-motion preference, so the `behavior: 'auto'` path rests on
+  `scrollToTop`'s unit tests plus the confirmed presence of the
+  `@media (prefers-reduced-motion: reduce)` block in the CSSOM. Do that one by hand if
+  you ever want it observed rather than inferred.
+
 - **D6 — nav + landing-page polish.** The half cut out of D2, still with no spec.
   Surveyed 2026-09-10, so these are found, not speculative:
   - **Two navs hold different a11y standards.** `LessonSideNav` has focus-move-in, a
