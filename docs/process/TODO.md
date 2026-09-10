@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-09-10 · **HEAD:** see `git log` · **Suite:** 97 files · 948 tests green
+**Last updated:** 2026-09-10 · **HEAD:** see `git log` · **Suite:** 97 files · 954 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -308,7 +308,7 @@ file as its home), `STRUCTURE.md`'s `src/sandbox/` row, README's build section,
 CONTRIBUTING's command table, `AGENTS.md`'s two new house rules, `docs/TOOLING.md`'s two
 new decision entries.
 
-## D. Design & accessibility polish — 3 of 5 open
+## D. Design & accessibility polish — 3 of 6 open
 
 Design and a11y come before branch protection **by decision 2026-09-09**: a footer that
 ships internal build chatter and two dead links is a defect on every page of a live
@@ -323,8 +323,9 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   edge is closed by construction. Contrast measured from rendered pixels in both
   themes (light 9.05 / 13.07 / 7.55, dark 7.15 / 8.71 / 6.48 — all clear AA 4.5:1);
   no horizontal overflow at 320 · 375 · 768 · 1024 · 1440.
-- **D4 — `BackToTopButton`.** **DONE 2026-09-10**, `683d1ce`, and **mounted nowhere by
-  design** — D2 owns the mount. Handover: `2026-09-10-backtotop-handover.md`. The
+- **D4 — `BackToTopButton`.** **DONE 2026-09-10**, `683d1ce`. Shipped deliberately
+  unmounted; **D2 has since mounted it** (`8e3c49f`), so the component and its mount
+  are both closed. Handover: `2026-09-10-backtotop-handover.md`. The
   reference's `IntersectionObserver` was **deleted, not repaired**: it watched its own
   container, so for an in-flow element it re-implemented scrolling, and removing it
   killed two defects outright (the `duration-[3600ms]` fade and the `opacity-0` +
@@ -336,22 +337,48 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   a dangling reference), the missing `:focus-visible` ring once you leave
   shadcn's `Button`, the redundant `Tooltip`, and `type="button"`. Bundles are
   byte-identical to the previous commit, because nothing imports it yet.
-  **STILL OWED, AND IT TRANSFERS TO D2 WITH THE MOUNT:** the keyboard-only pass, both
-  themes, the five widths and the in-browser reduced-motion check. None of them can run
-  against a component that is not mounted, so D2 is not done until they do.
-- **D5 — the two budget breaches, measured 2026-09-09.** `main-*.js` is **95.85 kB
-  gzipped against a < 80 kB** microsite target, and CSS is **19.98 kB against < 15 kB**.
+  The keyboard pass, both themes and the five widths transferred to D2 with the mount
+  and are **done** there. The in-browser reduced-motion check is the one item neither
+  job could complete — see D2's row for why, and what stands in for it.
+- **D5 — the two budget breaches, re-measured 2026-09-10 at `8e3c49f`.** `main-*.js`
+  is **95.99 kB gzipped against a < 80 kB** microsite target, and CSS is **20.10 kB
+  against < 15 kB**. §D's whole footer + back-to-top programme cost **+0.23 kB
+  gzipped** between them, so it moved neither breach materially — the causes are
+  upstream of §D, as the baseline measurement already said.
   Both PRE-DATE §D — measured at baseline by stashing the footer work — and the §D
   handover's "`main-*.js` is ~39kb raw today" is stale by roughly 7×. This also means
   the deferred **per-LO chunking** trigger below ("~a dozen LOs") is already met at ONE
   LO, by a different cause, so that row's wake-up condition is wrong as written.
-- **D2 — nav + landing-page polish.** Not started, no spec yet. Owns where
-  `BackToTopButton` mounts, because that touches `PageLayout`'s section loop and
-  `CourseHome`, both of which guard h re-renders. The rule is already derived, so do not
-  re-derive it: **static blocks yes, accordions no** — collapsing an accordion already
-  returns the reader upward, and inside a closed one the button is unreachable. It takes
-  a required `sectionId`, and D4's deferred verification (keyboard, both themes, five
-  widths, reduced motion in-browser) lands here with the mount.
+- **D2 — the `BackToTopButton` mount.** **DONE 2026-09-10**, `97a5b4b` + `8e3c49f`.
+  **SCOPED DOWN BY DECISION on the day:** the row used to read "nav + landing-page
+  polish", and the polish half was cut — D2 became the mount and nothing else, now §D6.
+  One button per `<section>` in `PageLayout` (four on the example LO), one on
+  `CourseHome`'s Lessons section and only when there are lessons. D4's deferred
+  verification is **done**: 320 / 375 / 768 / 1024 / 1440 with no overflow and flush
+  right at all five, both themes, keyboard reachable in natural tab order, every
+  `aria-describedby` resolving to a real heading. **One check could NOT be made
+  in-browser** — the Browser pane exposes no way to emulate the OS reduced-motion
+  preference, so the `behavior: 'auto'` path rests on `scrollToTop`'s unit tests plus
+  the confirmed presence of the `@media (prefers-reduced-motion: reduce)` block in the
+  CSSOM. Do that one by hand if you ever want it observed rather than inferred.
+- **D6 — nav + landing-page polish.** The half cut out of D2, still with no spec.
+  Surveyed 2026-09-10, so these are found, not speculative:
+  - **Two navs hold different a11y standards.** `LessonSideNav` has focus-move-in, a
+    Tab trap, `inert` when closed, Escape + focus restore. `Header`'s mobile panel has
+    Escape and `hidden` only — no trap, no focus move in, no scroll lock.
+  - **`activeSectionId` does not mean what its doc says.** `Header.tsx` calls it "the
+    section currently in view", but `PageLayout` only updates it on `hashchange`, so
+    `aria-current` is stale the moment the reader scrolls. Either build a real
+    scroll-spy or correct the comment. A scroll-spy does NOT contradict §D4's "delete
+    the observer": that observer watched ITSELF to answer a question scrolling already
+    answers; a spy watches OTHER elements to answer one the DOM cannot.
+  - **Two headers, two shapes.** LO page is `max-w-5xl`, sticky, blurred, brand is a
+    link, holds the nav landmark. `CourseHome` is `max-w-6xl`, static, brand is a `<p>`,
+    and the landmark lives inside `LessonSideNav`.
+  - **`Header` is still 240-char inline Tailwind strings** while §D1 moved the footer to
+    plain CSS in `@layer`. Pick one direction.
+  - **The landing page reads sparse at 1440 with one LO** — hero, then a single card in
+    a wide grid. Design work, not a defect.
 - **D3 — the `no-preference` motion sweep.** Candidate, not agreed. `home.css`,
   `shell.css` and `footer.css` all use the `reduce` override shape; the
   `no-preference` opt-in fails closed on a user agent without the query. One commit
@@ -431,3 +458,5 @@ build, so it cannot return. Two remain:
 | 2026-09-10 | `8e8ec94` | icon ink flushed; marks get the social hover + a focus ring they lacked             |
 | 2026-09-10 | `eac73fc` | `prefersReducedMotion` extracted to `src/lib/` — BackToTop is consumer two          |
 | 2026-09-10 | `683d1ce` | **`BackToTopButton`** (§D4) — observer deleted, not fixed; unmounted, D2 mounts it  |
+| 2026-09-10 | `97a5b4b` | landing page's Lessons heading id now comes from `headingId`, not a literal         |
+| 2026-09-10 | `8e3c49f` | **`BackToTopButton` mounted** (§D2) — one per section + the Lessons grid            |
