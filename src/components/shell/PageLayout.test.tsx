@@ -73,4 +73,35 @@ describe('PageLayout', () => {
     const html = renderToStaticMarkup(<PageLayout title="Lesson" sections={withContent} />);
     expect(html).toContain('Hello there');
   });
+
+  // §D · D2 — one back-to-top per section, mounted here rather than in the
+  // component (D4 shipped it deliberately unmounted). The describedby is what
+  // stops four identically-named buttons being indistinguishable, so the test
+  // that matters is that each one names ITS OWN section, not the first.
+  test('mounts one back-to-top button per section', () => {
+    const html = renderToStaticMarkup(<PageLayout title="T" sections={SECTIONS} />);
+
+    expect((html.match(/aria-label="Back to top"/g) ?? []).length).toBe(SECTIONS.length);
+  });
+
+  test('each back-to-top describes its own section heading, not a shared one', () => {
+    const html = renderToStaticMarkup(<PageLayout title="T" sections={SECTIONS} />);
+
+    for (const section of SECTIONS) {
+      expect(html).toContain(`aria-describedby="${headingId(section.id)}"`);
+    }
+    const described = html.match(/aria-describedby="[^"]+"/g) ?? [];
+    expect(new Set(described).size).toBe(SECTIONS.length);
+  });
+
+  test('the button sits inside its section, after the content', () => {
+    const html = renderToStaticMarkup(<PageLayout title="T" sections={SECTIONS} />);
+    const first = headingId(SECTIONS[0]!.id);
+    const button = html.indexOf(`aria-describedby="${first}"`);
+    const secondSection = html.indexOf(`id="${SECTIONS[1]!.id}"`);
+
+    // Before the next section opens → it is inside the first one.
+    expect(button).toBeGreaterThan(-1);
+    expect(button).toBeLessThan(secondSection);
+  });
 });

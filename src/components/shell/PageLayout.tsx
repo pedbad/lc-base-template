@@ -17,6 +17,7 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { headingId } from '@/lib/headingId';
+import BackToTopButton from './BackToTopButton';
 import Header from './Header';
 import Footer from './Footer';
 import type { NavSection } from './nav-section';
@@ -92,6 +93,12 @@ export default function PageLayout({ title, sections, themeToggle }: PageLayoutP
                 </p>
               )}
             </div>
+            {/* §D · D2. Inside the <section>, after its content, so the button's
+                aria-describedby names the heading of the section it closes — five
+                identically-named buttons per page are otherwise indistinguishable.
+                It lands outside every accordion by construction, because the
+                accordions are inside `section.content`. */}
+            <BackToTopButton sectionId={section.id} />
           </section>
         ))}
       </main>

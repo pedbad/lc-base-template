@@ -101,4 +101,20 @@ describe('CourseHome', () => {
     expect(html).toMatch(new RegExp(`<section[^>]*aria-labelledby="${hid}"`));
     expect(html).toMatch(new RegExp(`<h2[^>]*id="${hid}"`));
   });
+
+  // §D · D2 — the landing page's case is stronger than an LO page's: this header
+  // is deliberately NOT sticky (a backdrop-filter would trap the sliding panel),
+  // so nothing follows the reader down a long card grid.
+  test('mounts one back-to-top button on the Lessons section', () => {
+    const html = renderToStaticMarkup(<CourseHome lessons={LESSONS} />);
+
+    expect((html.match(/aria-label="Back to top"/g) ?? []).length).toBe(1);
+    expect(html).toContain(`aria-describedby="${headingId('lessons')}"`);
+  });
+
+  test('omits it when the course has no lessons — nothing to scroll past', () => {
+    const html = renderToStaticMarkup(<CourseHome lessons={[]} />);
+
+    expect(html).not.toContain('aria-label="Back to top"');
+  });
 });

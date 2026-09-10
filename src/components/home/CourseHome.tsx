@@ -22,6 +22,7 @@
  */
 import { courseConfig } from '@/config/course.config';
 import { headingId } from '@/lib/headingId';
+import BackToTopButton from '@/components/shell/BackToTopButton';
 import Footer from '@/components/shell/Footer';
 import ThemeToggle from '@/components/shell/ThemeToggle';
 import type { LoIndexEntry } from '@/lo/lo-index';
@@ -83,11 +84,19 @@ export default function CourseHome({ lessons }: CourseHomeProps) {
               appears here.
             </p>
           ) : (
-            <ul className="home-card-grid">
-              {lessons.map((lesson, index) => (
-                <LoCard key={lesson.folder} lesson={lesson} index={index} />
-              ))}
-            </ul>
+            <>
+              <ul className="home-card-grid">
+                {lessons.map((lesson, index) => (
+                  <LoCard key={lesson.folder} lesson={lesson} index={index} />
+                ))}
+              </ul>
+              {/* §D · D2, and only in this branch: the zero-lesson state is a
+                  single honest sentence, so a back-to-top under it would be
+                  absurd. The case here is stronger than on an LO page — this
+                  header is deliberately not sticky, so nothing follows the
+                  reader down a long grid. */}
+              <BackToTopButton sectionId="lessons" />
+            </>
           )}
         </section>
       </main>
