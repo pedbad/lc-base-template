@@ -116,14 +116,32 @@
     gap: 1rem;
   }
 
-  /* `gap` MATCHES .footer-identity deliberately. These are the two halves of one
+  /* ONE SHARED WIDTH FOR BOTH ROWS, so the marks and the social icons line up on
+     BOTH edges. Merely centring (or right-flushing) two rows of different natural
+     width — 209px of marks against 234px of icons — leaves the LC mark sitting 25px
+     inside the Facebook icon, which is the mismatch this fixes.
+
+     `width: max-content` makes the cluster hug its WIDEST row (the social row), and
+     `align-items: stretch` then hands that width to the mark row too. Each row
+     spreads itself with `space-between`, so first-to-first and last-to-last align by
+     construction rather than by a hand-tuned number.
+
+     This is the reference's mechanism: it puts `--footer-common-width` on
+     `.square-logos` AND `.footer-links` so both are literally the same width. Taking
+     the width from content instead of a magic constant means adding a fourth mark or
+     a sixth account cannot break the alignment.
+
+     `gap` MATCHES .footer-identity deliberately. These are the two halves of one grid
      row, so a different gap on each side offsets their second rows by exactly the
      difference — 1.25rem here against 1rem there was 4px of drift on its own. */
   .footer-cluster {
     grid-area: cluster;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
+    width: max-content;
+    max-width: 100%;
+    margin-inline: auto;
     gap: 1rem;
   }
 
@@ -176,7 +194,7 @@
   .footer-mark-row {
     display: flex;
     align-items: flex-end;
-    justify-content: center;
+    justify-content: space-between;
     min-height: var(--footer-lockup-height);
     gap: 2rem;
   }
@@ -207,7 +225,7 @@
      SVGs through <img>, which cannot inherit colour. */
   .footer-social {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     gap: 1rem;
   }
 
@@ -348,13 +366,12 @@
       align-items: flex-start;
     }
 
+    /* The CLUSTER right-aligns as a BLOCK; the rows inside keep their shared width
+       and their space-between spread, so both edges stay flush. `align-items:
+       flex-end` used to live here and had to go — it collapses each row to its own
+       content width, which is exactly what made the left edges ragged. */
     .footer-cluster {
-      align-items: flex-end;
-    }
-
-    .footer-mark-row,
-    .footer-social {
-      justify-content: flex-end;
+      margin-inline: auto 0;
     }
 
     .footer-licence,
