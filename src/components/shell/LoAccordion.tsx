@@ -33,11 +33,15 @@
  * promise is a reliable completion signal, and a cancelled animation rejects it —
  * which is exactly the "clicked again mid-close" case.
  *
- * Every id comes from the shared headingId helper (§5) — never a second scheme.
+ * Every id comes from the shared headingId helper (§5) — never a second scheme, and
+ * the reduced-motion read comes from the shared prefersReducedMotion module for the
+ * same reason: BackToTopButton is a second consumer, and two copies of a media query
+ * is how the two drift apart.
  */
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { headingId } from '@/lib/headingId';
+import { prefersReducedMotion } from '@/lib/prefersReducedMotion';
 import InstructionsCallout from './InstructionsCallout';
 
 interface LoAccordionProps {
@@ -56,14 +60,6 @@ interface LoAccordionProps {
 /** Reveal/collapse timing. Owned here now that the CSS no longer animates (see above). */
 const ANIMATION_MS = 250;
 const ANIMATION_EASING = 'cubic-bezier(0, 0, 0.2, 1)';
-
-function prefersReducedMotion(): boolean {
-  return (
-    typeof window !== 'undefined' &&
-    typeof window.matchMedia === 'function' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  );
-}
 
 /** Animate `element`'s height between two pixel values. */
 function animateHeight(element: HTMLElement, fromPx: number, toPx: number): Animation {
