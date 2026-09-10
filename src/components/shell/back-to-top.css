@@ -1,0 +1,86 @@
+/**
+ * back-to-top.css — the back-to-top control (§D · D4). Co-located with the shell
+ * components and imported by BackToTopButton.tsx, the same pattern as footer.css.
+ *
+ * Plain CSS + semantic tokens inside @layer components (guard g), rem throughout, one
+ * flat class (§D1: the reference reached five levels deep, which no utility can
+ * override).
+ *
+ * THERE IS NO ENTRANCE ANIMATION, AND THAT IS THE POINT. The reference faded this in
+ * over 3600ms via an IntersectionObserver watching its own container — for an in-flow
+ * element, machinery re-implementing scrolling. If an entrance is ever wanted, it
+ * belongs here as a CSS animation, where `prefers-reduced-motion` is honoured without
+ * a line of JS. Not in JS again.
+ */
+
+@layer components {
+  /* 2.25rem is 36px. WCAG 2.2 SC 2.5.8 (Target Size Minimum, AA) wants 24x24 CSS px,
+     and the footer's social links sit at 1.75rem/28px for that reason — this one is
+     larger because it is a lone action rather than one of a flush row, and it has no
+     neighbour to align its ink to. rem, so the target grows when the reader raises
+     their browser font size; a px box would not. */
+  .back-to-top {
+    --back-to-top-size: 2.25rem;
+
+    /* Right-aligned in normal flow. `margin-inline: auto 0` is the footer cluster's
+       idiom for this and needs no wrapper element to hold a flex context — the
+       reference's `top-button-container` div matched zero CSS rules. */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--back-to-top-size);
+    height: var(--back-to-top-size);
+    margin-block-start: 0.75rem;
+    margin-inline: auto 0;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background-color: var(--card);
+    color: var(--muted-foreground);
+    cursor: pointer;
+    transition:
+      border-color 180ms ease,
+      transform 180ms ease,
+      color 180ms ease;
+  }
+
+  /* Declared AFTER the plain class on purpose: a `:hover` (0,2,0) before its (0,1,0)
+     base is descending specificity, which stylelint flags because it makes the
+     cascade read backwards even when it happens to work. It bit `:hover` twice in
+     §D1 — the same trap applies to `:focus-visible`, which is also (0,2,0).
+
+     The treatment is the footer social row's, deliberately: a 2px lift plus a shift
+     to `--primary`, so the two icon affordances in the shell behave the same way. */
+  .back-to-top:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-2px);
+  }
+
+  /* THE RULE THAT ONLY EXISTS BECAUSE THIS IS A PLAIN <button>. The reference
+     inherited shadcn Button's ring; dropping that primitive drops the ring with it,
+     and nothing in the gate would have noticed. Matches .footer-link's offset. */
+  .back-to-top:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  .back-to-top-icon {
+    /* Ink, not box: the button owns the hit target, the icon owns the glyph. */
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  /* --- Reduced motion ---------------------------------------------------
+     The `reduce` override shape, matching footer.css, home.css and shell.css. The
+     scroll itself is guarded in JS (src/lib/scrollToTop.ts) because `scrollTo`'s
+     behaviour is not a CSS property; this covers the hover only. */
+  @media (prefers-reduced-motion: reduce) {
+    .back-to-top {
+      transition: none;
+    }
+
+    .back-to-top:hover {
+      transform: none;
+    }
+  }
+}
