@@ -32,6 +32,11 @@ const html = (sectionId = 'exercises') =>
 
 const css = readFileSync(path.join(import.meta.dirname, 'back-to-top.css'), 'utf8');
 
+/** Comments stripped, so an assertion about the RULES is not satisfied or broken by
+ *  prose. Guard g strips them for the same reason: every `!important` in this repo
+ *  sits in a header promising not to use one. */
+const rules = css.replace(/\/\*[\s\S]*?\*\//g, '');
+
 describe('BackToTopButton', () => {
   test('renders exactly one button and no wrapper element', () => {
     expect((html().match(/<button\b/g) ?? []).length).toBe(1);
@@ -128,50 +133,45 @@ describe('BackToTopButton', () => {
     expect(css).toMatch(/margin-inline:\s*auto\s+0\.75rem/);
   });
 
-  // --- The scroll-driven entrance (§D4 reversed 2026-09-10) ----------------
-  // The fade is back, as CSS rather than the reference's IntersectionObserver. All
-  // three of these pin failure modes that look like tidying.
+  // --- The reveal (§D4 reversed 2026-09-10, then re-done) -----------------
+  // First rebuilt as `animation-timeline: view()` with no JS. Measurably wrong: a
+  // view timeline is positional, so the three of four buttons already on screen at
+  // load sat past `entry 100%` and never faded. These pin the replacement.
 
-  test('the entrance is CSS on a view timeline — no observer came back', () => {
-    expect(css).toContain('animation-timeline: view()');
-    expect(css).toMatch(/@keyframes back-to-top-enter/);
-    expect(html()).not.toContain('style=');
+  test('no view timeline remains — it could not express "first time seen"', () => {
+    // The header still DISCUSSES the abandoned approach, which is why this reads the
+    // comment-stripped rules rather than the file.
+    expect(rules).not.toContain('animation-timeline');
+    expect(rules).not.toContain('@keyframes');
+    expect(css).toContain('animation-timeline'); // i.e. only in the prose
   });
 
-  // THE ONE THAT MATTERS. The base rule must stay VISIBLE: the `from` frame supplies
-  // the transparency via fill-mode `both`. Hoist `opacity: 0` into the base rule and
-  // every reader who skips the animation — no view-timeline support, or reduced
-  // motion — gets a permanently invisible button, which is the reference's defect
-  // made worse.
-  test('the hidden state lives only in the keyframes, never in the base rule', () => {
-    const base = /\.back-to-top \{([\s\S]*?)\n {2}\}/.exec(css)?.[1] ?? '';
+  // THE ONE THAT MATTERS. The transparency must be conditional on `js-reveal`, which
+  // index.html adds before first paint and only when IntersectionObserver exists and
+  // the reader has not asked for reduced motion. Hoist it into the base rule and
+  // every reader on those paths gets a permanently invisible button.
+  test('the hidden state is conditional on js-reveal, never unconditional', () => {
+    expect(css).toMatch(/\.js-reveal \.back-to-top:not\(\[data-seen\]\) \{[^}]*opacity:\s*0/);
+
+    const base = /\n {2}\.back-to-top \{([\s\S]*?)\n {2}\}/.exec(css)?.[1] ?? '';
     expect(base).not.toMatch(/opacity\s*:/);
-
-    const frames = /@keyframes back-to-top-enter \{([\s\S]*?)\n {6}\}/.exec(css)?.[1] ?? '';
-    expect(frames).toMatch(/opacity:\s*0/);
-    expect(css).toMatch(/animation:\s*back-to-top-enter linear both/);
   });
 
-  test('the entrance is behind @supports AND opts in via no-preference', () => {
-    // @supports so unsupported browsers never see the `from` frame; no-preference
-    // rather than a `reduce` override so unknown query support fails CLOSED.
-    const guardIndex = css.indexOf('@supports (animation-timeline: view())');
-    const prefIndex = css.indexOf('@media (prefers-reduced-motion: no-preference)');
-    // The DECLARATION, not the @supports prelude — which contains the same string.
-    const animIndex = css.indexOf('animation-timeline: view();');
+  test('index.html arms the reveal before paint, and only when it is safe to', () => {
+    const shell = readFileSync(path.join(import.meta.dirname, '../../../index.html'), 'utf8');
 
-    expect(guardIndex).toBeGreaterThan(-1);
-    expect(prefIndex).toBeGreaterThan(guardIndex);
-    expect(animIndex).toBeGreaterThan(prefIndex);
+    // Inline and in <head>: a deferred module or a React effect would paint the
+    // prerendered buttons visible, then hide them, then fade — a flash every load.
+    expect(shell.indexOf('js-reveal')).toBeLessThan(shell.indexOf('</head>'));
+    expect(shell).toContain("'IntersectionObserver' in window");
+    expect(shell).toContain("!window.matchMedia('(prefers-reduced-motion: reduce)').matches");
   });
 
-  // Animating `transform` instead would silently kill the hover lift: a filled
-  // animation beats an ordinary declaration. `translate` is a separate property and
-  // composes with `transform`, so both survive.
-  test('keyframes animate translate, not transform, so the hover lift survives', () => {
-    const frames = /@keyframes back-to-top-enter \{([\s\S]*?)\n {6}\}/.exec(css)?.[1] ?? '';
-    expect(frames).toMatch(/translate:/);
-    expect(frames).not.toMatch(/transform:/);
+  test('the reveal transitions translate, not transform, so the hover lift survives', () => {
+    // Separate properties that compose; sharing one would make the reveal and the
+    // hover fight over the same value.
+    expect(css).toMatch(/\.js-reveal \.back-to-top:not\(\[data-seen\]\) \{[^}]*translate:/);
+    expect(css).toMatch(/transition:[^;]*translate 900ms/);
     expect(css).toMatch(/\.back-to-top:hover \{[^}]*transform:\s*translateY\(-2px\)/);
   });
 });

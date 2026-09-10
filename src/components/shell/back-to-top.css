@@ -6,21 +6,17 @@
  * flat class (§D1: the reference reached five levels deep, which no utility can
  * override).
  *
- * THE ENTRANCE IS SCROLL-DRIVEN CSS, WITH NO JAVASCRIPT. §D4 deleted the reference's
- * IntersectionObserver and said that if the fade were ever wanted back it belonged
- * here as a CSS animation; it was wanted back (2026-09-10), so this is that. A view
- * timeline ties the fade to the element's own scroll position, which is what the
- * observer was laboriously approximating — and it cannot regress into the reference's
- * `duration-[3600ms]` reveal, because a scroll-linked animation has no duration to get
- * wrong.
+ * THE BUTTON FADES IN THE FIRST TIME IT IS SEEN. §D4 deleted the reference's
+ * IntersectionObserver; the fade was wanted back (2026-09-10) and was first rebuilt
+ * as a CSS `view()` timeline with no JS at all. That was measurably wrong, and the
+ * measurement is worth keeping: a view timeline is POSITIONAL, so an element already
+ * inside the viewport at load sits past `entry 100%` and never animates. Three of the
+ * four buttons on the example LO are on screen at load, so three of four never faded.
+ * "The first time it is seen" has no positional expression, which is the one thing
+ * the reference's observer got right. It is back, in `useRevealOnFirstView`.
  *
- * THE HIDDEN STATE LIVES ONLY INSIDE THE KEYFRAMES. This is the whole safety
- * argument, so do not "tidy" it by hoisting `opacity: 0` into the base rule. The base
- * rule keeps the button VISIBLE, and the `from` frame supplies the transparency via
- * `animation-fill-mode: both`. So every path that skips the animation — no
- * `animation-timeline` support, or a reader who asked for reduced motion — lands on a
- * plainly visible button. Declare `opacity: 0` in the base rule instead and those same
- * readers get a permanently invisible control: the reference's defect, made worse.
+ * THE HIDDEN STATE IS CONDITIONAL ON A CLASS THAT ONLY JS ADDS, and that is the whole
+ * safety argument — see the reveal rule below before changing anything about it.
  */
 
 @layer components {
@@ -71,7 +67,13 @@
        it darkens on the light page and lightens on the dark one. */
     border: 1px solid color-mix(in oklab, var(--accent) 62%, var(--foreground));
     cursor: pointer;
+
+    /* 900ms on opacity/translate is the REVEAL; 180ms is the hover. The reference
+       used 3600ms for the reveal, which is long enough to read as a page still
+       loading. One knob, here. */
     transition:
+      opacity 900ms ease,
+      translate 900ms ease,
       background-color 180ms ease,
       border-color 180ms ease,
       transform 180ms ease;
@@ -119,51 +121,37 @@
     height: 1.25rem;
   }
 
-  /* --- The scroll-driven entrance ---------------------------------------
-     TWO GUARDS, both load-bearing.
+  /* --- The reveal ------------------------------------------------------
+     THE HIDDEN STATE IS CONDITIONAL ON `js-reveal`, AND THAT IS THE WHOLE SAFETY
+     ARGUMENT. Do not "tidy" this into `.back-to-top { opacity: 0 }`. index.html adds
+     `js-reveal` to <html> before first paint, and only when IntersectionObserver
+     exists and the reader has not asked for reduced motion. So JS off, no observer,
+     or reduced motion all mean this selector never matches and the button is plainly
+     visible — nothing is left hidden waiting for a script that will not run. Declare
+     the transparency unconditionally instead and those readers get a permanently
+     invisible control: the reference's defect, made worse.
 
-     `@supports` keeps the whole thing out of browsers without view timelines, so they
-     never see the `from` frame at all.
+     `useRevealOnFirstView` sets `data-seen` on the node the first time it intersects,
+     which drops this rule and lets the transition below run. A first REBUILD of this
+     used `animation-timeline: view()` and no JS at all, which was measurably wrong:
+     a view timeline is positional, so a button already on screen at load is past
+     `entry 100%` and never animates. Three of the four buttons on the example LO are
+     on screen at load.
 
-     `no-preference` rather than this file's usual `reduce` override, and here that is
-     forced rather than stylistic (contrast §D3, which is about the other rules). The
-     `reduce` shape would mean declaring the animation unconditionally and cancelling
-     it with `animation: none` — but cancelling an animation whose `from` frame is the
-     only reason the button is transparent is fine, while a user agent that does not
-     understand the query would apply motion to someone who may have asked against it.
-     The opt-in fails closed: unknown support means no animation and a visible button.
-
-     KEYFRAMES ANIMATE `translate`, NOT `transform`. They are separate properties that
-     compose, so the hover's `transform: translateY(-2px)` still works. Animating
-     `transform` here would have silently killed the hover lift instead, because a
-     filled animation beats an ordinary declaration in the cascade. */
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      @keyframes back-to-top-enter {
-        from {
-          opacity: 0;
-          translate: 0 0.25rem;
-        }
-
-        to {
-          opacity: 1;
-          translate: 0 0;
-        }
-      }
-
-      .back-to-top {
-        animation: back-to-top-enter linear both;
-        animation-timeline: view();
-        animation-range: entry 15% entry 75%;
-      }
-    }
+     `translate`, not `transform`: they are separate properties that compose, so the
+     hover's `transform: translateY(-2px)` survives. */
+  .js-reveal .back-to-top:not([data-seen]) {
+    opacity: 0;
+    translate: 0 0.25rem;
   }
 
   /* --- Reduced motion ---------------------------------------------------
      The `reduce` override shape, matching footer.css, home.css and shell.css. The
-     entrance above needs nothing here — it is opt-in, so `reduce` simply never gets
-     it. The scroll itself is guarded in JS (src/lib/scrollToTop.ts) because
-     `scrollTo`'s behaviour is not a CSS property; this covers the hover only. */
+     reveal needs nothing here — index.html never arms it under reduced motion, so
+     the button is simply visible from the start. The scroll is guarded in JS
+     (src/lib/scrollToTop.ts) because `scrollTo`'s behaviour is not a CSS property.
+     This covers the hover, and the reveal transition that would otherwise linger on
+     a button that was never hidden. */
   @media (prefers-reduced-motion: reduce) {
     .back-to-top {
       transition: none;

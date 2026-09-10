@@ -32,6 +32,30 @@
           // storage or matchMedia unavailable — the light default stands
         }
       })();
+
+      // Pre-hydration ARMING for the back-to-top reveal, and it is here for exactly
+      // the reason the theme is: prerendered HTML already contains the buttons, so
+      // arming them from a module (deferred) or a React effect (post-paint) would
+      // paint them visible, then hide them, then fade — a flash on every load.
+      //
+      // FAIL-SAFE BY OMISSION. The stylesheet only hides a button when this class is
+      // present, so JS off, no IntersectionObserver, or a reader who asked for
+      // reduced motion all mean the buttons are plainly visible and nothing is
+      // hidden waiting for a script that will never run. Reduced motion opts OUT
+      // entirely rather than getting an instant hide-then-show, because appearing
+      // is the motion.
+      (function () {
+        try {
+          if (
+            'IntersectionObserver' in window &&
+            !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ) {
+            document.documentElement.classList.add('js-reveal');
+          }
+        } catch (error) {
+          // matchMedia unavailable — leave unarmed, i.e. buttons visible
+        }
+      })();
     </script>
   </head>
   <body>
