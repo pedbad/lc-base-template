@@ -93,7 +93,7 @@ work. **Guard c** checks the form; **guard d** checks the file is actually there
 | `src/styles/`     | **The theme** — the token chain. See [`DESIGNER.md`](DESIGNER.md).                                         |
 | `src/guards/`     | **The eight repo-wide invariant sweeps.** Vitest tests; `bun run guards` runs them.                        |
 | `src/build/`      | Build-time helpers importable by Vite — prerender HTML, dev-server LO pages, docs→HTML.                    |
-| `src/lib/`        | Small pure utilities — asset paths, heading ids, language tagging.                                         |
+| `src/lib/`        | Small shared utilities — asset paths, heading ids, language tagging, reduced motion, scroll-to-top.        |
 | `src/hooks/`      | React hooks — theme, hydration state, viewport.                                                            |
 | `src/audio/`      | Audio playback manager and its hook.                                                                       |
 | `src/showcase/`   | The opt-in debug gallery of every engine with sample content.                                              |

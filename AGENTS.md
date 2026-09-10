@@ -70,6 +70,12 @@ bun run format && bun run lint && bun run lint:css && bun run test && bun run bu
   that references a token, and in a `@media` breakpoint.
 - **Every CSS rule inside `@layer`. No `!important`.**
 - **Semantic HTML**, per spec §17. Decorative icons get `aria-hidden`.
+- **Reduced motion is read through `prefersReducedMotion()`** (`src/lib/`), and only
+  from an event handler or an effect — never at module scope or during render. A
+  module-scope `matchMedia` read throws in the Bun prerender; a read during render
+  makes the first client render disagree with the prerendered markup. CSS motion
+  belongs in a `@media (prefers-reduced-motion: reduce)` block instead, which needs
+  no JS at all.
 - **A new exercise engine follows the recipe:** schema + pure grading +
   colocated tests + thin view + fixture + registry entry. Copy the shape of
   `src/exercises/reading/`.

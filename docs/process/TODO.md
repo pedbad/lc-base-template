@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-09-10 · **HEAD:** see `git log` · **Suite:** 94 files · 928 tests green
+**Last updated:** 2026-09-10 · **HEAD:** see `git log` · **Suite:** 97 files · 948 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -308,35 +308,37 @@ file as its home), `STRUCTURE.md`'s `src/sandbox/` row, README's build section,
 CONTRIBUTING's command table, `AGENTS.md`'s two new house rules, `docs/TOOLING.md`'s two
 new decision entries.
 
-## D. Design & accessibility polish — 4 of 5 open
+## D. Design & accessibility polish — 3 of 5 open
 
 Design and a11y come before branch protection **by decision 2026-09-09**: a footer that
 ships internal build chatter and two dead links is a defect on every page of a live
 course, and adding collaborators does not fix it. Branch protection is now §E.
 
 - **D1 — the footer colophon.** **DONE 2026-09-09/10** except `BackToTopButton`, which
-  moves to D4. Spec: `docs/specs/2026-09-09-footer-colophon-design.md` (r2). The
+  moved to D4 and is now built too. Spec:
+  `docs/specs/2026-09-09-footer-colophon-design.md` (r2). The
   french-lo-1 footer is ported — lockup, LC/CC/eLearning imprint marks, social row,
   licence line — all driven by `src/config/footer.config.ts`, whose `href` refine
   rejects any bare fragment, so **`href: '#'` now fails the build** and the first §5.7
   edge is closed by construction. Contrast measured from rendered pixels in both
   themes (light 9.05 / 13.07 / 7.55, dark 7.15 / 8.71 / 6.48 — all clear AA 4.5:1);
   no horizontal overflow at 320 · 375 · 768 · 1024 · 1440.
-- **D4 — `BackToTopButton`.** **Not built.** Full handover:
-  `2026-09-10-backtotop-handover.md` — read that, not just the D1 spec §3.4, because it
-  reverses one of the spec's implied decisions. **Start by DELETING the reference's
-  IntersectionObserver:** for an in-flow element it re-implements scrolling, and
-  removing it kills two of the four defects outright (the `duration-[3600ms]` 3.6s fade
-  and the `opacity-0` hidden state that stays in the accessibility tree) rather than
-  fixing them. What remains is a plain `<button onClick>` of about 20 lines. Real
-  defects left: the unguarded smooth `scrollTo`, duplicate accessible names across ~5
-  buttons per LO (fix with `aria-describedby={headingId(section.id)}` — guard h does
-  NOT catch duplicate button names), a missing `:focus-visible` ring once you leave
-  shadcn's `Button`, and a redundant `Tooltip`. Needs
-  `src/lib/prefersReducedMotion.ts` extracted from `LoAccordion.tsx:60` first — its
-  second consumer. **Scope:** component + colocated tests, mounted NOWHERE; the
-  keyboard / both-themes / five-widths pass transfers to D2 with the mount, since you
-  cannot tab to a component that is not mounted.
+- **D4 — `BackToTopButton`.** **DONE 2026-09-10**, `683d1ce`, and **mounted nowhere by
+  design** — D2 owns the mount. Handover: `2026-09-10-backtotop-handover.md`. The
+  reference's `IntersectionObserver` was **deleted, not repaired**: it watched its own
+  container, so for an in-flow element it re-implemented scrolling, and removing it
+  killed two defects outright (the `duration-[3600ms]` fade and the `opacity-0` +
+  `pointer-events-none` + `tabIndex={-1}` hidden state that sat in the accessibility
+  tree). What shipped is a plain `<button onClick>`. Also fixed: the unguarded smooth
+  `scrollTo` (now `src/lib/scrollToTop.ts`, `behavior: 'auto'` under reduced motion),
+  duplicate accessible names across ~5 buttons per LO (a **required** `sectionId` prop
+  feeds `aria-describedby` — guard h does not compare button names, but it DOES fail on
+  a dangling reference), the missing `:focus-visible` ring once you leave
+  shadcn's `Button`, the redundant `Tooltip`, and `type="button"`. Bundles are
+  byte-identical to the previous commit, because nothing imports it yet.
+  **STILL OWED, AND IT TRANSFERS TO D2 WITH THE MOUNT:** the keyboard-only pass, both
+  themes, the five widths and the in-browser reduced-motion check. None of them can run
+  against a component that is not mounted, so D2 is not done until they do.
 - **D5 — the two budget breaches, measured 2026-09-09.** `main-*.js` is **95.85 kB
   gzipped against a < 80 kB** microsite target, and CSS is **19.98 kB against < 15 kB**.
   Both PRE-DATE §D — measured at baseline by stashing the footer work — and the §D
@@ -345,7 +347,11 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   LO, by a different cause, so that row's wake-up condition is wrong as written.
 - **D2 — nav + landing-page polish.** Not started, no spec yet. Owns where
   `BackToTopButton` mounts, because that touches `PageLayout`'s section loop and
-  `CourseHome`, both of which guard h re-renders.
+  `CourseHome`, both of which guard h re-renders. The rule is already derived, so do not
+  re-derive it: **static blocks yes, accordions no** — collapsing an accordion already
+  returns the reader upward, and inside a closed one the button is unreachable. It takes
+  a required `sectionId`, and D4's deferred verification (keyboard, both themes, five
+  widths, reduced motion in-browser) lands here with the mount.
 - **D3 — the `no-preference` motion sweep.** Candidate, not agreed. `home.css`,
   `shell.css` and `footer.css` all use the `reduce` override shape; the
   `no-preference` opt-in fails closed on a user agent without the query. One commit
@@ -423,3 +429,5 @@ build, so it cannot return. Two remain:
 | 2026-09-09 | `52e4ca4` | band kept mint; the two footer columns share a baseline                             |
 | 2026-09-10 | `40f4e1b` | mark and social rows share one width, so both edges flush                           |
 | 2026-09-10 | `8e8ec94` | icon ink flushed; marks get the social hover + a focus ring they lacked             |
+| 2026-09-10 | `eac73fc` | `prefersReducedMotion` extracted to `src/lib/` — BackToTop is consumer two          |
+| 2026-09-10 | `683d1ce` | **`BackToTopButton`** (§D4) — observer deleted, not fixed; unmounted, D2 mounts it  |
