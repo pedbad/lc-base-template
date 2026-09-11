@@ -35,8 +35,15 @@ import { SHOWCASE_FIXTURES } from '@/showcase/fixtures';
  *
  * Adding an asset field to a schema means adding its key here. The repo sweep asserts
  * a minimum find count so that omission surfaces as a failure, not as silence.
+ *
+ * `src` is here because an image that carries alt text cannot be a bare string: the
+ * outcomes block authors `image: { src, alt }`, and the walker only collects a STRING
+ * sitting directly under an asset key. Without `src` the nested path is walked past
+ * and the guard reports green having checked nothing — the precise staleness this
+ * file's header warns about. Nothing else in `lo-config/` or the showcase fixtures
+ * uses the key, so it collects exactly the paths intended.
  */
-export const ASSET_KEYS = ['audio', 'image'] as const;
+export const ASSET_KEYS = ['audio', 'image', 'src'] as const;
 
 /** Directory names never worth walking. */
 const SKIPPED_DIRS = ['node_modules', 'dist', '.git'] as const;

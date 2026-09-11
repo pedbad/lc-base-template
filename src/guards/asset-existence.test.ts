@@ -40,6 +40,21 @@ describe('collectAssetPaths — pulls authored paths out of a config tree', () =
   it('ignores empty and non-string values', () => {
     expect(collectAssetPaths({ audio: '', image: null, poster: 42 })).toEqual([]);
   });
+
+  it('collects an asset path nested under an image object, not only a bare string', () => {
+    // A block authoring `image: { src, alt }` — the shape an illustration with
+    // required alt text has. Before `src` was an asset key this returned [], and
+    // guard d silently stopped covering every such image.
+    expect(collectAssetPaths({ image: { src: 'images/lo-placeholder.svg', alt: '' } })).toEqual([
+      'images/lo-placeholder.svg',
+    ]);
+  });
+
+  it('a bare string under an asset key still collects, unchanged', () => {
+    expect(collectAssetPaths({ image: 'images/lo-placeholder.svg' })).toEqual([
+      'images/lo-placeholder.svg',
+    ]);
+  });
 });
 
 describe('findMissingAssets', () => {
