@@ -55,6 +55,14 @@ describe('collectAssetPaths — pulls authored paths out of a config tree', () =
       'images/lo-placeholder.svg',
     ]);
   });
+
+  it('ignores an absolute URL nested under src, as it does under a bare asset key', () => {
+    // `src` is the newest asset key, so it needs the same external-URL proof the
+    // bare keys have — an image hosted elsewhere has no file under `public/` to find.
+    expect(
+      collectAssetPaths({ image: { src: 'https://cdn.example.com/hero.png', alt: '' } }),
+    ).toEqual([]);
+  });
 });
 
 describe('findMissingAssets', () => {
