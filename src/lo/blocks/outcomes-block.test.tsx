@@ -6,7 +6,9 @@
  * expressible. The MARKUP: the tick is decoration, so the list semantics must come
  * from <ul>/<li> and every icon must be out of the accessibility tree.
  */
+import { renderToStaticMarkup } from 'react-dom/server';
 import { test, expect } from 'vitest';
+import { getBlockRenderer } from './block-renderers';
 import { OutcomesBlockContentSchema } from './outcomes-block-schema';
 
 /** A minimal valid content object, spread-and-overridden per case. */
@@ -67,4 +69,69 @@ test('authored strings arrive as parsed rich-text nodes, never as strings', () =
   expect(Array.isArray(parsed.lead)).toBe(true);
   expect(Array.isArray(parsed.items[0])).toBe(true);
   expect(JSON.stringify(parsed.items[0])).toContain('"em"');
+});
+
+/** Render the outcomes body through the registry, as the adapter does. */
+function renderOutcomes(content: unknown): string {
+  const Renderer = getBlockRenderer('outcomes');
+  if (!Renderer) throw new Error('no renderer for "outcomes"');
+  return renderToStaticMarkup(<Renderer content={content} />);
+}
+
+test('renders the lead as a <p> and one <li> per outcome, in authored order', () => {
+  const html = renderOutcomes(valid);
+
+  expect(html).toContain('<p');
+  expect(html).toContain('After completing this unit, you will be able to:');
+  expect(html).toContain('<ul');
+  expect(html.match(/<li/g)).toHaveLength(2);
+  expect(html.indexOf('Greet someone formally.')).toBeLessThan(
+    html.indexOf('Greet someone informally.'),
+  );
+});
+
+test('every tick is out of the accessibility tree — the list carries the semantics', () => {
+  const html = renderOutcomes(valid);
+
+  expect(html.match(/<svg/g)).toHaveLength(2);
+  expect(html.match(/aria-hidden="true"/g)).toHaveLength(2);
+});
+
+test('a decorative image renders an empty alt AND is hidden from the tree', () => {
+  const html = renderOutcomes({
+    ...valid,
+    image: { src: 'images/lo-placeholder.svg', alt: '' },
+  });
+
+  expect(html).toMatch(/<img[^>]*alt=""/);
+  expect(html).toMatch(/<img[^>]*aria-hidden="true"/);
+});
+
+test('a meaningful image keeps its alt text and stays in the tree', () => {
+  const html = renderOutcomes({
+    ...valid,
+    image: { src: 'images/two-people.svg', alt: 'Two people greeting each other' },
+  });
+
+  expect(html).toContain('alt="Two people greeting each other"');
+  expect(html).not.toMatch(/<img[^>]*aria-hidden/);
+});
+
+test('the image src goes through resolveAsset, never the authored string', () => {
+  const html = renderOutcomes({
+    ...valid,
+    image: { src: '/images/lo-placeholder.svg', alt: '' },
+  });
+
+  // resolveAsset strips the leading slash and resolves against BASE_URL.
+  expect(html).toContain('src="/images/lo-placeholder.svg"');
+  expect(html).not.toContain('src="//images');
+});
+
+test('a list-only block renders no <img> at all', () => {
+  expect(renderOutcomes(valid)).not.toContain('<img');
+});
+
+test('content that does not match the type fails loud, naming the type', () => {
+  expect(() => renderOutcomes({ text: ['wrong shape'] })).toThrow(/outcomes/);
 });

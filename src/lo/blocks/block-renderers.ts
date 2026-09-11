@@ -16,6 +16,7 @@
  * stays loose while every shipped type is still strictly checked.
  */
 import type { ComponentType } from 'react';
+import { OutcomesBlock } from './OutcomesBlock';
 import { ProseBlock, GrammarBlock } from './TextBlock';
 import { VocabularyBlock } from './VocabularyBlock';
 
@@ -31,6 +32,7 @@ export const BLOCK_RENDERERS: Readonly<Record<string, BlockRenderer>> = {
   prose: ProseBlock,
   grammar: GrammarBlock,
   vocabulary: VocabularyBlock,
+  outcomes: OutcomesBlock,
 };
 
 /** Resolve a block renderer by type, or `undefined` if no such type ships. */
