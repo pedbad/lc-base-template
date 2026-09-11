@@ -118,14 +118,17 @@ test('a meaningful image keeps its alt text and stays in the tree', () => {
 });
 
 test('the image src goes through resolveAsset, never the authored string', () => {
+  // The fixture path deliberately has NO leading slash. A path that already starts
+  // with the base short-circuits inside resolveAsset and comes back unchanged, so a
+  // renderer that never called it at all would produce byte-identical markup and this
+  // test would pass while proving nothing.
   const html = renderOutcomes({
     ...valid,
-    image: { src: '/images/lo-placeholder.svg', alt: '' },
+    image: { src: 'images/lo-placeholder.svg', alt: '' },
   });
 
-  // resolveAsset strips the leading slash and resolves against BASE_URL.
   expect(html).toContain('src="/images/lo-placeholder.svg"');
-  expect(html).not.toContain('src="//images');
+  expect(html).not.toContain('src="images/lo-placeholder.svg"');
 });
 
 test('a list-only block renders no <img> at all', () => {
