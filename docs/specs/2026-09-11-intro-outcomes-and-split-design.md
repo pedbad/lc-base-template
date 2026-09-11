@@ -124,6 +124,19 @@ worse than an empty one, because it puts a sentence that says nothing into the
 accessibility tree. An illustration that carries meaning gets real alt text; one that
 is atmosphere gets `""` and stays out of the tree.
 
+**Every image carries an `alt`; the empty string is a value, not an absence.** `alt`
+being required means no image can ship without one, and the `<img>` always renders the
+attribute. `alt=""` is the WCAG-correct treatment for a decorative image — forcing
+non-empty text onto decoration is an accessibility regression, because the screen
+reader then announces a sentence carrying no information. The shipped placeholder is
+decorative by its own declaration: `lo-placeholder.svg` contains
+`role="presentation" aria-hidden="true"`.
+
+**Verified against the repo's Zod (4.6.2) rather than assumed**, since the whole
+decision rests on it: `image` absent parses; `image` present with `alt` absent fails at
+path `image.alt` ("expected string, received undefined"); `alt: ""` parses; `alt: null`
+fails; `src: ""` fails as too small. No `.refine()` is needed.
+
 ### 2.1 Cut from the reference: `caption`
 
 French supports `image.caption` and renders `<figure>` / `<figcaption>` for it. No LO
