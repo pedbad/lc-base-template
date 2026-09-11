@@ -171,7 +171,20 @@ describe('BackToTopButton', () => {
     // Separate properties that compose; sharing one would make the reveal and the
     // hover fight over the same value.
     expect(css).toMatch(/\.js-reveal \.back-to-top:not\(\[data-seen\]\) \{[^}]*translate:/);
-    expect(css).toMatch(/transition:[^;]*translate 900ms/);
     expect(css).toMatch(/\.back-to-top:hover \{[^}]*transform:\s*translateY\(-2px\)/);
+  });
+
+  // SLOW IN, QUICK OUT. A transition is read from the state being moved TO, so the
+  // base rule times the arrival and the hidden rule times the departure. 900ms in was
+  // the first attempt and was too brisk to notice; 3600ms matches the reference.
+  test('arrives slowly and leaves quickly, like the reference', () => {
+    const base = /\n {2}\.back-to-top \{([\s\S]*?)\n {2}\}/.exec(rules)?.[1] ?? '';
+    const hidden =
+      /\.js-reveal \.back-to-top:not\(\[data-seen\]\) \{([\s\S]*?)\n {2}\}/.exec(rules)?.[1] ?? '';
+
+    expect(base).toMatch(/opacity 3600ms/);
+    expect(base).toMatch(/translate 3600ms/);
+    expect(hidden).toMatch(/opacity 300ms/);
+    expect(hidden).toMatch(/translate 300ms/);
   });
 });

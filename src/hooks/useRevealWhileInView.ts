@@ -1,5 +1,5 @@
 /**
- * useRevealOnFirstView — mark an element the first time it becomes visible (§D4/D2).
+ * useRevealWhileInView — keep an element marked for as long as it is on screen.
  *
  * WHY AN OBSERVER, AFTER §D4 DELETED ONE. §D4 removed the reference's
  * IntersectionObserver and replaced the fade with a CSS `view()` timeline. That was
@@ -9,6 +9,14 @@
  * on screen at load, so three of four never faded. The effect actually wanted is
  * "the first time this is seen", which has no positional expression — the reference
  * got that right, whatever else it got wrong.
+ *
+ * IT TOGGLES BOTH WAYS, and that is the point rather than a detail. A first version
+ * revealed once and disconnected, which is a defensible reading of "fade in when
+ * scrolled into view" and was WRONG in practice: the fade then happens once, inside
+ * the first second of page load, and never again however far you scroll — which reads
+ * as no animation at all. The reference sets `setShowButton(entry.isIntersecting)` on
+ * every callback, so its buttons fade out as they leave and back in as they return,
+ * and THAT is what makes the effect visible. Hence no `disconnect()` on intersect.
  *
  * NO REACT STATE, DELIBERATELY. The reveal is a `data-seen` attribute set straight on
  * the DOM node, so nothing re-renders and there is no client/server state to
@@ -43,8 +51,8 @@ const ROOT_MARGIN = '0px 0px -8% 0px';
  *  initial notification is queued at observe() time, so this is generous. */
 const FALLBACK_MS = 1000;
 
-/** Ref to attach to the element that should reveal itself once first seen. */
-export function useRevealOnFirstView<T extends HTMLElement>() {
+/** Ref for an element that should fade in while on screen and out when it leaves. */
+export function useRevealWhileInView<T extends HTMLElement>() {
   const ref = useRef<T>(null);
 
   useEffect(() => {
@@ -59,6 +67,9 @@ export function useRevealOnFirstView<T extends HTMLElement>() {
     const reveal = () => {
       node.dataset.seen = '';
     };
+    const hide = () => {
+      delete node.dataset.seen;
+    };
 
     let observer: IntersectionObserver;
     let delivered = false;
@@ -67,9 +78,10 @@ export function useRevealOnFirstView<T extends HTMLElement>() {
       observer = new IntersectionObserver(
         (entries) => {
           delivered = true; // proves this observer can deliver; see FALLBACK_MS
-          if (!entries.some((entry) => entry.isIntersecting)) return;
-          reveal();
-          observer.disconnect();
+          for (const entry of entries) {
+            if (entry.isIntersecting) reveal();
+            else hide();
+          }
         },
         { threshold: THRESHOLD, rootMargin: ROOT_MARGIN },
       );

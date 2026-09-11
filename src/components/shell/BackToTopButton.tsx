@@ -7,13 +7,14 @@
  * accordion (collapsing one already returns the reader upward, and inside a closed one
  * the button is unreachable because Radix unmounts the content).
  *
- * IT FADES IN THE FIRST TIME IT IS SEEN, and the only line of that here is the ref.
+ * IT FADES IN WHILE ON SCREEN AND OUT AS IT LEAVES, and the only line of that here
+ * is the ref.
  * §D4 deleted the reference's IntersectionObserver; the fade was wanted back
  * (2026-09-10) and was first rebuilt as a CSS `view()` timeline, which MEASURABLY did
  * not work for this effect — a view timeline is positional, so the three of four
  * buttons already on screen at load sat past `entry 100%` and never faded. "First
  * time seen" has no positional expression, so the observer came back, in
- * `useRevealOnFirstView`. Read that hook and back-to-top.css before touching this:
+ * `useRevealWhileInView`. Read that hook and back-to-top.css before touching this:
  * the hiding is armed in index.html BEFORE first paint and is fail-safe by omission,
  * so every path without it leaves a plainly VISIBLE button.
  *
@@ -41,7 +42,7 @@
  * The focus ring moves to back-to-top.css: dropping shadcn `Button` drops its ring.
  */
 import { ArrowUpIcon } from 'lucide-react';
-import { useRevealOnFirstView } from '@/hooks/useRevealOnFirstView';
+import { useRevealWhileInView } from '@/hooks/useRevealWhileInView';
 import { headingId } from '@/lib/headingId';
 import { scrollToTop } from '@/lib/scrollToTop';
 import './back-to-top.css';
@@ -57,7 +58,7 @@ interface BackToTopButtonProps {
 }
 
 export default function BackToTopButton({ sectionId }: BackToTopButtonProps) {
-  const revealRef = useRevealOnFirstView<HTMLButtonElement>();
+  const revealRef = useRevealWhileInView<HTMLButtonElement>();
 
   return (
     <button

@@ -68,12 +68,17 @@
     border: 1px solid color-mix(in oklab, var(--accent) 62%, var(--foreground));
     cursor: pointer;
 
-    /* 900ms on opacity/translate is the REVEAL; 180ms is the hover. The reference
-       used 3600ms for the reveal, which is long enough to read as a page still
-       loading. One knob, here. */
+    /* SLOW IN, QUICK OUT — the reference's asymmetry, and it is deliberate. This is
+       the SHOWN state, so this duration is what a button takes to arrive: 3600ms,
+       matching the reference, after 900ms proved too brisk to notice. The hidden rule
+       below carries its own, much shorter, duration for the way out; a transition is
+       read from the state being moved TO, so the two never compete.
+
+       Leaving is quick because a control sliding away slowly is a distraction, while
+       arriving slowly reads as deliberate. 180ms stays on the hover properties. */
     transition:
-      opacity 900ms ease,
-      translate 900ms ease,
+      opacity 3600ms ease,
+      translate 3600ms ease,
       background-color 180ms ease,
       border-color 180ms ease,
       transform 180ms ease;
@@ -131,8 +136,11 @@
      the transparency unconditionally instead and those readers get a permanently
      invisible control: the reference's defect, made worse.
 
-     `useRevealOnFirstView` sets `data-seen` on the node the first time it intersects,
-     which drops this rule and lets the transition below run. A first REBUILD of this
+     `useRevealWhileInView` adds `data-seen` while the node intersects and removes it
+     when it leaves, so this rule applies whenever the button is off screen and the
+     fade replays every time it returns. Revealing ONCE was the first attempt and read
+     as no animation at all: the fade played inside the first second of load, then
+     never again however far you scrolled. A first REBUILD of this
      used `animation-timeline: view()` and no JS at all, which was measurably wrong:
      a view timeline is positional, so a button already on screen at load is past
      `entry 100%` and never animates. Three of the four buttons on the example LO are
@@ -143,6 +151,16 @@
   .js-reveal .back-to-top:not([data-seen]) {
     opacity: 0;
     translate: 0 0.25rem;
+
+    /* The way OUT, and only the way out: a transition is taken from the state being
+       moved to, so this 300ms applies when the button leaves the viewport, while the
+       base rule's 3600ms applies when it arrives. The reference's exact pairing. */
+    transition:
+      opacity 300ms ease,
+      translate 300ms ease,
+      background-color 180ms ease,
+      border-color 180ms ease,
+      transform 180ms ease;
   }
 
   /* --- Reduced motion ---------------------------------------------------
