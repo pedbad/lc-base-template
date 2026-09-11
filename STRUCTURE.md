@@ -46,6 +46,7 @@ lo-config/lo-00-example/
   lo.json                          manifest: metadata + ordered refs to the below
   blocks/00-intro/block.json       a content block
   blocks/01-grammar/block.json
+  blocks/03-outcomes/block.json    back in the Introduction — see the ordinal rule
   exercises/01-select/exercise.json
   modals/example-popup/modal.json
 ```
@@ -57,8 +58,13 @@ Two naming rules carry real weight:
   (`lo-00-example` → `example.html`). **To reorder a course, rename folders.**
 - **`<ordinal>-<type>`** inside `blocks/` and `exercises/` — the file structure
   mirrors the rendered page, so "look at the page → go straight to the file".
-  Ordinals are section-scoped: blocks and exercises each count from their own
-  start. **Guard b** fails if a folder name stops matching the config.
+  Ordinals are **LO-wide per kind**, not per section: `blocks/` counts once across
+  the whole lesson and `exercises/` counts once, so the Introduction above holds
+  `00-intro` and `03-outcomes` while `01-` and `02-` sit in other sections. Order
+  WITHIN a section comes from the manifest array, never from the numbers. (This
+  line read "section-scoped" until 2026-09-11, which contradicted `lo-schema.ts`
+  and went unnoticed while every section happened to hold exactly one block.)
+  **Guard b** fails if a folder name stops matching the config.
 
 Every file here is validated by Zod at load (**guard a**). A malformed LO fails
 the build with the offending file named — it never emits a half-rendered page.

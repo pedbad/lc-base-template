@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-09-11 · **HEAD:** see `git log` · **Suite:** 98 files · 987 tests green
+**Last updated:** 2026-09-11 · **HEAD:** see `git log` · **Suite:** 98 files · 989 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -536,3 +536,4 @@ build, so it cannot return. Two remain:
 | 2026-09-11 | `7e22990` | `presentation: 'plain'` blocks; the **introduction is no longer an accordion**      |
 | 2026-09-11 | `6310dad` | **guard d saw nothing under `image.src`** — nested asset paths now collected        |
 | 2026-09-11 | `2592827` | **`outcomes` block** — ticked outcome list beside an illustration, split at `lg`    |
+| 2026-09-11 | `f90ac40` | **`intro` block type** — rule down the leading edge; the intro's callout dropped    |

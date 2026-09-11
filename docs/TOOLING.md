@@ -103,7 +103,7 @@ Layer 1 is the carrot; layers 2–3 are the stick.
 - **`bun run guards` — the fast subset** (`vitest run src/guards`). The guards are
   ordinary Vitest tests, so `bun run test` already enforces every one of them; this is
   the pre-commit check you run when you only want to know whether you broke a repo-wide
-  invariant. 211 tests in ~0.7s against the full suite's ~2s.
+  invariant. 214 tests in ~1s against the full suite's ~4s.
   - **Why a path glob and not a list:** every guard's scanner module lives in
     `src/guards/`, so a new guard joins the script the moment its file exists. A
     hand-maintained list is the thing that silently goes stale — the same argument

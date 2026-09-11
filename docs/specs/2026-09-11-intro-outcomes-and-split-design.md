@@ -317,3 +317,61 @@ concern each; nothing reachable from `vite.config.ts` may use `@/…` imports; t
 only, no raw hex outside `palette.css`; every CSS rule inside `@layer`, no
 `!important`. `bun run test`, never `bun test` — Bun's runner throws on the
 `import.meta.glob` in `load-lo-glob.ts` and reports a false failure.
+
+---
+
+## 9. Addendum — the same day, after the first pass shipped
+
+Seeing §1–§8 on screen changed two things. Both are implemented; this section is the
+record, not a proposal.
+
+### 9.1 The introduction's instructions callout is gone
+
+The example authored `content.instructions` on its intro block, which rendered through
+`InstructionsCallout` — an icon in a bordered box, explaining what callouts are. That
+was scaffolding describing the template to itself, and beneath an un-carded
+introduction it reintroduced exactly the panel `7e22990` removed. The field is dropped
+from `00-intro/block.json`.
+
+`InstructionsCallout` itself is UNTOUCHED, and that was the point of dropping the field
+rather than restyling the component. The `.instructions` class is a deliberate shared
+hook — the section- and accordion-level slots both use it — so restyling it would have
+changed every callout in the course to fix one.
+
+### 9.2 A third prose type, `intro`
+
+The opening paragraphs now render as `type: "intro"`: the same body as `type: "prose"`,
+wrapped so a rule runs down the leading edge. The weight the callout used to give the
+introduction now comes from the rule, which costs no box, no icon and no token.
+
+**A registered type, not a flag on `prose`.** It is the move `grammar` already makes —
+one body, a second name, one difference — and it keeps every other prose note in a
+course plain. `TextBlock` now serves three types.
+
+**A `div`, not a `<blockquote>`.** It is styled like a pull quote and is not one: the
+text is the page's own voice, not matter quoted from elsewhere. `<blockquote>` would
+announce a quotation to a screen reader that is not there, so the rule is carried by a
+border on a plain wrapper.
+
+**`border-s-4` / `ps-5`, the logical properties**, not `border-l-4` / `pl-5`. The rule
+belongs on the side the text STARTS on. In this English course that renders on the
+left; a clone into a right-to-left language gets it on the correct side without
+touching the component.
+
+### 9.3 What was considered and NOT done
+
+Moving the illustration to the section, so it could rise level with the first line of
+prose. It would have made the whole introduction one two-column grid, but the image
+would have had to stop being the outcomes block's property — a block can only arrange
+what it owns, and the prose is a different block. Rejected as too much structure for
+the gain; **the image stays on the outcomes block**, and the split stays
+outcomes-beside-illustration as §0 describes.
+
+### 9.4 Consequences for the tests
+
+Two tests read the REAL example LO rather than a fixture, so a config edit broke them.
+`load-lo.test.ts` simply learns the new type. The other asserted the plain-block
+instructions MECHANISM through authored content, and now builds its own fixture — a
+config edit breaking a code test means the test was pointing at the wrong thing.
+
+Suite: **989**. `bun run guards`: **214**, unchanged, since nothing here touched a guard.
