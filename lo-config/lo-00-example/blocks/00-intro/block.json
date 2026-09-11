@@ -1,8 +1,7 @@
 {
-  "type": "prose",
+  "type": "intro",
   "presentation": "plain",
   "content": {
-    "instructions": "Instructions render as a plain callout — informative, never an assertive announcement.",
     "text": [
       "Placeholder introduction. Every section, accordion, block and exercise on this page comes from this Learning Object's JSON under lo-config/lo-00-example — nothing about the page is hardcoded in the app.",
       "Copy that folder to start a real Learning Object, then replace this filler: lo.json declares the sections in order, and each block or exercise folder holds its own config.",

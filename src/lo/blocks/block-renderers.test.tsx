@@ -26,6 +26,20 @@ test('prose block renders one <p> per paragraph, in UI language', () => {
   expect(html).not.toContain('lang=');
 });
 
+test('intro block carries a leading-edge rule, and is not a <blockquote>', () => {
+  const html = renderBlock('intro', { text: ['Opening paragraph.'] });
+
+  expect(html).toContain('Opening paragraph.');
+  expect(html).toContain('<p');
+  // The rule is a border on a plain wrapper. It is styled like a pull quote and is
+  // NOT one — the text is the page's own voice, so announcing a quotation would be a
+  // lie to a screen reader.
+  expect(html).not.toContain('<blockquote');
+  expect(html).toMatch(/class="[^"]*border-s-4/);
+  // Same UI language as `prose`: the rule is decoration, not a change of meaning.
+  expect(html).not.toContain('lang=');
+});
+
 test('grammar block wraps its examples in the target language', () => {
   const html = renderBlock('grammar', { text: ['Yo soy de Madrid.'] });
 

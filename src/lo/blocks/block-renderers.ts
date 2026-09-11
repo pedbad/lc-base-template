@@ -17,7 +17,7 @@
  */
 import type { ComponentType } from 'react';
 import { OutcomesBlock } from './OutcomesBlock';
-import { ProseBlock, GrammarBlock } from './TextBlock';
+import { ProseBlock, GrammarBlock, IntroBlock } from './TextBlock';
 import { VocabularyBlock } from './VocabularyBlock';
 
 /** Props every block renderer receives: the block's raw, type-specific `content`. */
@@ -30,6 +30,7 @@ export type BlockRenderer = ComponentType<BlockRendererProps>;
 /** The registry. Add an entry when a new block `type` ships. */
 export const BLOCK_RENDERERS: Readonly<Record<string, BlockRenderer>> = {
   prose: ProseBlock,
+  intro: IntroBlock,
   grammar: GrammarBlock,
   vocabulary: VocabularyBlock,
   outcomes: OutcomesBlock,

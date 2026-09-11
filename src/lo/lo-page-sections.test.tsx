@@ -127,13 +127,46 @@ test('toPageSections: a plain block renders bare — no accordion, no surface, n
   expect(html).not.toContain('lo-accordion');
 });
 
-test('toPageSections: a plain block still renders its body and its instructions', () => {
-  const html = renderSection('introduction');
+test('toPageSections: a plain block still renders its body', () => {
+  expect(renderSection('introduction')).toContain('Placeholder introduction.');
+});
 
-  expect(html).toContain('Placeholder introduction.');
-  // The accordion used to host the instructions slot; with no accordion the callout
-  // has to be rendered directly, or the field would silently render nowhere.
+test('toPageSections: a plain block renders instructions no accordion is there to host', () => {
+  // SYNTHETIC, deliberately not the example LO. This asserts the MECHANISM, and
+  // pinning it to authored content is what made it fail the day the introduction
+  // stopped authoring an instructions line — a config edit breaking a code test is
+  // the test pointing at the wrong thing, not the config being wrong.
+  const [section] = toPageSections({
+    slug: 'lo-99-fixture',
+    title: 'Fixture',
+    sections: [
+      {
+        id: 'fixture',
+        label: 'Fixture',
+        blocks: [
+          {
+            ref: '00-note',
+            config: {
+              type: 'prose',
+              presentation: 'plain',
+              defaultOpen: false,
+              content: { instructions: 'Read this first.', text: ['Body.'] },
+            },
+          },
+        ],
+        exercises: [],
+      },
+    ],
+    modals: {},
+  });
+
+  const html = renderToStaticMarkup(<ModalProvider modals={{}}>{section?.content}</ModalProvider>);
+
   expect(html).toContain('class="instructions');
+  expect(html).toContain('Read this first.');
+  expect(html).toContain('Body.');
+  // Still plain: the callout arrives without an accordion wrapping it.
+  expect(html).not.toContain('<details');
 });
 
 test('toPageSections: card blocks are untouched — still an accordion with its h3', () => {

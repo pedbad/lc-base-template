@@ -28,7 +28,7 @@ test('loadLo (glob): loads the example LO with its sections in order', () => {
     '02-radio-quiz',
   ]);
   // Parts are resolved, not left as refs.
-  expect(lo.sections[0].blocks[0].config.type).toBe('prose');
+  expect(lo.sections[0].blocks[0].config.type).toBe('intro');
   // The intro is the example's PLAIN block — no accordion, so no defaultOpen. It
   // used to be this assertion's `defaultOpen: true` case.
   expect(lo.sections[0].blocks[0].config.presentation).toBe('plain');
