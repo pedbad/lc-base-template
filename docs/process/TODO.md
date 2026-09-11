@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-09-10 · **HEAD:** see `git log` · **Suite:** 97 files · 954 tests green
+**Last updated:** 2026-09-11 · **HEAD:** see `git log` · **Suite:** 97 files · 971 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -518,3 +518,6 @@ build, so it cannot return. Two remain:
 | 2026-09-10 | `683d1ce` | **`BackToTopButton`** (§D4) — observer deleted, not fixed; unmounted, D2 mounts it  |
 | 2026-09-10 | `97a5b4b` | landing page's Lessons heading id now comes from `headingId`, not a literal         |
 | 2026-09-10 | `8e3c49f` | **`BackToTopButton` mounted** (§D2) — one per section + the Lessons grid            |
+| 2026-09-10 | `8b26e36` | in-page nav animates — one `scroll-behavior` on `<html>`, reduce-guarded            |
+| 2026-09-10 | `008b082` | back-to-top fades both ways, 3600ms in / 300ms out, after two wrong mechanisms      |
+| 2026-09-11 | `7e22990` | `presentation: 'plain'` blocks; the **introduction is no longer an accordion**      |
