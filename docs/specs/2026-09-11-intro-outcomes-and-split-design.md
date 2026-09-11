@@ -216,8 +216,20 @@ what french renders once `splitInfoImage` takes the image away from
 ## 5. Tests
 
 `src/lo/blocks/outcomes-block.test.tsx`, **beside the code, never in `src/guards/`** —
-that glob _is_ `bun run guards` and means "the eight spec guards". It must still report
-**211** afterwards; a changed number means a file was filed wrongly.
+that glob _is_ `bun run guards` and means "the eight spec guards". The block's own
+tests add nothing to it.
+
+**One guard test does land in that glob, deliberately, taking it 211 → 212.** Guard d
+(`asset-existence.ts`) collects an asset path only when the value directly under a key
+in `ASSET_KEYS` (`['audio', 'image']`) is a **string**. This design's
+`image: { src, alt }` is an object, so the walker recurses past it, finds `src`, and
+collects nothing — the build stays green while the guard silently stops covering the
+illustration, which is the precise staleness that file's own header warns about. The
+fix is the one it prescribes: add `src` to `ASSET_KEYS`, with a test proving a nested
+path is collected. Nothing else in `lo-config/` or the showcase fixtures uses the key.
+That test is guard d's own, extending the guard rather than misfiling a feature test,
+so the rise is correct — but it is stated here, and in `TODO.md`, because the repo's
+bar is that a guard threshold never moves quietly.
 
 Schema:
 
