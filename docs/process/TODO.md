@@ -332,13 +332,28 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   `pointer-events-none` + `tabIndex={-1}` hidden state that sat in the accessibility
   tree). What shipped is a plain `<button onClick>`.
 
-  **THE FADE WAS ASKED FOR BACK on 2026-09-10 and is now in `back-to-top.css`**
-  (`afe06af`), as this row's own advice said it should be if ever wanted: a CSS
-  scroll-driven animation on a `view()` timeline, no JS. That reverses the _effect_
-  decision, NOT the observer one — there is still no `IntersectionObserver`, no
-  `useState`, no `useEffect` and no prerender question. The three real defects stay
-  fixed: a scroll-linked animation has no duration to get wrong, and the button is
-  focusable and clickable at every point in the fade. Also fixed: the unguarded smooth
+  **THE FADE WAS ASKED FOR BACK on 2026-09-10, AND THE OBSERVER CAME WITH IT.** Two
+  attempts failed first, and both failures are worth keeping because each looked
+  right:
+
+  1. `afe06af` — a CSS `view()` timeline, no JS, exactly what this row had advised.
+     Measurably wrong: a view timeline is POSITIONAL, so an element already inside the
+     viewport at load sits past `entry 100%` and never animates. Three of the four
+     buttons on the example LO are on screen at load, so three of four never faded.
+  2. `81947e6` — an observer again, but revealing ONCE and disconnecting. The fade
+     then plays inside the first second of load and never again however far you
+     scroll, which reads as no animation at all.
+
+  `008b082` is the one that works: `useRevealWhileInView` toggles `data-seen` BOTH
+  ways, so the button fades out as it leaves and back in as it returns — the
+  reference's own behaviour, and the repetition is what makes the effect visible.
+  3600ms in, 300ms out, the reference's asymmetry. So D4's observer decision IS
+  reversed, not just its effect decision; what stays fixed is the rest — no
+  `pointer-events-none`, no `tabIndex={-1}`, the button focusable and clickable at
+  every point in the fade, and the hiding armed in `index.html` before first paint so
+  JS off, no observer or reduced motion all leave a plainly VISIBLE button.
+
+  Also fixed: the unguarded smooth
   `scrollTo` (now `src/lib/scrollToTop.ts`, `behavior: 'auto'` under reduced motion),
   duplicate accessible names across ~5 buttons per LO (a **required** `sectionId` prop
   feeds `aria-describedby` — guard h does not compare button names, but it DOES fail on
@@ -349,14 +364,15 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   and are **done** there. The in-browser reduced-motion check is the one item neither
   job could complete — see D2's row for why, and what stands in for it.
 
-  **THE FADE ITSELF IS ALSO UNOBSERVED, for the same class of reason.** A hidden
-  Browser pane does not sample a `ViewTimeline` — computed opacity stays at 1 and
-  `getComputedTiming().progress` is `null` at every scroll position — so the visual
-  progression was never watched. What WAS verified at runtime: one animation attached,
-  `timeline` is a `ViewTimeline`, `fill` is `both`, the computed keyframes are
-  `opacity 0 / translate 0 4px` → `opacity 1 / translate 0`, and — the safety
-  property — cancelling the animation leaves computed opacity at **1**, so every path
-  that skips it shows a visible button.
+  **THE FADE ITSELF IS STILL UNOBSERVED, and that is why it took three goes.** A
+  hidden Browser pane delivers no `IntersectionObserver` callbacks and does not
+  advance transitions, so the one thing that would have shown each attempt failing —
+  watching it — was never available. Everything around it WAS measured: the CSS
+  resolves to opacity 0 armed-and-unseen, 1 armed-and-seen, 1 unarmed; arming happens
+  before paint and the built `<html>` tag carries no class; computed
+  transition-duration is 3.6s arriving and 0.3s leaving; and the delivery fallback
+  fires and reveals when no callback arrives. **Get a human to look at any animation
+  this pane cannot run.**
 
 - **D5 — the two budget breaches, re-measured 2026-09-10 at `8e3c49f`.** `main-*.js`
   is **95.99 kB gzipped against a < 80 kB** microsite target, and CSS is **20.10 kB
