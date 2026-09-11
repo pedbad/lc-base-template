@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-09-11 · **HEAD:** see `git log` · **Suite:** 97 files · 971 tests green
+**Last updated:** 2026-09-11 · **HEAD:** see `git log` · **Suite:** 98 files · 987 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -25,11 +25,20 @@ nothing reachable from `vite.config.ts` may use `@/…` imports; never import
 bun run format && bun run lint && bun run lint:css && bun run test && bun run build
 ```
 
-`bun run guards` (`vitest run src/guards`) is the fast subset — 211 tests in ~0.7s — for
+`bun run guards` (`vitest run src/guards`) is the fast subset — **214** tests in ~1s — for
 when you only want to know whether you broke a repo-wide invariant. It is a subset of
 `bun run test`, never a replacement for the gate above. It stayed at 211 when §B landed
 **on purpose**: the docs-freshness test lives in `src/docs/`, not `src/guards/`, because
 that glob means "the eight spec guards" and a stale-tree check is not one of them.
+
+**211 → 214 on 2026-09-11**, and the rise is the rule working rather than being bent.
+All three tests are guard **d**'s own (`6310dad`, `6f4dd36`): the collector only ever
+picked up a path whose value sat directly under an asset key as a STRING, so an image
+authored as `image: { src, alt }` — the shape required once alt text is mandatory — was
+walked straight past and the guard reported green having checked nothing. That is the
+staleness `asset-existence.ts`'s own header warns about, so `src` joined `ASSET_KEYS`.
+The outcomes block's OWN tests are not in this number: they live beside the code, which
+is exactly what the paragraph above is about.
 
 `bun run test` (Vitest), **not** `bun test` — Bun's own runner throws on the
 `import.meta.glob` in `load-lo-glob.ts` and reports a false failure.
@@ -379,6 +388,10 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   against < 15 kB**. §D's whole footer + back-to-top programme cost **+0.23 kB
   gzipped** between them, so it moved neither breach materially — the causes are
   upstream of §D, as the baseline measurement already said.
+  **Re-measured 2026-09-11 at `2592827`**, after the `outcomes` block: `main-*.js`
+  **96.62 kB** gzipped and CSS **20.32 kB**. The block cost **+0.43 kB** of JS (one
+  lucide icon plus the renderer) and **+0.10 kB** of CSS (utilities only, no
+  stylesheet) — so it moved neither breach materially, and neither breach is closed.
   Both PRE-DATE §D — measured at baseline by stashing the footer work — and the §D
   handover's "`main-*.js` is ~39kb raw today" is stale by roughly 7×. This also means
   the deferred **per-LO chunking** trigger below ("~a dozen LOs") is already met at ONE
@@ -521,3 +534,5 @@ build, so it cannot return. Two remain:
 | 2026-09-10 | `8b26e36` | in-page nav animates — one `scroll-behavior` on `<html>`, reduce-guarded            |
 | 2026-09-10 | `008b082` | back-to-top fades both ways, 3600ms in / 300ms out, after two wrong mechanisms      |
 | 2026-09-11 | `7e22990` | `presentation: 'plain'` blocks; the **introduction is no longer an accordion**      |
+| 2026-09-11 | `6310dad` | **guard d saw nothing under `image.src`** — nested asset paths now collected        |
+| 2026-09-11 | `2592827` | **`outcomes` block** — ticked outcome list beside an illustration, split at `lg`    |

@@ -56,7 +56,7 @@ collectAssetPaths(entry, found);
 
 `ASSET_KEYS` is `['audio', 'image']`. Task 4 authors `"image": { "src": …, "alt": … }` — an **object** under `image` — so the walker recurses past it, sees key `src`, and collects nothing. The build stays green while guard d silently stops covering the introduction's illustration. That file's own header names this exact failure: "a guard that collects by key silently passes if a schema renames its field… Adding an asset field to a schema means adding its key here."
 
-**`bun run guards` goes 211 → 212 as a result, and that is correct.** The 211 rule means "do not misfile feature tests into `src/guards/`". This test is guard d's own, extending the guard's coverage. Record the new number in Task 5.
+**`bun run guards` goes 211 → 214 as a result, and that is correct.** The 211 rule means "do not misfile feature tests into `src/guards/`". This test is guard d's own, extending the guard's coverage. Record the new number in Task 5.
 
 **Files:**
 
@@ -132,7 +132,7 @@ Expected: PASS, both new tests included.
 bun run guards
 ```
 
-Expected: PASS, **212 tests** (was 211).
+Expected: PASS, **213 tests** (was 211); a follow-up external-URL test took it to 214.
 
 - [ ] **Step 5: Commit**
 
@@ -145,7 +145,7 @@ collector walked past it and reported green having checked nothing — the
 staleness the guard's own header warns about. Adds \`src\` to ASSET_KEYS,
 which nothing else in lo-config or the fixtures uses.
 
-Guard count 211 -> 212: the new tests are guard d's own, extending the
+Guard count 211 -> 214: the new tests are guard d's own, extending the
 guard rather than misfiling feature tests into its glob.
 
 Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
@@ -658,7 +658,7 @@ Expected: all five clean.
 bun run guards
 ```
 
-Expected: **212** (211 before Task 1). If it is 213+, a feature test was misfiled into `src/guards/` — move it beside the code.
+Expected: **214** (211 before Task 1). If it is higher, a feature test was misfiled into `src/guards/` — move it beside the code.
 
 - [ ] **Step 2: Look at it, at five widths, in both themes**
 
@@ -688,7 +688,7 @@ Read the gzipped `main-*.js` and CSS figures off the `bun run build` output and 
 
 **Re-read the file immediately before editing.** An exact-string edit against a stale copy fails, and the table rows reflow their column widths.
 
-Add a "Done recently" row naming the real SHAs, and update the header line: the suite count rises by the tests this plan added, and **`bun run guards` is now 212, not 211** — that line explicitly explains the 211, so leaving it stale would mislead the next session.
+Add a "Done recently" row naming the real SHAs, and update the header line: the suite count rises by the tests this plan added, and **`bun run guards` is now 214, not 211** — that line explicitly explains the 211, so leaving it stale would mislead the next session.
 
 - [ ] **Step 6: Check whether anything else is owed**
 

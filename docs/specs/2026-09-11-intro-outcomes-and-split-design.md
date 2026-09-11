@@ -219,7 +219,7 @@ what french renders once `splitInfoImage` takes the image away from
 that glob _is_ `bun run guards` and means "the eight spec guards". The block's own
 tests add nothing to it.
 
-**One guard test does land in that glob, deliberately, taking it 211 → 212.** Guard d
+**Guard d's own tests do land in that glob, deliberately, taking it 211 → 214.** Guard d
 (`asset-existence.ts`) collects an asset path only when the value directly under a key
 in `ASSET_KEYS` (`['audio', 'image']`) is a **string**. This design's
 `image: { src, alt }` is an object, so the walker recurses past it, finds `src`, and
