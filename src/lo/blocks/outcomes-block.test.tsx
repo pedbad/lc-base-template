@@ -93,8 +93,10 @@ test('renders the lead as a <p> and one <li> per outcome, in authored order', ()
 test('every tick is out of the accessibility tree — the list carries the semantics', () => {
   const html = renderOutcomes(valid);
 
+  // Correlate the attribute to the ELEMENT, not two independent totals: a regression
+  // that moved aria-hidden off a tick onto some other node would keep both counts.
+  expect(html.match(/<svg[^>]*aria-hidden="true"/g)).toHaveLength(2);
   expect(html.match(/<svg/g)).toHaveLength(2);
-  expect(html.match(/aria-hidden="true"/g)).toHaveLength(2);
 });
 
 test('a decorative image renders an empty alt AND is hidden from the tree', () => {

@@ -46,7 +46,10 @@ export function OutcomesBlock({ content }: { content: unknown }) {
             // because the list is static config, never reordered at runtime.
             <li key={index} className="flex items-start gap-2 text-muted-foreground">
               <CircleCheck className="mt-0.5 size-5 shrink-0 text-success" aria-hidden="true" />
-              <span>
+              {/* min-w-0: a flex item will not shrink below its min-content width by
+                  default, so one long unbroken word in an authored outcome would push
+                  the row wider than its track and undo the minmax(0,1fr) above. */}
+              <span className="min-w-0">
                 <RichText nodes={item} />
               </span>
             </li>
