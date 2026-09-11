@@ -1,0 +1,17 @@
+{
+  "type": "outcomes",
+  "presentation": "plain",
+  "content": {
+    "lead": "After working through this template, you will be able to:",
+    "items": [
+      "Copy <em>lo-config/lo-00-example</em> and turn it into a real Learning Object.",
+      "Declare a page's sections, and their order, in <em>lo.json</em>.",
+      "Choose whether a block renders as a card or as page copy, with <em>presentation</em>.",
+      "Author an outcomes list like this one, with or without an illustration beside it."
+    ],
+    "image": {
+      "src": "images/lo-placeholder.svg",
+      "alt": ""
+    }
+  }
+}

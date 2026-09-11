@@ -6,7 +6,7 @@
     {
       "id": "introduction",
       "label": "Introduction",
-      "blocks": ["00-intro"]
+      "blocks": ["00-intro", "03-outcomes"]
     },
     {
       "id": "grammar",
