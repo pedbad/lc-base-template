@@ -1,7 +1,6 @@
 {
   "type": "prose",
-  "title": "How this Learning Object works",
-  "defaultOpen": true,
+  "presentation": "plain",
   "content": {
     "instructions": "Instructions render as a plain callout — informative, never an assertive announcement.",
     "text": [

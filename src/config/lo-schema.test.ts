@@ -241,3 +241,53 @@ test('lo-schema: options rejects non-positive sampleSize', () => {
 test('lo-schema: block type accepts a non-exercise string', () => {
   expect(() => BlockConfigSchema.parse({ type: 'grammar', title: 'X', content: {} })).not.toThrow();
 });
+
+// --- presentation: a block can opt out of the accordion entirely ------------
+// An introduction should read as the page talking, not as an object on the page.
+// `plain` drops the accordion — and with it the disclosure, the card surface and
+// the <h3> — so `title` and `defaultOpen` become meaningless. They are REJECTED
+// rather than ignored: a silently-dropped field in a config file is the same bug
+// class as the footer's `href: '#'`, which now fails the build for the same reason.
+
+test('BlockConfigSchema: presentation defaults to card, so existing blocks are unchanged', () => {
+  const cfg = { type: 'prose', title: 'T', content: {} };
+  expect(BlockConfigSchema.parse(cfg).presentation).toBe('card');
+});
+
+test('BlockConfigSchema: a card block still requires its title', () => {
+  expect(() => BlockConfigSchema.parse({ type: 'prose', content: {} })).toThrow();
+  expect(() =>
+    BlockConfigSchema.parse({ type: 'prose', presentation: 'card', content: {} }),
+  ).toThrow();
+});
+
+test('BlockConfigSchema: a plain block parses with no title', () => {
+  const cfg = { type: 'prose', presentation: 'plain', content: {} };
+  expect(() => BlockConfigSchema.parse(cfg)).not.toThrow();
+  expect(BlockConfigSchema.parse(cfg).title).toBeUndefined();
+});
+
+test('BlockConfigSchema: a plain block REJECTS title and defaultOpen, never ignores them', () => {
+  expect(() =>
+    BlockConfigSchema.parse({ type: 'prose', presentation: 'plain', title: 'T', content: {} }),
+  ).toThrow();
+  expect(() =>
+    BlockConfigSchema.parse({
+      type: 'prose',
+      presentation: 'plain',
+      defaultOpen: true,
+      content: {},
+    }),
+  ).toThrow();
+});
+
+test('BlockConfigSchema: presentation rejects an unknown value', () => {
+  expect(() =>
+    BlockConfigSchema.parse({
+      type: 'prose',
+      presentation: 'transparent',
+      title: 'T',
+      content: {},
+    }),
+  ).toThrow();
+});

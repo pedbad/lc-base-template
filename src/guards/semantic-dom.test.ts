@@ -465,6 +465,10 @@ describe('the rendered surface obeys §17', () => {
     expect(total((audit) => audit.controls)).toBeGreaterThanOrEqual(150);
     expect(total((audit) => audit.icons)).toBeGreaterThanOrEqual(70);
     expect(total((audit) => audit.ids)).toBeGreaterThanOrEqual(80);
-    expect(total((audit) => audit.headings)).toBeGreaterThanOrEqual(15);
+    // 14, not 15: the example LO's introduction became a `presentation: 'plain'`
+    // block, which renders with no accordion and therefore no <h3>. This floor is a
+    // smoke test against a moved fixture silently emptying the sweep, so it tracks a
+    // deliberate DOM change rather than pinning an exact count.
+    expect(total((audit) => audit.headings)).toBeGreaterThanOrEqual(14);
   });
 });

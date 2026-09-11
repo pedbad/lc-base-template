@@ -62,25 +62,61 @@ export type ExerciseOptions = z.infer<typeof ExerciseOptionsSchema>;
  * is a free string — block kinds are not in the exercise registry; it selects a
  * body renderer (`src/lo/blocks/block-renderers.tsx`).
  *
- * `title` is the accordion's `<h3>`. Required: it is human text with no derivable
- * source (the same argument as a section's `label` — a ref like `01-grammar` has
- * already lost capitalisation and accents), and blocks exist ONLY inside an LO, so
- * there is no titleless consumer to spare.
+ * `title` is the accordion's `<h3>`. Required FOR A CARD BLOCK: it is human text with
+ * no derivable source (the same argument as a section's `label` — a ref like
+ * `01-grammar` has already lost capitalisation and accents), and blocks exist ONLY
+ * inside an LO, so there is no titleless consumer to spare.
+ *
+ * `presentation` decides whether the block is an OBJECT ON THE PAGE or THE PAGE
+ * TALKING. `card` (the default, so nothing existing changes) wraps the body in an
+ * accordion: a disclosure, a bordered surface, and an `<h3>`. `plain` wraps it in
+ * nothing — the body renders straight into the section, under the section's own
+ * `<h2>`, which is what makes an introduction read as page copy rather than as one
+ * more panel among the exercises.
+ *
+ * A `plain` block therefore has no accordion, so `title` and `defaultOpen` describe
+ * nothing. A `title` is REJECTED rather than ignored, as is `defaultOpen: true`
+ * (an explicit `false` cannot be told from an absent field once `.default()` has
+ * run, and is harmless either way). A config field that is quietly
+ * dropped is the same bug class as the footer's `href: '#'`, which now fails the
+ * build precisely so that an author finds out at build time instead of never.
  */
-export const BlockConfigSchema = z.object({
-  type: z.string().min(1),
-  /** Accordion heading (`<h3>` inside `<summary>`). Blank rejected. */
-  title: z.string().min(1),
-  /**
-   * Whether this block's accordion starts open. Accordions default to closed;
-   * prose an author expects to be READ on arrival (an introduction) opts in.
-   * Exercises deliberately have no equivalent — a page of pre-opened exercises is
-   * a wall of controls.
-   */
-  defaultOpen: z.boolean().default(false),
-  labels: UiStringsOverrideSchema.optional(),
-  content: z.looseObject({}),
-});
+export const BlockConfigSchema = z
+  .object({
+    type: z.string().min(1),
+    /** Accordion heading (`<h3>` inside `<summary>`). Blank rejected. Card blocks
+     *  only — a plain block has no accordion to head. */
+    title: z.string().min(1).optional(),
+    /** `card` → wrapped in an accordion. `plain` → rendered bare into the section. */
+    presentation: z.enum(['card', 'plain']).default('card'),
+    /**
+     * Whether this block's accordion starts open. Accordions default to closed;
+     * prose an author expects to be READ on arrival (an introduction) opts in.
+     * Exercises deliberately have no equivalent — a page of pre-opened exercises is
+     * a wall of controls.
+     */
+    defaultOpen: z.boolean().default(false),
+    labels: UiStringsOverrideSchema.optional(),
+    content: z.looseObject({}),
+  })
+  // A card block is headed by its title, so it must have one.
+  .refine((block) => block.presentation !== 'card' || block.title !== undefined, {
+    path: ['title'],
+    message: "A card block needs a title — it is the accordion's <h3>.",
+  })
+  // A plain block has no accordion, so a title would render nowhere. Reject it
+  // rather than drop it silently.
+  .refine((block) => block.presentation !== 'plain' || block.title === undefined, {
+    path: ['title'],
+    message: 'A plain block has no accordion to head — remove `title`.',
+  })
+  // Same for defaultOpen: there is nothing to open. Only `true` can be caught here,
+  // because `.default(false)` makes an absent field indistinguishable from an
+  // explicit `false` by the time this runs — and an explicit `false` is harmless.
+  .refine((block) => block.presentation !== 'plain' || block.defaultOpen !== true, {
+    path: ['defaultOpen'],
+    message: 'A plain block has no accordion to open — remove `defaultOpen`.',
+  });
 export type BlockConfig = z.infer<typeof BlockConfigSchema>;
 
 /**

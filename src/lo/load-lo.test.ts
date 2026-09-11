@@ -29,7 +29,9 @@ test('loadLo (glob): loads the example LO with its sections in order', () => {
   ]);
   // Parts are resolved, not left as refs.
   expect(lo.sections[0].blocks[0].config.type).toBe('prose');
-  expect(lo.sections[0].blocks[0].config.defaultOpen).toBe(true);
+  // The intro is the example's PLAIN block — no accordion, so no defaultOpen. It
+  // used to be this assertion's `defaultOpen: true` case.
+  expect(lo.sections[0].blocks[0].config.presentation).toBe('plain');
 });
 
 test('loadLo (disk): produces exactly the same LO as the glob reader', () => {
