@@ -1,0 +1,61 @@
+/**
+ * lo-hero.css — the LO page's hero banner (spec docs/specs/2026-10-05-lo-hero-banner-design.md §5).
+ * Co-located with LoHero.tsx and imported by it, the same pattern as shell.css and
+ * footer.css. Tokens only, every rule inside @layer components, no motion — so there
+ * is no reduced-motion case.
+ *
+ * THE TITLE SITS ON A SOLID PANEL, NOT A SCRIM, deliberately. A gradient's contrast
+ * depends on whatever pixels the author's art puts under it, so it can be verified for
+ * one image and fail on the next. A solid --card panel's contrast is one token pair,
+ * the same for every image and both variants, and is measured once per theme.
+ */
+@layer components {
+  .lo-hero {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    inline-size: 100%;
+  }
+
+  /* The box reserves its own height, so nothing shifts when the image arrives (CLS).
+     The min-block-size keeps a wide crop from collapsing to a strip at 320–375px;
+     the max stops it dominating a 1920px screen. */
+  .lo-hero[data-variant='image'] {
+    aspect-ratio: 16 / 5;
+    min-block-size: 14rem;
+    max-block-size: 28rem;
+  }
+
+  .lo-hero[data-variant='band'] {
+    padding-block-start: 4rem;
+    background-color: var(--hero-band);
+  }
+
+  .lo-hero-image {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  /* The content column (Tailwind's max-w-5xl + px-4 = 64rem + 1rem), so the panel's
+     leading edge lines up with every <h2> below it. */
+  .lo-hero-inner {
+    position: relative;
+    inline-size: 100%;
+    max-inline-size: 64rem;
+    margin-inline: auto;
+    padding-inline: 1rem;
+    padding-block-end: 1.5rem;
+  }
+
+  .lo-hero-title {
+    display: inline-block;
+    max-inline-size: 100%;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius);
+    background-color: var(--card);
+    color: var(--card-foreground);
+  }
+}
