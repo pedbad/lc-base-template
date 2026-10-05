@@ -61,6 +61,22 @@ test('assembleLo: omits the image key entirely when the manifest declares none',
   expect('image' in lo).toBe(false);
 });
 
+test('assembleLo: carries the manifest hero through to the assembled LO', () => {
+  const tree = validTree();
+  const lo = assembleLo('lo-01-salutations', {
+    ...tree,
+    manifest: { ...(tree.manifest as object), hero: { src: 'images/lo-01/hero.webp' } },
+  });
+
+  expect(lo.hero).toEqual({ src: 'images/lo-01/hero.webp' });
+});
+
+test('assembleLo: omits the hero key entirely when the manifest declares none', () => {
+  const lo = assembleLo('lo-01-salutations', validTree());
+
+  expect('hero' in lo).toBe(false);
+});
+
 test('assembleLo: resolves each ref to its parsed config', () => {
   const lo = assembleLo('lo-01-salutations', validTree());
 

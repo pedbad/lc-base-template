@@ -29,6 +29,7 @@ import {
   ModalConfigSchema,
   type BlockConfig,
   type LoExerciseConfig,
+  type LoHero,
 } from '@/config/lo-schema';
 import { parseRichText } from './rich-text/parse-rich-text';
 import { collectModalTargets } from './rich-text/rich-text-nodes';
@@ -72,6 +73,8 @@ export interface AssembledLo {
   readonly description?: string;
   /** Author-relative card illustration path; absent when the author declared none. */
   readonly image?: string;
+  /** Page hero banner art; absent when the author declared none (the band renders). */
+  readonly hero?: LoHero;
   readonly sections: readonly AssembledSection[];
   /**
    * Declared modals, keyed by id, with their prose already parsed to rich-text nodes
@@ -189,6 +192,7 @@ export function assembleLo(slug: string, tree: LoFileTree): AssembledLo {
     title: manifest.title,
     ...(manifest.description === undefined ? {} : { description: manifest.description }),
     ...(manifest.image === undefined ? {} : { image: manifest.image }),
+    ...(manifest.hero === undefined ? {} : { hero: manifest.hero }),
     sections,
     modals,
   };
