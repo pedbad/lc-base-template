@@ -155,10 +155,10 @@ Layer 1 is the carrot; layers 2–3 are the stick.
 **This is the one place the budget is written down.** Every other doc and comment that
 needs the number points here rather than restating it.
 
-| Asset        | Budget (gzipped) | Measured at `6b5b821` | Headroom |
+| Asset        | Budget (gzipped) | Measured at `e4c9fe0` | Headroom |
 | ------------ | ---------------- | --------------------- | -------- |
-| `main-*.js`  | **< 100 kB**     | 97.13 kB              | 2.87 kB  |
-| `main-*.css` | **< 15 kB**      | 15.69 kB              | −0.69 kB |
+| `main-*.js`  | **< 100 kB**     | 97.29 kB              | 2.71 kB  |
+| `main-*.css` | **< 15 kB**      | 15.84 kB              | −0.84 kB |
 
 - **JS was raised from < 80 kB to < 100 kB by the maintainer's decision.** The 80 kB
   figure is the generic "microsite" row from the maintainer's global ECC rules
@@ -168,7 +168,7 @@ needs the number points here rather than restating it.
   islands, or dropping Base UI for native elements — and that is an architecture
   rewrite with breakage risk for a number that gates nothing. 100 kB is the budget this
   repo is held to; the global rule is not edited, this entry overrides it here.
-- **CSS stays < 15 kB** and is still 0.69 kB over. The remaining lead (Open Sans
+- **CSS stays < 15 kB** and is still 0.84 kB over (0.69 before the §D9 hero banner). The remaining lead (Open Sans
   `@font-face` subsets) is a decision about which scripts the template serves, not an
   optimisation — see TODO §D5.
 - **Headroom is thin, so measure, do not assume.** Read the gzipped `main-*.js` and CSS

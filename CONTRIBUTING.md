@@ -96,6 +96,14 @@ Three `lo.json` fields do double duty as that LO's card:
 bare relative or root-absolute URL. Out of the box `lo-00-example` points at the shared
 `images/lo-placeholder.svg` — drop your own file into `public/images/` and name it there.
 
+`hero` is the page's banner art and is not on the card. Write it as an object,
+`"hero": { "src": "images/lo-NN-slug/hero.webp" }`: a wide crop (about 2000px across,
+WebP or AVIF), separate from the card's `image`. It is decorative by default, because the
+banner already carries the LO title as the page's `<h1>`. Add `"alt"` only when the art
+says something the title does not, and never write `"alt": ""`, which the schema rejects.
+Omit `hero` entirely and the banner renders as a plain brand-coloured band.
+`lo-00-example` points at `images/lo-00-example/hero.svg`.
+
 ### Course order has one source: the folder ordinal
 
 The `lo-NN-` number in the folder name orders the cards, the lesson nav and the build.

@@ -1,7 +1,6 @@
 # LO hero banner — design
 
-**Status:** approved in conversation 2026-10-05, awaiting spec review · **Owner:** maintainer
-· **TODO:** to be added as a §D row when work starts.
+**Status:** shipped 2026-10-05 (see TODO §D9) · **Owner:** maintainer
 
 ## 1. Goal
 
@@ -207,7 +206,8 @@ plus `BASE_URL=/course/ bun run build` to prove the hero `src` resolves under a 
 - **The LO authoring docs:** document the `hero` key wherever `image` is documented today
   (located at implementation by grepping for it), including the decorative-by-default
   `alt` rule and the image size advice.
-- `DESIGNER.md`: the new `--hero-band` token.
+- `DESIGNER.md`: no change — it lists no component tokens (not even `--footer`);
+  `--hero-band` is documented in `tokens.css`, where it is defined.
 - `STRUCTURE.md` and `bun run docs:tree`: the new files. The freshness test enforces this.
 - `public/llms.txt`: only if its description of an LO page changes.
 - `docs/process/TODO.md`: the §D row, its measured bundle figures, and a "Done recently"

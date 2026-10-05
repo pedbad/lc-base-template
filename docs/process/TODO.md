@@ -317,7 +317,7 @@ file as its home), `STRUCTURE.md`'s `src/sandbox/` row, README's build section,
 CONTRIBUTING's command table, `AGENTS.md`'s two new house rules, `docs/TOOLING.md`'s two
 new decision entries.
 
-## D. Design & accessibility polish — 2 of 8 open
+## D. Design & accessibility polish — 2 of 9 open
 
 Design and a11y come before branch protection **by decision 2026-09-09**: a footer that
 ships internal build chatter and two dead links is a defect on every page of a live
@@ -384,7 +384,7 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   this pane cannot run.**
 
 - **D5 — the budget breaches. JS half CLOSED BY DECISION 2026-10-05; CSS half open
-  (0.69 kB over).** The maintainer raised the JS budget from < 80 kB to **< 100 kB
+  (0.84 kB over since §D9; current figures in `docs/TOOLING.md`).** The maintainer raised the JS budget from < 80 kB to **< 100 kB
   gzipped** rather than re-architect for it, so `main-*.js` at 97.13 kB (`6b5b821`) is
   now **within budget, with 2.87 kB of headroom**. The budget lives in ONE place —
   `docs/TOOLING.md`, "Bundle budget" — and the measurements below are kept as the
@@ -901,6 +901,40 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   light: near-white chips on a dark page. One gesture reaches it, which is probably why
   it survived this long.
 
+- **D9 — the LO hero banner. DONE 2026-10-05, `fddb8e2`…`e4c9fe0`.** Spec:
+  `docs/specs/2026-10-05-lo-hero-banner-design.md`; plan:
+  `docs/process/2026-10-05-lo-hero-banner-plan.md`. Every LO page now opens on a
+  full-bleed `LoHero` directly under the sticky header, holding the page's one `<h1>` on
+  a solid `--card` panel. The art comes from an optional `hero: { src, alt? }` in
+  `lo.json`, decorative unless `alt` is given; without `hero` the banner is a
+  `--hero-band` band (`var(--primary)`), so every LO opens the same way.
+
+  **One decision taken during the build, against the plan's stop-and-ask:** React 19's
+  server renderer hoists a `<link rel="preload" as="image">` for EVERY non-lazy `<img>`
+  — probed with and without `fetchPriority` — so the only way to avoid it is lazy-loading
+  the page's LCP image. Accepted. In the prerender it lands at the top of `#root`, and
+  hydration skips it: the built page hydrates with a silent console. `LoHero.test.tsx`
+  pins the preload so a React upgrade that changes it is noticed.
+
+  **Verified:**
+  - **Widths:** 320 · 375 · 768 · 1024 · 1440 with no overflow. The hero sits flush under
+    the header, is 224px tall at its 14rem floor and 448px at its 28rem cap, and the
+    panel's leading edge equals the `<h2>`s' at every width.
+  - **Contrast:** title 14.81:1 in light and 8.71:1 in dark, painted on a 1x1 canvas.
+    The band variant has the same panel, so the same ratios, and the band resolves to
+    `--primary` in both themes.
+  - **Build:** `BASE_URL=/course/` resolves the art to
+    `/course/images/lo-00-example/hero.svg`. Guard d was planted with a missing `src`
+    and seen failing.
+
+  **Bundle (`docs/TOOLING.md`, "Bundle budget"):** `main-*.js` **97.29 kB** gzipped (was
+  97.13) and CSS **15.84 kB** (was 15.69). So the CSS breach on §D5 grows from 0.69 to
+  **0.84 kB over**, and JS keeps 2.71 kB of headroom. Suite 1025 → 1047.
+
+  **Spec correction:** §10 said to add `--hero-band` to `DESIGNER.md`. That file lists no
+  component tokens (not even `--footer`), so the token is documented where it is defined,
+  in `tokens.css`, and the spec now says so.
+
 ---
 
 ## E. Before sharing with other developers
@@ -993,3 +1027,4 @@ build, so it cannot return. Two remain:
 | 2026-09-14 | see below | page ground is **`--paper`, not white** — off-white for dyslexic readers            |
 | 2026-10-05 | —         | header **scroll-spy deferred** to a later version (§D6 → "Deferred on purpose")     |
 | 2026-10-05 | —         | **JS budget raised to < 100 kB** gzipped; one home in `docs/TOOLING.md` (§D5)       |
+| 2026-10-05 | `e4c9fe0` | **LO hero banner** — full-bleed, holds the `<h1>`, band fallback (§D9)              |

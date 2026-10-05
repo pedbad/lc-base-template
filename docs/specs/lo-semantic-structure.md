@@ -57,7 +57,15 @@ against a semantic-structure audit of the french-lo-1 reference implementation
     </header>
 
     <main id="content" tabindex="-1">
-      <h1>{LO title}</h1>
+      <div class="lo-hero">
+        <!-- Full-bleed hero banner (docs/specs/2026-10-05-lo-hero-banner-design.md).
+             Optional decorative <img alt=""> from lo.json `hero`; without it, a
+             --hero-band band. The ONE <h1> lives here, on a solid --card panel. -->
+        <h1>{LO title}</h1>
+      </div>
+
+      <!-- <div class="lo-content"> — the content column (max-w-5xl). Every
+           <section> below sits inside it; it closes just before </main>. -->
 
       <section id="introduction" aria-labelledby="introduction-heading">
         <h2 id="introduction-heading">Introduction</h2>
@@ -117,6 +125,7 @@ against a semantic-structure audit of the french-lo-1 reference implementation
 
         <button aria-label="Back to top" tabindex="-1">…</button>
       </section>
+      <!-- </div> closes .lo-content -->
     </main>
 
     <footer>
