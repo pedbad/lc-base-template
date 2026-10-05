@@ -29,7 +29,10 @@
 
   <rect width="1600" height="500" fill="url(#lo-hero-sky)" />
 
-  <!-- Two speech bubbles on the right: the conversation motif of the card placeholder. -->
+  <!-- Two speech bubbles on the right: the conversation motif of the card placeholder,
+       drawn at 2x (scaled about their own centre) so they read at banner size. They bleed
+       past the top and bottom edges on purpose; the title's top-left corner stays clear. -->
+  <g transform="translate(1180 250) scale(2) translate(-1237 -250)">
   <g fill="none" stroke="#133844" stroke-linecap="round" stroke-linejoin="round">
     <g opacity="0.14" stroke-width="22">
       <path d="M1004 262h196a36 36 0 0 0 36-36v-96a36 36 0 0 0-36-36h-196a36 36 0 0 0-36 36v96a36 36 0 0 0 36 36h6l-20 52 58-52" />
@@ -42,5 +45,6 @@
   <g stroke="#00bdb6" stroke-linecap="round" stroke-width="14" opacity="0.55">
     <path d="M1264 256h164" />
     <path d="M1264 302h118" />
+  </g>
   </g>
 </svg>
