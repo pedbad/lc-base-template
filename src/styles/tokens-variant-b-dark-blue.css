@@ -91,6 +91,13 @@
     --footer-crest-b-mid: color-mix(in oklab, var(--footer) 22%, transparent);
     --footer-crest-linear-start: color-mix(in oklab, var(--footer) 50%, var(--background));
     --footer-crest-linear-mid: color-mix(in oklab, var(--footer) 18%, transparent);
+
+    /* Page hero band (spec 2026-10-05 §5) — the banner's surface when an LO has no hero
+       art. DERIVED from --primary, so it follows every preset and both themes with no
+       .dark copy: a custom property is substituted where it is USED. The title panel
+       on it is --card / --card-foreground in both variants, so the contrast verified
+       for the image variant holds here too. */
+    --hero-band: var(--primary);
   }
 
   .dark {
