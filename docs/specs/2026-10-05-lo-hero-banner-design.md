@@ -21,7 +21,7 @@ with the title set over a calm area of the image.
 | #   | Question                         | Decision                                                                           |
 | --- | -------------------------------- | ---------------------------------------------------------------------------------- |
 | H1  | What is the text on the image?   | **The page's `<h1>` itself**, moved into the hero. The image is decorative.        |
-| H2  | How wide?                        | **Full-bleed**, edge to edge. The title aligns to the `max-w-5xl` content column.  |
+| H2  | How wide?                        | **Full-bleed**, edge to edge. The title sits flush left under the header brand.    |
 | H3  | Image source, and no-image case? | **New optional `hero` field** in `lo.json`; without it, a token-coloured **band**. |
 
 **"shadcn hero section"** was read as intent, not as a dependency: shadcn/ui ships no hero
@@ -73,7 +73,7 @@ and CSS in the repo's token idiom, with no new package and no Base UI. That matc
     />
     <!-- img present only in the image variant -->
     <div class="lo-hero-inner">
-      <!-- max-w-5xl + px-4: the content column -->
+      <!-- px-4: the header's inset, flush left under the brand -->
       <h1 class="lo-hero-title">{LO title}</h1>
     </div>
   </div>
@@ -112,8 +112,10 @@ tokens only (guards f and g).
   `object-fit: cover`. Because the box reserves its own height, nothing shifts when the
   image arrives (CLS).
 - **The title panel** is pinned to the top-start corner of the box (moved from
-  bottom-start at the maintainer's request, 2026-10-05), inside the
-  content column, so its left edge lines up with every `<h2>` below. It is a solid
+  bottom-start at the maintainer's request, 2026-10-05). Its left edge is flush with
+  the viewport at the header's 1rem inset, directly under the course brand, which the
+  header now also places flush left (both changed at the maintainer's request to match
+  french-lo-1; it no longer aligns with the centred `<h2>` column). It is a solid
   surface in `--card` / `--card-foreground` with `--radius` and padding. **Solid, not a
   scrim**: a gradient's contrast depends on the pixels under it, while a solid panel's
   contrast is one token pair, the same for every image, and measurable once per theme.
@@ -193,7 +195,7 @@ plus `BASE_URL=/course/ bun run build` to prove the hero `src` resolves under a 
 ## 9. Not included
 
 - **A per-LO title position** (the reference sets its title top-right). There is one
-  position: top-start, aligned to the headings.
+  position: top-start, flush left under the header brand.
 - `srcset` / responsive image sources.
 - **Restyling the `<h1>`** (colour, display serif).
 - **Showing the LO name in the header brand.**

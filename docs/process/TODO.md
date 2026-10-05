@@ -677,7 +677,7 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     already found. It does NOT contradict §D4's "delete the observer" — that
     observer watched ITSELF to answer a question scrolling already answers; a spy
     watches OTHER elements to answer one the DOM cannot.
-  - **Two headers, two shapes.** LO page is `max-w-5xl`, sticky, blurred, brand is a
+  - **Two headers, two shapes.** LO page is full-width since 2026-10-05 (brand flush left, matching french-lo-1; was `max-w-5xl`), sticky, blurred, brand is a
     link, holds the nav landmark. `CourseHome` is `max-w-6xl`, static, brand is a `<p>`,
     and the landmark lives inside `LessonRail`.
   - **`Header` is still 240-char inline Tailwind strings** while §D1 moved the footer to
@@ -919,7 +919,10 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   **Verified:**
   - **Widths:** 320 · 375 · 768 · 1024 · 1440 with no overflow. The hero sits flush under
     the header, is 224px tall at its 14rem floor and 448px at its 28rem cap, and the
-    panel's leading edge equals the `<h2>`s' at every width.
+    panel's leading edge equalled the `<h2>`s' at every width. **Superseded the same
+    day at the maintainer's request (`8cad626`, then the flush-left commit):** the title
+    moved to the hero's top-left, then flush left at the header's 1rem inset directly
+    under the course brand, matching french-lo-1. The `<h2>` column stays centred.
   - **Contrast:** title 14.81:1 in light and 8.71:1 in dark, painted on a 1x1 canvas.
     The band variant has the same panel, so the same ratios, and the band resolves to
     `--primary` in both themes.

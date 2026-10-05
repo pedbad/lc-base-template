@@ -117,10 +117,7 @@ export default function Header({
     // above the page" — white in the light theme, the lifted dark surface in the dark
     // one — so the bar reads as a bar in both without hardcoding a colour in either.
     <header className="sticky top-0 z-40 border-b border-border bg-card/95 supports-backdrop-filter:bg-card/80 supports-backdrop-filter:backdrop-blur">
-      <nav
-        aria-label="Main navigation"
-        className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-3"
-      >
+      <nav aria-label="Main navigation" className="flex items-center gap-3 px-4 py-3">
         {/* The brand links HOME, to the course landing page (Phase D) — not to
             #content as it once did. That was a second skip link, and PageLayout
             already renders a real one as the page's first focusable element; mean-
@@ -203,7 +200,7 @@ export default function Header({
           sections={sections}
           activeSectionId={activeSectionId}
           onNavigate={() => setIsMobileNavOpen(false)}
-          className="mx-auto flex max-w-5xl flex-col gap-1 px-4 py-3"
+          className="flex flex-col gap-1 px-4 py-3"
         />
       </div>
     </header>

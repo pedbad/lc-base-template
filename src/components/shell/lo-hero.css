@@ -39,13 +39,13 @@
     object-fit: cover;
   }
 
-  /* The content column (Tailwind's max-w-5xl + px-4 = 64rem + 1rem), so the panel's
-     leading edge lines up with every <h2> below it. */
+  /* Flush to the viewport's leading edge with the header's own inset (its nav is
+     px-4 = 1rem), so the title sits directly under the course brand, as in
+     french-lo-1. Deliberately NOT the content column: the maintainer asked for the
+     brand and the title to align with each other at the browser's left edge. */
   .lo-hero-inner {
     position: relative;
     inline-size: 100%;
-    max-inline-size: 64rem;
-    margin-inline: auto;
     padding-inline: 1rem;
     padding-block-start: 1.5rem;
   }
