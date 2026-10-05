@@ -4,7 +4,7 @@
  * ONE <h1>, moved here from PageLayout, so the LO's name is announced exactly once.
  *
  * Two variants, one shape. With `hero` art: a decorative image filling a fixed-ratio
- * box, the title on a solid panel at its bottom-start corner. Without: the same panel
+ * box, the title on a solid panel at its top-start corner. Without: the same panel
  * on a --hero-band surface. Every LO page therefore opens the same way and no LO is
  * blocked on artwork.
  *

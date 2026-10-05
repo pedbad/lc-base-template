@@ -17,7 +17,7 @@
     Hex literals are deliberate HERE, as in lo-placeholder.svg: an <img> is a separate
     document and cannot read the page's CSS custom properties. Values are copied from
     src/styles/palette.css (Cambridge Light Blue / Blue / Warm Blue / Dark Blue) — keep
-    them in step if the palette changes. The calm lower-left keeps the title panel's
+    them in step if the palette changes. The calm upper-left keeps the title panel's
     corner uncluttered.
   -->
   <defs>

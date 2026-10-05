@@ -111,7 +111,8 @@ tokens only (guards f and g).
   at 320–375px would otherwise be a strip about 100px tall. The `<img>` fills it with
   `object-fit: cover`. Because the box reserves its own height, nothing shifts when the
   image arrives (CLS).
-- **The title panel** is pinned to the bottom-start corner of the box, inside the
+- **The title panel** is pinned to the top-start corner of the box (moved from
+  bottom-start at the maintainer's request, 2026-10-05), inside the
   content column, so its left edge lines up with every `<h2>` below. It is a solid
   surface in `--card` / `--card-foreground` with `--radius` and padding. **Solid, not a
   scrim**: a gradient's contrast depends on the pixels under it, while a solid panel's
@@ -192,7 +193,7 @@ plus `BASE_URL=/course/ bun run build` to prove the hero `src` resolves under a 
 ## 9. Not included
 
 - **A per-LO title position** (the reference sets its title top-right). There is one
-  position: bottom-start, aligned to the headings.
+  position: top-start, aligned to the headings.
 - `srcset` / responsive image sources.
 - **Restyling the `<h1>`** (colour, display serif).
 - **Showing the LO name in the header brand.**

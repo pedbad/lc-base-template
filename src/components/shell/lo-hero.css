@@ -13,7 +13,7 @@
   .lo-hero {
     position: relative;
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;
     inline-size: 100%;
   }
 
@@ -27,7 +27,7 @@
   }
 
   .lo-hero[data-variant='band'] {
-    padding-block-start: 4rem;
+    padding-block-end: 1.5rem;
     background-color: var(--hero-band);
   }
 
@@ -47,7 +47,7 @@
     max-inline-size: 64rem;
     margin-inline: auto;
     padding-inline: 1rem;
-    padding-block-end: 1.5rem;
+    padding-block-start: 1.5rem;
   }
 
   .lo-hero-title {
