@@ -14,8 +14,8 @@
  *
  * HAND-ROLLED, AND NOT shadcn's `Sidebar`, WHICH THIS REPO ALREADY VENDORS. Measured,
  * not assumed: importing `@/components/ui/sidebar` in `collapsible="icon"` mode took
- * main-*.js from 96.83 kB to 117.89 kB gzipped — +21.06 kB on a landing page whose
- * budget is < 80 kB and which is already over it. The cost is its dependency fan-out
+ * main-*.js from 96.83 kB to 117.89 kB gzipped — +21.06 kB, which breaks even the
+ * raised < 100 kB budget (docs/TOOLING.md, "Bundle budget"). The cost is its dependency fan-out
  * (Sheet, Tooltip, Button, Input, Separator, Skeleton) rather than the rail itself.
  * Two further problems came off with it:
  *   - it persists open/closed in a COOKIE read on mount, and prerendered markup here

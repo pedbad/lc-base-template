@@ -383,7 +383,15 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   fires and reveals when no callback arrives. **Get a human to look at any animation
   this pane cannot run.**
 
-- **D5 — the two budget breaches, re-measured 2026-09-10 at `8e3c49f`.** `main-*.js`
+- **D5 — the budget breaches. JS half CLOSED BY DECISION 2026-10-05; CSS half open
+  (0.69 kB over).** The maintainer raised the JS budget from < 80 kB to **< 100 kB
+  gzipped** rather than re-architect for it, so `main-*.js` at 97.13 kB (`6b5b821`) is
+  now **within budget, with 2.87 kB of headroom**. The budget lives in ONE place —
+  `docs/TOOLING.md`, "Bundle budget" — and the measurements below are kept as the
+  dated record they are: where they say "< 80 kB", that was the budget at the time.
+  CSS stays < 15 kB.
+
+  **Re-measured 2026-09-10 at `8e3c49f`.** `main-*.js`
   is **95.99 kB gzipped against a < 80 kB** microsite target, and CSS is **20.10 kB
   against < 15 kB**. §D's whole footer + back-to-top programme cost **+0.23 kB
   gzipped** between them, so it moved neither breach materially — the causes are
@@ -599,10 +607,11 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   1.74 kB gz — and this is a TEMPLATE, so dropping Greek or Cyrillic is a decision about
   which courses it can serve, not an optimisation. Left open deliberately.
 
-  **Next step is a spec, not a patch** — for the JS half. The gap there is ~17 kB
-  gzipped, the options differ in kind (defer the dialog / drop Base UI wrappers for
-  native elements / hydrate islands instead of the page), and picking between them is a
-  design conversation. The CSS half no longer needs one.
+  **SUPERSEDED 2026-10-05 — no JS spec is needed.** This paragraph used to say the JS
+  half's next step was a spec choosing between deferring the dialog, dropping Base UI
+  wrappers for native elements, or hydrating islands, to close a ~17 kB gap. The budget
+  was raised to < 100 kB instead (see the top of this row), so none of those is
+  scheduled. They stay on record here as the options, should the budget ever tighten.
 
 - **D2 — the `BackToTopButton` mount.** **DONE 2026-09-10**, `97a5b4b` + `8e3c49f` +
   `1a5500b` (the mint restyle).
@@ -910,7 +919,7 @@ Not forgotten. Decided.
 
 | Item                        | Trigger to pick it up                                                                                                                                                                                                                                                                                                       |
 | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Per-LO chunking (§5.4)      | **~a dozen LOs.** Eager `import.meta.glob` means every page bundles every LO's JSON. Harmless at one. Measure against the <80kb gzipped microsite JS budget.                                                                                                                                                                |
+| Per-LO chunking (§5.4)      | **~a dozen LOs.** Eager `import.meta.glob` means every page bundles every LO's JSON. Harmless at one. Measure each new LO against the < 100 kB gzipped JS budget (`docs/TOOLING.md`, "Bundle budget") — headroom was 2.87 kB at one LO, so this may wake before a dozen.                                                    |
 | Rich text in modals/engines | Someone actually needs it. Fully spec'd in `docs/specs/lo-rich-text-modals.md` §12, zero built.                                                                                                                                                                                                                             |
 | Conjugation v2 choice mode  | Someone wants tap-to-answer verb tables. Schema ready, view path unbuilt.                                                                                                                                                                                                                                                   |
 | Header scroll-spy (§D6)     | LO pages grow long enough that readers lose their place. Highlight only — never write the hash (its handler moves focus); pause during clicked jumps; handle a last section too short to reach the trigger line; switch `aria-current` to `location`. Needs a human eyeball — a hidden pane delivers no observer callbacks. |
@@ -983,3 +992,4 @@ build, so it cannot return. Two remain:
 | 2026-09-14 | `7d6216d` | vocabulary row **clickable end to end**, delegating to its speaker button           |
 | 2026-09-14 | see below | page ground is **`--paper`, not white** — off-white for dyslexic readers            |
 | 2026-10-05 | —         | header **scroll-spy deferred** to a later version (§D6 → "Deferred on purpose")     |
+| 2026-10-05 | —         | **JS budget raised to < 100 kB** gzipped; one home in `docs/TOOLING.md` (§D5)       |

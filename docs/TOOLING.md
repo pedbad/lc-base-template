@@ -150,6 +150,33 @@ Layer 1 is the carrot; layers 2–3 are the stick.
   the prerender pass will later write — see _Dev-server LO pages_ below.
 - **Rejected:** Create-React-App (deprecated), Webpack (slower, heavier config).
 
+### Bundle budget — JS < 100 kB, CSS < 15 kB gzipped _(decision 2026-10-05)_
+
+**This is the one place the budget is written down.** Every other doc and comment that
+needs the number points here rather than restating it.
+
+| Asset        | Budget (gzipped) | Measured at `6b5b821` | Headroom |
+| ------------ | ---------------- | --------------------- | -------- |
+| `main-*.js`  | **< 100 kB**     | 97.13 kB              | 2.87 kB  |
+| `main-*.css` | **< 15 kB**      | 15.69 kB              | −0.69 kB |
+
+- **JS was raised from < 80 kB to < 100 kB by the maintainer's decision.** The 80 kB
+  figure is the generic "microsite" row from the maintainer's global ECC rules
+  (`~/.claude/rules/ecc/web/performance.md`), which this repo had been quoting. It did
+  not fit this build: `react-dom` alone is 55.6% of `main-*.js` (TODO §D5's sourcemap
+  attribution), so reaching 80 kB meant changing how much of the page is React —
+  islands, or dropping Base UI for native elements — and that is an architecture
+  rewrite with breakage risk for a number that gates nothing. 100 kB is the budget this
+  repo is held to; the global rule is not edited, this entry overrides it here.
+- **CSS stays < 15 kB** and is still 0.69 kB over. The remaining lead (Open Sans
+  `@font-face` subsets) is a decision about which scripts the template serves, not an
+  optimisation — see TODO §D5.
+- **Headroom is thin, so measure, do not assume.** Read the gzipped `main-*.js` and CSS
+  sizes off `bun run build` whenever a change adds a dependency or a component, and
+  record the figure. The per-LO chunking trigger in TODO's "Deferred on purpose" table
+  is measured against this JS budget.
+- **Not enforced by a test.** The figures are read off the build output by hand.
+
 ### TypeScript — language + type safety
 
 - **What:** JavaScript with static types.
@@ -815,7 +842,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   `Sheet`, so its first client render cannot match prerendered markup; it also writes a
   state cookie. Re-measured when the rail was built (§D · D7): importing it in
   `collapsible="icon"` mode took `main-*.js` from **96.83 kB to 117.89 kB gzipped**,
-  +21.06 kB on a page already over its < 80 kB budget, because it drags in Sheet,
+  +21.06 kB — over even the raised < 100 kB budget (see _Bundle budget_), because it drags in Sheet,
   Tooltip, Button, Input, Separator and Skeleton. `LessonRail` costs **+0.16 kB** and
   is one strip plus one off-canvas panel at every width — `inert` when closed (not
   `hidden`, which cannot slide), Escape/focus-trap/focus-restore/scroll-lock in ~50
