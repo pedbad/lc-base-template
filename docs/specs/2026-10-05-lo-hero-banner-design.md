@@ -154,7 +154,7 @@ tokens only (guards f and g).
 
 - `lo-config/lo-00-example/lo.json` gains a `hero` pointing at a new placeholder,
   `public/images/lo-00-example/hero.svg`: a wide, quiet illustration that shows the crop
-  and the panel without pretending to be course art. Authors copying the folder see the
+  and the title placement without pretending to be course art. Authors copying the folder see the
   pattern immediately.
 - **Implementation check:** confirm whether guard f's markup half reads `.svg` files in
   `public/`. If it does, the placeholder's colours must satisfy it. The existing

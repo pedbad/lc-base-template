@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-05 · **HEAD:** see `git log` · **Suite:** 100 files · 1025 tests green
+**Last updated:** 2026-10-05 · **HEAD:** see `git log` · **Suite:** 101 files · 1047 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -384,7 +384,7 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   this pane cannot run.**
 
 - **D5 — the budget breaches. JS half CLOSED BY DECISION 2026-10-05; CSS half open
-  (0.84 kB over since §D9; current figures in `docs/TOOLING.md`).** The maintainer raised the JS budget from < 80 kB to **< 100 kB
+  (about 0.85 kB over since §D9; current figures in `docs/TOOLING.md`).** The maintainer raised the JS budget from < 80 kB to **< 100 kB
   gzipped** rather than re-architect for it, so `main-*.js` at 97.13 kB (`6b5b821`) is
   now **within budget, with 2.87 kB of headroom**. The budget lives in ONE place —
   `docs/TOOLING.md`, "Bundle budget" — and the measurements below are kept as the

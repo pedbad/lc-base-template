@@ -90,7 +90,7 @@ Keep the click-to-jump behaviour as it is.
 - **Reduced motion:** the scroll-spy itself has no motion. If the active-link style gains
   a transition, it goes in CSS under the repo's `reduce` override, and it never
   transitions a token colour declared in a base state (TODO §D8).
-- **Bundle:** JS is 97.29 kB gzipped against < 100 kB (`docs/TOOLING.md`, "Bundle
+- **Bundle:** JS is 97.28 kB gzipped against < 100 kB (`docs/TOOLING.md`, "Bundle
   budget"). A hook costs a few hundred bytes. Measure it and record the figure anyway.
 
 ## 5. Suggested shape (not decided — the spec decides)
