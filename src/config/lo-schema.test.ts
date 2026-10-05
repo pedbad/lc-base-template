@@ -63,6 +63,65 @@ test('lo-schema: manifest rejects a blank image path', () => {
   ).toThrow();
 });
 
+// The page hero (spec 2026-10-05 §3): optional; src required inside it; alt optional
+// and absent-means-decorative; strict, so a misspelt key fails at load.
+test('lo-schema: manifest accepts an optional hero with src only', () => {
+  const parsed = LoManifestSchema.parse({
+    title: 'Salutations',
+    hero: { src: 'images/lo-01/hero.webp' },
+    sections: oneSection,
+  });
+  expect(parsed.hero).toEqual({ src: 'images/lo-01/hero.webp' });
+});
+
+test('lo-schema: manifest accepts a hero with an authored alt', () => {
+  const parsed = LoManifestSchema.parse({
+    title: 'Salutations',
+    hero: { src: 'images/lo-01/hero.webp', alt: 'A café terrace in Lyon' },
+    sections: oneSection,
+  });
+  expect(parsed.hero?.alt).toBe('A café terrace in Lyon');
+});
+
+test('lo-schema: manifest without a hero parses, leaving it undefined', () => {
+  const parsed = LoManifestSchema.parse({ title: 'Salutations', sections: oneSection });
+  expect(parsed.hero).toBeUndefined();
+});
+
+test('lo-schema: manifest rejects a hero with no src', () => {
+  expect(() =>
+    LoManifestSchema.parse({ title: 'Salutations', hero: {}, sections: oneSection }),
+  ).toThrow();
+});
+
+// Same reason as the blank card image: an empty path resolves to the page itself.
+test('lo-schema: manifest rejects a blank hero src', () => {
+  expect(() =>
+    LoManifestSchema.parse({ title: 'Salutations', hero: { src: '' }, sections: oneSection }),
+  ).toThrow();
+});
+
+// Omission already means decorative, so "" would be a second spelling of it.
+test('lo-schema: manifest rejects a blank hero alt', () => {
+  expect(() =>
+    LoManifestSchema.parse({
+      title: 'Salutations',
+      hero: { src: 'images/lo-01/hero.webp', alt: '' },
+      sections: oneSection,
+    }),
+  ).toThrow();
+});
+
+test('lo-schema: manifest rejects an unknown hero key', () => {
+  expect(() =>
+    LoManifestSchema.parse({
+      title: 'Salutations',
+      hero: { src: 'images/lo-01/hero.webp', scr: 'typo' },
+      sections: oneSection,
+    }),
+  ).toThrow();
+});
+
 // Guard: title is required — a manifest without it fails the build.
 test('lo-schema: manifest missing title throws', () => {
   expect(() => LoManifestSchema.parse({ sections: oneSection })).toThrow();

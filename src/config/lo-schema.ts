@@ -225,6 +225,28 @@ export const LoSectionSchema = z
 export type LoSection = z.infer<typeof LoSectionSchema>;
 
 /**
+ * The LO page's hero banner art (spec docs/specs/2026-10-05-lo-hero-banner-design.md §3).
+ *
+ * `src` is an author-relative asset path resolved through `resolveAsset()` at render,
+ * like the card's `image`. Blank is rejected for the same reason: an empty path resolves
+ * to the page itself.
+ *
+ * `alt` is optional and ABSENT MEANS DECORATIVE. The hero carries the page's <h1>, so
+ * the image's default name must be empty or a screen reader reads the title twice.
+ * Supply it only when the artwork says something the title does not. Blank is rejected:
+ * omission already means decorative, and "" would be a second spelling of it.
+ *
+ * Strict, so a misspelt key (`scr`) fails at load instead of silently dropping the art.
+ * `src` sits under a key guard d already collects (`ASSET_KEYS`), so a missing file
+ * fails the suite with no guard change.
+ */
+export const LoHeroSchema = z.strictObject({
+  src: z.string().min(1),
+  alt: z.string().min(1).optional(),
+});
+export type LoHero = z.infer<typeof LoHeroSchema>;
+
+/**
  * Validates an LO folder's `lo.json` manifest: LO meta plus its ORDERED `sections[]`.
  * Ordinal ref prefixes (`01-`, `02-`) stay LO-wide per kind; the array is what orders
  * items WITHIN a section.
@@ -246,6 +268,13 @@ export const LoManifestSchema = z
      * the base URL itself, which would request the page as an image.
      */
     image: z.string().min(1).optional(),
+    /**
+     * Optional hero banner art for this LO's page — a wide crop, separate from the
+     * card's `image` because a card crop and a banner crop rarely suit one file. Omit
+     * it and the hero renders as a token-coloured band, so every LO page opens the
+     * same way and no LO is blocked on artwork.
+     */
+    hero: LoHeroSchema.optional(),
     /** The page, in order. At least one — an LO with no sections renders nothing. */
     sections: z.array(LoSectionSchema).min(1),
     /**
