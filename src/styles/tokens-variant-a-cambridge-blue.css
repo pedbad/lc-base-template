@@ -95,10 +95,16 @@
 
     /* Page hero band (spec 2026-10-05 §5) — the banner's surface when an LO has no hero
        art. DERIVED from --primary, so it follows every preset and both themes with no
-       .dark copy: a custom property is substituted where it is USED. The title panel
-       on it is --card / --card-foreground in both variants, so the contrast verified
-       for the image variant holds here too. */
+       .dark copy: a custom property is substituted where it is USED. The title on it
+       takes --primary-foreground, the button pair. */
     --hero-band: var(--primary);
+
+    /* Hero title ink over AUTHOR ART (spec 2026-10-05 §5). Deliberately NOT themed: the
+       art is an <img> and does not change with the theme, so a light title in dark mode
+       would sit on the same light art and fail. One dark ink in both themes, which is
+       why there is no .dark copy — and why hero art must keep the title's top-left
+       corner light (CONTRIBUTING.md). */
+    --hero-title-ink: var(--slate-4);
   }
 
   .dark {

@@ -4,8 +4,8 @@
  * ONE <h1>, moved here from PageLayout, so the LO's name is announced exactly once.
  *
  * Two variants, one shape. With `hero` art: a decorative image filling a fixed-ratio
- * box, the title on a solid panel at its top-start corner. Without: the same panel
- * on a --hero-band surface. Every LO page therefore opens the same way and no LO is
+ * box, the title directly on it at its top-start corner. Without: the same title on
+ * a --hero-band surface. Every LO page therefore opens the same way and no LO is
  * blocked on artwork.
  *
  * A <div>, NOT a <header>. A <header> inside <main> is no landmark, so it would add
@@ -49,8 +49,8 @@ export default function LoHero({ title, hero }: LoHeroProps) {
       )}
       <div className="lo-hero-inner">
         {/* Type styles unchanged from the <h1> PageLayout used to render. Colour is NOT
-            a utility here: utilities outrank @layer components, and the panel's colour
-            pair lives in lo-hero.css so it stays one verified pair. */}
+            a utility here: utilities outrank @layer components, and the per-variant
+            ink lives in lo-hero.css so each stays one verified pair. */}
         <h1 className="lo-hero-title font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
           {title}
         </h1>

@@ -4,10 +4,14 @@
  * footer.css. Tokens only, every rule inside @layer components, no motion — so there
  * is no reduced-motion case.
  *
- * THE TITLE SITS ON A SOLID PANEL, NOT A SCRIM, deliberately. A gradient's contrast
- * depends on whatever pixels the author's art puts under it, so it can be verified for
- * one image and fail on the next. A solid --card panel's contrast is one token pair,
- * the same for every image and both variants, and is measured once per theme.
+ * THE TITLE SITS DIRECTLY ON THE HERO, with no panel (removed 2026-10-05 at the
+ * maintainer's request; it was a solid --card panel). So its contrast is now a pair per
+ * variant, chosen so neither depends on the theme flipping under it:
+ *   - over art: --hero-title-ink, one dark ink in BOTH themes, because the <img> does
+ *     not change with the theme. The cost is an authoring rule: art must keep the
+ *     title's top-left corner light (CONTRIBUTING.md). Verified on the placeholder.
+ *   - on the band: --primary-foreground on --primary, the button pair, which both
+ *     themes already hold at AA.
  */
 @layer components {
   .lo-hero {
@@ -53,9 +57,10 @@
   .lo-hero-title {
     display: inline-block;
     max-inline-size: 100%;
-    padding: 0.75rem 1.25rem;
-    border-radius: var(--radius);
-    background-color: var(--card);
-    color: var(--card-foreground);
+    color: var(--hero-title-ink);
+  }
+
+  .lo-hero[data-variant='band'] .lo-hero-title {
+    color: var(--primary-foreground);
   }
 }

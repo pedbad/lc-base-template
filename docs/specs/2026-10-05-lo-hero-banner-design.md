@@ -111,25 +111,31 @@ tokens only (guards f and g).
   at 320–375px would otherwise be a strip about 100px tall. The `<img>` fills it with
   `object-fit: cover`. Because the box reserves its own height, nothing shifts when the
   image arrives (CLS).
-- **The title panel** is pinned to the top-start corner of the box (moved from
+- **The title** is pinned to the top-start corner of the box (moved from
   bottom-start at the maintainer's request, 2026-10-05). Its left edge is flush with
   the viewport at the header's 1rem inset, directly under the course brand, which the
   header now also places flush left (both changed at the maintainer's request to match
-  french-lo-1; it no longer aligns with the centred `<h2>` column). It is a solid
-  surface in `--card` / `--card-foreground` with `--radius` and padding. **Solid, not a
-  scrim**: a gradient's contrast depends on the pixels under it, while a solid panel's
-  contrast is one token pair, the same for every image, and measurable once per theme.
+  french-lo-1; it no longer aligns with the centred `<h2>` column). **It sits directly
+  on the hero, with no panel** — the solid `--card` panel this spec first chose was
+  removed at the maintainer's request, 2026-10-05. Contrast is therefore one pair per
+  variant, neither dependent on the theme: over art, `--hero-title-ink`, a single dark ink
+  in BOTH themes (the `<img>` does not change with the theme, so a themed light title
+  would fail on light art in dark mode); on the band, `--primary-foreground` on
+  `--primary`, the button pair. The cost is an authoring rule: hero art must keep the
+  title's top-left corner light. Measured on the placeholder: worst pixel 12.38:1 at
+  1440, 5.67:1 at 375 where the title crosses a bubble stroke.
 - **The `<h1>` keeps its current type styles**, moving with it unchanged. Restyling the
   title (for example a coloured display serif like the reference) is a separate design
   decision and is not bundled in here.
-- **The band variant** (no `hero` in `lo.json`) is the same box and the same panel on a
+- **The band variant** (no `hero` in `lo.json`) is the same box and title on a
   solid background, a new component token `--hero-band` defined in `tokens.css` for both
-  themes. It is not an image, so it has no aspect ratio, just block padding. The panel
-  is identical, so the contrast verified for one variant holds for the other.
+  themes. It is not an image, so it has no aspect ratio, just block padding. Its title
+  takes `--primary-foreground`.
 - **Spacing:** `<main>` loses its top padding so the hero sits flush under the header.
   `.lo-content` keeps the old column box and bottom padding, and the first section's
   `mt-12` stays.
-- **Theme:** the panel and band follow the theme. The image does not, as artwork.
+- **Theme:** the band and its title follow the theme. The image and the title over it
+  do not, as artwork.
 - **Motion:** none, so there is no reduced-motion case.
 
 ## 6. Performance

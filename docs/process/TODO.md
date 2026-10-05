@@ -904,8 +904,8 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
 - **D9 — the LO hero banner. DONE 2026-10-05, `fddb8e2`…`e4c9fe0`.** Spec:
   `docs/specs/2026-10-05-lo-hero-banner-design.md`; plan:
   `docs/process/2026-10-05-lo-hero-banner-plan.md`. Every LO page now opens on a
-  full-bleed `LoHero` directly under the sticky header, holding the page's one `<h1>` on
-  a solid `--card` panel. The art comes from an optional `hero: { src, alt? }` in
+  full-bleed `LoHero` directly under the sticky header, holding the page's one `<h1>`
+  (first on a solid `--card` panel; the panel was removed later the same day). The art comes from an optional `hero: { src, alt? }` in
   `lo.json`, decorative unless `alt` is given; without `hero` the banner is a
   `--hero-band` band (`var(--primary)`), so every LO opens the same way.
 
@@ -923,9 +923,13 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     day at the maintainer's request (`8cad626`, then the flush-left commit):** the title
     moved to the hero's top-left, then flush left at the header's 1rem inset directly
     under the course brand, matching french-lo-1. The `<h2>` column stays centred.
-  - **Contrast:** title 14.81:1 in light and 8.71:1 in dark, painted on a 1x1 canvas.
-    The band variant has the same panel, so the same ratios, and the band resolves to
-    `--primary` in both themes.
+  - **Contrast:** first measured on the `--card` panel (14.81:1 light, 8.71:1 dark).
+    **Panel removed same day at the maintainer's request:** the title now sits on the
+    art in `--hero-title-ink`, one dark ink in both themes because the `<img>` does not
+    theme. Worst pixel under the title on the placeholder: 12.38:1 at 1440 (both themes),
+    5.67:1 at 375 where it crosses a bubble stroke. Authoring rule added to
+    CONTRIBUTING: keep the title's top-left corner light. The band uses
+    `--primary-foreground` on `--primary`. Placeholder bubbles drawn at 2x.
   - **Build:** `BASE_URL=/course/` resolves the art to
     `/course/images/lo-00-example/hero.svg`. Guard d was planted with a missing `src`
     and seen failing.

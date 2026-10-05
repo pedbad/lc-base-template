@@ -101,7 +101,9 @@ bare relative or root-absolute URL. Out of the box `lo-00-example` points at the
 WebP or AVIF), separate from the card's `image`. It is decorative by default, because the
 banner already carries the LO title as the page's `<h1>`. Add `"alt"` only when the art
 says something the title does not, and never write `"alt": ""`, which the schema rejects.
-Omit `hero` entirely and the banner renders as a plain brand-coloured band.
+The title is printed straight onto the art in one dark ink, in both themes, so **keep
+the art's top-left corner light and calm** behind the title. Dark art there fails
+contrast. Omit `hero` entirely and the banner renders as a plain brand-coloured band.
 `lo-00-example` points at `images/lo-00-example/hero.svg`.
 
 ### Course order has one source: the folder ordinal
