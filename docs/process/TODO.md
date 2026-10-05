@@ -665,16 +665,17 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     not animate. **Fix was documentation, not code** — the panel now carries the
     reasoning so the next reader does not re-derive it, plus tests pinning the
     no-trap contract.
-  - **`activeSectionId` — the DOC is fixed; the SCROLL-SPY is DEFERRED (2026-10-05).**
+  - **`activeSectionId` — the DOC is fixed; the SCROLL-SPY is NEXT (reopened 2026-10-05).**
     `Header.tsx` called it "the section currently in view"; `PageLayout` only updates
     it on `hashchange`, so `aria-current` was stale the moment the reader scrolled.
     **Corrected 2026-09-14**: the prop now documents what it is — the section last
     NAVIGATED to — and says plainly what it is not, so nobody reads viewport tracking
     into it. The name is unchanged on purpose; renaming touches nine call sites to no
-    benefit while the real question is open. **The scroll-spy itself is out of this
-    version by decision 2026-10-05** — modest value at four sections, desktop only —
-    and now lives in "Deferred on purpose" below, with its trigger and the traps
-    already found. It does NOT contradict §D4's "delete the observer" — that
+    benefit while the real question is open. **Deferred to a later version and then
+    reopened the same day, 2026-10-05: the maintainer decided it is wanted now.** It is
+    the next job. Handover with the traps already found:
+    `docs/process/2026-10-05-scroll-spy-handover.md`. When it ships, close this bullet.
+    It does NOT contradict §D4's "delete the observer" — that
     observer watched ITSELF to answer a question scrolling already answers; a spy
     watches OTHER elements to answer one the DOM cannot.
   - **Two headers, two shapes.** LO page is full-width since 2026-10-05 (brand flush left, matching french-lo-1; was `max-w-5xl`), sticky, blurred, brand is a
@@ -958,12 +959,11 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
 
 Not forgotten. Decided.
 
-| Item                        | Trigger to pick it up                                                                                                                                                                                                                                                                                                       |
-| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Per-LO chunking (§5.4)      | **~a dozen LOs.** Eager `import.meta.glob` means every page bundles every LO's JSON. Harmless at one. Measure each new LO against the < 100 kB gzipped JS budget (`docs/TOOLING.md`, "Bundle budget") — headroom was 2.87 kB at one LO, so this may wake before a dozen.                                                    |
-| Rich text in modals/engines | Someone actually needs it. Fully spec'd in `docs/specs/lo-rich-text-modals.md` §12, zero built.                                                                                                                                                                                                                             |
-| Conjugation v2 choice mode  | Someone wants tap-to-answer verb tables. Schema ready, view path unbuilt.                                                                                                                                                                                                                                                   |
-| Header scroll-spy (§D6)     | LO pages grow long enough that readers lose their place. Highlight only — never write the hash (its handler moves focus); pause during clicked jumps; handle a last section too short to reach the trigger line; switch `aria-current` to `location`. Needs a human eyeball — a hidden pane delivers no observer callbacks. |
+| Item                        | Trigger to pick it up                                                                                                                                                                                                                                                    |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Per-LO chunking (§5.4)      | **~a dozen LOs.** Eager `import.meta.glob` means every page bundles every LO's JSON. Harmless at one. Measure each new LO against the < 100 kB gzipped JS budget (`docs/TOOLING.md`, "Bundle budget") — headroom was 2.87 kB at one LO, so this may wake before a dozen. |
+| Rich text in modals/engines | Someone actually needs it. Fully spec'd in `docs/specs/lo-rich-text-modals.md` §12, zero built.                                                                                                                                                                          |
+| Conjugation v2 choice mode  | Someone wants tap-to-answer verb tables. Schema ready, view path unbuilt.                                                                                                                                                                                                |
 
 ### Two small known edges (§5.7)
 
@@ -1035,3 +1035,4 @@ build, so it cannot return. Two remain:
 | 2026-10-05 | —         | header **scroll-spy deferred** to a later version (§D6 → "Deferred on purpose")     |
 | 2026-10-05 | —         | **JS budget raised to < 100 kB** gzipped; one home in `docs/TOOLING.md` (§D5)       |
 | 2026-10-05 | `e4c9fe0` | **LO hero banner** — full-bleed, holds the `<h1>`, band fallback (§D9)              |
+| 2026-10-05 | —         | header **scroll-spy reopened** — out of "Deferred on purpose", back on §D6 as next  |
