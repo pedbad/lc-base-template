@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-09-14 · **HEAD:** see `git log` · **Suite:** 100 files · 1025 tests green
+**Last updated:** 2026-10-05 · **HEAD:** see `git log` · **Suite:** 100 files · 1025 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -656,14 +656,16 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     not animate. **Fix was documentation, not code** — the panel now carries the
     reasoning so the next reader does not re-derive it, plus tests pinning the
     no-trap contract.
-  - **`activeSectionId` — the DOC is fixed, the SCROLL-SPY is still open.**
+  - **`activeSectionId` — the DOC is fixed; the SCROLL-SPY is DEFERRED (2026-10-05).**
     `Header.tsx` called it "the section currently in view"; `PageLayout` only updates
     it on `hashchange`, so `aria-current` was stale the moment the reader scrolled.
     **Corrected 2026-09-14**: the prop now documents what it is — the section last
     NAVIGATED to — and says plainly what it is not, so nobody reads viewport tracking
     into it. The name is unchanged on purpose; renaming touches nine call sites to no
-    benefit while the real question is open. **Still open: whether to build the
-    scroll-spy at all.** It does NOT contradict §D4's "delete the observer" — that
+    benefit while the real question is open. **The scroll-spy itself is out of this
+    version by decision 2026-10-05** — modest value at four sections, desktop only —
+    and now lives in "Deferred on purpose" below, with its trigger and the traps
+    already found. It does NOT contradict §D4's "delete the observer" — that
     observer watched ITSELF to answer a question scrolling already answers; a spy
     watches OTHER elements to answer one the DOM cannot.
   - **Two headers, two shapes.** LO page is `max-w-5xl`, sticky, blurred, brand is a
@@ -906,11 +908,12 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
 
 Not forgotten. Decided.
 
-| Item                        | Trigger to pick it up                                                                                                                                        |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Per-LO chunking (§5.4)      | **~a dozen LOs.** Eager `import.meta.glob` means every page bundles every LO's JSON. Harmless at one. Measure against the <80kb gzipped microsite JS budget. |
-| Rich text in modals/engines | Someone actually needs it. Fully spec'd in `docs/specs/lo-rich-text-modals.md` §12, zero built.                                                              |
-| Conjugation v2 choice mode  | Someone wants tap-to-answer verb tables. Schema ready, view path unbuilt.                                                                                    |
+| Item                        | Trigger to pick it up                                                                                                                                                                                                                                                                                                       |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Per-LO chunking (§5.4)      | **~a dozen LOs.** Eager `import.meta.glob` means every page bundles every LO's JSON. Harmless at one. Measure against the <80kb gzipped microsite JS budget.                                                                                                                                                                |
+| Rich text in modals/engines | Someone actually needs it. Fully spec'd in `docs/specs/lo-rich-text-modals.md` §12, zero built.                                                                                                                                                                                                                             |
+| Conjugation v2 choice mode  | Someone wants tap-to-answer verb tables. Schema ready, view path unbuilt.                                                                                                                                                                                                                                                   |
+| Header scroll-spy (§D6)     | LO pages grow long enough that readers lose their place. Highlight only — never write the hash (its handler moves focus); pause during clicked jumps; handle a last section too short to reach the trigger line; switch `aria-current` to `location`. Needs a human eyeball — a hidden pane delivers no observer callbacks. |
 
 ### Two small known edges (§5.7)
 
@@ -979,3 +982,4 @@ build, so it cannot return. Two remain:
 | 2026-09-14 | see below | **vocabulary before grammar** in the example; per-term audio on the word list       |
 | 2026-09-14 | `7d6216d` | vocabulary row **clickable end to end**, delegating to its speaker button           |
 | 2026-09-14 | see below | page ground is **`--paper`, not white** — off-white for dyslexic readers            |
+| 2026-10-05 | —         | header **scroll-spy deferred** to a later version (§D6 → "Deferred on purpose")     |

@@ -42,8 +42,9 @@ interface HeaderProps {
    *
    * That is a limit, not a bug to route around here. `aria-current="page"` on the
    * link the reader chose is honest on its own terms — it marks where they asked to
-   * be. Making it track the VIEWPORT needs a scroll-spy in `PageLayout` (TODO §D6),
-   * which is a different feature with its own cost, not a one-line fix. The name is
+   * be. Making it track the VIEWPORT needs a scroll-spy in `PageLayout` — deferred
+   * to a later version (TODO "Deferred on purpose") — which is a different feature
+   * with its own cost, not a one-line fix. The name is
    * kept because renaming it touches nine call sites to no one's benefit while the
    * scroll-spy question is still open; this comment is the contract.
    */
