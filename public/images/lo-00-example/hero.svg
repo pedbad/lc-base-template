@@ -1,0 +1,46 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 1600 500"
+  width="1600"
+  height="500"
+  role="presentation"
+  aria-hidden="true"
+>
+  <!--
+    hero.svg — the example LO's hero banner art (`"hero"` in lo-00-example/lo.json).
+    A wide, quiet placeholder that shows the crop and the title panel without
+    pretending to be course art. Authors replace it per LO with a WebP/AVIF about
+    2000px wide.
+
+    Decorative: LoHero renders it with alt="" because the <h1> names the page.
+
+    Hex literals are deliberate HERE, as in lo-placeholder.svg: an <img> is a separate
+    document and cannot read the page's CSS custom properties. Values are copied from
+    src/styles/palette.css (Cambridge Light Blue / Blue / Warm Blue / Dark Blue) — keep
+    them in step if the palette changes. The calm lower-left keeps the title panel's
+    corner uncluttered.
+  -->
+  <defs>
+    <linearGradient id="lo-hero-sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d1f9f1" />
+      <stop offset="1" stop-color="#8ee8d8" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="500" fill="url(#lo-hero-sky)" />
+
+  <!-- Two speech bubbles on the right: the conversation motif of the card placeholder. -->
+  <g fill="none" stroke="#133844" stroke-linecap="round" stroke-linejoin="round">
+    <g opacity="0.14" stroke-width="22">
+      <path d="M1004 262h196a36 36 0 0 0 36-36v-96a36 36 0 0 0-36-36h-196a36 36 0 0 0-36 36v96a36 36 0 0 0 36 36h6l-20 52 58-52" />
+    </g>
+    <g opacity="0.28" stroke-width="18">
+      <path d="M1250 362h220a36 36 0 0 0 36-36v-112a36 36 0 0 0-36-36h-220a36 36 0 0 0-36 36v112a36 36 0 0 0 36 36h8l-18 44 50-44" />
+    </g>
+  </g>
+
+  <g stroke="#00bdb6" stroke-linecap="round" stroke-width="14" opacity="0.55">
+    <path d="M1264 256h164" />
+    <path d="M1264 302h118" />
+  </g>
+</svg>
