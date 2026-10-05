@@ -133,13 +133,14 @@ export default function Header({
               `logo.svg` resolves against the CURRENT page URL, which breaks on an LO
               page under a sub-path base (anti-pattern #28).
 
-              Sized by height with width auto, so a replacement mark of any square-ish
-              ratio sits on the title's cap height without the header re-flowing.
+              3rem square (size-12), doubled from 1.5rem at the maintainer's request
+              2026-10-05; mask-size: contain keeps any square-ish replacement mark
+              inside that box without distortion.
               Masked, not <img>: `currentColor` inside an <img>-loaded SVG resolves
               against that file's own document and comes out black in both themes.
               See the .course-mark rule in shell.css. */}
           <span
-            className="course-mark size-6"
+            className="course-mark size-12"
             style={{ '--course-mark': `url(${resolveAsset(courseConfig.logo)})` } as CSSProperties}
             aria-hidden="true"
           />

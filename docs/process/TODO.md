@@ -929,7 +929,7 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     theme. Worst pixel under the title on the placeholder: 12.38:1 at 1440 (both themes),
     5.67:1 at 375 where it crosses a bubble stroke. Authoring rule added to
     CONTRIBUTING: keep the title's top-left corner light. The band uses
-    `--primary-foreground` on `--primary`. Placeholder bubbles drawn at 2x.
+    `--primary-foreground` on `--primary`.
   - **Build:** `BASE_URL=/course/` resolves the art to
     `/course/images/lo-00-example/hero.svg`. Guard d was planted with a missing `src`
     and seen failing.
