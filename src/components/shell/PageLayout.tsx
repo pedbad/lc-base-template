@@ -5,8 +5,10 @@
  *   <a class="skip-link" href="#content">        ← first focusable thing on the page
  *   <Header>                                      ← header>nav landmark (step 1)
  *   <main id="content" tabindex="-1">
- *     <h1>{title}</h1>                            ← the ONE h1 (§2)
- *     <section id aria-labelledby>…<h2>…</section> ← one per section
+ *     <div class="lo-hero">…<h1>{title}</h1></div>  ← the ONE h1 (§2), in the hero
+ *     <div class="lo-content">                       ← the content column
+ *       <section id aria-labelledby>…<h2>…</section> ← one per section
+ *     </div>
  *   </main>
  *   <Footer>                                      ← footer landmark (step 2)
  *
@@ -16,10 +18,12 @@
  */
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
+import type { LoHero as LoHeroConfig } from '@/config/lo-schema';
 import { headingId } from '@/lib/headingId';
 import BackToTopButton from './BackToTopButton';
 import Header from './Header';
 import Footer from './Footer';
+import LoHero from './LoHero';
 import type { NavSection } from './nav-section';
 import './shell.css';
 
@@ -31,6 +35,8 @@ export interface PageSection extends NavSection {
 interface PageLayoutProps {
   /** The LO title — the page's single <h1>. */
   title: string;
+  /** Optional hero banner art from lo.json; absent → the hero renders as a band. */
+  hero?: LoHeroConfig;
   /** Ordered sections; drives both the nav links and the <section> bodies. */
   sections: readonly PageSection[];
   /** Dark-mode Switch slot, forwarded to the Header nav (wired in step 6). */
@@ -43,7 +49,7 @@ function currentHashId(): string {
   return window.location.hash.replace(/^#/, '');
 }
 
-export default function PageLayout({ title, sections, themeToggle }: PageLayoutProps) {
+export default function PageLayout({ title, hero, sections, themeToggle }: PageLayoutProps) {
   // Seeded from the hash at mount, then moved only by `hashchange` below. So it is
   // "the section last navigated to", never "the section on screen" — see the prop's
   // doc on `Header`, which is where that distinction is spelled out.
@@ -70,40 +76,43 @@ export default function PageLayout({ title, sections, themeToggle }: PageLayoutP
 
       <Header sections={sections} activeSectionId={activeSectionId} themeToggle={themeToggle} />
 
-      <main id="content" tabIndex={-1} className="mx-auto max-w-5xl px-4 py-8 focus:outline-none">
-        <h1 className="font-heading text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-          {title}
-        </h1>
+      <main id="content" tabIndex={-1} className="focus:outline-none">
+        {/* Hero spec §4: the hero is <main>'s first child and holds the ONE <h1>, so a
+            skip-link user lands on the title. It is full-bleed, which is why <main>
+            no longer carries the column box — .lo-content below does. */}
+        <LoHero title={title} hero={hero} />
 
-        {sections.map((section) => (
-          <section
-            key={section.id}
-            id={section.id}
-            aria-labelledby={headingId(section.id)}
-            className="mt-12 scroll-mt-20"
-          >
-            <h2
-              id={headingId(section.id)}
-              tabIndex={-1}
-              className="font-heading text-2xl font-semibold text-foreground focus:outline-none"
+        <div className="lo-content mx-auto max-w-5xl px-4 pb-8">
+          {sections.map((section) => (
+            <section
+              key={section.id}
+              id={section.id}
+              aria-labelledby={headingId(section.id)}
+              className="mt-12 scroll-mt-20"
             >
-              {section.label}
-            </h2>
-            <div className="mt-4">
-              {section.content ?? (
-                <p className="text-muted-foreground">
-                  Placeholder content for the {section.label} section.
-                </p>
-              )}
-            </div>
-            {/* §D · D2. Inside the <section>, after its content, so the button's
-                aria-describedby names the heading of the section it closes — five
-                identically-named buttons per page are otherwise indistinguishable.
-                It lands outside every accordion by construction, because the
-                accordions are inside `section.content`. */}
-            <BackToTopButton sectionId={section.id} />
-          </section>
-        ))}
+              <h2
+                id={headingId(section.id)}
+                tabIndex={-1}
+                className="font-heading text-2xl font-semibold text-foreground focus:outline-none"
+              >
+                {section.label}
+              </h2>
+              <div className="mt-4">
+                {section.content ?? (
+                  <p className="text-muted-foreground">
+                    Placeholder content for the {section.label} section.
+                  </p>
+                )}
+              </div>
+              {/* §D · D2. Inside the <section>, after its content, so the button's
+                  aria-describedby names the heading of the section it closes — five
+                  identically-named buttons per page are otherwise indistinguishable.
+                  It lands outside every accordion by construction, because the
+                  accordions are inside `section.content`. */}
+              <BackToTopButton sectionId={section.id} />
+            </section>
+          ))}
+        </div>
       </main>
 
       <Footer />

@@ -27,7 +27,12 @@ function App({ lo }: AppProps) {
   // prose, and it renders the one dialog host for all of them (rich-text spec §7).
   return (
     <ModalProvider modals={lo.modals}>
-      <PageLayout title={lo.title} sections={sections} themeToggle={<ThemeToggle />} />
+      <PageLayout
+        title={lo.title}
+        hero={lo.hero}
+        sections={sections}
+        themeToggle={<ThemeToggle />}
+      />
     </ModalProvider>
   );
 }

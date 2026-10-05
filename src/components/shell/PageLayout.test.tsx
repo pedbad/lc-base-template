@@ -104,4 +104,33 @@ describe('PageLayout', () => {
     expect(button).toBeGreaterThan(-1);
     expect(button).toBeLessThan(secondSection);
   });
+
+  test('opens <main> with the hero, which holds the single <h1> (hero spec §4)', () => {
+    const html = renderToStaticMarkup(<PageLayout title="Lesson" sections={sections} />);
+    const main = html.slice(html.indexOf('<main'));
+    expect(main).toMatch(/^<main[^>]*><div class="lo-hero"/);
+    expect(html.indexOf('class="lo-hero"')).toBeLessThan(html.indexOf('<h1'));
+  });
+
+  test('renders every section inside .lo-content, after the hero', () => {
+    const html = renderToStaticMarkup(<PageLayout title="Lesson" sections={sections} />);
+    const content = html.indexOf('class="lo-content');
+    expect(content).toBeGreaterThan(html.indexOf('</h1>'));
+    expect(content).toBeLessThan(html.indexOf('<section'));
+  });
+
+  test('main no longer carries the content column box — .lo-content does', () => {
+    const html = renderToStaticMarkup(<PageLayout title="Lesson" sections={sections} />);
+    expect(html).not.toMatch(/<main[^>]*max-w-5xl/);
+    expect(html).toMatch(/class="lo-content[^"]*max-w-5xl/);
+  });
+
+  test('passes hero art through: image variant when given, band when not', () => {
+    const withArt = renderToStaticMarkup(
+      <PageLayout title="Lesson" sections={sections} hero={{ src: 'images/h.webp' }} />,
+    );
+    const without = renderToStaticMarkup(<PageLayout title="Lesson" sections={sections} />);
+    expect(withArt).toContain('data-variant="image"');
+    expect(without).toContain('data-variant="band"');
+  });
 });
