@@ -122,7 +122,11 @@ tokens only (guards f and g).
   in BOTH themes (the `<img>` does not change with the theme, so a themed light title
   would fail on light art in dark mode); on the band, `--primary-foreground` on
   `--primary`, the button pair. The cost is an authoring rule: hero art must keep the
-  title's top-left corner light. Measured on the placeholder: worst pixel 12.38:1 at
+  title's top-left corner light. The image box also carries `--hero-art-ground` (Cambridge
+  Light Blue, unthemed) so the title survives a slow or failed image, and so contrast
+  checkers, which read the CSS background and not the image, do not see dark ink on
+  the dark page — that was a real WAVE/axe failure in dark mode, fixed 2026-10-05
+  (13.07:1). Measured on the placeholder: worst pixel 12.38:1 at
   1440, 5.67:1 at 375 where the title crosses a bubble stroke.
 - **The `<h1>` keeps its current type styles**, moving with it unchanged. Restyling the
   title (for example a coloured display serif like the reference) is a separate design

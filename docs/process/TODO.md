@@ -930,7 +930,12 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     theme. Worst pixel under the title on the placeholder: 12.38:1 at 1440 (both themes),
     5.67:1 at 375 where it crosses a bubble stroke. Authoring rule added to
     CONTRIBUTING: keep the title's top-left corner light. The band uses
-    `--primary-foreground` on `--primary`.
+    `--primary-foreground` on `--primary`. **Follow-up the same day:** an a11y checker
+    flagged the title in dark mode. It was right: checkers read the CSS background, and
+    the image box had none, so they saw dark ink on the dark page (about 1:1) — which is
+    also what a reader gets if the image fails to load. The box now carries
+    `--hero-art-ground` (Cambridge Light Blue, unthemed): 13.07:1 in both themes and with
+    the image hidden.
   - **Build:** `BASE_URL=/course/` resolves the art to
     `/course/images/lo-00-example/hero.svg`. Guard d was planted with a missing `src`
     and seen failing.

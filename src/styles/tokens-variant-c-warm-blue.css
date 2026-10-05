@@ -106,6 +106,12 @@
        why there is no .dark copy — and why hero art must keep the title's top-left
        corner light (CONTRIBUTING.md). */
     --hero-title-ink: var(--slate-4);
+
+    /* The ground BEHIND hero art (spec 2026-10-05 §5), also not themed, for the same
+       reason as the ink above. It is what shows while the <img> loads or if it fails, and
+       it is the background contrast checkers (WAVE, axe) measure the title against, since
+       they cannot see an image. Without it the title read dark-on-dark in dark mode. */
+    --hero-art-ground: var(--cam-light-blue);
   }
 
   .dark {

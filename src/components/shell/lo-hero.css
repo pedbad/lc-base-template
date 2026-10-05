@@ -10,6 +10,9 @@
  *   - over art: --hero-title-ink, one dark ink in BOTH themes, because the <img> does
  *     not change with the theme. The cost is an authoring rule: art must keep the
  *     title's top-left corner light (CONTRIBUTING.md). Verified on the placeholder.
+ *     The box itself carries --hero-art-ground, a light, unthemed fill, so the title
+ *     stays legible while the image loads or if it fails — and so contrast checkers,
+ *     which cannot see an image, measure ink against a light ground, not the dark page.
  *   - on the band: --primary-foreground on --primary, the button pair, which both
  *     themes already hold at AA.
  */
@@ -28,6 +31,7 @@
     aspect-ratio: 16 / 5;
     min-block-size: 14rem;
     max-block-size: 28rem;
+    background-color: var(--hero-art-ground);
   }
 
   .lo-hero[data-variant='band'] {
