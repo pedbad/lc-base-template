@@ -16,8 +16,8 @@ import path from 'node:path';
 import { describe, expect, test } from 'vitest';
 import { listLoSlugs, loadLo } from '../load-lo-disk';
 import { TextBlockContentSchema } from '../blocks/text-block-schema';
-import { collectAudioPaths, collectModalTargets } from './rich-text-nodes';
-import type { RichTextNode } from './rich-text-nodes';
+import { collectEntryAudioPaths, collectEntryModalTargets } from './rich-text-nodes';
+import type { RichTextEntry } from './rich-text-nodes';
 
 const PUBLIC_DIR = path.resolve(import.meta.dirname, '../../../public');
 
@@ -29,7 +29,7 @@ const RICH_TEXT_BLOCK_TYPES = new Set(['prose', 'grammar']);
  * loader) and from its rich-text blocks (parsed here through the same schema the
  * renderer uses, so this sees exactly what the page will).
  */
-function richTextOf(slug: string): readonly (readonly RichTextNode[])[] {
+function richTextOf(slug: string): readonly RichTextEntry[] {
   const lo = loadLo(slug);
 
   const fromModals = Object.values(lo.modals).flatMap((modal) => modal.content);
@@ -57,7 +57,7 @@ describe('every LO', () => {
 
   test.each(SLUGS)('%s: every modal link resolves to a declared modal', (slug) => {
     const declared = Object.keys(loadLo(slug).modals);
-    const targets = richTextOf(slug).flatMap(collectModalTargets);
+    const targets = collectEntryModalTargets(richTextOf(slug));
 
     targets.forEach((target) => {
       expect(declared, `${slug} links to modal "${target}" but does not declare it`).toContain(
@@ -67,20 +67,16 @@ describe('every LO', () => {
   });
 
   test.each(SLUGS)('%s: every audio path is namespaced under audio/<slug>/', (slug) => {
-    richTextOf(slug)
-      .flatMap(collectAudioPaths)
-      .forEach((soundFile) => {
-        expect(soundFile).toMatch(new RegExp(`^audio/${slug}/`));
-      });
+    collectEntryAudioPaths(richTextOf(slug)).forEach((soundFile) => {
+      expect(soundFile).toMatch(new RegExp(`^audio/${slug}/`));
+    });
   });
 
   test.each(SLUGS)('%s: every audio path resolves to a real file in public/', (slug) => {
-    richTextOf(slug)
-      .flatMap(collectAudioPaths)
-      .forEach((soundFile) => {
-        const absolute = path.join(PUBLIC_DIR, soundFile);
-        expect(existsSync(absolute), `${soundFile} does not exist in public/`).toBe(true);
-      });
+    collectEntryAudioPaths(richTextOf(slug)).forEach((soundFile) => {
+      const absolute = path.join(PUBLIC_DIR, soundFile);
+      expect(existsSync(absolute), `${soundFile} does not exist in public/`).toBe(true);
+    });
   });
 });
 
@@ -89,12 +85,12 @@ describe('the example LO specifically', () => {
     const lo = loadLo('lo-00-example');
     expect(Object.keys(lo.modals)).toContain('example-popup');
 
-    const targets = richTextOf('lo-00-example').flatMap(collectModalTargets);
+    const targets = collectEntryModalTargets(richTextOf('lo-00-example'));
     expect(targets).toContain('example-popup');
   });
 
   test('the modal carries an audio icon, not only text', () => {
     const modal = loadLo('lo-00-example').modals['example-popup'];
-    expect(modal.content.flatMap(collectAudioPaths).length).toBeGreaterThan(0);
+    expect(collectEntryAudioPaths(modal.content).length).toBeGreaterThan(0);
   });
 });

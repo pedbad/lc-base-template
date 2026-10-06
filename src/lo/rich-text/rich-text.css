@@ -1,0 +1,76 @@
+/**
+ * rich-text.css — block entries in authored rich text: lists, tables, the audio player
+ * (spec §14). Imported by RichTextEntries.tsx, so page prose and popups share one look.
+ *
+ * Plain CSS + semantic tokens, inside @layer components (guard g), no raw hex and no
+ * raw px outside guard f's allowlist (borders and outlines only). Flat selectors.
+ */
+
+@layer components {
+  /* Preflight strips list markers; authored lists need them back, or a list reads as
+     loose lines. Logical padding so the markers sit on the side the text starts. */
+  .rich-text-list {
+    padding-inline-start: 1.5rem;
+    list-style: disc;
+  }
+
+  ol.rich-text-list {
+    list-style: decimal;
+  }
+
+  .rich-text-list > li + li {
+    margin-top: 0.25rem;
+  }
+
+  /* A wide table scrolls sideways inside its region instead of widening a popup or the
+     page column. The region is a tab stop (see RichTextEntries), so it owns a focus
+     outline — the shared 2px `--ring` shape from focus-outline.ts. */
+  .rich-text-table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    border-radius: calc(var(--radius) * 0.6);
+  }
+
+  .rich-text-table-scroll:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  .rich-text-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rich-text-table caption {
+    padding-bottom: 0.5rem;
+    color: var(--foreground);
+    font-weight: 600;
+    text-align: start;
+  }
+
+  .rich-text-table th,
+  .rich-text-table td {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border);
+    text-align: start;
+    vertical-align: top;
+  }
+
+  .rich-text-table th {
+    background-color: var(--muted);
+    color: var(--foreground);
+    font-weight: 600;
+  }
+
+  .rich-text-player {
+    display: block;
+  }
+
+  .rich-text-player audio {
+    display: block;
+    width: 100%;
+    max-width: 28rem;
+    margin-top: 0.375rem;
+  }
+}

@@ -13,7 +13,7 @@
  * Spec: docs/specs/lo-rich-text-modals.md §7.
  */
 import { createContext, useContext } from 'react';
-import type { RichTextNode } from '../rich-text-nodes';
+import type { RichTextEntry } from '../rich-text-nodes';
 
 /** One modal's assembled content: rich text already parsed, never a raw string. */
 export interface ModalContent {
@@ -21,8 +21,8 @@ export interface ModalContent {
   readonly id: string;
   /** The dialog's accessible name. Required, so a dialog can never be nameless. */
   readonly title: string;
-  /** One entry per paragraph, each a readonly node list. */
-  readonly content: readonly (readonly RichTextNode[])[];
+  /** One entry per paragraph or block (list, table, audio player — spec §14). */
+  readonly content: readonly RichTextEntry[];
   /** Set when the body is target-language content (WCAG 3.1.2). */
   readonly lang?: string;
 }

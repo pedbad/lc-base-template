@@ -25,7 +25,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { RichText } from '../RichText';
+import { RichTextEntries } from '../RichTextEntries';
 import { ModalContext, type ModalContent, type ModalContextValue } from './modal-context';
 
 interface ModalProviderProps {
@@ -38,12 +38,7 @@ interface ModalProviderProps {
 function ModalBody({ modal }: { modal: ModalContent }) {
   return (
     <div className="space-y-3" lang={modal.lang}>
-      {modal.content.map((paragraph, index) => (
-        // Static authored config, never reordered — index is stable.
-        <p key={index}>
-          <RichText nodes={paragraph} />
-        </p>
-      ))}
+      <RichTextEntries entries={modal.content} />
     </div>
   );
 }

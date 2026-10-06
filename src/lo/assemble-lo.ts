@@ -31,8 +31,8 @@ import {
   type LoExerciseConfig,
   type LoHero,
 } from '@/config/lo-schema';
-import { parseRichText } from './rich-text/parse-rich-text';
-import { collectModalTargets } from './rich-text/rich-text-nodes';
+import { parseRichTextEntry } from './rich-text/parse-rich-text-entry';
+import { collectEntryModalTargets } from './rich-text/rich-text-nodes';
 import type { ModalContent } from './rich-text/modal/modal-context';
 
 /**
@@ -140,7 +140,7 @@ export function assembleLo(slug: string, tree: LoFileTree): AssembledLo {
           id,
           title: config.title,
           // Parsed HERE, at load, so a bad tag dies naming the file the author edits.
-          content: config.content.map((paragraph) => parseRichText(paragraph, filePath)),
+          content: config.content.map((entry) => parseRichTextEntry(entry, filePath)),
           ...(config.lang === undefined ? {} : { lang: config.lang }),
         } satisfies ModalContent,
       ];
@@ -177,7 +177,7 @@ export function assembleLo(slug: string, tree: LoFileTree): AssembledLo {
   // per-type content schema at render, so links authored there are covered by the
   // repo-wide guard in `lo-rich-text.test.ts` instead (spec §5).
   Object.values(modals).forEach((modal) => {
-    modal.content.flatMap(collectModalTargets).forEach((target) => {
+    collectEntryModalTargets(modal.content).forEach((target) => {
       if (!(target in modals)) {
         throw new Error(
           `${loPath(slug, `modals/${modal.id}/modal.json`)} links to modal "${target}", ` +
