@@ -30,10 +30,12 @@ export default function ThemeToggle() {
         onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
         aria-label="Dark mode"
         // Header a11y audit (2026-10-06), overriding the vendored Switch here because
-        // `src/components/ui/` belongs to the shadcn CLI. Its focus ring is a box-shadow,
-        // which forced colours drops, so the shared outline replaces it (`ring-0` keeps
-        // the two from stacking).
-        className={`focus-visible:ring-0 ${FOCUS_OUTLINE}`}
+        // `src/components/ui/` belongs to the shadcn CLI. Its OFF track (`bg-input`)
+        // measured 1.88:1 on the light header and its thumb 1.8:1 on that track, under
+        // 1.4.11's 3:1 for a state; `muted-foreground` is 6.3:1 and 6.4:1. Its focus
+        // ring is a box-shadow, which forced colours drops, so the shared outline
+        // replaces it (`ring-0` keeps the two from stacking).
+        className={`data-unchecked:bg-muted-foreground focus-visible:ring-0 ${FOCUS_OUTLINE}`}
       />
       <MoonIcon className="size-4 text-muted-foreground" aria-hidden="true" />
     </span>

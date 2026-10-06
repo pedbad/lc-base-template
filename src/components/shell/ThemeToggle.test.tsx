@@ -21,6 +21,19 @@ describe('ThemeToggle', () => {
     expect(html).toMatch(/aria-checked="(true|false)"/);
   });
 
+  // Header a11y audit (2026-10-06): the vendored Switch's OFF track is `bg-input`, and
+  // on the white light-theme header that measured 1.88:1 track-to-header and 1.8:1
+  // thumb-to-track — the thumb's position IS the state, and 1.4.11 wants 3:1 for it.
+  // `muted-foreground` measures 6.3:1 and 6.4:1. Overridden here, not in
+  // `src/components/ui/`, which the shadcn CLI owns and would silently revert.
+  test('the off state draws a track that clears 3:1 in the light theme', () => {
+    const html = renderToStaticMarkup(<ThemeToggle />);
+    const root = /<[^>]*role="switch"[^>]*>/.exec(html)?.[0] ?? '';
+
+    expect(root).toContain('data-unchecked:bg-muted-foreground');
+    expect(root).not.toMatch(/(^|\s)data-unchecked:bg-input(\s|")/);
+  });
+
   // Its own focus ring is a box-shadow over `outline-none`; forced colours strips the
   // shadow and the always-on border no longer CHANGES on focus, so nothing shows.
   test('draws the shared outline focus indicator, not only a shadow ring', () => {
