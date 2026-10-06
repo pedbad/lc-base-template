@@ -160,7 +160,7 @@ export default function Header({
           aria-controls={MOBILE_PANEL_ID}
           aria-label="Toggle navigation menu"
           onClick={() => setIsMobileNavOpen((open) => !open)}
-          className={`inline-flex size-9 items-center justify-center rounded-md border border-border text-foreground transition-colors hover:bg-muted sm:hidden ${FOCUS_OUTLINE}`}
+          className={`inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-border text-foreground transition-colors hover:bg-muted sm:hidden ${FOCUS_OUTLINE}`}
         >
           <Menu className="size-5" aria-hidden="true" />
         </button>

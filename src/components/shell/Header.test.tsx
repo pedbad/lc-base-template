@@ -148,6 +148,15 @@ describe('Header', () => {
     }
   });
 
+  // At 375px the brand title squeezed the 36px toggle to 26px wide — still over 2.5.8's
+  // 24px floor, but only just, and no longer the square it is drawn as.
+  test('mobile toggle keeps its size beside a long brand title', () => {
+    const html = renderToStaticMarkup(<Header sections={SECTIONS} />);
+    const toggle = /<button[^>]*aria-controls="mobile-nav-panel"[^>]*>/.exec(html)?.[0] ?? '';
+
+    expect(toggle).toMatch(/\bshrink-0\b/);
+  });
+
   test('renders an optional theme-toggle slot inside the nav', () => {
     const html = renderToStaticMarkup(
       <Header sections={SECTIONS} themeToggle={<span data-testid="toggle-slot" />} />,
