@@ -157,8 +157,8 @@ needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-06 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 100 kB**     | 97.80 kB            | 2.20 kB  |
-| `main-*.css` | **< 15 kB**      | 15.87 kB            | −0.87 kB |
+| `main-*.js`  | **< 100 kB**     | 97.70 kB            | 2.30 kB  |
+| `main-*.css` | **< 15 kB**      | 15.97 kB            | −0.97 kB |
 
 - **JS was raised from < 80 kB to < 100 kB by the maintainer's decision.** The 80 kB
   figure is the generic "microsite" row from the maintainer's global ECC rules
@@ -168,7 +168,8 @@ needs the number points here rather than restating it.
   islands, or dropping Base UI for native elements — and that is an architecture
   rewrite with breakage risk for a number that gates nothing. 100 kB is the budget this
   repo is held to; the global rule is not edited, this entry overrides it here.
-- **CSS stays < 15 kB** and is still 0.87 kB over (0.69 before the §D9 hero banner). The remaining lead (Open Sans
+- **CSS stays < 15 kB** and is still 0.97 kB over (0.69 before the §D9 hero banner; the
+  header's move to plain CSS, TODO §D6, added 0.17 kB). The remaining lead (Open Sans
   `@font-face` subsets) is a decision about which scripts the template serves, not an
   optimisation — see TODO §D5.
 - **Headroom is thin, so measure, do not assume.** Read the gzipped `main-*.js` and CSS

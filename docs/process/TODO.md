@@ -384,7 +384,7 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   this pane cannot run.**
 
 - **D5 — the budget breaches. JS half CLOSED BY DECISION 2026-10-05; CSS half open
-  (about 0.87 kB over at 2026-10-06; current figures in `docs/TOOLING.md`).** The maintainer raised the JS budget from < 80 kB to **< 100 kB
+  (about 0.97 kB over at 2026-10-06; current figures in `docs/TOOLING.md`).** The maintainer raised the JS budget from < 80 kB to **< 100 kB
   gzipped** rather than re-architect for it, so `main-*.js` at 97.13 kB (`6b5b821`) is
   now **within budget, with 2.87 kB of headroom**. The budget lives in ONE place —
   `docs/TOOLING.md`, "Bundle budget" — and the measurements below are kept as the
@@ -772,8 +772,25 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     **Bundle:** `main-*.js` 97.80 → 97.86 kB gzipped; `main-*.css` 15.87 → 15.95 kB,
     then 15.80 kB after the docs scan exclusion.
 
-  - **`Header` is still 240-char inline Tailwind strings** while §D1 moved the footer to
-    plain CSS in `@layer`. Pick one direction.
+  - **`Header` to plain CSS — DONE 2026-10-06.** It was ~240-character inline Tailwind
+    strings while §D1 had moved the footer to plain CSS. **The maintainer picked plain
+    CSS** for the core chrome. `src/components/shell/header.css`, `@layer components`,
+    flat `site-header-*` classes, tokens only; a test now fails if a Tailwind utility
+    reappears in the header's markup, and the focus-outline and toggle-size tests read
+    `header.css` instead of class strings. **Parity was measured, not eyeballed:** a
+    full computed-style dump of all 13 header elements in 20 states (375 / 1440, light
+    / dark, panel open, hover, active link, keyboard focus) before and after. The only
+    differences are the intended ones — links no longer transition `color` and the
+    toggle transitions only `background-color`, because the old `transition-colors`
+    named base-state token colours, the §D8 shape. One trap found on the way:
+    `--radius-sm` and `--font-heading` are `@theme inline`, so they are NOT runtime
+    variables and `var(--radius-sm)` in plain CSS resolves to nothing — the expressions
+    are written out. a11y re-run: axe 0, focus outline ≥ 7.68:1 and present in forced
+    colours, disclosure keyboard flow unchanged.
+    **Bundle — it did NOT help §D5:** `main-*.css` 15.80 → 15.97 kB (+0.17), because
+    nearly every utility the header used is still used elsewhere, so the plain rules are
+    added bytes rather than moved ones; `main-*.js` 97.86 → 97.70 kB (−0.16, the class
+    strings leaving the bundle). The choice was for one styling strategy, not for size.
   - **The landing page reads sparse at 1440 with one LO** — hero, then a single card in
     a wide grid. Design work, not a defect.
 
