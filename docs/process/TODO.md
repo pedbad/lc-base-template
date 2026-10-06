@@ -1136,8 +1136,10 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   pages disagree on width: 1024px for the LO page and sandbox, 768px for the showcase,
   with gutters of 16px or 24px. Agreed direction: keep 68ch for TEXT, let
   code/tables/exercises break out to the full column, give all three pages one frame
-  width (1024px), and use one gutter token. First check whether LO prose is uncapped at
-  992px. Measurements, file:line pointers and traps are in
+  width (**1152px / 72rem**, maintainer's decision 2026-10-06; the header too), and use
+  one gutter token. At that width the text measure is mandatory, and widgets sized
+  `width: 100%` (the flashcards card is 3:2) need their own cap. First check whether LO
+  prose is uncapped at 992px. Measurements, file:line pointers and traps are in
   `docs/process/2026-10-06-content-width-handover.md`.
 
 ---

@@ -41,14 +41,27 @@ Pull apart two widths that are tangled today:
    widgets: not held to the text measure. In the sandbox, that alone gives code 976px
    and ends all 9 overflows at desktop widths. Below about 830px they still scroll, which
    is correct.
-3. **One page width.** The showcase moves from 768px to 1024px, to match the LO page and
-   the sandbox. It is currently the narrowest column holding the widest content.
+3. **One page width: 1152px (`72rem`) — maintainer's decision, 2026-10-06.** All three
+   pages move to one frame token. The LO page and the sandbox go from 1024px, and the
+   showcase from 768px, which is now the narrowest column holding the widest content.
+   With the 32px desktop gutter (point 4), the content column is **1088px**, and the
+   empty space each side is 144px at 1440 and 64px at 1280.
 4. **One side padding**, as a token (for example `clamp(1rem, 4vw, 2rem)`): 16px on a
    phone, 32px on a desktop. Today it is 16px on the LO page and 24px on the debug pages.
 
-**Not in scope unless the maintainer asks after seeing 1–4:** widening the page frame to
-1152px (`72rem`). That only works together with point 1. Without a text measure, a
-1152px column runs about 130 characters per line.
+**Point 1 is NOT optional at 1152px.** Without a reading measure, text in a 1088px column
+runs about 130 characters per line. Every page that holds running text in the frame needs
+the measure: LO prose, block text, the showcase's notes, and the sandbox docs.
+
+**Watch what grows with the frame.** Anything sized `width: 100%` gets 64–96px wider at 1440. Most of it is fine. Some is not:
+
+- **The flashcards card is `width: 100%` with `aspect-ratio: 3 / 2`**, so it would grow to
+  about 1088 × 725px. Give exercise widgets a sensible cap of their own, or a "wide"
+  track narrower than the full frame, and decide per engine. Measure all 15 engines on
+  the showcase at 1440 and list any that look stretched.
+- **Images and the LO hero:** check the hero title still lines up with the header inset.
+- **The header:** its width must move to the same frame token, or the header and content
+  edges stop lining up.
 
 ## Check FIRST — unmeasured
 
@@ -94,7 +107,7 @@ that grows the job past one concern per commit, split it.
 
 - Zero `<pre>` overflow on `debug-sandbox.html` at 1440 and 1280; still scrollable, still
   focusable, at 375.
-- One frame width and one gutter token shared by the LO page, showcase and sandbox, with
+- One 72rem frame token and one gutter token shared by the LO page, showcase, sandbox and header, with
   edges lined up between header and content.
 - Paragraph line length within about 75 characters wherever the reading measure applies.
 - No horizontal page scroll at 320. Screenshots at 320 · 768 · 1024 · 1440, both themes.
