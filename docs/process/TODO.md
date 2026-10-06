@@ -698,10 +698,73 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     instead: **both stay fully accessible and both emit valid HTML and CSS.** What
     enforces that today, and what does not, is in
     `docs/process/2026-10-06-header-a11y-audit-handover.md` — the follow-up audit.
+  - **Header a11y + validity audit — DONE 2026-10-06.** Both headers, on the BUILT site,
+    at 375 and 1440, light and dark: eight cells, every check in the handover's §3.
+    **How:** the Browser pane was hidden, which freezes the document timeline
+    (`visibilityState: hidden`, `document.timeline` not advancing), so every colour
+    read after a theme flip was a transition stuck at t=0 — it reported dark nav links
+    at 1.28:1 that are really 6.68:1. The matrix was therefore run in headless Chromium
+    (`playwright-core` and the cached `chrome-headless-shell`, from the session
+    scratchpad — **nothing added to the repo**; the no-axe decision in
+    `docs/TOOLING.md` stands): axe-core 4.10.2 from cdnjs, real Tab / Shift+Tab /
+    Enter / Escape key presses, contrast painted on a 1x1 canvas against the composited
+    ground, `emulateMedia({ forcedColors: 'active' })`. HTML: `html-validate`
+    (`standard` preset — spec validity, not the house-style `recommended` one) run once
+    from the scratchpad, at the maintainer's choice over uploading to the W3C.
+
+    **Found and fixed** (one branch, each with a test that failed first):
+    1. **LO brand and nav links had a 2.88:1 focus indicator** in light — the base
+       layer's `outline: auto` in `ring/50`, under SC 1.4.11's 3:1.
+    2. **Four controls had NO focus indicator under forced colours** — the LO menu
+       toggle, the LO theme switch, the rail panel's close button and its lesson links
+       all drew a box-shadow ring over `outline-none`, and forced colours drops
+       `box-shadow`. Fix for 1 and 2 together: one indicator,
+       `src/components/shell/focus-outline.ts`, the Tailwind spelling of the
+       2px-solid-`--ring`-offset-2px outline the plain-CSS chrome already used. Every
+       control in both headers now draws it: min 7.08:1, and present in forced colours.
+    3. **LO theme switch OFF state failed 1.4.11** in light — track 1.88:1 on the
+       header, thumb 1.8:1 on the track. Now `muted-foreground`: 6.31:1 and 6.06:1.
+       Overridden in `ThemeToggle`, not in `src/components/ui/` (the shadcn CLI owns
+       it). Dark, where the switch is ON, was already 7.68:1 / 10.36:1.
+    4. **The `LessonRail` panel behaved modally but was announced as nothing** — focus
+       in, Tab trapped, page scroll-locked, yet a screen reader's virtual cursor could
+       walk out into the page behind, which is not inert. Now `role="dialog"`,
+       `aria-modal="true"`, named by its own "Lessons" title.
+    5. **`<h3>` inside `<span>` on every landing card** (`LoCard`) — the one spec
+       error html-validate found. The wrappers are `<div>`s; both were already
+       `display: block`, so nothing moved.
+    6. **LO menu toggle squeezed to 26x36 at 375** by the wrapping brand title — over
+       2.5.8's 24px, but not the square it is drawn as. `shrink-0`: 36x36.
+
+    **Passed as found:** axe 0 violations in all eight cells, panels closed and open
+    (5 `color-contrast` "incomplete" per cell — text over the blurred / backdropped
+    grounds axe cannot composite; measured by hand instead). Text contrast: brand
+    14.66 / 9.45, nav link 7.69 / 6.68, active link 12.40 / 7.68, rail lesson link
+    9.19 / 6.88, panel title 6.38 / 5.34 (light / dark). Keyboard: LO disclosure opens
+    on Enter, Tab walks into it, Escape closes and returns focus to the toggle; rail
+    panel moves focus in, traps Tab both ways, Escape restores focus, panel back to
+    `inert`, scroll lock released. Targets: all ≥ 32px except the LO switch's 32x18
+    visual, whose `::after` extends the hit area to 56x34. **No colour strands on a
+    theme flip** (§D8's failure shape): every header and rail colour lands on the new
+    theme within 1.5 s, both directions, on a live timeline. Validator: 0 errors on
+    both pages after fix 5.
+
+    **Recorded, not fixed, with reasons:** the LO toggle's border (1.88 / 1.45) and the
+    rail theme track's border (1.9 / 1.44) are under 3:1, but neither is what
+    identifies the control — the glyph (14.66 / 9.45) and the thumb (10.77 / 5.93)
+    are, and those clear it. The header's bottom border is decoration.
+
+    **Not run:** W3C CSS validation — stylelint (`stylelint-config-standard`) is the
+    only CSS check, and it is not a validator; no offline CSS validator was chosen.
+    A screen-reader pass of the new `aria-modal` (VoiceOver) is a human check. Reduced
+    motion is still not emulable in the pane (§D4).
+    **Bundle:** `main-*.js` 97.80 → 97.86 kB gzipped; `main-*.css` 15.87 → 15.95 kB.
+
   - **`Header` is still 240-char inline Tailwind strings** while §D1 moved the footer to
     plain CSS in `@layer`. Pick one direction.
   - **The landing page reads sparse at 1440 with one LO** — hero, then a single card in
     a wide grid. Design work, not a defect.
+
 - **D3 — the `no-preference` motion sweep. REJECTED, closed 2026-09-14.** The repo uses
   the `reduce` override shape — motion in the base state, `transition: none` under
   `@media (prefers-reduced-motion: reduce)` — and it stays that way. The candidate was
@@ -1059,3 +1122,4 @@ build, so it cannot return. Two remain:
 | 2026-10-05 | `e4c9fe0` | **LO hero banner** — full-bleed, holds the `<h1>`, band fallback (§D9)                  |
 | 2026-10-05 | —         | header **scroll-spy reopened** — out of "Deferred on purpose", back on §D6 as next      |
 | 2026-10-06 | see §D6   | header **scroll-spy** — highlight follows the section on screen; hash-load parity fixed |
+| 2026-10-06 | see §D6   | **header a11y audit** — one forced-colours-safe focus outline, five fixes               |

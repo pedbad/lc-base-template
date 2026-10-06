@@ -1,6 +1,8 @@
 # Handover — a11y + validity audit of both headers (TODO §D6)
 
 **Written:** 2026-10-06 at `main`, after the header scroll-spy shipped.
+**Status: DONE 2026-10-06** — results, fixes and what was not run are in TODO §D6
+("Header a11y + validity audit").
 **Decision behind it:** the LO header and the landing-page header need not match. Both
 must stay **fully accessible** and emit **valid HTML and CSS** (TODO §D6, "Two headers").
 
