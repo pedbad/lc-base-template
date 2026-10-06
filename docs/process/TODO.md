@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-05 · **HEAD:** see `git log` · **Suite:** 101 files · 1047 tests green
+**Last updated:** 2026-10-06 · **HEAD:** see `git log` · **Suite:** 103 files · 1062 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -691,9 +691,13 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     It does NOT contradict §D4's "delete the observer" — that
     observer watched ITSELF to answer a question scrolling already answers; a spy
     watches OTHER elements to answer one the DOM cannot.
-  - **Two headers, two shapes.** LO page is full-width since 2026-10-05 (brand flush left, matching french-lo-1; was `max-w-5xl`), sticky, blurred, brand is a
-    link, holds the nav landmark. `CourseHome` is `max-w-6xl`, static, brand is a `<p>`,
-    and the landmark lives inside `LessonRail`.
+  - **Two headers, two shapes — CLOSED BY DECISION 2026-10-06.** The LO header is
+    full-width, sticky, blurred, its brand a link, and it holds the nav landmark;
+    `CourseHome`'s is `max-w-6xl`, static, its brand a `<p>`, and its landmark lives in
+    `LessonRail`. **The maintainer decided they need not match.** The standing rule
+    instead: **both stay fully accessible and both emit valid HTML and CSS.** What
+    enforces that today, and what does not, is in
+    `docs/process/2026-10-06-header-a11y-audit-handover.md` — the follow-up audit.
   - **`Header` is still 240-char inline Tailwind strings** while §D1 moved the footer to
     plain CSS in `@layer`. Pick one direction.
   - **The landing page reads sparse at 1440 with one LO** — hero, then a single card in
