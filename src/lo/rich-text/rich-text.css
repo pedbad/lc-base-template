@@ -1,12 +1,37 @@
 /**
  * rich-text.css — block entries in authored rich text: lists, tables, the audio player
- * (spec §14). Imported by RichTextEntries.tsx, so page prose and popups share one look.
+ * (spec §14), plus the popup link itself (§7). Imported by RichTextEntries.tsx and
+ * ModalLink.tsx, so page prose and popups share one look.
  *
  * Plain CSS + semantic tokens, inside @layer components (guard g), no raw hex and no
  * raw px outside guard f's allowlist (borders and outlines only). Flat selectors.
  */
 
 @layer components {
+  /* Popup links (spec §7). A <button> styled as the link it reads as: it sits inside
+     a sentence, so it must be told apart from the prose around it by more than colour
+     alone (WCAG 1.4.1) — hence the underline. Until 2026-10-06 nothing styled it and
+     it rendered as plain text. `--primary` on the page ground measured 11.9:1
+     light, 10.4:1 dark. */
+  .modal-link {
+    color: var(--primary);
+    text-decoration-line: underline;
+    text-decoration-thickness: 0.0625rem;
+    text-underline-offset: 0.1875rem;
+    cursor: pointer;
+  }
+
+  @media (hover: hover) {
+    .modal-link:hover {
+      text-decoration-thickness: 0.125rem;
+    }
+  }
+
+  .modal-link:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
   /* Preflight strips list markers; authored lists need them back, or a list reads as
      loose lines. Logical padding so the markers sit on the side the text starts. */
   .rich-text-list {

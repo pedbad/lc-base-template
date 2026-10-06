@@ -7,6 +7,7 @@
  * open/close behaviour is Base UI's and is verified in the browser, not here — see
  * spec §11.
  */
+import { readFileSync } from 'node:fs';
 import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { RichText } from './RichText';
@@ -57,6 +58,19 @@ describe('text and emphasis', () => {
 });
 
 describe('modal links', () => {
+  // Found 2026-10-06 while verifying spec §14: no CSS targeted `.modal-link`, so a popup
+  // link rendered as plain text — nothing told a reader it was clickable (WCAG 1.4.1).
+  // It must look like a link: underlined and in the link colour, with a focus outline.
+  test('is styled as a link — underlined, link-coloured, with a focus outline', () => {
+    const css = readFileSync(new URL('./rich-text.css', import.meta.url), 'utf-8');
+    const rule = /\.modal-link\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
+    const focus = /\.modal-link:focus-visible\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
+
+    expect(rule).toMatch(/text-decoration-line:\s*underline/);
+    expect(rule).toMatch(/color:\s*var\(--primary\)/);
+    expect(focus).toMatch(/outline:\s*2px solid var\(--ring\)/);
+  });
+
   test('renders a button, never an anchor (spec §7)', () => {
     const html = renderAuthored('<a class="modal-link" data-modal-target="tuvous">vous</a>');
     expect(html).toContain('<button');

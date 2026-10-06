@@ -8,10 +8,13 @@
  * the problem at its source: correct role, no fake href, keyboard behaviour for free.
  * Authors keep writing the familiar `<a class="modal-link" data-modal-target="…">`.
  *
+ * Styled as a link in rich-text.css (underlined, `--primary`), so it reads as one.
+ *
  * Spec: docs/specs/lo-rich-text-modals.md §7, §8.
  */
 import type { ReactNode } from 'react';
 import { useModal } from './modal-context';
+import '../rich-text.css';
 
 interface ModalLinkProps {
   /** The modal id to open — the authored `data-modal-target`. */
