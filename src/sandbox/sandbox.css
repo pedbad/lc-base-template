@@ -82,6 +82,13 @@
     background: var(--color-muted);
   }
 
+  /* Each <pre> is a tab stop (tabindex="0", see codeRegionOpen in docs-markdown.ts)
+     so a keyboard can scroll it; the stop needs a ring you can see. */
+  .doc-prose pre:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
   .doc-prose pre code {
     padding: 0;
     background: none;

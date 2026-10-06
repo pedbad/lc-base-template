@@ -109,6 +109,7 @@ export const SANDBOX_DOCS: readonly SandboxDoc[] = [
 ] as const;
 
 const DOC_BY_FILE = new Map(SANDBOX_DOCS.map((doc) => [doc.file, doc]));
+const DOC_BY_ID = new Map(SANDBOX_DOCS.map((doc) => [doc.id, doc]));
 
 /** Repo root, from this file's location — `readSandboxDocs()` needs no argument. */
 const DEFAULT_REPO_ROOT = path.resolve(import.meta.dirname, '../..');
@@ -141,6 +142,8 @@ interface RenderState {
   readonly slugCounts: Map<string, number>;
   /** Whether each open link was de-linked, so `link_close` closes the right tag. */
   readonly delinked: boolean[];
+  /** Code blocks so far — the ordinal that makes each block's region name unique. */
+  codeBlocks: number;
 }
 
 /** `#the-files` within one doc, uniquified the way GitHub does (`-1`, `-2`, …). */
@@ -232,6 +235,31 @@ md.renderer.rules.link_close = (_tokens, _idx, _options, env) => {
   return state.delinked.pop() ? '</span>' : '</a>';
 };
 
+/**
+ * Code blocks scroll sideways (`overflow-x: auto` in sandbox.css), and a scroll region a
+ * keyboard cannot reach fails axe `scrollable-region-focusable` (TODO §D10). Wrapping
+ * would avoid the tab stop but is wrong for these docs: STRUCTURE's trees and DESIGNER's
+ * token-flow diagram are column-aligned, and a wrapped tree misreports nesting. So each
+ * `<pre>` is a focusable, named region, as RichTextEntries does for a wide table. The
+ * ordinal keeps names unique — a page of identical `region`s fails `landmark-unique`.
+ */
+function codeRegionOpen(state: RenderState, info: string): string {
+  state.codeBlocks += 1;
+  const file = DOC_BY_ID.get(state.docId)?.file ?? state.docId;
+  const language = info.trim().split(/\s+/)[0];
+  const name = `${file} code sample ${state.codeBlocks}${language ? ` (${language})` : ''}`;
+  return `<pre tabindex="0" role="region" aria-label="${md.utils.escapeHtml(name)}">`;
+}
+
+for (const rule of ['fence', 'code_block'] as const) {
+  const render = md.renderer.rules[rule];
+  md.renderer.rules[rule] = (tokens, idx, options, env, self) => {
+    const html = render?.(tokens, idx, options, env, self) ?? '';
+    const open = codeRegionOpen(env as unknown as RenderState, tokens[idx]?.info ?? '');
+    return html.replace(/^<pre>/, open);
+  };
+}
+
 /** Render one doc's markdown, returning its HTML and the headings it contains. */
 export function renderDoc(
   markdown: string,
@@ -240,7 +268,13 @@ export function renderDoc(
   html: string;
   headings: readonly DocHeading[];
 } {
-  const state: RenderState = { docId, headings: [], slugCounts: new Map(), delinked: [] };
+  const state: RenderState = {
+    docId,
+    headings: [],
+    slugCounts: new Map(),
+    delinked: [],
+    codeBlocks: 0,
+  };
   // markdown-it types `env` as its own Env record; the renderer rules above are the
   // only readers of it, and they read it back as RenderState.
   const html = md.render(markdown, state as unknown as Record<string, unknown>);

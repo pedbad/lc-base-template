@@ -152,6 +152,32 @@ describe('renderDocMarkdown — GFM shapes the docs actually use', () => {
   });
 });
 
+// Code blocks scroll sideways (`overflow-x: auto`), and a scroll region a keyboard
+// cannot reach fails axe `scrollable-region-focusable` (TODO §D10). Wrapping was the
+// other option and is wrong here: STRUCTURE's trees and DESIGNER's token-flow diagram
+// are column-aligned, and a wrapped tree misreports what is inside what. So each block
+// is a focusable, named region — RichTextEntries' table-scroll pattern. Names must be
+// unique, or a page of identical `region`s fails axe `landmark-unique`.
+describe('renderDocMarkdown — code blocks are keyboard-scrollable regions', () => {
+  it('makes a fenced block a focusable region named by doc, ordinal and language', () => {
+    expect(render('```bash\nbun run dev\n```')).toContain(
+      '<pre tabindex="0" role="region" aria-label="DESIGNER.md code sample 1 (bash)">',
+    );
+  });
+
+  it('names an untagged block without a language', () => {
+    expect(render('```\ntree\n```', 'structure')).toContain(
+      '<pre tabindex="0" role="region" aria-label="STRUCTURE.md code sample 1">',
+    );
+  });
+
+  it('counts blocks per doc, including indented ones', () => {
+    const html = render('```css\na {}\n```\n\n    indented\n');
+    expect(html).toContain('aria-label="DESIGNER.md code sample 1 (css)"');
+    expect(html).toContain('aria-label="DESIGNER.md code sample 2"');
+  });
+});
+
 describe('readSandboxDocs', () => {
   const pages = readSandboxDocs();
 
@@ -189,6 +215,17 @@ describe('readSandboxDocs', () => {
       expect(findHeadingViolations(article), page.file).toEqual([]);
       expect(page.html, page.file).not.toMatch(/<h[1-3][\s>]/);
     }
+  });
+
+  it('makes every code block in the hub a focusable region with a unique name', () => {
+    const pres = pages.flatMap((page) =>
+      Array.from(page.html.matchAll(/<pre[^>]*>/g), (m) => m[0]),
+    );
+    expect(pres.length).toBeGreaterThan(0);
+    expect(pres.filter((pre) => !pre.includes('tabindex="0"'))).toEqual([]);
+    const names = pres.map((pre) => /aria-label="([^"]+)"/.exec(pre)?.[1]);
+    expect(names.every(Boolean)).toBe(true);
+    expect(new Set(names).size).toBe(names.length);
   });
 
   // The same check `src/docs/md-links.ts` makes of the repo, made of the rendered hub:
