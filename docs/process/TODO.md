@@ -1130,6 +1130,16 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
 
   Reopen if WAVE's alerts are made a gate, or if a real heading is ever styled as a `<p>`.
 
+- **D11 — one content width, a reading measure, and breakout. OPEN — next job.** The
+  sandbox's rendered docs scroll sideways because `.doc-prose` caps `<pre>` at 68ch
+  (605px), while the widest block needs 786px and the column gives 976px. Separately, the
+  pages disagree on width: 1024px for the LO page and sandbox, 768px for the showcase,
+  with gutters of 16px or 24px. Agreed direction: keep 68ch for TEXT, let
+  code/tables/exercises break out to the full column, give all three pages one frame
+  width (1024px), and use one gutter token. First check whether LO prose is uncapped at
+  992px. Measurements, file:line pointers and traps are in
+  `docs/process/2026-10-06-content-width-handover.md`.
+
 ---
 
 ## E. Before sharing with other developers
