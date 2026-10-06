@@ -19,13 +19,15 @@
  *
  * A11y contract (spec §5): the closed mobile panel uses the `hidden` attribute
  * (not aria-hidden + CSS), so its links are truly unfocusable; Escape closes the
- * panel AND returns focus to the toggle button.
+ * panel AND returns focus to the toggle button. Every link and button draws the
+ * shared `FOCUS_OUTLINE` (focus-outline.ts says why an outline and not a ring).
  */
 import { useEffect, useRef, useState } from 'react';
 import { Menu } from 'lucide-react';
 import type { CSSProperties, ReactNode } from 'react';
 import { courseConfig } from '@/config/course.config';
 import { resolveAsset, resolveHomeHref } from '@/lib/assets';
+import { FOCUS_OUTLINE } from './focus-outline';
 import type { NavSection } from './nav-section';
 
 interface HeaderProps {
@@ -74,7 +76,7 @@ function NavLinks({
             href={`#${section.id}`}
             aria-current={section.id === activeSectionId ? 'location' : undefined}
             onClick={onNavigate}
-            className="rounded-sm px-2 py-1 font-medium text-foreground/80 underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:text-foreground aria-[current]:text-primary aria-[current]:underline"
+            className={`rounded-sm px-2 py-1 font-medium text-foreground/80 underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:text-foreground aria-[current]:text-primary aria-[current]:underline ${FOCUS_OUTLINE}`}
           >
             {section.navLabel ?? section.label}
           </a>
@@ -121,7 +123,7 @@ export default function Header({
             resolveHomeHref() so it survives a non-root base (anti-pattern #28). */}
         <a
           href={resolveHomeHref()}
-          className="mr-auto flex items-center gap-2 rounded-sm font-heading text-lg font-semibold tracking-tight text-foreground focus-visible:underline"
+          className={`mr-auto flex items-center gap-2 rounded-sm font-heading text-lg font-semibold tracking-tight text-foreground ${FOCUS_OUTLINE}`}
         >
           {/* The course's mark, named by `courseConfig.logo`. DECORATIVE: this link
               already has the course title as its accessible name, so announcing the
@@ -158,7 +160,7 @@ export default function Header({
           aria-controls={MOBILE_PANEL_ID}
           aria-label="Toggle navigation menu"
           onClick={() => setIsMobileNavOpen((open) => !open)}
-          className="inline-flex size-9 items-center justify-center rounded-md border border-border text-foreground transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none sm:hidden"
+          className={`inline-flex size-9 items-center justify-center rounded-md border border-border text-foreground transition-colors hover:bg-muted sm:hidden ${FOCUS_OUTLINE}`}
         >
           <Menu className="size-5" aria-hidden="true" />
         </button>

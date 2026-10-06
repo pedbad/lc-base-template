@@ -10,6 +10,7 @@
 import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import Header from './Header';
+import { FOCUS_OUTLINE } from './focus-outline';
 import { resolveHomeHref } from '@/lib/assets';
 import type { NavSection } from './nav-section';
 /** Local section fixture. Sections come from an LO's lo.json in the real app; these
@@ -129,6 +130,22 @@ describe('Header', () => {
     // which breaks on an LO page under a sub-path base. The leading slash is the only
     // visible proof it was resolved at all.
     expect(html).not.toContain('url(logo.svg)');
+  });
+
+  // Header a11y audit (2026-10-06). The links used to fall back to the browser's
+  // `outline: auto` in `ring/50` — 2.88:1 on the light header, under 1.4.11's 3:1 —
+  // and the toggle drew a box-shadow ring with `outline-none`, which Windows forced
+  // colours strips, leaving NO indicator. Every control now draws the one shared
+  // outline, which survives forced colours and clears 3:1 in both themes.
+  test('every link and button draws the shared outline focus indicator', () => {
+    const html = renderToStaticMarkup(<Header sections={SECTIONS} />);
+    const controls = html.match(/<(a|button)\b[^>]*>/g) ?? [];
+
+    expect(controls.length).toBeGreaterThan(0);
+    for (const tag of controls) {
+      expect(tag).toContain(FOCUS_OUTLINE);
+      expect(tag).not.toContain('focus-visible:outline-none');
+    }
   });
 
   test('renders an optional theme-toggle slot inside the nav', () => {

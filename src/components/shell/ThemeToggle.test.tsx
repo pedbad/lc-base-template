@@ -7,6 +7,7 @@
 import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import ThemeToggle from './ThemeToggle';
+import { FOCUS_OUTLINE } from './focus-outline';
 
 describe('ThemeToggle', () => {
   test('renders a switch with a stable "Dark mode" accessible name', () => {
@@ -18,6 +19,15 @@ describe('ThemeToggle', () => {
   test('exposes aria-checked reflecting the (SSR default light) state', () => {
     const html = renderToStaticMarkup(<ThemeToggle />);
     expect(html).toMatch(/aria-checked="(true|false)"/);
+  });
+
+  // Its own focus ring is a box-shadow over `outline-none`; forced colours strips the
+  // shadow and the always-on border no longer CHANGES on focus, so nothing shows.
+  test('draws the shared outline focus indicator, not only a shadow ring', () => {
+    const html = renderToStaticMarkup(<ThemeToggle />);
+    const root = /<[^>]*role="switch"[^>]*>/.exec(html)?.[0] ?? '';
+
+    expect(root).toContain(FOCUS_OUTLINE);
   });
 
   test('associates the Switch hidden form input with a label (WAVE: no missing form label)', () => {

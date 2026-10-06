@@ -8,6 +8,7 @@ import { useId } from 'react';
 import { MoonIcon, SunIcon } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { useTheme } from '@/hooks/useTheme';
+import { FOCUS_OUTLINE } from './focus-outline';
 
 export default function ThemeToggle() {
   const { isDark, setTheme } = useTheme();
@@ -28,6 +29,11 @@ export default function ThemeToggle() {
         checked={isDark}
         onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
         aria-label="Dark mode"
+        // Header a11y audit (2026-10-06), overriding the vendored Switch here because
+        // `src/components/ui/` belongs to the shadcn CLI. Its focus ring is a box-shadow,
+        // which forced colours drops, so the shared outline replaces it (`ring-0` keeps
+        // the two from stacking).
+        className={`focus-visible:ring-0 ${FOCUS_OUTLINE}`}
       />
       <MoonIcon className="size-4 text-muted-foreground" aria-hidden="true" />
     </span>

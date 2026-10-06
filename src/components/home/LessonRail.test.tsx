@@ -16,6 +16,7 @@ import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { footerConfig } from '@/config/footer.config';
 import type { LoIndexEntry } from '@/lo/lo-index';
+import { FOCUS_OUTLINE } from '@/components/shell/focus-outline';
 import LessonRail from './LessonRail';
 
 const LESSONS: readonly LoIndexEntry[] = [
@@ -58,6 +59,20 @@ describe('LessonRail', () => {
 
     expect(html).toMatch(/id="lesson-nav-panel"[^>]*inert=""/);
     expect(html).toMatch(/id="lesson-nav-panel"[^>]*aria-hidden="true"/);
+  });
+
+  // Same audit: these drew a box-shadow ring over `outline-none`, and forced colours
+  // strips box-shadow, so they had no focus indicator at all there.
+  test('every control in the panel draws the shared outline focus indicator', () => {
+    const html = renderToStaticMarkup(<LessonRail lessons={LESSONS} />);
+    const panel = html.slice(html.indexOf('id="lesson-nav-panel"'));
+    const controls = panel.match(/<(a|button)\b[^>]*>/g) ?? [];
+
+    expect(controls.length).toBe(LESSONS.length + 1);
+    for (const tag of controls) {
+      expect(tag).toContain(FOCUS_OUTLINE);
+      expect(tag).not.toContain('focus-visible:outline-none');
+    }
   });
 
   // The strip is unconditional; only the LESSON parts depend on there being lessons.

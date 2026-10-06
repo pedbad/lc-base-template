@@ -41,6 +41,7 @@
  *   - opening moves focus into the panel; closing restores it to the toggle
  *   - Tab is trapped inside the open panel (it covers the page)
  *   - the page behind is scroll-locked while it is open
+ *   - every control draws the shared `FOCUS_OUTLINE`, which survives forced colours
  *   - `inert` when closed, so the off-screen links are truly unreachable — NOT
  *     `hidden`, which cannot slide (`display: none` kills the transition)
  *   - motion is CSS-only, so `prefers-reduced-motion` is honoured in home.css
@@ -59,6 +60,7 @@ import { useEffect, useRef, useState } from 'react';
 import { PanelLeftIcon, XIcon } from 'lucide-react';
 import { footerConfig } from '@/config/footer.config';
 import ThemeToggleButton from '@/components/shell/ThemeToggleButton';
+import { FOCUS_OUTLINE } from '@/components/shell/focus-outline';
 import { resolveAsset } from '@/lib/assets';
 import { spriteHref } from '@/lib/sprite';
 import type { LoIndexEntry } from '@/lo/lo-index';
@@ -231,7 +233,7 @@ export default function LessonRail({ lessons }: LessonRailProps) {
                 type="button"
                 onClick={() => setIsOpen(false)}
                 aria-label="Close lesson list"
-                className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                className={`inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground ${FOCUS_OUTLINE}`}
               >
                 <XIcon className="size-4" aria-hidden="true" />
               </button>
@@ -243,7 +245,7 @@ export default function LessonRail({ lessons }: LessonRailProps) {
                   <li key={lesson.folder}>
                     <a
                       href={resolveAsset(`${lesson.slug}.html`)}
-                      className="flex items-baseline gap-3 rounded-md px-3 py-2 text-sm text-foreground/85 transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                      className={`flex items-baseline gap-3 rounded-md px-3 py-2 text-sm text-foreground/85 transition-colors hover:bg-muted hover:text-foreground ${FOCUS_OUTLINE}`}
                     >
                       <span aria-hidden="true" className="font-mono text-xs text-muted-foreground">
                         {String(index + 1).padStart(2, '0')}
