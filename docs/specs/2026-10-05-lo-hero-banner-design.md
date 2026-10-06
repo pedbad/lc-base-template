@@ -78,7 +78,7 @@ and CSS in the repo's token idiom, with no new package and no Base UI. That matc
     </div>
   </div>
   <div class="lo-content">
-    <!-- max-w-5xl + px-4, takes over main's old box -->
+    <!-- takes over main's old box; since TODO §D11 that box is .page-frame (layout.css) -->
     <section id aria-labelledby>…</section>
     <!-- unchanged -->
   </div>

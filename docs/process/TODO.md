@@ -1130,17 +1130,41 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
 
   Reopen if WAVE's alerts are made a gate, or if a real heading is ever styled as a `<p>`.
 
-- **D11 — one content width, a reading measure, and breakout. OPEN — next job.** The
-  sandbox's rendered docs scroll sideways because `.doc-prose` caps `<pre>` at 68ch
-  (605px), while the widest block needs 786px and the column gives 976px. Separately, the
-  pages disagree on width: 1024px for the LO page and sandbox, 768px for the showcase,
-  with gutters of 16px or 24px. Agreed direction: keep 68ch for TEXT, let
-  code/tables/exercises break out to the full column, give all three pages one frame
-  width (**1152px / 72rem**, maintainer's decision 2026-10-06; the header too), and use
-  one gutter token. At that width the text measure is mandatory, and widgets sized
-  `width: 100%` (the flashcards card is 3:2) need their own cap. First check whether LO
-  prose is uncapped at 992px. Measurements, file:line pointers and traps are in
-  `docs/process/2026-10-06-content-width-handover.md`.
+- **D11 — one content width, a reading measure, and breakout. CLOSED 2026-10-06
+  (`b0c3d42`).** Handover: `docs/process/2026-10-06-content-width-handover.md`.
+  `src/styles/layout.css` holds four tokens, pinned by `src/styles/layout.test.ts`:
+  - **`--frame-width: 72rem` + `--frame-gutter: clamp(1rem, 4vw, 2rem)`**, read by one
+    `.page-frame` box on `.lo-content`, both debug pages' `<main>` and the debug
+    header's inner row. Content column 1088px; header and content edges now match on
+    both debug pages (the showcase's were 232 vs 360px apart at 1440).
+  - **`--measure: 60ch`, not the 68ch handed over — measured.** `ch` is the width of
+    "0", wider than the average Open Sans glyph: 68ch gave lesson prose ~83 characters
+    per line, 60ch gives ~74 (maintainer's decision). On TEXT only: rich-text
+    paragraphs and lists, `.doc-prose`'s text children, outcomes text, the reading
+    passage, sandbox intros and palette notes (Tailwind's 65ch `max-w-prose` is gone,
+    so there is one measure). `<pre>`, tables, images, the vocabulary list break out.
+  - **`--exercise-track: 48rem`** on a wrapper in `ExerciseHost`, for every engine. At
+    the full 1088px every row engine stretched (conjugation inputs ~800px wide, Check a
+    column away). Flashcards (30rem) and memory-match (32rem) were already capped —
+    the handover's 1088 × 725px card worry did not apply.
+  - **The LO header and hero title stay full-bleed**, by the recorded 2026-10-05
+    decision (`lo-hero.css`), not moved to the frame as the handover proposed —
+    maintainer's call.
+
+  Built site (`DEBUG=1`), before → after:
+
+  | Page / width                  | Before                   | After                                   |
+  | ----------------------------- | ------------------------ | --------------------------------------- |
+  | sandbox `<pre>` overflow 1440 | 9 / 22                   | **0 / 22** (0 at 1024, 1280)            |
+  | sandbox `<pre>` overflow 375  | 14 / 22, focusable       | 13 / 22, focusable, arrow-scrolls       |
+  | LO prose, chars per line      | max 143 (≥ 1024)         | **median 74, max 79**                   |
+  | showcase, chars per line      | max 90 (reading passage) | median 74, max 78                       |
+  | sandbox, chars per line       | max 154 (palette notes)  | median 69, max 80                       |
+  | column at 1440 / 1280         | 992 · 720 · 976px        | 1088px everywhere; 144 / 64px each side |
+
+  No horizontal page scroll on any page at 320 · 375 · 768 · 1024 · 1280 · 1440, either
+  theme. axe: zero violations on all three pages, both themes. CSS 16.55 → **16.67 kB**
+  gzip (budget < 17), JS 100.21 kB.
 
 ---
 
@@ -1239,3 +1263,4 @@ build, so it cannot return. Two remain:
 | 2026-10-06 | see §D6   | **header a11y audit** — one forced-colours-safe focus outline, five fixes                |
 | 2026-10-06 | `d72c02f` | **rich-text block entries** — lists, tables, audio player; JS budget < 105 kB            |
 | 2026-10-06 | `a82ef49` | **a11y follow-ups (§D10)** — speaker 24px floor, sandbox outline + code regions, AA pair |
+| 2026-10-06 | `b0c3d42` | **one page frame (§D11)** — 72rem frame, 60ch measure, 48rem exercise track, breakout    |

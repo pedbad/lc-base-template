@@ -64,7 +64,7 @@ against a semantic-structure audit of the french-lo-1 reference implementation
         <h1>{LO title}</h1>
       </div>
 
-      <!-- <div class="lo-content"> — the content column (max-w-5xl). Every
+      <!-- <div class="lo-content page-frame"> — the content column (layout.css). Every
            <section> below sits inside it; it closes just before </main>. -->
 
       <section id="introduction" aria-labelledby="introduction-heading">

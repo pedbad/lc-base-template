@@ -88,9 +88,13 @@ automatically — see [If a test goes red](#if-a-test-goes-red) below.
 | `tokens-variant-a-cambridge-blue.css` | preset                | switching the primary / CTA colour                       |
 | `tokens-variant-b-dark-blue.css`      | preset (default)      | switching the primary / CTA colour                       |
 | `tokens-variant-c-warm-blue.css`      | preset                | switching the primary / CTA colour                       |
+| `layout.css`                          | layout (not colour)   | changing the page width, gutter or reading measure       |
 
-All five are in **`src/styles/`**. `index.css` imports `palette.css` then
-`tokens.css`; the three variant files sit beside them as switchable presets.
+All six are in **`src/styles/`**. `index.css` imports `palette.css`, then
+`tokens.css`, then `layout.css`; the three variant files sit beside them as
+switchable presets. `layout.css` is not part of the colour chain and no preset
+copies it: it holds the one page width, the side gutter, the reading measure
+for running text and the exercise track, each explained in its own comment.
 
 ---
 

@@ -16,6 +16,7 @@ the drift the guards exist to prevent, so there is only ever one.
 | `tokens-variant-a-cambridge-blue.css` | preset                | switching `--primary` / `--ring`                  |
 | `tokens-variant-b-dark-blue.css`      | preset (default)      | switching `--primary` / `--ring`                  |
 | `tokens-variant-c-warm-blue.css`      | preset                | switching `--primary` / `--ring`                  |
+| `layout.css`                          | layout, not colour    | changing the page frame, gutter or measure        |
 
 Enforced here: raw hex only in `palette.css` (**guard f**,
 `src/guards/token-integrity.ts`); every rule inside `@layer`, zero `!important`
