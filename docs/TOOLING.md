@@ -158,7 +158,7 @@ needs the number points here rather than restating it.
 | Asset        | Budget (gzipped) | Measured 2026-10-06 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
 | `main-*.js`  | **< 105 kB**     | 100.21 kB           | 4.79 kB  |
-| `main-*.css` | **< 17 kB**      | 16.67 kB            | 0.33 kB  |
+| `main-*.css` | **< 17 kB**      | 16.68 kB            | 0.32 kB  |
 
 - **JS was raised from < 80 kB to < 100 kB by the maintainer's decision.** The 80 kB
   figure is the generic "microsite" row from the maintainer's global ECC rules

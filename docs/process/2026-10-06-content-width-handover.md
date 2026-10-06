@@ -2,6 +2,10 @@
 
 **Written:** 2026-10-06 at `main` (`27c5d89`), after §D10 closed.
 
+**Status: DONE 2026-10-06** (`b0c3d42`, `20c06c2`). Three calls went against this
+handover — 60ch not 68ch, the LO header stays full-bleed, the intro spans the column —
+and they are recorded with the before/after figures in TODO §D11.
+
 ## Prompt to start the next session with
 
 > Read `AGENTS.md`, then `docs/process/TODO.md` §D11, then this handover

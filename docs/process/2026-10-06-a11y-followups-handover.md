@@ -3,6 +3,8 @@
 **Written:** 2026-10-06 at `main` (`3918591`), after rich-text block entries and the
 debug pages' shared "Jump to" bar shipped.
 
+**Status: DONE 2026-10-06** — fixed or decided, item by item, in TODO §D10.
+
 ## Prompt to start the next session with
 
 > Read `AGENTS.md`, then `docs/process/TODO.md` §D10, then this handover
