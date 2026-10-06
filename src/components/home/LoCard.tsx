@@ -40,7 +40,10 @@ export default function LoCard({ lesson, index }: LoCardProps) {
       style={{ animationDelay: `${Math.min(index * STAGGER_STEP_MS, MAX_STAGGER_MS)}ms` }}
     >
       <a href={resolveAsset(`${lesson.slug}.html`)} className="lo-card">
-        <span className="lo-card-band">
+        {/* <div>s, not <span>s: the <h3> below is flow content, and a <span> may hold
+            phrasing content only (html-validate, header a11y audit 2026-10-06). An <a>
+            in an <li> is transparent to flow content, so this is valid here. */}
+        <div className="lo-card-band">
           {lesson.image === undefined ? (
             // No illustration authored: a decorative icon band, not a broken image
             // and not an empty box. `image` is optional on purpose (lo-schema.ts).
@@ -61,12 +64,12 @@ export default function LoCard({ lesson, index }: LoCardProps) {
               attributes here: an author's image has whatever intrinsic size it has,
               and stating the wrong one would be a lie that buys nothing — the space
               is already reserved, so there is no layout shift either way. */}
-          <span className="lo-card-title-overlay">
+          <div className="lo-card-title-overlay">
             <h3 className="font-heading text-base leading-tight font-bold text-foreground sm:text-lg">
               {lesson.title}
             </h3>
-          </span>
-        </span>
+          </div>
+        </div>
 
         {lesson.description === undefined ? null : (
           <p className="lo-card-blurb">{lesson.description}</p>

@@ -68,6 +68,15 @@ describe('CourseHome', () => {
     expect((html.match(/<h3/g) ?? []).length).toBe(LESSONS.length);
   });
 
+  // Header a11y audit (2026-10-06), found by html-validate on dist/index.html: the card
+  // title's <h3> sat inside a <span>, whose content model is phrasing only. The card is
+  // an <a> inside an <li>, so flow content is allowed there — the wrappers are <div>s.
+  test('no card heading sits inside phrasing-only markup', () => {
+    const html = renderToStaticMarkup(<CourseHome lessons={LESSONS} />);
+
+    expect(html).not.toMatch(/<span[^>]*>(?:(?!<\/span>).)*<h3/s);
+  });
+
   test('links each card at that LO’s static page, routed through the base', () => {
     const html = renderToStaticMarkup(<CourseHome lessons={LESSONS} />);
 
