@@ -41,6 +41,7 @@
  *   - opening moves focus into the panel; closing restores it to the toggle
  *   - Tab is trapped inside the open panel (it covers the page)
  *   - the page behind is scroll-locked while it is open
+ *   - `role="dialog"` + `aria-modal`, named by the panel's own "Lessons" title
  *   - every control draws the shared `FOCUS_OUTLINE`, which survives forced colours
  *   - `inert` when closed, so the off-screen links are truly unreachable — NOT
  *     `hidden`, which cannot slide (`display: none` kills the transition)
@@ -67,6 +68,7 @@ import type { LoIndexEntry } from '@/lo/lo-index';
 import './home.css';
 
 const PANEL_ID = 'lesson-nav-panel';
+const PANEL_TITLE_ID = 'lesson-nav-title';
 /** Set on <html> while the panel is open; home.css locks scrolling off it. */
 const SCROLL_LOCK_CLASS = 'lesson-nav-open';
 
@@ -224,9 +226,18 @@ export default function LessonRail({ lessons }: LessonRailProps) {
             data-open={isOpen}
             inert={!isOpen}
             aria-hidden={!isOpen}
+            // It BEHAVES modally (focus in, Tab trap, scroll lock), so it says so: without
+            // `aria-modal` a screen reader's virtual cursor walks out into the page behind,
+            // which is not inert (header a11y audit, 2026-10-06).
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={PANEL_TITLE_ID}
           >
             <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
-              <p className="font-heading text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+              <p
+                id={PANEL_TITLE_ID}
+                className="font-heading text-sm font-semibold tracking-wide text-muted-foreground uppercase"
+              >
                 Lessons
               </p>
               <button

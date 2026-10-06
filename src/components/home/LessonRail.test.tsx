@@ -61,6 +61,21 @@ describe('LessonRail', () => {
     expect(html).toMatch(/id="lesson-nav-panel"[^>]*aria-hidden="true"/);
   });
 
+  // Header a11y audit (2026-10-06). The panel BEHAVES as a modal dialog — focus moves
+  // in, Tab is trapped, the page is scroll-locked — but announced as nothing, so a
+  // screen-reader user's virtual cursor could walk out of it into the page behind,
+  // which is not inert. `aria-modal` is what tells AT that page is out of bounds.
+  test('the panel is a modal dialog named by its own "Lessons" title', () => {
+    const html = renderToStaticMarkup(<LessonRail lessons={LESSONS} />);
+    const panel = /<div[^>]*id="lesson-nav-panel"[^>]*>/.exec(html)?.[0] ?? '';
+    const labelId = /aria-labelledby="([^"]+)"/.exec(panel)?.[1];
+
+    expect(panel).toContain('role="dialog"');
+    expect(panel).toContain('aria-modal="true"');
+    expect(labelId).toBeDefined();
+    expect(html).toMatch(new RegExp(`<p[^>]*id="${labelId}"[^>]*>Lessons</p>`));
+  });
+
   // Same audit: these drew a box-shadow ring over `outline-none`, and forced colours
   // strips box-shadow, so they had no focus indicator at all there.
   test('every control in the panel draws the shared outline focus indicator', () => {
