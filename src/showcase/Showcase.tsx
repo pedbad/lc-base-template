@@ -6,11 +6,15 @@
  * This is where each ported engine is seen and tested in isolation before it is used
  * in a real LO. Cards grow one at a time as engines are ported (Phase B).
  *
+ * The first card is not an engine: it is the rich-text authoring reference — every
+ * block entry (lists, tables, the audio player) plus a popup (spec §14).
+ *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §3, §8;
  *       docs/process/2026-07-02-instructions-box-handover.md §3.
  */
 import { ExerciseHost } from '@/exercises/lib/ExerciseHost';
 import { SHOWCASE_FIXTURES } from './fixtures';
+import RichTextShowcase from './RichTextShowcase';
 
 export default function Showcase() {
   return (
@@ -18,9 +22,14 @@ export default function Showcase() {
       <header className="mb-8">
         <h1 className="text-3xl font-bold">Exercise Showcase</h1>
         <p className="mt-2 text-muted-foreground">
-          Each interactive exercise engine, rendered in isolation for review and testing.
+          Each interactive exercise engine, rendered in isolation for review and testing — after the
+          rich-text reference, which shows what lesson prose and popups accept.
         </p>
       </header>
+
+      <div className="mb-10">
+        <RichTextShowcase />
+      </div>
 
       {SHOWCASE_FIXTURES.length === 0 ? (
         <p className="rounded-md border border-dashed p-6 text-center text-muted-foreground">
