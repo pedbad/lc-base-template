@@ -1,7 +1,7 @@
 # Handover — the LO header scroll-spy (TODO §D6)
 
 > **DONE 2026-10-06.** Shipped per `docs/specs/2026-10-06-header-scroll-spy-design.md`;
-> see TODO §D6 for what was verified and what a human still owes. Kept as the record.
+> human scroll check confirmed by the maintainer; see TODO §D6 for what was verified. Kept as the record.
 
 **Written:** 2026-10-05 at `main` after the LO hero banner (§D9) shipped.
 **Decision:** the maintainer reopened the scroll-spy the same day it was deferred. It is

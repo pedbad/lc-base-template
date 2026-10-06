@@ -684,8 +684,9 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     Exercises through every intermediate position; the hash and focus never change on
     scroll. **How:** the Browser pane was hidden, so it dispatched no `scroll` events —
     each position was set with `scrollTo` and a synthetic `scroll` event dispatched,
-    which drives the real listener but is NOT a human scrolling. **Still owed: a human
-    scrolls the page and watches the highlight follow** (handover trap 6).
+    which drives the real listener but is NOT a human scrolling. **Human-confirmed
+    2026-10-06:** the maintainer scrolled the built page and the highlight follows
+    (handover trap 6).
     **Bundle:** `main-*.js` 97.29 → 97.80 kB gzipped (+0.51 kB); CSS unchanged.
     It does NOT contradict §D4's "delete the observer" — that
     observer watched ITSELF to answer a question scrolling already answers; a spy
