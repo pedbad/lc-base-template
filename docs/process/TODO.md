@@ -1150,6 +1150,10 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   - **The LO header and hero title stay full-bleed**, by the recorded 2026-10-05
     decision (`lo-hero.css`), not moved to the frame as the handover proposed —
     maintainer's call.
+  - **The intro block spans the column** (follow-up, maintainer's call): at the measure
+    it left an empty band beside it, above the outcomes image. `.rich-text-full` on
+    `IntroBlock` lifts the measure; ~140 characters per line at 1440 is the accepted
+    cost. Other prose keeps 60ch.
 
   Built site (`DEBUG=1`), before → after:
 

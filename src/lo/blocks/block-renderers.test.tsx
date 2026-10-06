@@ -117,3 +117,13 @@ test('a block whose content does not match its type fails loud, naming the type'
 test('an unregistered block type resolves to undefined for the caller to handle', () => {
   expect(getBlockRenderer('pronunciation')).toBeUndefined();
 });
+
+// §D11 follow-up (maintainer, 2026-10-06): the intro is the page talking, and held to
+// the 60ch measure it left an empty band beside it, above the outcomes image. It spans
+// the column; other prose keeps the measure.
+test('intro block opts out of the reading measure; prose does not', () => {
+  expect(renderBlock('intro', { text: ['Opening.'] })).toMatch(
+    /^<div class="[^"]*\brich-text-full\b/,
+  );
+  expect(renderBlock('prose', { text: ['Commentary.'] })).not.toContain('rich-text-full');
+});

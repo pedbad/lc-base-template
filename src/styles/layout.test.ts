@@ -115,3 +115,15 @@ describe('one measure, not two', () => {
     expect(offenders).toEqual([]);
   });
 });
+
+describe('the intro block spans the column', () => {
+  test('.rich-text-full lifts the measure off its paragraphs and lists', () => {
+    const richText = read('lo/rich-text/rich-text.css');
+    expect(
+      ruleBody(
+        richText,
+        '.rich-text-full .rich-text-paragraph,\n  .rich-text-full .rich-text-list',
+      ),
+    ).toContain('max-inline-size: none;');
+  });
+});

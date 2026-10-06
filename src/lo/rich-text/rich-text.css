@@ -54,6 +54,13 @@
     margin-top: 0.25rem;
   }
 
+  /* The intro block opts out (maintainer, 2026-10-06): it is the page talking, and at
+     the measure it left an empty band beside it, above the outcomes image. */
+  .rich-text-full .rich-text-paragraph,
+  .rich-text-full .rich-text-list {
+    max-inline-size: none;
+  }
+
   /* A wide table scrolls sideways inside its region instead of widening a popup or the
      page column. The region is a tab stop (see RichTextEntries), so it owns a focus
      outline — the shared 2px `--ring` shape from focus-outline.ts. */

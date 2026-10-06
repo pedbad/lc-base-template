@@ -63,7 +63,7 @@ export function ProseBlock({ content }: { content: unknown }) {
  */
 export function IntroBlock({ content }: { content: unknown }) {
   return (
-    <div className="border-s-4 border-accent ps-5">
+    <div className="rich-text-full border-s-4 border-accent ps-5">
       <TextBlock content={content} type="intro" />
     </div>
   );
