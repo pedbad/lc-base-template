@@ -5,6 +5,7 @@
 import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import Showcase from './Showcase';
+import { SHOWCASE_SECTIONS } from './showcase-sections';
 import { SHOWCASE_FIXTURES } from './fixtures';
 
 const html = renderToStaticMarkup(<Showcase />);
@@ -15,13 +16,20 @@ describe('Showcase nav', () => {
     expect(nav).not.toBe('');
   });
 
-  test('links the rich-text card first, then every engine card, in fixture order', () => {
-    const hrefs = [...nav.matchAll(/href="#([^"]+)"/g)].map(([, id]) => id);
-    expect(hrefs).toEqual(['rich-text', ...SHOWCASE_FIXTURES.map((fixture) => fixture.id)]);
+  test('offers the cards behind a "Jump to card" menu, not as a row of links', () => {
+    expect(nav).toMatch(/aria-haspopup="menu"[^>]*>[^<]*Jump to card/);
+    expect(nav).not.toMatch(/href="#/);
   });
 
-  test('every in-page link has a card with that id to land on', () => {
-    [...nav.matchAll(/href="#([^"]+)"/g)].forEach(([, id]) => {
+  test('the menu lists the rich-text card first, then every engine card, in fixture order', () => {
+    expect(SHOWCASE_SECTIONS.map((section) => section.id)).toEqual([
+      'rich-text',
+      ...SHOWCASE_FIXTURES.map((fixture) => fixture.id),
+    ]);
+  });
+
+  test('every menu entry has a card with that id to land on', () => {
+    SHOWCASE_SECTIONS.forEach(({ id }) => {
       expect(html).toContain(`id="${id}"`);
     });
   });

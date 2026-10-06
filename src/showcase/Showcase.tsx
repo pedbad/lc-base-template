@@ -17,14 +17,9 @@
  */
 import { ExerciseHost } from '@/exercises/lib/ExerciseHost';
 import { SHOWCASE_FIXTURES } from './fixtures';
+import { SHOWCASE_SECTIONS } from './showcase-sections';
 import RichTextShowcase from './RichTextShowcase';
 import { DebugPageHeader } from '@/sandbox/DebugPageHeader';
-
-/** In-page nav: the rich-text card, then one link per engine card, in fixture order. */
-const SECTIONS = [
-  { id: 'rich-text', label: 'Rich text' },
-  ...SHOWCASE_FIXTURES.map((fixture) => ({ id: fixture.id, label: fixture.title })),
-];
 
 export default function Showcase() {
   return (
@@ -33,7 +28,8 @@ export default function Showcase() {
         title="Exercise Showcase"
         description="Each interactive exercise engine, rendered in isolation for review and testing — after the rich-text reference, which shows what lesson prose and popups accept."
         navLabel="Showcase sections"
-        sections={SECTIONS}
+        sections={SHOWCASE_SECTIONS}
+        jumpLabel="Jump to card"
         current="showcase"
       />
 

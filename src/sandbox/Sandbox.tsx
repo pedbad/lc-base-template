@@ -43,6 +43,7 @@ export default function Sandbox() {
         description="Theme tokens, type and icons, straight from the source files. Debug-only — this page is absent from a deployed course."
         navLabel="Sandbox sections"
         sections={SECTIONS}
+        jumpLabel="Jump to section"
         current="sandbox"
       />
 
