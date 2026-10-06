@@ -384,7 +384,7 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   this pane cannot run.**
 
 - **D5 — the budget breaches. JS half CLOSED BY DECISION 2026-10-05; CSS half open
-  (about 0.85 kB over since §D9; current figures in `docs/TOOLING.md`).** The maintainer raised the JS budget from < 80 kB to **< 100 kB
+  (about 0.87 kB over at 2026-10-06; current figures in `docs/TOOLING.md`).** The maintainer raised the JS budget from < 80 kB to **< 100 kB
   gzipped** rather than re-architect for it, so `main-*.js` at 97.13 kB (`6b5b821`) is
   now **within budget, with 2.87 kB of headroom**. The budget lives in ONE place —
   `docs/TOOLING.md`, "Bundle budget" — and the measurements below are kept as the
@@ -665,16 +665,28 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     not animate. **Fix was documentation, not code** — the panel now carries the
     reasoning so the next reader does not re-derive it, plus tests pinning the
     no-trap contract.
-  - **`activeSectionId` — the DOC is fixed; the SCROLL-SPY is NEXT (reopened 2026-10-05).**
-    `Header.tsx` called it "the section currently in view"; `PageLayout` only updates
-    it on `hashchange`, so `aria-current` was stale the moment the reader scrolled.
-    **Corrected 2026-09-14**: the prop now documents what it is — the section last
-    NAVIGATED to — and says plainly what it is not, so nobody reads viewport tracking
-    into it. The name is unchanged on purpose; renaming touches nine call sites to no
-    benefit while the real question is open. **Deferred to a later version and then
-    reopened the same day, 2026-10-05: the maintainer decided it is wanted now.** It is
-    the next job. Handover with the traps already found:
-    `docs/process/2026-10-05-scroll-spy-handover.md`. When it ships, close this bullet.
+  - **Header scroll-spy — SHIPPED 2026-10-06. Closed.** The active nav link now follows
+    the section on screen, in the desktop nav and the mobile panel, with
+    `aria-current="location"` (was `page`). A followed link wins at once and holds
+    until its smooth scroll settles (150 ms debounce, no `scrollend` — Safari lacks it
+    in the floor), so there is no flicker; the last section lights at the page bottom;
+    nothing is lit on the hero. Spec `docs/specs/2026-10-06-header-scroll-spy-design.md`,
+    plan `docs/process/2026-10-06-header-scroll-spy-plan.md`. A passive scroll listener,
+    not an observer — the spec's §4 says why. Rules are pure and unit-tested
+    (`src/lib/sectionInView.ts`, `src/lib/jumpHold.ts`); `src/hooks/useScrollSpy.ts` wires.
+    **A parity bug fixed on the way:** `useState(currentHashId)` read the hash during the
+    first client render, so `/example.html#grammar` hydrated with NO link marked —
+    silently, since production React neither patches nor reports attribute mismatches.
+    State now starts at `''` and the hash is read in an effect; a test pins it.
+    **Verified on the built site (2026-10-06):** loading `#grammar` marks Grammar after
+    hydration; at each section's landing position the matching link is marked; the hero
+    marks none; the bottom marks Exercises; a click on Exercises from the top holds
+    Exercises through every intermediate position; the hash and focus never change on
+    scroll. **How:** the Browser pane was hidden, so it dispatched no `scroll` events —
+    each position was set with `scrollTo` and a synthetic `scroll` event dispatched,
+    which drives the real listener but is NOT a human scrolling. **Still owed: a human
+    scrolls the page and watches the highlight follow** (handover trap 6).
+    **Bundle:** `main-*.js` 97.29 → 97.80 kB gzipped (+0.51 kB); CSS unchanged.
     It does NOT contradict §D4's "delete the observer" — that
     observer watched ITSELF to answer a question scrolling already answers; a spy
     watches OTHER elements to answer one the DOM cannot.
@@ -987,57 +999,58 @@ build, so it cannot return. Two remain:
 
 ## Done recently (so a new session does not redo it)
 
-| Date       | Commit    | What                                                                                |
-| ---------- | --------- | ----------------------------------------------------------------------------------- |
-| 2026-09-03 | `6c62d6d` | LICENSE added — MIT code + CC-BY-4.0 content (buildlist 28)                         |
-| 2026-09-03 | `2104d13` | content licence changed to **CC BY-NC 4.0**, swept through every doc                |
-| 2026-09-03 | `f3f432e` | `main` stays open by decision; protection reframed as a pre-share gate              |
-| 2026-09-03 | `ef9ec8f` | exercise showcase **opt-in per build** — no longer ships (buildlist 17b)            |
-| 2026-09-03 | `2e3e4bd` | this TODO.md added as the live worklist; stale claims corrected                     |
-| 2026-09-03 | `c239fa8` | **guard c — asset-path** (buildlist 21): `src/guards/` created, 21 tests            |
-| 2026-09-03 | `4367d31` | **guard d — asset-existence** (buildlist 22), 11 tests                              |
-| 2026-09-07 | `891511c` | **guard b — naming + render-mirror** (buildlist 20), 17 tests                       |
-| 2026-09-07 | `22757f5` | **guard e — registry completeness** (buildlist 23), 30 tests                        |
-| 2026-09-07 | `0891e27` | guard f **survey** banked in §A-f — the rule, not the guard yet                     |
-| 2026-09-07 | —         | GitHub **template repository** box ticked (buildlist 33), verified                  |
-| 2026-09-07 | see A8    | `bun run guards` fast subset added (buildlist 31 closed)                            |
-| 2026-09-07 | `df6c987` | **guard f — token integrity** (buildlist 24), 27 tests + shared reader              |
-| 2026-09-07 | `69c254b` | **guard g — CSS layer discipline** (buildlist 25), 21 tests                         |
-| 2026-09-07 | `99cd77d` | **guard h — semantic DOM over rendered output** (buildlist 26), 84 tests            |
-| 2026-09-08 | `8c95085` | **DESIGNER / STRUCTURE / AGENTS** written (buildlist 29); §B closed                 |
-| 2026-09-08 | `f06295a` | **`bun run docs:tree`** + freshness test (buildlist 30), 8 tests                    |
-| 2026-09-08 | `99825af` | README + CONTRIBUTING now link the three new books                                  |
-| 2026-09-08 | `0bcd7d7` | markdown **link-existence check** added (`src/docs/md-links.ts`)                    |
-| 2026-09-08 | `c5dd291` | **debug sandbox** — palette / type / icons (buildlist 16), 10 tests                 |
-| 2026-09-08 | `4029c9a` | **sandbox docs hub** — markdown→HTML (buildlist 18), 26 tests                       |
-| 2026-09-09 | `23f1d15` | §D opened, branch protection renumbered to §E                                       |
-| 2026-09-09 | `d863465` | **footer defect fixed** — schema-validated config; `href: '#'` now fails the build  |
-| 2026-09-09 | `4c70955` | footer assets downscaled 264→52 KB, ratio-normalised, sprite marks themeable        |
-| 2026-09-09 | `dad0428` | **preset drift fixed** — `--success` back-ported to all three presets + parity test |
-| 2026-09-09 | `c06a595` | `--footer` surface + six derived crest tokens                                       |
-| 2026-09-09 | `6c6d429` | lockup, imprint marks and social row                                                |
-| 2026-09-09 | `999176c` | `footer.css` — editorial colophon, crest in both themes                             |
-| 2026-09-09 | `52e4ca4` | band kept mint; the two footer columns share a baseline                             |
-| 2026-09-10 | `40f4e1b` | mark and social rows share one width, so both edges flush                           |
-| 2026-09-10 | `8e8ec94` | icon ink flushed; marks get the social hover + a focus ring they lacked             |
-| 2026-09-10 | `eac73fc` | `prefersReducedMotion` extracted to `src/lib/` — BackToTop is consumer two          |
-| 2026-09-10 | `683d1ce` | **`BackToTopButton`** (§D4) — observer deleted, not fixed; unmounted, D2 mounts it  |
-| 2026-09-10 | `97a5b4b` | landing page's Lessons heading id now comes from `headingId`, not a literal         |
-| 2026-09-10 | `8e3c49f` | **`BackToTopButton` mounted** (§D2) — one per section + the Lessons grid            |
-| 2026-09-10 | `8b26e36` | in-page nav animates — one `scroll-behavior` on `<html>`, reduce-guarded            |
-| 2026-09-10 | `008b082` | back-to-top fades both ways, 3600ms in / 300ms out, after two wrong mechanisms      |
-| 2026-09-11 | `7e22990` | `presentation: 'plain'` blocks; the **introduction is no longer an accordion**      |
-| 2026-09-11 | `6310dad` | **guard d saw nothing under `image.src`** — nested asset paths now collected        |
-| 2026-09-11 | `2592827` | **`outcomes` block** — ticked outcome list beside an illustration, split at `lg`    |
-| 2026-09-11 | `f90ac40` | **`intro` block type** — rule down the leading edge; the intro's callout dropped    |
-| 2026-09-14 | `d272093` | Header's mobile panel documented as a **disclosure, not a dialog** — no trap owed   |
-| 2026-09-14 | `ad627ce` | D5 bundle **attributed by sourcemap** — data recorded, no fix attempted             |
-| 2026-09-14 | `e4b10b4` | **course mark in the header**; guard d now sweeps `course.config.ts`                |
-| 2026-09-14 | `1ca5f3b` | course mark **masked, not `<img>`** — it was invisible in dark                      |
-| 2026-09-14 | see below | **vocabulary before grammar** in the example; per-term audio on the word list       |
-| 2026-09-14 | `7d6216d` | vocabulary row **clickable end to end**, delegating to its speaker button           |
-| 2026-09-14 | see below | page ground is **`--paper`, not white** — off-white for dyslexic readers            |
-| 2026-10-05 | —         | header **scroll-spy deferred** to a later version (§D6 → "Deferred on purpose")     |
-| 2026-10-05 | —         | **JS budget raised to < 100 kB** gzipped; one home in `docs/TOOLING.md` (§D5)       |
-| 2026-10-05 | `e4c9fe0` | **LO hero banner** — full-bleed, holds the `<h1>`, band fallback (§D9)              |
-| 2026-10-05 | —         | header **scroll-spy reopened** — out of "Deferred on purpose", back on §D6 as next  |
+| Date       | Commit    | What                                                                                    |
+| ---------- | --------- | --------------------------------------------------------------------------------------- |
+| 2026-09-03 | `6c62d6d` | LICENSE added — MIT code + CC-BY-4.0 content (buildlist 28)                             |
+| 2026-09-03 | `2104d13` | content licence changed to **CC BY-NC 4.0**, swept through every doc                    |
+| 2026-09-03 | `f3f432e` | `main` stays open by decision; protection reframed as a pre-share gate                  |
+| 2026-09-03 | `ef9ec8f` | exercise showcase **opt-in per build** — no longer ships (buildlist 17b)                |
+| 2026-09-03 | `2e3e4bd` | this TODO.md added as the live worklist; stale claims corrected                         |
+| 2026-09-03 | `c239fa8` | **guard c — asset-path** (buildlist 21): `src/guards/` created, 21 tests                |
+| 2026-09-03 | `4367d31` | **guard d — asset-existence** (buildlist 22), 11 tests                                  |
+| 2026-09-07 | `891511c` | **guard b — naming + render-mirror** (buildlist 20), 17 tests                           |
+| 2026-09-07 | `22757f5` | **guard e — registry completeness** (buildlist 23), 30 tests                            |
+| 2026-09-07 | `0891e27` | guard f **survey** banked in §A-f — the rule, not the guard yet                         |
+| 2026-09-07 | —         | GitHub **template repository** box ticked (buildlist 33), verified                      |
+| 2026-09-07 | see A8    | `bun run guards` fast subset added (buildlist 31 closed)                                |
+| 2026-09-07 | `df6c987` | **guard f — token integrity** (buildlist 24), 27 tests + shared reader                  |
+| 2026-09-07 | `69c254b` | **guard g — CSS layer discipline** (buildlist 25), 21 tests                             |
+| 2026-09-07 | `99cd77d` | **guard h — semantic DOM over rendered output** (buildlist 26), 84 tests                |
+| 2026-09-08 | `8c95085` | **DESIGNER / STRUCTURE / AGENTS** written (buildlist 29); §B closed                     |
+| 2026-09-08 | `f06295a` | **`bun run docs:tree`** + freshness test (buildlist 30), 8 tests                        |
+| 2026-09-08 | `99825af` | README + CONTRIBUTING now link the three new books                                      |
+| 2026-09-08 | `0bcd7d7` | markdown **link-existence check** added (`src/docs/md-links.ts`)                        |
+| 2026-09-08 | `c5dd291` | **debug sandbox** — palette / type / icons (buildlist 16), 10 tests                     |
+| 2026-09-08 | `4029c9a` | **sandbox docs hub** — markdown→HTML (buildlist 18), 26 tests                           |
+| 2026-09-09 | `23f1d15` | §D opened, branch protection renumbered to §E                                           |
+| 2026-09-09 | `d863465` | **footer defect fixed** — schema-validated config; `href: '#'` now fails the build      |
+| 2026-09-09 | `4c70955` | footer assets downscaled 264→52 KB, ratio-normalised, sprite marks themeable            |
+| 2026-09-09 | `dad0428` | **preset drift fixed** — `--success` back-ported to all three presets + parity test     |
+| 2026-09-09 | `c06a595` | `--footer` surface + six derived crest tokens                                           |
+| 2026-09-09 | `6c6d429` | lockup, imprint marks and social row                                                    |
+| 2026-09-09 | `999176c` | `footer.css` — editorial colophon, crest in both themes                                 |
+| 2026-09-09 | `52e4ca4` | band kept mint; the two footer columns share a baseline                                 |
+| 2026-09-10 | `40f4e1b` | mark and social rows share one width, so both edges flush                               |
+| 2026-09-10 | `8e8ec94` | icon ink flushed; marks get the social hover + a focus ring they lacked                 |
+| 2026-09-10 | `eac73fc` | `prefersReducedMotion` extracted to `src/lib/` — BackToTop is consumer two              |
+| 2026-09-10 | `683d1ce` | **`BackToTopButton`** (§D4) — observer deleted, not fixed; unmounted, D2 mounts it      |
+| 2026-09-10 | `97a5b4b` | landing page's Lessons heading id now comes from `headingId`, not a literal             |
+| 2026-09-10 | `8e3c49f` | **`BackToTopButton` mounted** (§D2) — one per section + the Lessons grid                |
+| 2026-09-10 | `8b26e36` | in-page nav animates — one `scroll-behavior` on `<html>`, reduce-guarded                |
+| 2026-09-10 | `008b082` | back-to-top fades both ways, 3600ms in / 300ms out, after two wrong mechanisms          |
+| 2026-09-11 | `7e22990` | `presentation: 'plain'` blocks; the **introduction is no longer an accordion**          |
+| 2026-09-11 | `6310dad` | **guard d saw nothing under `image.src`** — nested asset paths now collected            |
+| 2026-09-11 | `2592827` | **`outcomes` block** — ticked outcome list beside an illustration, split at `lg`        |
+| 2026-09-11 | `f90ac40` | **`intro` block type** — rule down the leading edge; the intro's callout dropped        |
+| 2026-09-14 | `d272093` | Header's mobile panel documented as a **disclosure, not a dialog** — no trap owed       |
+| 2026-09-14 | `ad627ce` | D5 bundle **attributed by sourcemap** — data recorded, no fix attempted                 |
+| 2026-09-14 | `e4b10b4` | **course mark in the header**; guard d now sweeps `course.config.ts`                    |
+| 2026-09-14 | `1ca5f3b` | course mark **masked, not `<img>`** — it was invisible in dark                          |
+| 2026-09-14 | see below | **vocabulary before grammar** in the example; per-term audio on the word list           |
+| 2026-09-14 | `7d6216d` | vocabulary row **clickable end to end**, delegating to its speaker button               |
+| 2026-09-14 | see below | page ground is **`--paper`, not white** — off-white for dyslexic readers                |
+| 2026-10-05 | —         | header **scroll-spy deferred** to a later version (§D6 → "Deferred on purpose")         |
+| 2026-10-05 | —         | **JS budget raised to < 100 kB** gzipped; one home in `docs/TOOLING.md` (§D5)           |
+| 2026-10-05 | `e4c9fe0` | **LO hero banner** — full-bleed, holds the `<h1>`, band fallback (§D9)                  |
+| 2026-10-05 | —         | header **scroll-spy reopened** — out of "Deferred on purpose", back on §D6 as next      |
+| 2026-10-06 | see §D6   | header **scroll-spy** — highlight follows the section on screen; hash-load parity fixed |

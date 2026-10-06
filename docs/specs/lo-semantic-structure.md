@@ -31,7 +31,7 @@ against a semantic-structure audit of the french-lo-1 reference implementation
 
         <!-- One entry per top-level <section>, in page order. Generated FROM
              the section list — not hand-authored separately. -->
-        <a href="#introduction" aria-current="true">Introduction</a>
+        <a href="#introduction" aria-current="location">Introduction</a>
         <a href="#grammar">Grammar</a>
         <a href="#vocabulary">Vocabulary</a>
         <a href="#exercises">Exercises</a>
