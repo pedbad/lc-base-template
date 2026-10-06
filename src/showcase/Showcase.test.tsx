@@ -2,6 +2,7 @@
  * Showcase.test.tsx — the exercise showcase's top nav (shared with the debug sandbox via
  * DebugPageHeader): a link to every card, derived from the fixtures, plus the way back.
  */
+import { readFileSync } from 'node:fs';
 import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import Showcase from './Showcase';
@@ -38,5 +39,18 @@ describe('Showcase nav', () => {
     expect(nav).toContain('href="/debug-sandbox.html"');
     expect(nav).not.toContain('href="/exercise-showcase.html"');
     expect(nav).toContain('Course home');
+  });
+});
+
+// The showcase gained a theme switch with the shared header. Without the pre-paint
+// script its HTML shell never applies a stored dark theme: the switch reads "dark" while
+// the page renders light (found 2026-10-06). Same inline script as index.html and
+// debug-sandbox.html.
+describe('exercise-showcase.html', () => {
+  test('applies the stored theme before first paint, like the other pages', () => {
+    const shell = readFileSync(new URL('../../exercise-showcase.html', import.meta.url), 'utf-8');
+    const head = shell.slice(0, shell.indexOf('</head>'));
+    expect(head).toContain("localStorage.getItem('lc-theme')");
+    expect(head).toContain("classList.add('dark')");
   });
 });

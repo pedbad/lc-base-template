@@ -9,6 +9,25 @@
       content="Live gallery of every lc-base-template exercise engine — flashcards, dictation, memory match, drag-to-fill gaps, reading comprehension and more."
     />
     <title>Exercise Showcase — lc-base-template</title>
+    <script>
+      // Pre-hydration theme, mirroring index.html and debug-sandbox.html: the showcase
+      // has a theme switch (the shared DebugPageHeader), and without this a stored dark
+      // theme never reaches the page — the switch reads "dark" over a light page.
+      // Deliberately inline and module-free — an imported module is deferred, which is
+      // too late. Mirrors resolveInitialTheme() in src/hooks/useTheme.ts; keep all four
+      // in sync.
+      (function () {
+        try {
+          var stored = localStorage.getItem('lc-theme');
+          var isDark =
+            stored === 'dark' ||
+            (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) document.documentElement.classList.add('dark');
+        } catch (error) {
+          // storage or matchMedia unavailable — the light default stands
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
