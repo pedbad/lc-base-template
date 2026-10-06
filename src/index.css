@@ -40,6 +40,15 @@
 @source not "./components/ui/textarea.tsx";
 @source not "./components/ui/tooltip.tsx";
 
+/* The docs are prose, never a class source — but Tailwind's auto-detection scans them
+   too, and turns any `[word:Word]` it meets into an arbitrary-property utility. A code
+   example in FUTURE_PROJECTS.md (`Click [icon:CircleCheck] …`) shipped
+   `.\[icon\:CircleCheck\]{icon:CircleCheck}`: not a real property, and the only error
+   csstree-validator found in the built CSS (header a11y audit, 2026-10-06). The
+   sandbox renders these files at build time from `src/build/`, whose classes are
+   scanned there, so nothing that styles the docs hub lives under `docs/`. */
+@source not "../docs";
+
 /* Feijoa = official Cambridge display font (headings/titles). COMMERCIAL (Klim) —
    spec §12 / decision #18: the font files are NEVER committed. public/fonts/feijoa/
    is git-ignored and populated per Cambridge deploy only. Until then these files are
