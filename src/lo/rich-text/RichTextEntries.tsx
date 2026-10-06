@@ -71,7 +71,11 @@ function EntryView({
   switch (entry.kind) {
     case 'paragraph':
       return (
-        <p className={paragraphClassName}>
+        <p
+          className={
+            paragraphClassName ? `rich-text-paragraph ${paragraphClassName}` : 'rich-text-paragraph'
+          }
+        >
           <RichText nodes={entry.children} />
         </p>
       );

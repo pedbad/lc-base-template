@@ -36,7 +36,7 @@ export function OutcomesBlock({ content }: { content: unknown }) {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start">
-      <div>
+      <div className="max-w-(--measure)">
         <p className="font-medium text-foreground">
           <RichText nodes={lead} />
         </p>

@@ -27,3 +27,15 @@ describe('ExerciseHost server rendering', () => {
     expect(html).not.toContain('Loading…');
   });
 });
+
+// §D11: the page frame grew to 72rem; widgets sized `width: 100%` stretched with it
+// (conjugation inputs ~800px wide, Check a column away from the rows). Every engine
+// goes through this host, so one track caps them all.
+describe('ExerciseHost layout', () => {
+  test('wraps the instruction box and the engine in one exercise track', () => {
+    const html = renderToStaticMarkup(<ExerciseHost type="select" config={CONFIG} />);
+
+    expect(html).toMatch(/^<div class="exercise-track">/);
+    expect(html).toMatch(/needs JavaScript[^<]*<\/p><\/div>$/i);
+  });
+});

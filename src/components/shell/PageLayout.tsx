@@ -119,7 +119,7 @@ export default function PageLayout({ title, hero, sections, themeToggle }: PageL
             no longer carries the column box — .lo-content below does. */}
         <LoHero title={title} hero={hero} />
 
-        <div className="lo-content mx-auto max-w-5xl px-4 pb-8">
+        <div className="lo-content page-frame pb-8">
           {sections.map((section) => (
             <section
               key={section.id}

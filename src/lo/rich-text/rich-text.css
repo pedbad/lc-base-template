@@ -32,6 +32,13 @@
     outline-offset: 2px;
   }
 
+  /* The reading measure (layout.css, TODO §D11). Paragraphs and lists only: a table
+     and the player below are wide things and keep the whole column. */
+  .rich-text-paragraph,
+  .rich-text-list {
+    max-inline-size: var(--measure);
+  }
+
   /* Preflight strips list markers; authored lists need them back, or a list reads as
      loose lines. Logical padding so the markers sit on the side the text starts. */
   .rich-text-list {

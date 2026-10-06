@@ -20,7 +20,7 @@ export default function TypographySection() {
       <h2 id="type-heading" className="font-heading text-2xl font-bold">
         Typography
       </h2>
-      <p className="mt-2 max-w-prose text-muted-foreground">
+      <p className="mt-2 max-w-(--measure) text-muted-foreground">
         Both families are declared in <code>palette.css</code>, not in a preset file, so switching
         the primary preset never moves the type. If the two specimens below look the same, Feijoa is
         not installed — see DESIGNER.md, &ldquo;Feijoa is never committed&rdquo;.
@@ -41,7 +41,7 @@ export default function TypographySection() {
       </ul>
 
       <h3 className="mt-10 font-heading text-lg font-semibold">The scale</h3>
-      <p className="mt-1 max-w-prose text-sm text-muted-foreground">
+      <p className="mt-1 max-w-(--measure) text-sm text-muted-foreground">
         The four steps the course actually uses. Zoom the browser to 200% — every one of them should
         grow, because none is a pixel length.
       </p>

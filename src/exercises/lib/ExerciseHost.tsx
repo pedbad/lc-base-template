@@ -50,8 +50,10 @@ export function ExerciseHost({ type, config }: ExerciseHostProps) {
   // exercise can work without it. Non-hydrating roots never see this branch.
   const isHydrated = useIsHydrated();
 
+  // One track for every engine (layout.css, TODO §D11): most engines are rows sized
+  // `width: 100%`, which stretch into empty space at the full page frame.
   return (
-    <>
+    <div className="exercise-track">
       <ExerciseInstructions text={instructions} />
       {Engine ? (
         isHydrated ? (
@@ -67,6 +69,6 @@ export function ExerciseHost({ type, config }: ExerciseHostProps) {
           No engine registered for type <code>{type}</code>.
         </p>
       )}
-    </>
+    </div>
   );
 }

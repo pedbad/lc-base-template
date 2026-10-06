@@ -181,7 +181,11 @@ export default function ReadingExercise({ config }: ExerciseComponentProps) {
         lang={TARGET_LANG}
       >
         {paragraphs.map((paragraph, index) => (
-          <p key={`${uid}-p-${index}`} className={index > 0 ? 'mt-3' : undefined}>
+          // The passage is running text: it keeps the reading measure (TODO §D11).
+          <p
+            key={`${uid}-p-${index}`}
+            className={index > 0 ? 'mt-3 max-w-(--measure)' : 'max-w-(--measure)'}
+          >
             {paragraph}
           </p>
         ))}

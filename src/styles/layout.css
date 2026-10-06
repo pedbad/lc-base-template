@@ -1,0 +1,56 @@
+/* ==========================================================================
+   layout.css — one page frame, one gutter, one reading measure (TODO §D11)
+   ==========================================================================
+   Widths used to be written per page: `max-w-5xl px-4` on the LO page, `max-w-5xl
+   px-6` on the sandbox, `max-w-3xl px-6` on the showcase. These four tokens replace
+   all of them, and `.page-frame` is the one column box that reads them.
+
+   Two widths, deliberately pulled apart:
+     - the FRAME is how wide the page is. Wide things — code, tables, the vocabulary
+       list — use all of it.
+     - the MEASURE is how long a line of running text is. Paragraphs, lists and doc
+       headings are held to it wherever they sit, because a 1088px line of prose is
+       about 130 characters, and reading needs about 60–75.
+   Exercise widgets sit between the two on their own track: most are rows sized
+   `width: 100%`, and at the full frame they stretch into rows of empty space.
+
+   Not colour, so not in tokens.css: these do not change per theme or per preset, and
+   tokens.css's token set is mirrored in every preset (token-presets.test.ts).
+   Pinned by layout.test.ts.
+   ========================================================================== */
+
+@layer base {
+  :root {
+    /* 1152px. Maintainer's decision, 2026-10-06. With the desktop gutter the
+       content column is 1088px. */
+    --frame-width: 72rem;
+
+    /* 16px on a phone, 32px on a desktop; 4vw between (32px at 800px). */
+    --frame-gutter: clamp(1rem, 4vw, 2rem);
+
+    /* `ch` is the width of "0", wider than the average Open Sans glyph: 68ch measured
+       about 83 characters per line of lesson prose, 60ch about 74. */
+    --measure: 60ch;
+
+    /* 768px: near the 720px column the showcase engines were reviewed at, and wide
+       enough for line-match's two columns. */
+    --exercise-track: 48rem;
+  }
+}
+
+@layer components {
+  /* The column box. Border-box (Preflight), so the gutter sits INSIDE the frame:
+     1152px wide, 1088px of content. The LO page's .lo-content, both debug pages'
+     <main> and the debug header's inner row all carry it, so their edges line up. */
+  .page-frame {
+    max-inline-size: var(--frame-width);
+    margin-inline: auto;
+    padding-inline: var(--frame-gutter);
+  }
+
+  /* Every exercise, on the LO page and the showcase, mounts inside one of these
+     (ExerciseHost). Left-aligned, like the text above it. */
+  .exercise-track {
+    max-inline-size: var(--exercise-track);
+  }
+}

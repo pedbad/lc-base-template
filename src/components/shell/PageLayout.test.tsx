@@ -119,10 +119,18 @@ describe('PageLayout', () => {
     expect(content).toBeLessThan(html.indexOf('<section'));
   });
 
+  // §D11: the column box is the shared `.page-frame` (layout.css), not a per-page
+  // Tailwind width, so the LO page and both debug pages cannot drift apart again.
   test('main no longer carries the content column box — .lo-content does', () => {
     const html = renderToStaticMarkup(<PageLayout title="Lesson" sections={sections} />);
-    expect(html).not.toMatch(/<main[^>]*max-w-5xl/);
-    expect(html).toMatch(/class="lo-content[^"]*max-w-5xl/);
+    expect(html).not.toMatch(/<main[^>]*page-frame/);
+    expect(html).toMatch(/class="lo-content[^"]*\bpage-frame\b/);
+  });
+
+  test('.lo-content sets no width or gutter of its own', () => {
+    const html = renderToStaticMarkup(<PageLayout title="Lesson" sections={sections} />);
+    const content = /class="(lo-content[^"]*)"/.exec(html)?.[1] ?? '';
+    expect(content).not.toMatch(/\bmax-w-|\bpx-\d/);
   });
 
   // Scroll-spy spec §3, "First render". The prerender has no window, so it marks no

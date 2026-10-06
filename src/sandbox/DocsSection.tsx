@@ -31,7 +31,7 @@ export default function DocsSection() {
       <h2 id="docs-heading" className="font-heading text-2xl font-bold">
         Docs
       </h2>
-      <p className="mt-2 max-w-prose text-muted-foreground">
+      <p className="mt-2 max-w-(--measure) text-muted-foreground">
         The project&rsquo;s written docs, rendered from the markdown files themselves. These are not
         copies — edit the <code>.md</code> in the repo root and this page follows on the next
         reload, which is why there is nothing here to keep in sync.

@@ -37,6 +37,14 @@ describe('ReadingExercise', () => {
     expect(html).toContain(`lang="${TARGET_LANG}"`);
   });
 
+  // §D11: the passage is running text, so it reads at the shared measure even inside
+  // the 48rem exercise track (about 99 characters per line without it).
+  test('holds every passage paragraph to the reading measure', () => {
+    const html = renderToStaticMarkup(<ReadingExercise config={baseConfig} />);
+    expect(html).toContain('<p class="max-w-(--measure)">Ana vive en Madrid.</p>');
+    expect(html).toContain('<p class="mt-3 max-w-(--measure)">Trabaja en una oficina.</p>');
+  });
+
   test('renders one radiogroup per question', () => {
     const html = renderToStaticMarkup(<ReadingExercise config={baseConfig} />);
     expect((html.match(/role="radiogroup"/g) ?? []).length).toBe(2);

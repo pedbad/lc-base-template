@@ -47,7 +47,7 @@ export default function Sandbox() {
         current="sandbox"
       />
 
-      <main className="mx-auto flex max-w-5xl flex-col gap-14 px-6 py-10">
+      <main className="page-frame flex flex-col gap-14 py-10">
         <PaletteSection />
         <TypographySection />
         <IconsSection />

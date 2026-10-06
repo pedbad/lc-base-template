@@ -35,6 +35,21 @@ describe('RichTextEntries', () => {
     expect(html).toMatch(/<ol[^>]*><li>c<\/li><\/ol>/);
   });
 
+  // §D11: paragraphs and lists hold the reading measure (rich-text.css); tables and
+  // the player do not, so they can break out to the column.
+  test('paragraphs and lists carry the measure classes; a caller class is kept', () => {
+    const html = renderToStaticMarkup(
+      <ModalProvider modals={{}}>
+        <RichTextEntries
+          entries={['Hola', '<ul><li>a</li></ul>'].map((entry) => parseRichTextEntry(entry))}
+          paragraphClassName="text-foreground"
+        />
+      </ModalProvider>,
+    );
+    expect(html).toContain('<p class="rich-text-paragraph text-foreground">Hola</p>');
+    expect(html).toMatch(/<ul class="rich-text-list"/);
+  });
+
   test('a list is never wrapped in a <p>, which would be invalid HTML', () => {
     expect(renderAuthored('<ul><li>a</li></ul>')).not.toMatch(/<p[^>]*><ul/);
   });

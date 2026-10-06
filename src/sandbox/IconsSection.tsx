@@ -25,7 +25,7 @@ export default function IconsSection() {
       <h2 id="icons-heading" className="font-heading text-2xl font-bold">
         Icon sprite
       </h2>
-      <p className="mt-2 max-w-prose text-muted-foreground">
+      <p className="mt-2 max-w-(--measure) text-muted-foreground">
         Every <code>&lt;symbol&gt;</code> in <code>public/icons.svg</code>, with its id. Reference
         one as <code>&lt;use href=&#123;spriteHref(id)&#125; /&gt;</code> — through{' '}
         <code>resolveAsset()</code>, never as a bare path. The UI icons elsewhere in the app come

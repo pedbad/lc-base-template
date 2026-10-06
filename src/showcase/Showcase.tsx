@@ -33,7 +33,7 @@ export default function Showcase() {
         current="showcase"
       />
 
-      <main className="mx-auto max-w-3xl px-6 py-10">
+      <main className="page-frame py-10">
         <div className="mb-10">
           <RichTextShowcase />
         </div>

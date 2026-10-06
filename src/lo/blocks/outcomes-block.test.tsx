@@ -140,3 +140,9 @@ test('a list-only block renders no <img> at all', () => {
 test('content that does not match the type fails loud, naming the type', () => {
   expect(() => renderOutcomes({ text: ['wrong shape'] })).toThrow(/outcomes/);
 });
+
+// §D11: below `lg` the text column spans the whole frame; the lead and list hold the
+// reading measure there. At `lg` each track is already narrower than it.
+test('the text column holds the reading measure', () => {
+  expect(renderOutcomes(valid)).toMatch(/^<div class="[^"]*"><div class="max-w-\(--measure\)"><p/);
+});

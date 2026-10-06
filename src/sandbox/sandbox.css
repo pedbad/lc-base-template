@@ -13,9 +13,22 @@
    ========================================================================== */
 
 @layer components {
+  /* THE MEASURE IS ON THE TEXT, NOT THE CONTAINER (TODO §D11). Capping .doc-prose
+     itself held every <pre> to a reading measure too, and nine code blocks scrolled
+     sideways inside a 976px column. Text children read at the shared measure
+     (layout.css); <pre>, tables and images break out to the full column. */
   .doc-prose {
-    max-width: 68ch;
     line-height: 1.65;
+  }
+
+  .doc-prose > p,
+  .doc-prose > ul,
+  .doc-prose > ol,
+  .doc-prose > blockquote,
+  .doc-prose > h4,
+  .doc-prose > h5,
+  .doc-prose > h6 {
+    max-inline-size: var(--measure);
   }
 
   .doc-prose > * + * {

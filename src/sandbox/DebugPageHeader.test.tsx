@@ -50,4 +50,12 @@ describe('DebugPageHeader', () => {
   test('carries the theme switch', () => {
     expect(html).toContain('role="switch"');
   });
+
+  // §D11: the header's inner row and the page's <main> are both `.page-frame`, so the
+  // title and the first line of content share one left edge at every width.
+  test('its inner row is the shared page frame, with no width or gutter of its own', () => {
+    const row = /<header[^>]*><div class="([^"]*)"/.exec(html)?.[1] ?? '';
+    expect(row).toMatch(/\bpage-frame\b/);
+    expect(row).not.toMatch(/\bmax-w-|\bpx-\d/);
+  });
 });

@@ -14,6 +14,7 @@
    Component-level tokens layer on top in later steps. */
 @import './styles/palette.css';
 @import './styles/tokens.css';
+@import './styles/layout.css';
 
 /* Vendored shadcn wrappers that nothing imports, kept out of Tailwind's SCAN.
    Rollup already excludes them from the JS bundle by following the import graph, but

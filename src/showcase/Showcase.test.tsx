@@ -54,3 +54,13 @@ describe('exercise-showcase.html', () => {
     expect(head).toContain("classList.add('dark')");
   });
 });
+
+// §D11: one frame for every page. The showcase was the narrowest (max-w-3xl) while
+// holding the widest content; it now shares `.page-frame` with the sandbox and LO page.
+describe('Showcase layout', () => {
+  test('<main> is the shared page frame, with no width or gutter of its own', () => {
+    const main = /<main class="([^"]*)"/.exec(html)?.[1] ?? '';
+    expect(main).toMatch(/\bpage-frame\b/);
+    expect(main).not.toMatch(/\bmax-w-|\bpx-\d/);
+  });
+});

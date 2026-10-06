@@ -71,7 +71,7 @@ export function DebugPageHeader({
   const other = OTHER_PAGE[current];
   return (
     <header className="border-b border-border bg-card">
-      <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-3 px-6 py-4">
+      <div className="page-frame flex flex-wrap items-center gap-x-6 gap-y-3 py-4">
         <div className="mr-auto">
           <h1 className="font-heading text-2xl font-bold">{title}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{description}</p>

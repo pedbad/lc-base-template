@@ -58,7 +58,7 @@ export default function PaletteSection() {
       <h2 id="palette-heading" className="font-heading text-2xl font-bold">
         Colour
       </h2>
-      <p className="mt-2 max-w-prose text-muted-foreground">
+      <p className="mt-2 max-w-(--measure) text-muted-foreground">
         Three layers, and only the first holds real values. Edit a primitive and every semantic
         token, component and page below it follows — that is the one-file re-skin DESIGNER.md
         describes. Toggle the theme above to see the semantic layer flip.
@@ -70,7 +70,7 @@ export default function PaletteSection() {
       {PRIMITIVE_SWATCHES.map((group) => (
         <article key={group.title} className="mt-5">
           <h4 className="text-sm font-semibold">{group.title}</h4>
-          <p className="text-sm text-muted-foreground">{group.note}</p>
+          <p className="max-w-(--measure) text-sm text-muted-foreground">{group.note}</p>
           <ul className="mt-3 grid grid-cols-[repeat(auto-fill,minmax(13rem,1fr))] gap-3">
             {group.tokens.map((token) => (
               <PrimitiveSwatch key={token} token={token} />
@@ -82,14 +82,14 @@ export default function PaletteSection() {
       <h3 className="mt-10 font-heading text-lg font-semibold">
         Layer 2 — semantic pairs (<code className="text-base">src/styles/tokens.css</code>)
       </h3>
-      <p className="mt-1 max-w-prose text-sm text-muted-foreground">
+      <p className="mt-1 max-w-(--measure) text-sm text-muted-foreground">
         What components actually name. Each pair is a surface plus the text colour it guarantees
         contrast for — never mix a surface with someone else&rsquo;s foreground.
       </p>
       {SEMANTIC_SWATCHES.map((group) => (
         <article key={group.title} className="mt-5">
           <h4 className="text-sm font-semibold">{group.title}</h4>
-          <p className="text-sm text-muted-foreground">{group.note}</p>
+          <p className="max-w-(--measure) text-sm text-muted-foreground">{group.note}</p>
           <ul className="mt-3 grid grid-cols-[repeat(auto-fill,minmax(17rem,1fr))] gap-4">
             {group.pairs.map((pair) => (
               <SemanticSwatch key={pair.token} pair={pair} />
@@ -101,7 +101,7 @@ export default function PaletteSection() {
       {SWATCH_STRIPS.map((group) => (
         <article key={group.title} className="mt-8">
           <h4 className="text-sm font-semibold">{group.title}</h4>
-          <p className="text-sm text-muted-foreground">{group.note}</p>
+          <p className="max-w-(--measure) text-sm text-muted-foreground">{group.note}</p>
           <ul className="mt-3 flex flex-col gap-2">
             {group.tokens.map((token) => (
               <li key={token} className="flex items-center gap-3">
