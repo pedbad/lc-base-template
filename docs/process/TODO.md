@@ -317,7 +317,7 @@ file as its home), `STRUCTURE.md`'s `src/sandbox/` row, README's build section,
 CONTRIBUTING's command table, `AGENTS.md`'s two new house rules, `docs/TOOLING.md`'s two
 new decision entries.
 
-## D. Design & accessibility polish — 1 of 9 open
+## D. Design & accessibility polish — 2 of 10 open
 
 Design and a11y come before branch protection **by decision 2026-09-09**: a footer that
 ships internal build chatter and two dead links is a defect on every page of a live
@@ -1058,6 +1058,14 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   **Spec correction:** §10 said to add `--hero-band` to `DESIGNER.md`. That file lists no
   component tokens (not even `--footer`), so the token is documented where it is defined,
   in `tokens.css`, and the spec now says so.
+
+- **D10 — a11y follow-ups surfaced 2026-10-06. OPEN — next job.** Four findings from the
+  day's axe runs, not caused by that day's work and left alone to keep each change one
+  concern: (1) `word-spot` tokens fail axe `target-size` — decide whether SC 2.5.8's
+  inline exemption applies before fixing; (2) the debug sandbox has 5 `<h1>`; (3) sandbox
+  doc `<pre>` blocks are unreachable scroll regions; (4) sandbox swatch cards fail
+  contrast in dark. Handover with the prompt to start from:
+  `docs/process/2026-10-06-a11y-followups-handover.md`.
 
 ---
 
