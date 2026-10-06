@@ -195,11 +195,12 @@ If a content PR finds itself editing a file in the second list, that's the signa
 and ask** — usually the content model needs extending, not the component patched.
 
 **Every PR** goes through [`.github/pull_request_template.md`](.github/pull_request_template.md):
-green `bun run test · lint · build`, plus the keyboard / landmark / contrast / screenshot
+green `bun run format:check · lint · lint:css · test · build`, plus the keyboard / landmark / contrast / screenshot
 checks CI can't fully judge.
 
 **`main` is NOT protected yet.** While the template is a single-maintainer build, changes
-go straight to `main` and the verify gate above is run by hand before each commit. Branch
+go straight to `main` and the verify gate (`AGENTS.md`, "Verify before you claim done")
+is run by hand before each commit. Branch
 protection — PR required, CI required to merge — goes on **before the repo is shared with
 other developers**; it is a pre-share checklist item, not an oversight. Setup steps and the
 single-maintainer lockout to avoid: [`docs/BRANCH_PROTECTION.md`](docs/BRANCH_PROTECTION.md).
@@ -223,9 +224,10 @@ These are locked spec decisions, documented here when each lands:
   asset-path, **d** asset-existence, **e** registry completeness, **f** token integrity
   (no raw hex/px bypassing the token chain), **g** CSS layer discipline (every rule in
   `@layer`, no `!important`) and **h** semantic DOM (the spec §17 contract over rendered
-  output) — those eight in `src/guards/`. They are Vitest tests, so `bun run test`
-  already enforces them, and `bun run guards` runs the eight sweeps on their own in under
-  a second. Guard h has a second half that is not in `src/guards/` at all:
+  output). **b–h** are the seven sweeps in `src/guards/`; **a** is not a sweep — the Zod
+  schemas run on every load, and their contract tests sit beside them in `src/config/`.
+  All are Vitest tests, so `bun run test` already enforces them, and `bun run guards`
+  runs the seven sweeps on their own in under a second. Guard h has a second half that is not in `src/guards/` at all:
   `eslint-plugin-jsx-a11y` in `eslint.config.js`, which lints the JSX as you write it —
   so an a11y mistake can fail either `bun run lint` or `bun run test`, depending on
   whether it is visible in one file or only in the assembled page. See

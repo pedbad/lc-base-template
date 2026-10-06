@@ -55,7 +55,7 @@ bun run format && bun run lint && bun run lint:css && bun run test && bun run bu
 - **Course order is the `lo-NN-` ordinal and nothing else**, sorted numerically.
   Do not add an order list; reorder by renaming folders.
 - **Render-mirror naming:** `<ordinal>-<type>` inside `blocks/` and `exercises/`,
-  section-scoped. Media under `public/` mirrors the same names. Guard b enforces
+  numbered LO-wide per kind, not per section (`STRUCTURE.md`). Media under `public/` mirrors the same names. Guard b enforces
   the folder↔config match.
 
 ## Code rules
@@ -81,8 +81,9 @@ bun run format && bun run lint && bun run lint:css && bun run test && bun run bu
 
 ## The eight guards
 
-They are Vitest tests in `src/guards/` (plus `eslint-plugin-jsx-a11y` for guard
-h's per-file half), so `bun run test` already enforces them. **Do not weaken a
+Guards b–h are Vitest sweeps in `src/guards/` (plus `eslint-plugin-jsx-a11y` for guard
+h's per-file half); guard a is the Zod schemas, run on every load and tested in
+`src/config/`. All are Vitest tests, so `bun run test` already enforces them. **Do not weaken a
 guard to make a change pass** — if a guard fires, the code is wrong, or the rule
 genuinely needs a written-down narrowing with its reasoning in the guard header.
 

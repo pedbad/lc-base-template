@@ -3,7 +3,7 @@
    ==========================================================================
    This is the preset currently copied into the imported src/styles/tokens.css.
    Reference copy kept here so all three presets switch by the same one-step
-   "copy over tokens.css" flow (see src/styles/README.md).
+   "copy over tokens.css" flow (see DESIGNER.md, Job 2).
    palette.css is SHARED — never edit brand values here.
 
    Primary = Cambridge Dark Blue (#133844, used as an interactive accent) + white.

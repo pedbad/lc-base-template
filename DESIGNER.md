@@ -112,10 +112,9 @@ Nothing on it is hand-written: every square, specimen and icon is generated from
 | **Colour**     | Every colour token as a swatch, in its three layers                               | you need a token's name, or want to check a re-skin  |
 | **Typography** | Both font families as specimens, plus the four sizes the course uses              | you changed fonts, or want to know if Feijoa is live |
 | **Icons**      | Every icon in the sprite, with its id                                             | you need an icon's name                              |
-| **Docs**       | This guide, plus CONTRIBUTING, STRUCTURE and AGENTS, rendered from their markdown | you would rather read the docs in the browser        |
 | **Docs**       | This guide, plus CONTRIBUTING, STRUCTURE and AGENTS, rendered from their markdown | you want the docs without leaving the browser        |
 
-Three things worth knowing before you trust it:
+A few things worth knowing before you trust it:
 
 - **Layer 1 is what you edit; Layer 2 is what you check.** The primitives come
   first because they are the one-file re-skin. The semantic pairs below them are
@@ -140,10 +139,6 @@ Three things worth knowing before you trust it:
   markdown as you save it, so it cannot fall behind. A link there to a repo file
   the hub does not render shows as plain grey text rather than a dead click — open
   that path in the repo instead.
-- **The Docs section is this file, not a copy of it.** It is rendered from the
-  markdown as you save it, so it cannot fall behind. A link there to a repo file
-  the hub does not render shows as plain grey text rather than a dead click — open
-  that path in the repo.
 
 The sandbox is a **debug page, not part of the course**. It is absent from anything
 deployed unless a build explicitly asks for it (`DEBUG=1 bun run build`), so
@@ -157,8 +152,9 @@ sandbox's own nav.
 
 Open **`src/styles/palette.css`** and change the hex values. That is the whole job.
 
-The palette is two ramps: `--slate-*` (the neutral greys the interface is built
-from) and `--cam-*` (the Cambridge brand accents). Replace those values with
+The palette is two ramps — `--slate-*` (the neutral greys the interface is built
+from) and `--cam-*` (the Cambridge brand accents) — plus `--paper` (the page ground)
+and `--white`. Replace those values with
 another institution's and the entire course follows — every component, light
 mode and dark mode.
 
@@ -170,16 +166,18 @@ bun run dev     # leave running; the browser updates as you save
 
 - Raw hex belongs here and **nowhere else**. Not in `tokens.css`, not in a
   component's CSS.
-- Both themes are defined: `:root` is light, `.dark` is dark. Dark inverts the
-  Slate ramp, with `color-mix` lifting the dark surfaces (card, popover, muted)
-  off the Slate-4 base. Change one, check the other.
+- The palette holds primitives only, the same in both themes. Light and dark are
+  assigned in `tokens.css` (and the preset files): `:root` is light, `.dark` is dark,
+  which inverts the Slate ramp, with `color-mix` lifting the dark surfaces (card,
+  popover, muted) off the Slate-4 base. Change a primitive, check both themes.
 
 ---
 
 ## Job 2 — switch the primary preset (change the CTA / button colour)
 
-Three presets ship. They differ **only** in `--primary` and `--ring` — the
-palette underneath is identical, so this is a small, safe, reversible change.
+Three presets ship. They differ only in `--primary`, `--ring` and their twins
+(`--primary-foreground`, `--sidebar-primary*`, `--sidebar-ring`) — the palette
+underneath is identical, so this is a small, safe, reversible change.
 
 | Preset                  | `--primary` (light)    | CTA on white          | Feel                       |
 | ----------------------- | ---------------------- | --------------------- | -------------------------- |
@@ -231,7 +229,10 @@ variant files — switching the `--primary` preset must never change the fonts:
 ```
 
 `index.css` maps Tailwind's `--font-sans → --font-body` and
-`--font-heading → --font-display`, which re-types every component at once.
+`--font-heading → --font-display`, which re-types every component at once. Those
+mappings live in `@theme inline`, so they are **not** runtime variables: plain-CSS
+components (the header, the footer) read `var(--font-display)` directly, and the
+same goes for radius — `calc(var(--radius) * 0.6)`, never `var(--radius-sm)`.
 
 **To re-font a clone:** edit those two tokens, and swap the npm font package or
 the `@font-face` files. Never set `font-family` on an individual component.
@@ -260,7 +261,9 @@ rather than freezing). Change these knowingly; they are accessibility floors.
 they are the reason the one-file promise holds. If you hit one, it is telling you
 a specific thing, and each has a one-line fix.
 
-Both run when you commit, and again in CI.
+Both are Vitest tests: they run in `bun run test` (and on their own in
+`bun run guards`), and in CI. The pre-commit hook runs Prettier, ESLint and
+Stylelint only, so a commit can succeed and CI still fail on one of these.
 
 ### "raw-hex" — a colour outside `palette.css`
 

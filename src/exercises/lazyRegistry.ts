@@ -21,7 +21,7 @@ import type { ExerciseType } from '@/config/exercise-types';
  * Props every engine receives. `config` is the validated exercise config
  * (`type` + `content` + optional `options`/`labels`). It is `unknown` here and
  * narrowed by each engine against its own per-type content schema — the registry
- * stays type-agnostic so all 12 engines can share one map.
+ * stays type-agnostic so every engine can share one map.
  */
 export interface ExerciseComponentProps {
   config: unknown;

@@ -545,8 +545,9 @@ BEFORE SHARING WITH OTHER DEVELOPERS (pre-share gate — none of these block sol
 
 ## Paste-in prompt — target-language `lang` retrofit (new session)
 
-Found while brainstorming Phase C (2026-07-01), not yet fixed. Self-contained —
-paste as-is into a fresh session.
+Found while brainstorming Phase C (2026-07-01). **DONE 2026-07-01** — `src/lib/lang.ts`
+and `TARGET_LANG`, now used across every engine; the prompt below is kept as the record
+of what was asked, not as open work.
 
 ```
 Fix a WCAG 3.1.2 gap across the 12 exercise engines in lc-base-template: none of

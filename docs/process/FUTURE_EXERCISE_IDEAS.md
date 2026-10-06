@@ -1,7 +1,7 @@
 # Future exercise ideas — parking lot
 
 Candidate exercise types **not** in the current build queue
-(`docs/specs/2026-07-03-new-exercise-engines-design.md` covers the three being
+(`docs/specs/2026-07-03-new-exercise-engines-design.md` covered the three since
 built: flashcards, conjugation table, reading comprehension). Tiered by the
 infrastructure each needs. Promote an item into the design doc + buildlist when
 its tier is unblocked and its value justifies the work.

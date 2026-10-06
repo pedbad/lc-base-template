@@ -90,21 +90,21 @@ work. **Guard c** checks the form; **guard d** checks the file is actually there
 
 ## `src/` — the application
 
-| Folder            | Owns                                                                                                                  |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `src/exercises/`  | **The engines.** One folder per exercise type, plus `lib/` (shared shell) and the registry.                           |
-| `src/lo/`         | **The loader.** Reads an LO folder, validates it, assembles it into a page.                                           |
-| `src/components/` | **The page shell** — header, footer, nav, landing page, audio players, `ui/` primitives.                              |
-| `src/config/`     | **The content contract** — Zod schemas, course config, UI strings.                                                    |
-| `src/styles/`     | **The theme** — the token chain. See [`DESIGNER.md`](DESIGNER.md).                                                    |
-| `src/guards/`     | **The eight repo-wide invariant sweeps.** Vitest tests; `bun run guards` runs them.                                   |
-| `src/build/`      | Build-time helpers importable by Vite — prerender HTML, dev-server LO pages, docs→HTML.                               |
-| `src/lib/`        | Small shared utilities — asset paths, heading ids, language tagging, reduced motion, scroll-to-top, scroll-spy rules. |
-| `src/hooks/`      | React hooks — theme, hydration state, viewport, scroll-spy.                                                           |
-| `src/audio/`      | Audio playback manager and its hook.                                                                                  |
-| `src/showcase/`   | The opt-in debug gallery of every engine with sample content.                                                         |
-| `src/sandbox/`    | The opt-in debug sandbox — tokens, type, the icon sprite and the docs hub.                                            |
-| `src/docs/`       | Documentation checks — the `STRUCTURE.md` tree generator, its freshness test, and the markdown link check.            |
+| Folder            | Owns                                                                                                                                   |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/exercises/`  | **The engines.** One folder per exercise type, plus `lib/` (shared shell) and the registry.                                            |
+| `src/lo/`         | **The loader.** Reads an LO folder, validates it, assembles it into a page.                                                            |
+| `src/components/` | **The page shell** — header, LO hero, footer, landing page + lesson rail, audio players, `ui/` primitives.                             |
+| `src/config/`     | **The content contract** — Zod schemas, course config, UI strings.                                                                     |
+| `src/styles/`     | **The theme** — the token chain. See [`DESIGNER.md`](DESIGNER.md).                                                                     |
+| `src/guards/`     | **The seven repo-wide invariant sweeps** (guards b–h; guard a is the Zod schemas in `src/config/`). `bun run guards`.                  |
+| `src/build/`      | Build-time helpers importable by Vite — prerender HTML, dev-server LO pages, docs→HTML, debug entries, `@source` check.                |
+| `src/lib/`        | Small shared utilities — asset paths, heading ids, language tagging, reduced motion, scroll-to-top, scroll-spy rules, the icon sprite. |
+| `src/hooks/`      | React hooks — theme, hydration state, viewport, scroll-spy, reveal-while-in-view.                                                      |
+| `src/audio/`      | Audio playback manager and its hook.                                                                                                   |
+| `src/showcase/`   | The opt-in debug gallery of every engine with sample content.                                                                          |
+| `src/sandbox/`    | The opt-in debug sandbox — tokens, type, the icon sprite and the docs hub.                                                             |
+| `src/docs/`       | Documentation checks — the `STRUCTURE.md` tree generator, its freshness test, and the markdown link check.                             |
 
 ### Inside `src/exercises/`
 
@@ -117,7 +117,7 @@ src/exercises/select/
   select-grading.ts       PURE grading — no React, no DOM
   select-grading.test.ts  colocated tests for the grader
   SelectExercise.tsx      thin view: renders state, calls the grader
-  select.css              engine styles, all inside @layer
+  select.css              engine styles inside @layer — only if it needs its own
 ```
 
 Pure grading is split from the view on purpose: the interesting logic is testable

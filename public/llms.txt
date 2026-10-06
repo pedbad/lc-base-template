@@ -32,7 +32,7 @@ grader plus a thin React view, and is registered in
 `src/exercises/lazyRegistry.ts`.
 
 - Choice: select, inline-choice, radio-quiz
-- Typing: inline-gap, typed-transform, dictation, text entry within engines
+- Typing: inline-gap, typed-transform, dictation
 - Matching: line-match, memory-match, word-spot
 - Ordering: word-order, phrase-reorder, drag-fill-gaps
 - Study and reading: flashcards, reading, conjugation

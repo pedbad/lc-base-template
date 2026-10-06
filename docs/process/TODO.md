@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-06 · **HEAD:** see `git log` · **Suite:** 103 files · 1062 tests green
+**Last updated:** 2026-10-06 · **HEAD:** see `git log` · **Suite:** 103 files · 1070 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -1075,11 +1075,11 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
 
 Not forgotten. Decided.
 
-| Item                        | Trigger to pick it up                                                                                                                                                                                                                                                    |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Per-LO chunking (§5.4)      | **~a dozen LOs.** Eager `import.meta.glob` means every page bundles every LO's JSON. Harmless at one. Measure each new LO against the < 100 kB gzipped JS budget (`docs/TOOLING.md`, "Bundle budget") — headroom was 2.87 kB at one LO, so this may wake before a dozen. |
-| Rich text in modals/engines | Someone actually needs it. Fully spec'd in `docs/specs/lo-rich-text-modals.md` §12, zero built.                                                                                                                                                                          |
-| Conjugation v2 choice mode  | Someone wants tap-to-answer verb tables. Schema ready, view path unbuilt.                                                                                                                                                                                                |
+| Item                        | Trigger to pick it up                                                                                                                                                                                                                                                                                       |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Per-LO chunking (§5.4)      | **~a dozen LOs.** Eager `import.meta.glob` means every page bundles every LO's JSON. Harmless at one. Measure each new LO against the < 100 kB gzipped JS budget (`docs/TOOLING.md`, "Bundle budget") — headroom is under 3 kB at one LO (current figure in that section), so this may wake before a dozen. |
+| Rich text in modals/engines | Someone actually needs it. Fully spec'd in `docs/specs/lo-rich-text-modals.md` §12, zero built.                                                                                                                                                                                                             |
+| Conjugation v2 choice mode  | Someone wants tap-to-answer verb tables. Schema ready, view path unbuilt.                                                                                                                                                                                                                                   |
 
 ### Two small known edges (§5.7)
 

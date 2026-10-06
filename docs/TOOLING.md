@@ -27,7 +27,7 @@ and `eslint.config.js`. The `README` links here rather than restating it.
 | **Stylelint**               | CSS linting                                    | 6    |
 | **husky** + **lint-staged** | Pre-commit guard (format/lint staged)          | 7    |
 | **Tailwind CSS** (v4)       | Utility-first styling · theme engine           | 8    |
-| **shadcn/ui** + **Lucide**  | Components (19) · icons                        | 9    |
+| **shadcn/ui** + **Lucide**  | Components (18) · icons                        | 9    |
 | **Cambridge Slate tokens**  | Theme: primitive→semantic→component CSS vars   | 10   |
 | **Cambridge typography**    | Open Sans (body) + Feijoa (display) + baseline | 10b  |
 | **Zod**                     | Runtime config validation (fail-fast at load)  | 11   |
@@ -62,8 +62,8 @@ to strongest:
    lint-failing commits locally. Bypassable with `--no-verify`.
 3. **CI** — GitHub Actions (`.github/workflows/ci.yml`) re-runs `lint` + `lint:css` +
    `format:check` + `test` + `build` on every PR. The unbypassable wall: a
-   `--no-verify` commit still fails here before merge. (Guards b–h join this list as
-   they land; guard a already runs inside `test`.)
+   `--no-verify` commit still fails here before merge. (All eight guards run inside
+   `test`: b–h as the `src/guards/` sweeps, a through its colocated schema tests.)
 
 Layer 1 is the carrot; layers 2–3 are the stick.
 
@@ -99,7 +99,7 @@ Layer 1 is the carrot; layers 2–3 are the stick.
      travels with the repo matters.
 - **Config:** `vite.config.ts` → `test` block (node env — the suite renders via
   `renderToStaticMarkup`, and the two storage tests stub `window`/`localStorage`
-  themselves, so no jsdom). 85 files · 821 tests.
+  themselves, so no jsdom). Current suite size: the header of `docs/process/TODO.md`.
 - **`bun run guards` — the fast subset** (`vitest run src/guards`). The guards are
   ordinary Vitest tests, so `bun run test` already enforces every one of them; this is
   the pre-commit check you run when you only want to know whether you broke a repo-wide
@@ -707,7 +707,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 - **What:** each engine's grading logic — the pure "is this answer correct, and what
   fills it on Show-answers" functions — was lifted out of the `*.tsx` component into a
   colocated `src/exercises/<engine>/<engine>-grading.ts` (e.g. `select-grading.ts`
-  exports `gradeSelect` + `fillSelectAnswers`). 11 engines now carry a grading file;
+  exports `gradeSelect` + `fillSelectAnswers`). 13 of the 15 engines carry a grading file;
   the component imports the fns instead of inlining them.
 - **Why:** grading is the one genuinely engine-specific pure function in each engine,
   and it was tangled into JSX/handlers where it could not be unit-tested in isolation.
@@ -859,7 +859,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 `debug-sandbox.html` — and ONE env flag emits both: `DEBUG=1 bun run build`. The rule
 lives in `src/build/build-entries.ts` (`isDebugRequested`, `debugEntries`) and fails
 CLOSED: absent, empty, `0`, `false` or anything unrecognised all mean "do not build
-them". 14 tests cover the edges.
+them". 10 tests cover the edges.
 
 - **Why one flag and not two.** The dev server serves both pages regardless of
   `rollupOptions.input`, so nobody needs a deploy carrying one debug page and not the
