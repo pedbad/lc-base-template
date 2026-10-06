@@ -56,7 +56,7 @@ function decode(text: string): string {
 }
 
 /** One parsed tag: its name, attributes, and which of the three forms it took. */
-interface Tag {
+export interface Tag {
   readonly name: string;
   readonly attributes: Readonly<Record<string, string>>;
   readonly isClosing: boolean;
@@ -83,7 +83,7 @@ function parseAttributes(source: string): Readonly<Record<string, string>> {
  * `>` while respecting quoted attribute values, so a `>` inside a value cannot end
  * the tag early.
  */
-function readTag(html: string, start: number, fail: (message: string) => never): Tag {
+export function readTag(html: string, start: number, fail: (message: string) => never): Tag {
   let index = start + 1;
   const isClosing = html[index] === '/';
   if (isClosing) index += 1;
@@ -120,6 +120,35 @@ function readTag(html: string, start: number, fail: (message: string) => never):
   };
 }
 
+/**
+ * Tags that only exist at BLOCK level (spec §14). Inside a paragraph each is an error
+ * telling the author to give it its own array entry — never silently flattened.
+ */
+const BLOCK_ONLY_TAGS = new Set([
+  'ul',
+  'ol',
+  'li',
+  'table',
+  'caption',
+  'thead',
+  'tbody',
+  'tr',
+  'th',
+  'td',
+]);
+
+/** The guidance every misplaced block element gets. */
+const OWN_ENTRY =
+  'is a block — a list, table or audio player must be its own entry in the array, ' +
+  'not part of a paragraph';
+
+/** Build the `fail` a parser threads through: throws, prefixed with the source path. */
+export function failWith(source: string | undefined): (message: string) => never {
+  return (message) => {
+    throw new Error(source === undefined ? message : `${source}: ${message}`);
+  };
+}
+
 /** True when `value`'s whitespace-separated tokens include `token`. */
 function hasToken(value: string | undefined, token: string): boolean {
   return (value ?? '').split(/\s+/).includes(token);
@@ -151,6 +180,7 @@ function makeAudio(
   children: readonly RichTextNode[],
   fail: (message: string) => never,
 ): RichTextNode {
+  if (attributes['data-audio-player'] !== undefined) fail(`<span data-audio-player> ${OWN_ENTRY}`);
   const soundFile = attributes['data-audio'];
   if (soundFile === undefined) {
     fail('<span> is only supported as an audio icon: it needs a non-empty data-audio path');
@@ -188,9 +218,7 @@ export function parseRichText(html: string, source?: string): readonly RichTextN
   // Annotated on the CONST, not just the arrow's return: TypeScript only treats calls
   // to a never-returning function as unreachable (so `frame` narrows after a
   // `fail(...)` guard) when the identifier itself carries the type.
-  const fail: (message: string) => never = (message) => {
-    throw new Error(source === undefined ? message : `${source}: ${message}`);
-  };
+  const fail: (message: string) => never = failWith(source);
 
   const root: RichTextNode[] = [];
   const stack: Frame[] = [];
@@ -259,6 +287,7 @@ export function parseRichText(html: string, source?: string): readonly RichTextN
         });
         break;
       default:
+        if (BLOCK_ONLY_TAGS.has(tag.name)) fail(`<${tag.name}> ${OWN_ENTRY}`);
         fail(
           `<${tag.name}> is not in the rich-text allowlist ` +
             '(strong, em, br, a.modal-link, span[data-audio])',
