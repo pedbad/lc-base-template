@@ -317,7 +317,7 @@ file as its home), `STRUCTURE.md`'s `src/sandbox/` row, README's build section,
 CONTRIBUTING's command table, `AGENTS.md`'s two new house rules, `docs/TOOLING.md`'s two
 new decision entries.
 
-## D. Design & accessibility polish — 2 of 9 open
+## D. Design & accessibility polish — 1 of 9 open
 
 Design and a11y come before branch protection **by decision 2026-09-09**: a footer that
 ships internal build chatter and two dead links is a defect on every page of a live
@@ -383,13 +383,15 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   fires and reveals when no callback arrives. **Get a human to look at any animation
   this pane cannot run.**
 
-- **D5 — the budget breaches. JS half CLOSED BY DECISION 2026-10-05; CSS half open
-  (about 0.97 kB over at 2026-10-06; current figures in `docs/TOOLING.md`).** The maintainer raised the JS budget from < 80 kB to **< 100 kB
-  gzipped** rather than re-architect for it, so `main-*.js` at 97.13 kB (`6b5b821`) is
-  now **within budget, with 2.87 kB of headroom**. The budget lives in ONE place —
+- **D5 — the budget breaches. CLOSED BY DECISION: JS 2026-10-05, CSS 2026-10-06.**
+  The maintainer raised the CSS budget from < 15 kB to **< 17 kB** gzipped (2026-10-06),
+  so `main-*.css` at 15.97 kB is within budget with about 1 kB of headroom; current
+  figures in `docs/TOOLING.md`. The maintainer raised the JS budget from < 80 kB to **< 100 kB
+  gzipped** rather than re-architect for it, so `main-*.js` at 97.13 kB (`6b5b821`) was
+  **within budget, with 2.87 kB of headroom** at the time. The budget lives in ONE place —
   `docs/TOOLING.md`, "Bundle budget" — and the measurements below are kept as the
-  dated record they are: where they say "< 80 kB", that was the budget at the time.
-  CSS stays < 15 kB.
+  dated record they are: where they say "< 80 kB" or "< 15 kB", that was the budget at
+  the time.
 
   **Re-measured 2026-09-10 at `8e3c49f`.** `main-*.js`
   is **95.99 kB gzipped against a < 80 kB** microsite target, and CSS is **20.10 kB
