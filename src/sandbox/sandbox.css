@@ -1,7 +1,7 @@
 /* ==========================================================================
    sandbox.css — prose styling for the docs hub (buildlist 18, spec §14)
    ==========================================================================
-   The hub renders markdown the repo already owns, so its HTML is <h2>, <table>,
+   The hub renders markdown the repo already owns, so its HTML is <h5>, <table>,
    <pre> and <li> with no classes to hang utilities on — the one place in this
    repo where element selectors are the right tool rather than a shortcut.
 
@@ -22,35 +22,32 @@
     margin-top: 0.9rem;
   }
 
-  .doc-prose h1,
-  .doc-prose h2,
-  .doc-prose h3,
-  .doc-prose h4 {
+  /* Headings render three levels below their markdown (`#` → h4) because each doc
+     sits under DocsSection's article <h3> — see HEADING_OFFSET in docs-markdown.ts.
+     Sizes follow the markdown level, so h4 is the doc title, h6 its deepest detail. */
+  .doc-prose h4,
+  .doc-prose h5,
+  .doc-prose h6 {
     font-family: var(--font-heading);
     font-weight: 700;
     line-height: 1.25;
     scroll-margin-top: 1.5rem;
   }
 
-  .doc-prose h1 {
+  .doc-prose h4 {
     font-size: 1.6rem;
   }
 
-  .doc-prose h2 {
+  .doc-prose h5 {
     font-size: 1.3rem;
   }
 
-  .doc-prose h3 {
+  .doc-prose h6 {
     font-size: 1.1rem;
   }
 
-  .doc-prose h4 {
-    font-size: 1rem;
-  }
-
-  .doc-prose > h2,
-  .doc-prose > h3,
-  .doc-prose > h4 {
+  .doc-prose > h5,
+  .doc-prose > h6 {
     margin-top: 2rem;
   }
 

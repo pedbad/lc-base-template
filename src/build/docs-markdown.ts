@@ -170,15 +170,32 @@ const md = new MarkdownIt({
   typographer: false,
 });
 
+/**
+ * How far below its markdown level a heading renders. DocsSection puts each doc under
+ * `<h2>Docs</h2>` and an article `<h3>{file}</h3>`, so a doc's `#` title is an `h4` —
+ * rendered as written it was a second page `<h1>`, four of them (TODO §D10). The
+ * markdown keeps its `#`: GitHub renders it standalone, where `h1` is right.
+ */
+const HEADING_OFFSET = 3;
+
+/** `h1` → `h4` … clamped at `h6`, where HTML's headings stop. */
+function nestedHeadingTag(markdownTag: string | undefined): string {
+  const level = Number(markdownTag?.slice(1) ?? 2);
+  return `h${Math.min(level + HEADING_OFFSET, 6)}`;
+}
+
 md.renderer.rules.heading_open = (tokens, idx, _options, env) => {
   const state = env as unknown as RenderState;
   const token = tokens[idx];
   const text = tokens[idx + 1]?.content ?? '';
   const id = docAnchorId(state.docId, uniqueAnchor(state, text));
+  // The MARKDOWN level, not the rendered one: the contents nav picks `##`/`###` by it.
   const level = Number(token?.tag?.slice(1) ?? 0);
   state.headings.push({ id, text: text.replace(/`/g, ''), level });
-  return `<${token?.tag ?? 'h2'} id="${md.utils.escapeHtml(id)}">`;
+  return `<${nestedHeadingTag(token?.tag)} id="${md.utils.escapeHtml(id)}">`;
 };
+
+md.renderer.rules.heading_close = (tokens, idx) => `</${nestedHeadingTag(tokens[idx]?.tag)}>\n`;
 
 md.renderer.rules.link_open = (tokens, idx, _options, env) => {
   const state = env as unknown as RenderState;

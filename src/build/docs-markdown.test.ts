@@ -9,10 +9,12 @@
  * that worked on GitHub becoming a dead click, and an anchor that resolves to nothing.
  */
 import { describe, expect, it } from 'vitest';
+import { findHeadingViolations } from '../guards/semantic-dom';
 import {
   SANDBOX_DOCS,
   docAnchorId,
   readSandboxDocs,
+  renderDoc,
   renderDocMarkdown,
   slugify,
 } from './docs-markdown';
@@ -78,6 +80,25 @@ describe('renderDocMarkdown — headings', () => {
     const html = render('## Notes\n\n## Notes');
     expect(html).toContain('id="designer--notes"');
     expect(html).toContain('id="designer--notes-1"');
+  });
+
+  // The hub nests each doc under DocsSection's `<h3>{file}</h3>`, so a doc's `#` title
+  // is an h4, not a second page `<h1>` (axe/§17, TODO §D10). The source stays `#`.
+  it('renders each markdown level three below its own, under the article h3', () => {
+    const html = render('# Title\n\n## Part\n\n### Detail');
+    expect(html).toMatch(/<h4 id="designer--title">Title<\/h4>/);
+    expect(html).toMatch(/<h5 id="designer--part">Part<\/h5>/);
+    expect(html).toMatch(/<h6 id="designer--detail">Detail<\/h6>/);
+    expect(html).not.toMatch(/<h[1-3][\s>]/);
+  });
+
+  it('clamps anything deeper at h6, since HTML stops there', () => {
+    expect(render('#### Deep')).toMatch(/<h6 id="designer--deep">Deep<\/h6>/);
+  });
+
+  it('keeps the MARKDOWN level in the headings list, which the contents nav reads', () => {
+    const { headings } = renderDoc('# Title\n\n## Part', 'designer');
+    expect(headings.map((heading) => heading.level)).toEqual([1, 2]);
   });
 });
 
@@ -158,6 +179,16 @@ describe('readSandboxDocs', () => {
     const designer = pages.find((page) => page.id === 'designer');
     expect(designer?.headings.length).toBeGreaterThan(5);
     expect(designer?.headings.every((heading) => heading.id.startsWith('designer--'))).toBe(true);
+  });
+
+  // Guard h's outline rule over each doc as DocsSection places it: under `<h3>{file}`.
+  // The sandbox page itself is not in guard h's sweep, which is how five `<h1>` shipped.
+  it('nests every doc under its article h3 with no skipped level', () => {
+    for (const page of pages) {
+      const article = `<h3>${page.file}</h3>${page.html}`;
+      expect(findHeadingViolations(article), page.file).toEqual([]);
+      expect(page.html, page.file).not.toMatch(/<h[1-3][\s>]/);
+    }
   });
 
   // The same check `src/docs/md-links.ts` makes of the repo, made of the rendered hub:
