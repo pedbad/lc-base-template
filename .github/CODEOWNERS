@@ -29,7 +29,7 @@
 /tsconfig*.json         @pedbad
 /eslint.config.js       @pedbad
 /prettier.config.mjs    @pedbad
-/.stylelintrc*          @pedbad
+/stylelint.config.mjs   @pedbad
 /.claude/settings.json  @pedbad
 
 # --- Specs + canonical process docs (the source of truth authors build against) ---
