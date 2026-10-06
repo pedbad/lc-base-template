@@ -317,7 +317,7 @@ file as its home), `STRUCTURE.md`'s `src/sandbox/` row, README's build section,
 CONTRIBUTING's command table, `AGENTS.md`'s two new house rules, `docs/TOOLING.md`'s two
 new decision entries.
 
-## D. Design & accessibility polish — 2 of 10 open
+## D. Design & accessibility polish — 0 of 11 open
 
 Design and a11y come before branch protection **by decision 2026-09-09**: a footer that
 ships internal build chatter and two dead links is a defect on every page of a live
@@ -651,7 +651,8 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   `@media (prefers-reduced-motion: reduce)` block in the CSSOM. Do that one by hand if
   you ever want it observed rather than inferred.
 
-- **D6 — nav + landing-page polish.** The half cut out of D2, still with no spec.
+- **D6 — nav + landing-page polish. CLOSED 2026-10-06** — every row below is shipped
+  or closed by decision. The half cut out of D2, never specced as a whole.
   Surveyed 2026-09-10, so these are found, not speculative:
   - **Two navs differ CORRECTLY — this row was a false alarm. Closed 2026-09-14.**
     It read "two navs hold different a11y standards": `LessonSideNav` (now
@@ -793,8 +794,10 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     nearly every utility the header used is still used elsewhere, so the plain rules are
     added bytes rather than moved ones; `main-*.js` 97.86 → 97.70 kB (−0.16, the class
     strings leaving the bundle). The choice was for one styling strategy, not for size.
-  - **The landing page reads sparse at 1440 with one LO** — hero, then a single card in
-    a wide grid. Design work, not a defect.
+  - **The landing page reads sparse at 1440 with one LO — CLOSED BY DECISION
+    2026-10-06.** Hero, then a single card in a wide grid. The maintainer's call: not a
+    design job. Every LO folder adds its own card, so the grid fills as the course's
+    lessons are built. Do not redesign it for the one-LO case.
 
 - **D3 — the `no-preference` motion sweep. REJECTED, closed 2026-09-14.** The repo uses
   the `reduce` override shape — motion in the base state, `transition: none` under
@@ -1268,3 +1271,4 @@ build, so it cannot return. Two remain:
 | 2026-10-06 | `d72c02f` | **rich-text block entries** — lists, tables, audio player; JS budget < 105 kB            |
 | 2026-10-06 | `a82ef49` | **a11y follow-ups (§D10)** — speaker 24px floor, sandbox outline + code regions, AA pair |
 | 2026-10-06 | `b0c3d42` | **one page frame (§D11)** — 72rem frame, 60ch measure, 48rem exercise track, breakout    |
+| 2026-10-06 | —         | **§D6 closed** — sparse one-LO landing page left as is; it fills as LOs are added        |
