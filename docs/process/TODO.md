@@ -754,11 +754,23 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     identifies the control — the glyph (14.66 / 9.45) and the thumb (10.77 / 5.93)
     are, and those clear it. The header's bottom border is decoration.
 
-    **Not run:** W3C CSS validation — stylelint (`stylelint-config-standard`) is the
-    only CSS check, and it is not a validator; no offline CSS validator was chosen.
-    Reduced motion is still not emulable in the pane (§D4). A screen-reader pass of the
-    new `aria-modal` was dropped by the maintainer (2026-10-06).
-    **Bundle:** `main-*.js` 97.80 → 97.86 kB gzipped; `main-*.css` 15.87 → 15.95 kB.
+    **CSS validation — run 2026-10-06, as a follow-up.** No Java on the machine, so
+    the W3C `vnu.jar` was out; `csstree-validator` 4.0.1 (spec grammars from mdn-data)
+    was run once from the scratchpad over all seven built stylesheets — nothing
+    uploaded, nothing added to the repo. **One error:** an unknown property `icon`, from
+    a PHANTOM utility — Tailwind v4 auto-detects sources across the whole repo, and a
+    code example in `FUTURE_PROJECTS.md` (`Click [icon:CircleCheck] …`) became
+    `.\[icon\:CircleCheck\]{icon:CircleCheck}`. Fixed with `@source not "../docs"` in
+    `src/index.css`, which also dropped ten other utilities only docs prose mentioned
+    (`grid-cols-2`, `rounded-2xl`, `md:flex-row`, …), each confirmed unused outside
+    `docs/`. Every `class="` left in the docs sits in a code span, so the debug docs hub
+    loses nothing. **Validator: 0 errors**, production and `DEBUG=1` builds.
+
+    **Not run:** reduced motion is still not emulable in the pane (§D4). A
+    screen-reader pass of the new `aria-modal` was dropped by the maintainer
+    (2026-10-06).
+    **Bundle:** `main-*.js` 97.80 → 97.86 kB gzipped; `main-*.css` 15.87 → 15.95 kB,
+    then 15.80 kB after the docs scan exclusion.
 
   - **`Header` is still 240-char inline Tailwind strings** while §D1 moved the footer to
     plain CSS in `@layer`. Pick one direction.
