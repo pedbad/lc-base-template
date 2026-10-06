@@ -756,8 +756,8 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
 
     **Not run:** W3C CSS validation — stylelint (`stylelint-config-standard`) is the
     only CSS check, and it is not a validator; no offline CSS validator was chosen.
-    A screen-reader pass of the new `aria-modal` (VoiceOver) is a human check. Reduced
-    motion is still not emulable in the pane (§D4).
+    Reduced motion is still not emulable in the pane (§D4). A screen-reader pass of the
+    new `aria-modal` was dropped by the maintainer (2026-10-06).
     **Bundle:** `main-*.js` 97.80 → 97.86 kB gzipped; `main-*.css` 15.87 → 15.95 kB.
 
   - **`Header` is still 240-char inline Tailwind strings** while §D1 moved the footer to
