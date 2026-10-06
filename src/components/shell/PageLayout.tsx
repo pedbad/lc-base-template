@@ -16,9 +16,10 @@
  * (§2). In-page navigation MOVES FOCUS to the target section heading (§5), not just
  * scrolls — otherwise keyboard/AT users' focus position doesn't follow the jump.
  */
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { LoHero as LoHeroConfig } from '@/config/lo-schema';
+import { useScrollSpy } from '@/hooks/useScrollSpy';
 import { headingId } from '@/lib/headingId';
 import BackToTopButton from './BackToTopButton';
 import Header from './Header';
@@ -49,24 +50,60 @@ function currentHashId(): string {
   return window.location.hash.replace(/^#/, '');
 }
 
-export default function PageLayout({ title, hero, sections, themeToggle }: PageLayoutProps) {
-  // Seeded from the hash at mount, then moved only by `hashchange` below. So it is
-  // "the section last navigated to", never "the section on screen" — see the prop's
-  // doc on `Header`, which is where that distinction is spelled out.
-  const [activeSectionId, setActiveSectionId] = useState(currentHashId);
+/** A plain primary click — the only kind that navigates in place. A modified click
+ *  opens a new tab or window and leaves this page where it is. */
+function isPlainClick(event: MouseEvent): boolean {
+  return (
+    !event.defaultPrevented &&
+    event.button === 0 &&
+    !event.metaKey &&
+    !event.ctrlKey &&
+    !event.shiftKey &&
+    !event.altKey
+  );
+}
 
-  // In-page nav: when the hash changes to a section, mark it active AND move focus
-  // to its heading so keyboard/AT focus follows the visual jump (spec §5).
+export default function PageLayout({ title, hero, sections, themeToggle }: PageLayoutProps) {
+  // The section on screen, from the scroll-spy (docs/specs/2026-10-06-header-scroll-
+  // spy-design.md). It starts at '' on the server AND on the first client render: the
+  // hash is read in the effect below, never during render, so a page loaded with
+  // #grammar hydrates against the markup it was prerendered with (AGENTS.md rule 4).
+  const sectionIdsKey = sections.map((section) => section.id).join(' ');
+  const [activeSectionId, holdSection] = useScrollSpy(sectionIdsKey);
+
+  // A FOLLOWED link wins over the spy: it is marked at once and held until its smooth
+  // scroll settles, so the highlight does not flicker through the sections in between.
+  // Three ways in — a click on any in-page section link (caught at the click, before
+  // the scroll starts), a `hashchange` (Back/Forward), and the hash the page was
+  // loaded with. Only `hashchange` moves focus to the heading (spec §5); the spy never
+  // touches focus, the hash or history.
   useEffect(() => {
+    const isSection = (id: string) => sections.some((section) => section.id === id);
+
+    const loadedWith = currentHashId();
+    if (isSection(loadedWith)) holdSection(loadedWith);
+
+    function handleClick(event: MouseEvent) {
+      if (!isPlainClick(event) || !(event.target instanceof Element)) return;
+      const link = event.target.closest('a[href^="#"]');
+      const id = link?.getAttribute('href')?.slice(1) ?? '';
+      if (isSection(id)) holdSection(id);
+    }
+
     function handleHashChange() {
       const id = currentHashId();
-      if (!sections.some((section) => section.id === id)) return;
-      setActiveSectionId(id);
+      if (!isSection(id)) return;
+      holdSection(id);
       document.getElementById(headingId(id))?.focus();
     }
+
+    document.addEventListener('click', handleClick);
     window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, [sections]);
+    return () => {
+      document.removeEventListener('click', handleClick);
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, [sections, holdSection]);
 
   return (
     <>

@@ -32,21 +32,17 @@ interface HeaderProps {
   /** Ordered top-level sections; one nav link is derived per entry, in order. */
   sections: readonly NavSection[];
   /**
-   * Id of the section the reader last NAVIGATED to — the in-page hash — whose link
-   * carries `aria-current="page"`.
+   * Id of the section the reader is AT, whose link carries `aria-current="location"`;
+   * `''` or absent marks no link.
    *
-   * NOT "the section currently in view", which is what this comment used to claim.
-   * `PageLayout` seeds it from the hash at mount and thereafter updates it only on
-   * `hashchange`, so scrolling past a section does not touch it and `aria-current`
-   * stays on the last followed link until another is followed.
+   * `PageLayout` drives it from `useScrollSpy`
+   * (docs/specs/2026-10-06-header-scroll-spy-design.md): it is the section on screen
+   * as the reader scrolls, except that a followed link wins at once and holds until
+   * its smooth scroll settles, so the highlight does not flicker through the sections
+   * in between. Above the first section — on the hero — it is `''`.
    *
-   * That is a limit, not a bug to route around here. `aria-current="page"` on the
-   * link the reader chose is honest on its own terms — it marks where they asked to
-   * be. Making it track the VIEWPORT needs a scroll-spy in `PageLayout` — deferred
-   * to a later version (TODO "Deferred on purpose") — which is a different feature
-   * with its own cost, not a one-line fix. The name is
-   * kept because renaming it touches nine call sites to no one's benefit while the
-   * scroll-spy question is still open; this comment is the contract.
+   * `location`, not `page`: `page` claims the whole document, and this marks a place
+   * within it.
    */
   activeSectionId?: string;
   /** Site/course title for the brand link (defaults to the course config title). */
@@ -76,7 +72,7 @@ function NavLinks({
         <li key={section.id}>
           <a
             href={`#${section.id}`}
-            aria-current={section.id === activeSectionId ? 'page' : undefined}
+            aria-current={section.id === activeSectionId ? 'location' : undefined}
             onClick={onNavigate}
             className="rounded-sm px-2 py-1 font-medium text-foreground/80 underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:text-foreground aria-[current]:text-primary aria-[current]:underline"
           >

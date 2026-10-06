@@ -6,7 +6,7 @@
  * no skips (§2). The focus-moves-to-heading-on-nav behaviour is verified in the
  * browser (step 7).
  */
-import { describe, expect, test } from 'vitest';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import PageLayout from './PageLayout';
 import { headingId } from '@/lib/headingId';
@@ -123,6 +123,23 @@ describe('PageLayout', () => {
     const html = renderToStaticMarkup(<PageLayout title="Lesson" sections={sections} />);
     expect(html).not.toMatch(/<main[^>]*max-w-5xl/);
     expect(html).toMatch(/class="lo-content[^"]*max-w-5xl/);
+  });
+
+  // Scroll-spy spec §3, "First render". The prerender has no window, so it marks no
+  // link; a client hydrating /example.html#grammar has a hash. If the first render
+  // read that hash, the two would disagree — and production React neither patches
+  // nor reports an attribute mismatch, so Grammar was silently never marked. The
+  // stubbed window stands in for the hydrating client.
+  describe('first render ignores the URL hash (prerender parity)', () => {
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    test('marks no nav link even when the page was loaded with a section hash', () => {
+      vi.stubGlobal('window', { location: { hash: '#grammar' } });
+      const html = renderToStaticMarkup(<PageLayout title="Lesson" sections={sections} />);
+      expect(html).not.toContain('aria-current');
+    });
   });
 
   test('passes hero art through: image variant when given, band when not', () => {

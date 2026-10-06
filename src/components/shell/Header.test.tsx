@@ -59,9 +59,18 @@ describe('Header', () => {
     expect(html).toContain('>Vocabulary<');
   });
 
-  test('marks the active section link with aria-current', () => {
+  // `location`, not `page` (scroll-spy spec S1): the link marks where the reader is
+  // WITHIN this page. Both copies — desktop nav and mobile panel — carry it.
+  test('marks the active section link with aria-current="location", in both navs', () => {
     const html = renderToStaticMarkup(<Header sections={SECTIONS} activeSectionId="grammar" />);
-    expect(html).toMatch(/aria-current="(true|page)"/);
+    expect(html.match(/aria-current="location"/g) ?? []).toHaveLength(2);
+    expect(html).toMatch(/href="#grammar" aria-current="location"/);
+    expect(html).not.toContain('aria-current="page"');
+  });
+
+  test('marks no link when no section is active (the hero, scroll-spy spec S2)', () => {
+    const html = renderToStaticMarkup(<Header sections={SECTIONS} activeSectionId="" />);
+    expect(html).not.toContain('aria-current');
   });
 
   test('mobile toggle button wires aria-expanded + aria-controls + an accessible name', () => {
