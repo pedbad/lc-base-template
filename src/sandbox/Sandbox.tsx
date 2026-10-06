@@ -21,8 +21,7 @@
  * through ExerciseHost. Folding a token reference, a type specimen, an icon sprite and a
  * docs hub into it would leave a folder whose name describes a quarter of its contents.
  */
-import { resolveAsset, resolveHomeHref } from '@/lib/assets';
-import ThemeToggle from '@/components/shell/ThemeToggle';
+import { DebugPageHeader } from './DebugPageHeader';
 import PaletteSection from './PaletteSection';
 import TypographySection from './TypographySection';
 import IconsSection from './IconsSection';
@@ -39,48 +38,13 @@ const SECTIONS = [
 export default function Sandbox() {
   return (
     <div className="min-h-dvh bg-background text-foreground">
-      <header className="border-b border-border bg-card">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-6">
-          <div>
-            <h1 className="font-heading text-3xl font-bold">Debug sandbox</h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Theme tokens, type and icons, straight from the source files. Debug-only — this page
-              is absent from a deployed course.
-            </p>
-          </div>
-          <ThemeToggle />
-        </div>
-        <nav aria-label="Sandbox sections" className="mx-auto max-w-5xl px-6 pb-4">
-          <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
-            {SECTIONS.map((section) => (
-              <li key={section.id}>
-                <a
-                  className="underline underline-offset-4 hover:no-underline"
-                  href={`#${section.id}`}
-                >
-                  {section.label}
-                </a>
-              </li>
-            ))}
-            <li>
-              <a
-                className="underline underline-offset-4 hover:no-underline"
-                href={resolveAsset('exercise-showcase.html')}
-              >
-                Exercise showcase
-              </a>
-            </li>
-            <li>
-              <a
-                className="underline underline-offset-4 hover:no-underline"
-                href={resolveHomeHref()}
-              >
-                Course home
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </header>
+      <DebugPageHeader
+        title="Debug sandbox"
+        description="Theme tokens, type and icons, straight from the source files. Debug-only — this page is absent from a deployed course."
+        navLabel="Sandbox sections"
+        sections={SECTIONS}
+        current="sandbox"
+      />
 
       <main className="mx-auto flex max-w-5xl flex-col gap-14 px-6 py-10">
         <PaletteSection />

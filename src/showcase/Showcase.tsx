@@ -6,6 +6,9 @@
  * This is where each ported engine is seen and tested in isolation before it is used
  * in a real LO. Cards grow one at a time as engines are ported (Phase B).
  *
+ * The top nav is the debug sandbox's own (`DebugPageHeader`), so the two debug pages
+ * link to each other the same way.
+ *
  * The first card is not an engine: it is the rich-text authoring reference — every
  * block entry (lists, tables, the audio player) plus a popup (spec §14).
  *
@@ -15,36 +18,49 @@
 import { ExerciseHost } from '@/exercises/lib/ExerciseHost';
 import { SHOWCASE_FIXTURES } from './fixtures';
 import RichTextShowcase from './RichTextShowcase';
+import { DebugPageHeader } from '@/sandbox/DebugPageHeader';
+
+/** In-page nav: the rich-text card, then one link per engine card, in fixture order. */
+const SECTIONS = [
+  { id: 'rich-text', label: 'Rich text' },
+  ...SHOWCASE_FIXTURES.map((fixture) => ({ id: fixture.id, label: fixture.title })),
+];
 
 export default function Showcase() {
   return (
-    <main className="mx-auto max-w-3xl px-6 py-10">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold">Exercise Showcase</h1>
-        <p className="mt-2 text-muted-foreground">
-          Each interactive exercise engine, rendered in isolation for review and testing — after the
-          rich-text reference, which shows what lesson prose and popups accept.
-        </p>
-      </header>
+    <div className="min-h-dvh bg-background text-foreground">
+      <DebugPageHeader
+        title="Exercise Showcase"
+        description="Each interactive exercise engine, rendered in isolation for review and testing — after the rich-text reference, which shows what lesson prose and popups accept."
+        navLabel="Showcase sections"
+        sections={SECTIONS}
+        current="showcase"
+      />
 
-      <div className="mb-10">
-        <RichTextShowcase />
-      </div>
+      <main className="mx-auto max-w-3xl px-6 py-10">
+        <div className="mb-10">
+          <RichTextShowcase />
+        </div>
 
-      {SHOWCASE_FIXTURES.length === 0 ? (
-        <p className="rounded-md border border-dashed p-6 text-center text-muted-foreground">
-          No exercises registered yet. Each engine adds its card here as it is ported.
-        </p>
-      ) : (
-        <section className="flex flex-col gap-10">
-          {SHOWCASE_FIXTURES.map((fixture) => (
-            <article key={fixture.id} id={fixture.id} className="rounded-lg border p-6">
-              <h2 className="mb-4 text-xl font-semibold">{fixture.title}</h2>
-              <ExerciseHost type={fixture.type} config={fixture.config} />
-            </article>
-          ))}
-        </section>
-      )}
-    </main>
+        {SHOWCASE_FIXTURES.length === 0 ? (
+          <p className="rounded-md border border-dashed p-6 text-center text-muted-foreground">
+            No exercises registered yet. Each engine adds its card here as it is ported.
+          </p>
+        ) : (
+          <section aria-label="Exercise engines" className="flex flex-col gap-10">
+            {SHOWCASE_FIXTURES.map((fixture) => (
+              <article
+                key={fixture.id}
+                id={fixture.id}
+                className="scroll-mt-6 rounded-lg border p-6"
+              >
+                <h2 className="mb-4 text-xl font-semibold">{fixture.title}</h2>
+                <ExerciseHost type={fixture.type} config={fixture.config} />
+              </article>
+            ))}
+          </section>
+        )}
+      </main>
+    </div>
   );
 }
