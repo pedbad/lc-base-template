@@ -127,7 +127,10 @@
     --secondary: color-mix(in oklab, var(--slate-4) 80%, var(--white));
     --secondary-foreground: var(--slate-1);
     --muted: color-mix(in oklab, var(--slate-4) 80%, var(--white));
-    --muted-foreground: var(--slate-2);
+
+    /* Slate 2 lifted 6% toward white: plain Slate 2 on --muted is 4.47:1, just under AA
+       (axe, TODO §D10). Mixed, it is 4.67:1 — token-contrast.test.ts holds the line. */
+    --muted-foreground: color-mix(in oklab, var(--slate-2) 94%, var(--white));
     --accent: var(--cam-blue);
     --accent-foreground: var(--slate-4);
     --destructive: var(--cam-dark-crest);
