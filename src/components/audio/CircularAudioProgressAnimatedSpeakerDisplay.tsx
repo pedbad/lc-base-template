@@ -28,6 +28,9 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 const STROKE_WIDTH = 1.8;
 /** Rendered pixel size; mirrors french-lo-1's --compact-dimension default. */
 const DEFAULT_SIZE = 27;
+/** WCAG 2.2 SC 2.5.8 floor, CSS px. Callers that overlay another target (flashcards,
+ *  memory-match) cannot claim the spacing exception, so the button never goes under. */
+const MIN_TARGET_SIZE = 24;
 
 interface SpeakerDisplayProps {
   status?: ClipStatus;
@@ -122,6 +125,8 @@ function SpeakerDisplay({
   const baseClass =
     `audio-container super-compact-speaker circular-audio-progress-speaker ${status} ${inline ? 'inline' : ''} ${className}`.trim();
   const sizeStyle = { width: `${size}px`, height: `${size}px` };
+  const targetSize = Math.max(size, MIN_TARGET_SIZE);
+  const targetStyle = { width: `${targetSize}px`, height: `${targetSize}px` };
 
   if (!interactive) {
     return (
@@ -137,10 +142,10 @@ function SpeakerDisplay({
       aria-label={label}
       title={label}
       className={baseClass}
-      style={sizeStyle}
+      style={targetStyle}
       onClick={handleClick}
     >
-      <SpeakerSvg size={size} offset={offset} isPlaying={status === 'playing'} />
+      <SpeakerSvg size={targetSize} offset={offset} isPlaying={status === 'playing'} />
     </button>
   );
 }

@@ -172,7 +172,7 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
       <AudioClip
         className="super-compact-speaker flashcards-audio"
         soundFile={current.audio}
-        size={22}
+        size={24}
         inline
       />
     ) : null;
