@@ -1,0 +1,173 @@
+/**
+ * header.css — the LO page header (§D6). Co-located with Header.tsx, which imports it,
+ * the same pattern as footer.css, shell.css and home.css.
+ *
+ * WHY PLAIN CSS. The header used to be ~240-character inline Tailwind strings while
+ * §D1 moved the footer to plain CSS; the maintainer picked one direction for the core
+ * chrome (2026-10-06) and it is this one. It was ported value for value and checked
+ * against a computed-style snapshot of every element, in every state, at 375 and 1440,
+ * light and dark — so what changed visually is only what the notes below say changed.
+ *
+ * Plain CSS + semantic tokens, everything inside @layer components (guard g), no raw
+ * hex or raw px outside guard f's allowlist. `--radius-sm` and `--font-heading` are
+ * NOT used: they live in index.css's `@theme inline`, which inlines them into
+ * utilities and never emits them as runtime variables, so `var(--radius-sm)` here
+ * would resolve to nothing. The expressions they stand for are written out instead.
+ *
+ * SELECTORS ARE FLAT, one class each, as in footer.css — a utility can still override.
+ *
+ * THE ONE DELIBERATE CHANGE: links and the toggle no longer transition `color`. The
+ * Tailwind `transition-colors` they carried named a token colour declared in the base
+ * state, which is the §D8 shape ("never transition a token colour declared in a base
+ * state"). The links now snap on hover; the toggle transitions only its
+ * `background-color`, whose base is transparent and whose token appears on hover only,
+ * which §D8 records as safe.
+ */
+
+@layer components {
+  /* --- The bar ------------------------------------------------------------
+     `--card`, not `--background`: the page ground is `--paper`, an off-white chosen to
+     cut glare for dyslexic readers, and a header painted the page colour dissolves into
+     it. Card means "a plane above the page" in both themes. Translucent with a blur
+     where the browser can blur, near-opaque where it cannot. */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    border-bottom: 1px solid var(--border);
+    background-color: color-mix(in oklab, var(--card) 95%, transparent);
+  }
+
+  @supports (backdrop-filter: blur(1px)) {
+    .site-header {
+      background-color: color-mix(in oklab, var(--card) 80%, transparent);
+      backdrop-filter: blur(8px);
+    }
+  }
+
+  .site-header-nav {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.75rem 1rem;
+  }
+
+  /* --- Brand: the course mark + title, linking home ------------------------ */
+  .site-header-brand {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-inline-end: auto;
+    border-radius: calc(var(--radius) * 0.6);
+    color: var(--foreground);
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.75rem;
+    letter-spacing: -0.025em;
+  }
+
+  /* 3rem square, doubled from 1.5rem at the maintainer's request 2026-10-05. The mask
+     itself is `.course-mark` in shell.css. */
+  .site-header-mark {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  /* --- Section links: desktop row and mobile column share one link rule ------- */
+  .site-header-links {
+    display: none;
+    gap: 0.25rem;
+    align-items: center;
+  }
+
+  .site-header-panel-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .site-header-link {
+    padding: 0.25rem 0.5rem;
+    border-radius: calc(var(--radius) * 0.6);
+    color: color-mix(in oklab, var(--foreground) 80%, transparent);
+    font-weight: 500;
+    text-underline-offset: 0.25rem;
+  }
+
+  @media (hover: hover) {
+    .site-header-link:hover {
+      color: var(--foreground);
+      text-decoration-line: underline;
+    }
+  }
+
+  /* --- Mobile toggle + disclosure panel ------------------------------------ */
+  .site-header-toggle {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) * 0.8);
+    color: var(--foreground);
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @media (hover: hover) {
+    .site-header-toggle:hover {
+      background-color: var(--muted);
+    }
+  }
+
+  .site-header-toggle-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .site-header-panel {
+    border-top: 1px solid var(--border);
+  }
+
+  /* The shared focus indicator (focus-outline.ts says why an outline, never a ring):
+     2px solid `--ring`, offset 2px — 12.4:1 light, 7.7:1 dark, kept in forced colours. */
+  .site-header-brand:focus-visible,
+  .site-header-link:focus-visible,
+  .site-header-toggle:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  .site-header-link:focus-visible {
+    color: var(--foreground);
+  }
+
+  /* After hover and focus on purpose: the section the reader is AT stays marked in
+     the primary colour whatever the pointer or focus is doing (scroll-spy spec). */
+  .site-header-link[aria-current] {
+    color: var(--primary);
+    text-decoration-line: underline;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-header-toggle {
+      transition: none;
+    }
+  }
+
+  /* Tailwind's `sm` breakpoint, which the header was built against: the row of
+     section links replaces the toggle and its panel. */
+  @media (width >= 40rem) {
+    .site-header-links {
+      display: flex;
+    }
+
+    .site-header-toggle,
+    .site-header-panel {
+      display: none;
+    }
+  }
+}

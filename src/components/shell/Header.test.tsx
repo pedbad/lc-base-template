@@ -7,15 +7,17 @@
  * (aria-expanded + aria-controls + a `hidden` panel). The interactive
  * Escape-closes-and-restores-focus behaviour is verified in the browser (step 7).
  */
+import { readFileSync } from 'node:fs';
 import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import Header from './Header';
-import { FOCUS_OUTLINE } from './focus-outline';
 import { resolveHomeHref } from '@/lib/assets';
 import type { NavSection } from './nav-section';
 /** Local section fixture. Sections come from an LO's lo.json in the real app; these
  *  tests exercise the FRAME, so they own a small list rather than importing one
  *  (there is no default list in code any more — see nav-section.ts). */
+const HEADER_CSS = readFileSync(new URL('./header.css', import.meta.url), 'utf-8');
+
 const SECTIONS: readonly NavSection[] = [
   { id: 'introduction', label: 'Introduction' },
   { id: 'grammar', label: 'Grammar: formal and informal address', navLabel: 'Grammar' },
@@ -136,15 +138,23 @@ describe('Header', () => {
   // `outline: auto` in `ring/50` — 2.88:1 on the light header, under 1.4.11's 3:1 —
   // and the toggle drew a box-shadow ring with `outline-none`, which Windows forced
   // colours strips, leaving NO indicator. Every control now draws the one shared
-  // outline, which survives forced colours and clears 3:1 in both themes.
-  test('every link and button draws the shared outline focus indicator', () => {
+  // outline (2px solid --ring, offset 2px), which survives forced colours. Since the
+  // header moved to plain CSS (§D6) that rule lives in header.css, so this reads it.
+  test('every link and button gets the shared outline focus indicator from header.css', () => {
     const html = renderToStaticMarkup(<Header sections={SECTIONS} />);
     const controls = html.match(/<(a|button)\b[^>]*>/g) ?? [];
+    const focusRules = [...HEADER_CSS.matchAll(/([^{}]*:focus-visible[^{}]*)\{([^}]*)\}/g)].filter(
+      ([, , body]) =>
+        /outline:\s*2px solid var\(--ring\)/.test(body) && /outline-offset:\s*2px/.test(body),
+    );
 
     expect(controls.length).toBeGreaterThan(0);
     for (const tag of controls) {
-      expect(tag).toContain(FOCUS_OUTLINE);
-      expect(tag).not.toContain('focus-visible:outline-none');
+      const classes = (/class="([^"]*)"/.exec(tag)?.[1] ?? '').split(/\s+/);
+      const covered = focusRules.some(([, selectors]) =>
+        classes.some((c) => c !== '' && selectors.includes(`.${c}:focus-visible`)),
+      );
+      expect(covered, tag).toBe(true);
     }
   });
 
@@ -153,8 +163,25 @@ describe('Header', () => {
   test('mobile toggle keeps its size beside a long brand title', () => {
     const html = renderToStaticMarkup(<Header sections={SECTIONS} />);
     const toggle = /<button[^>]*aria-controls="mobile-nav-panel"[^>]*>/.exec(html)?.[0] ?? '';
+    const toggleClass = /class="([^"\s]+)/.exec(toggle)?.[1] ?? '';
+    const rule = new RegExp(`\\.${toggleClass}\\s*\\{([^}]*)\\}`).exec(HEADER_CSS)?.[1] ?? '';
 
-    expect(toggle).toMatch(/\bshrink-0\b/);
+    expect(toggleClass).not.toBe('');
+    expect(rule).toMatch(/flex-shrink:\s*0/);
+  });
+
+  // §D6 (2026-10-06): the header follows the footer to plain CSS in @layer. A Tailwind
+  // utility creeping back into this markup is the split this decision ended.
+  test('styles itself from header.css classes, not inline Tailwind utilities', () => {
+    const html = renderToStaticMarkup(<Header sections={SECTIONS} />);
+    const classes = [...html.matchAll(/class="([^"]*)"/g)].flatMap(([, c]) => c.split(/\s+/));
+
+    expect(classes.length).toBeGreaterThan(0);
+    for (const c of classes) {
+      expect(c, `unexpected class "${c}"`).toMatch(
+        /^(site-header(-[a-z]+)*|course-mark|lucide(-[a-z]+)*)$/,
+      );
+    }
   });
 
   test('renders an optional theme-toggle slot inside the nav', () => {

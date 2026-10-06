@@ -20,15 +20,18 @@
  * A11y contract (spec §5): the closed mobile panel uses the `hidden` attribute
  * (not aria-hidden + CSS), so its links are truly unfocusable; Escape closes the
  * panel AND returns focus to the toggle button. Every link and button draws the
- * shared `FOCUS_OUTLINE` (focus-outline.ts says why an outline and not a ring).
+ * shared 2px `--ring` outline (focus-outline.ts says why an outline and not a ring).
+ *
+ * Styling is plain CSS in header.css (§D6, 2026-10-06), as the footer's is — no
+ * Tailwind utilities in this markup.
  */
 import { useEffect, useRef, useState } from 'react';
 import { Menu } from 'lucide-react';
 import type { CSSProperties, ReactNode } from 'react';
 import { courseConfig } from '@/config/course.config';
 import { resolveAsset, resolveHomeHref } from '@/lib/assets';
-import { FOCUS_OUTLINE } from './focus-outline';
 import type { NavSection } from './nav-section';
+import './header.css';
 
 interface HeaderProps {
   /** Ordered top-level sections; one nav link is derived per entry, in order. */
@@ -76,7 +79,7 @@ function NavLinks({
             href={`#${section.id}`}
             aria-current={section.id === activeSectionId ? 'location' : undefined}
             onClick={onNavigate}
-            className={`rounded-sm px-2 py-1 font-medium text-foreground/80 underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:text-foreground aria-[current]:text-primary aria-[current]:underline ${FOCUS_OUTLINE}`}
+            className="site-header-link"
           >
             {section.navLabel ?? section.label}
           </a>
@@ -109,36 +112,29 @@ export default function Header({
   }, [isMobileNavOpen]);
 
   return (
-    // `bg-card`, not `bg-background`: the page ground is `--paper`, an off-white
-    // chosen to cut glare for dyslexic readers, and a header painted the same colour
-    // as the page dissolves into it. Card is the surface token that means "a plane
-    // above the page" — white in the light theme, the lifted dark surface in the dark
-    // one — so the bar reads as a bar in both without hardcoding a colour in either.
-    <header className="sticky top-0 z-40 border-b border-border bg-card/95 supports-backdrop-filter:bg-card/80 supports-backdrop-filter:backdrop-blur">
-      <nav aria-label="Main navigation" className="flex items-center gap-3 px-4 py-3">
+    // Painted `--card`, not `--background` — header.css says why.
+    <header className="site-header">
+      <nav aria-label="Main navigation" className="site-header-nav">
         {/* The brand links HOME, to the course landing page (Phase D) — not to
             #content as it once did. That was a second skip link, and PageLayout
             already renders a real one as the page's first focusable element; mean-
             while an LO page had no route back to the course at all. Through
             resolveHomeHref() so it survives a non-root base (anti-pattern #28). */}
-        <a
-          href={resolveHomeHref()}
-          className={`mr-auto flex items-center gap-2 rounded-sm font-heading text-lg font-semibold tracking-tight text-foreground ${FOCUS_OUTLINE}`}
-        >
+        <a href={resolveHomeHref()} className="site-header-brand">
           {/* The course's mark, named by `courseConfig.logo`. DECORATIVE: this link
               already has the course title as its accessible name, so announcing the
               mark too would say the same thing twice. `resolveAsset` because a bare
               `logo.svg` resolves against the CURRENT page URL, which breaks on an LO
               page under a sub-path base (anti-pattern #28).
 
-              3rem square (size-12), doubled from 1.5rem at the maintainer's request
+              3rem square (header.css), doubled from 1.5rem at the maintainer's request
               2026-10-05; mask-size: contain keeps any square-ish replacement mark
               inside that box without distortion.
               Masked, not <img>: `currentColor` inside an <img>-loaded SVG resolves
               against that file's own document and comes out black in both themes.
               See the .course-mark rule in shell.css. */}
           <span
-            className="course-mark size-12"
+            className="course-mark site-header-mark"
             style={{ '--course-mark': `url(${resolveAsset(courseConfig.logo)})` } as CSSProperties}
             aria-hidden="true"
           />
@@ -148,7 +144,7 @@ export default function Header({
         <NavLinks
           sections={sections}
           activeSectionId={activeSectionId}
-          className="hidden items-center gap-1 sm:flex"
+          className="site-header-links"
         />
 
         {themeToggle}
@@ -160,9 +156,9 @@ export default function Header({
           aria-controls={MOBILE_PANEL_ID}
           aria-label="Toggle navigation menu"
           onClick={() => setIsMobileNavOpen((open) => !open)}
-          className={`inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-border text-foreground transition-colors hover:bg-muted sm:hidden ${FOCUS_OUTLINE}`}
+          className="site-header-toggle"
         >
-          <Menu className="size-5" aria-hidden="true" />
+          <Menu className="site-header-toggle-icon" aria-hidden="true" />
         </button>
       </nav>
 
@@ -190,16 +186,12 @@ export default function Header({
 
           What it DOES owe, and has: `aria-expanded` + `aria-controls` on the toggle,
           and Escape to close with focus returned there (the effect above). */}
-      <div
-        id={MOBILE_PANEL_ID}
-        hidden={!isMobileNavOpen}
-        className="border-t border-border sm:hidden"
-      >
+      <div id={MOBILE_PANEL_ID} hidden={!isMobileNavOpen} className="site-header-panel">
         <NavLinks
           sections={sections}
           activeSectionId={activeSectionId}
           onNavigate={() => setIsMobileNavOpen(false)}
-          className="flex flex-col gap-1 px-4 py-3"
+          className="site-header-panel-links"
         />
       </div>
     </header>
