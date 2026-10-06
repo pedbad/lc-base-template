@@ -75,7 +75,7 @@ describe('presentParts — what is on disk', () => {
       '03-outcomes',
     ]);
     expect(present.exercises.map((part) => part.ref)).toEqual(['01-select', '02-radio-quiz']);
-    expect(present.modals.map((part) => part.ref)).toEqual(['example-popup']);
+    expect(present.modals.map((part) => part.ref)).toEqual(['conjugation', 'example-popup']);
     expect(present.blocks.every((part) => part.hasConfig)).toBe(true);
   });
 

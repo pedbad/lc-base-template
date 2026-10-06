@@ -1,0 +1,10 @@
+{
+  "title": "Conjugation popup (placeholder)",
+  "content": [
+    "A popup accepts the same entries as page prose. Inline audio still works mid-sentence: <span data-audio=\"audio/lo-00-example/placeholder.m4a\" data-audio-label=\"Play the placeholder clip\"></span>",
+    "<ul><li>An unordered list for loose points.</li><li>Items hold inline rich text: <strong>strong</strong>, <em>em</em> and popup links.</li></ul>",
+    "<ol><li>An ordered list for steps.</li><li>Use it when the order matters.</li></ol>",
+    "<table><caption>Placeholder conjugation table</caption><thead><tr><th>Pronoun</th><th>Form</th><th>Listen</th></tr></thead><tbody><tr><th>Placeholder pronoun 1</th><td>placeholder form 1</td><td><span data-audio=\"audio/lo-00-example/placeholder.m4a\" data-audio-label=\"Play placeholder form 1\"></span></td></tr><tr><th>Placeholder pronoun 2</th><td>placeholder form 2</td><td><span data-audio=\"audio/lo-00-example/placeholder.m4a\" data-audio-label=\"Play placeholder form 2\"></span></td></tr><tr><th>Placeholder pronoun 3</th><td>placeholder form 3</td><td><span data-audio=\"audio/lo-00-example/placeholder.m4a\" data-audio-label=\"Play placeholder form 3\"></span></td></tr></tbody></table>",
+    "<span data-audio-player=\"audio/lo-00-example/placeholder.m4a\" data-audio-label=\"Listen to all the forms\"></span>"
+  ]
+}

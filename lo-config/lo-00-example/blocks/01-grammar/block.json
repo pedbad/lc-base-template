@@ -2,11 +2,16 @@
   "type": "grammar",
   "title": "Placeholder grammar note",
   "content": {
-    "instructions": "Placeholder grammar note — replace this with the rule the accordion should teach. Instructions are plain text; the paragraphs below support inline rich text.",
+    "instructions": "Placeholder grammar note — replace this with the rule the accordion should teach. Instructions are plain text; the entries below support rich text: paragraphs, lists, tables and audio.",
     "text": [
       "Placeholder grammar example sentence one, with <strong>a key term</strong> and <em>a stressed word</em>.",
       "Prose can launch a popup mid-sentence — <a class=\"modal-link\" href=\"#content\" data-modal-target=\"example-popup\">open the example popup</a> — and can carry an inline audio icon: <span data-audio=\"audio/lo-00-example/placeholder.m4a\" data-audio-label=\"Play the placeholder clip\"></span>",
-      "Each entry in this array renders as its own paragraph, wrapped in the target language for assistive tech."
+      "An entry can also be a whole block. This list is one entry:",
+      "<ul><li>Placeholder rule one, with <strong>the key form</strong>.</li><li>Placeholder rule two, with an inline speaker <span data-audio=\"audio/lo-00-example/placeholder.m4a\" data-audio-label=\"Play the placeholder clip\"></span></li></ul>",
+      "<table><caption>Placeholder table: two forms of address</caption><thead><tr><th>Form</th><th>When to use it</th></tr></thead><tbody><tr><th>Placeholder form A</th><td>Informal — friends, family, children</td></tr><tr><th>Placeholder form B</th><td>Formal — strangers, officials, <em>anyone you are unsure about</em></td></tr></tbody></table>",
+      "<span data-audio-player=\"audio/lo-00-example/placeholder.m4a\" data-audio-label=\"Listen to the placeholder dialogue\"></span>",
+      "For a fuller table in a popup, <a class=\"modal-link\" href=\"#content\" data-modal-target=\"conjugation\">open the conjugation popup</a>.",
+      "Each entry in this array renders as its own paragraph or block, wrapped in the target language for assistive tech."
     ]
   }
 }

@@ -26,5 +26,5 @@
       "exercises": ["01-select", "02-radio-quiz"]
     }
   ],
-  "modals": ["example-popup"]
+  "modals": ["example-popup", "conjugation"]
 }

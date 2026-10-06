@@ -93,4 +93,33 @@ describe('the example LO specifically', () => {
     const modal = loadLo('lo-00-example').modals['example-popup'];
     expect(collectEntryAudioPaths(modal.content).length).toBeGreaterThan(0);
   });
+
+  // Spec §14: the example LO is the authoring reference for block entries, in BOTH
+  // places they are accepted — so an author can copy a working list, table and player
+  // from page prose and from a popup.
+  test('page prose (the grammar block) carries a list, a table and the audio player', () => {
+    const grammar = loadLo('lo-00-example')
+      .sections.flatMap((section) => section.blocks)
+      .find(({ ref }) => ref === '01-grammar');
+    const entries = TextBlockContentSchema.parse(grammar?.config.content).text;
+
+    expect(new Set(entries.map((entry) => entry.kind))).toEqual(
+      new Set(['paragraph', 'list', 'table', 'audioPlayer']),
+    );
+  });
+
+  test('a popup carries an unordered and an ordered list, a table and the audio player', () => {
+    const lo = loadLo('lo-00-example');
+    expect(Object.keys(lo.modals)).toContain('conjugation');
+    expect(collectEntryModalTargets(richTextOf('lo-00-example'))).toContain('conjugation');
+
+    const content = lo.modals.conjugation.content;
+    const kinds = content.map((entry) =>
+      entry.kind === 'list' ? (entry.ordered ? 'ol' : 'ul') : entry.kind,
+    );
+    expect(new Set(kinds)).toEqual(new Set(['paragraph', 'ul', 'ol', 'table', 'audioPlayer']));
+
+    const table = content.find((entry) => entry.kind === 'table');
+    expect(table === undefined ? [] : collectEntryAudioPaths([table])).not.toHaveLength(0);
+  });
 });
