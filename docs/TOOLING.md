@@ -150,15 +150,15 @@ Layer 1 is the carrot; layers 2–3 are the stick.
   the prerender pass will later write — see _Dev-server LO pages_ below.
 - **Rejected:** Create-React-App (deprecated), Webpack (slower, heavier config).
 
-### Bundle budget — JS < 100 kB, CSS < 17 kB gzipped _(decisions 2026-10-05, 2026-10-06)_
+### Bundle budget — JS < 105 kB, CSS < 17 kB gzipped _(decisions 2026-10-05, 2026-10-06)_
 
 **This is the one place the budget is written down.** Every other doc and comment that
 needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-06 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 100 kB**     | 97.70 kB            | 2.30 kB  |
-| `main-*.css` | **< 17 kB**      | 15.97 kB            | 1.03 kB  |
+| `main-*.js`  | **< 105 kB**     | 100.15 kB           | 4.85 kB  |
+| `main-*.css` | **< 17 kB**      | 16.19 kB            | 0.81 kB  |
 
 - **JS was raised from < 80 kB to < 100 kB by the maintainer's decision.** The 80 kB
   figure is the generic "microsite" row from the maintainer's global ECC rules
@@ -166,8 +166,15 @@ needs the number points here rather than restating it.
   not fit this build: `react-dom` alone is 55.6% of `main-*.js` (TODO §D5's sourcemap
   attribution), so reaching 80 kB meant changing how much of the page is React —
   islands, or dropping Base UI for native elements — and that is an architecture
-  rewrite with breakage risk for a number that gates nothing. 100 kB is the budget this
-  repo is held to; the global rule is not edited, this entry overrides it here.
+  rewrite with breakage risk for a number that gates nothing. The global rule is not
+  edited; this entry overrides it here.
+- **JS raised again, < 100 kB → < 105 kB, by the maintainer's decision (2026-10-06).**
+  Rich-text block entries (lists, tables, the audio player — spec
+  `docs/specs/lo-rich-text-modals.md` §14) took `main-*.js` from 97.70 to 100.15 kB: +1.89 kB
+  of parser and renderer, +0.56 kB of example-LO content, because the LO JSON and the
+  rich-text parser both ship to the browser. The alternative on the table was parsing
+  rich text at BUILD time so the parser never ships; recorded as the lever to pull if
+  the budget bites again.
 - **CSS was raised from < 15 kB to < 17 kB by the maintainer's decision (2026-10-06).**
   It stood 0.97 kB over at 15.97 kB (0.69 before the §D9 hero banner; the header's move
   to plain CSS, TODO §D6, added 0.17 kB), and the remaining lead — the Open Sans

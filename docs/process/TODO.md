@@ -1075,11 +1075,11 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
 
 Not forgotten. Decided.
 
-| Item                        | Trigger to pick it up                                                                                                                                                                                                                                                                                       |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Per-LO chunking (§5.4)      | **~a dozen LOs.** Eager `import.meta.glob` means every page bundles every LO's JSON. Harmless at one. Measure each new LO against the < 100 kB gzipped JS budget (`docs/TOOLING.md`, "Bundle budget") — headroom is under 3 kB at one LO (current figure in that section), so this may wake before a dozen. |
-| Rich text in modals/engines | Someone actually needs it. Fully spec'd in `docs/specs/lo-rich-text-modals.md` §12, zero built.                                                                                                                                                                                                             |
-| Conjugation v2 choice mode  | Someone wants tap-to-answer verb tables. Schema ready, view path unbuilt.                                                                                                                                                                                                                                   |
+| Item                       | Trigger to pick it up                                                                                                                                                                                                                                                                                                                                    |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Per-LO chunking (§5.4)     | **~a dozen LOs.** Eager `import.meta.glob` means every page bundles every LO's JSON. Harmless at one. Measure each new LO against the JS budget (`docs/TOOLING.md`, "Bundle budget") — headroom is under 5 kB at one LO (current figure in that section), so this may wake before a dozen. Parsing rich text at build time is the other lever (TOOLING). |
+| Rich text: §12 leftovers   | Someone actually needs it. Inline rich text + popups shipped 2026-08-04; block entries (lists, tables, the audio player) in prose AND popups shipped 2026-10-06 (spec §14). Still unbuilt from §12: rich text in exercise content, deep-linking a popup, nested popups.                                                                                  |
+| Conjugation v2 choice mode | Someone wants tap-to-answer verb tables. Schema ready, view path unbuilt.                                                                                                                                                                                                                                                                                |
 
 ### Two small known edges (§5.7)
 
@@ -1154,3 +1154,4 @@ build, so it cannot return. Two remain:
 | 2026-10-05 | —         | header **scroll-spy reopened** — out of "Deferred on purpose", back on §D6 as next      |
 | 2026-10-06 | see §D6   | header **scroll-spy** — highlight follows the section on screen; hash-load parity fixed |
 | 2026-10-06 | see §D6   | **header a11y audit** — one forced-colours-safe focus outline, five fixes               |
+| 2026-10-06 | `d72c02f` | **rich-text block entries** — lists, tables, audio player; JS budget < 105 kB           |
