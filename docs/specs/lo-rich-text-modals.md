@@ -1,7 +1,8 @@
 # LO Rich Text + Modal Popups (spec)
 
 **Status:** accepted 2026-08-04. Implemented in the same session — see §11 for the test plan
-that guards it.
+that guards it. **Extended 2026-10-06** with block entries (lists, tables, the audio player)
+in popups AND page prose — see §14, which amends R4 and R7.
 
 **Problem.** Authored LO prose is plain text today: `TextBlockContentSchema.text` is a
 `string[]` and `TextBlock` renders `<p>{paragraph}</p>`, escaped. So an authored
@@ -27,7 +28,7 @@ governed by §3 of that spec (`instructions`, `lang`) and §2's heading rules.
 | R1  | Authors write **HTML strings**. The loader parses them to a typed node tree. React renders nodes.                                                                   |
 | R2  | **No `dangerouslySetInnerHTML`, no sanitiser dependency.** A strict allowlist + loud failure.                                                                       |
 | R3  | Modal content lives in **`modals/<id>/modal.json`**, mirroring `blocks/` and `exercises/`.                                                                          |
-| R4  | Rich text is **inline-only**. Paragraph breaks come from the `string[]` array, not from `<p>` tags.                                                                 |
+| R4  | Each array entry is a paragraph of inline rich text **or one whole block** (list, table, audio player — §14). Never a `<p>` tag; the array is the paragraph break.  |
 | R5  | Parsing happens **at load** for modals, so a bad tag fails with the file path. Block prose parses via its per-type schema at render — see §5 for the split and why. |
 | R6  | Modal state lives in **React context** with a single `ModalHost`, not one `<Dialog>` per link.                                                                      |
 | R7  | The parser is **hand-rolled**. See §9 for why, and the swap point if the grammar grows.                                                                             |
@@ -382,3 +383,85 @@ Extension points, listed so they are added as decisions rather than drift:
 - **Restoring `DemoModal`.** A standalone filler-text dialog demos chrome the authoring
   format cannot produce. Deleted in `5c9f19f`; this spec replaces it with a modal the
   example LO actually declares. See the Part C handover §4 resolution.
+
+---
+
+## 14. Block entries — lists, tables, the audio player (v2, 2026-10-06)
+
+**Decision (maintainer, 2026-10-06):** lists and tables, plus a full-width audio player
+beside the inline speaker icon, in **both** popups (`modal.json` `content[]`) and page prose
+(`block.json` `content.text[]` for `prose` and `grammar`). One rule for authors: anything a
+popup accepts, page prose accepts.
+
+### Authoring
+
+Each array entry is EITHER a paragraph of inline rich text (unchanged, §2) OR exactly one
+block element, spanning the whole entry:
+
+```json
+"<ul><li>first <em>item</em></li><li>second</li></ul>",
+"<ol><li>step one</li><li>step two</li></ol>",
+"<table><caption>Present tense of être</caption><thead><tr><th>Pronoun</th><th>Form</th></tr></thead><tbody><tr><th>je</th><td>suis <span data-audio=\"audio/<slug>/suis.m4a\"></span></td></tr></tbody></table>",
+"<span data-audio-player=\"audio/<slug>/dialogue.m4a\" data-audio-label=\"Listen to the dialogue\"></span>"
+```
+
+| Entry                                       | Renders as                                       | Rules (each a loud load/parse failure)                                                                                                                                                                                        |
+| ------------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `<ul>` / `<ol>`                             | `<ul>` / `<ol>`                                  | only `<li>` children, at least one; each `<li>` holds inline rich text; **no nested lists** in v2; no attributes                                                                                                              |
+| `<table>`                                   | `<table>` in a keyboard-scrollable, named region | **`<caption>` required** (it names the table and its scroll region); optional `<thead>`; `<tbody>` optional; `<tr>` of `<th>`/`<td>` holding inline rich text; at least one body row; every row the same width; no attributes |
+| `<span data-audio-player data-audio-label>` | `AudioClip`'s native player, labelled            | must be the WHOLE entry; empty; `data-audio-label` required (it is the visible label); same `audio/<slug>/` + file-exists guard as `data-audio`                                                                               |
+
+- **Header scope is the renderer's job, not the author's.** A `<th>` in `<thead>` renders
+  `scope="col"`; a `<th>` is allowed in a body row only as its FIRST cell and renders
+  `scope="row"`. Authored attributes on structural tags are rejected (closed allowlist).
+- **Why caption is required.** A wide table scrolls sideways inside a narrow popup, and a
+  scroll region must be focusable and named (axe `scrollable-region-focusable`); the caption
+  is that name, and also what a screen reader announces on entering the table.
+- **Why `<span data-audio-player>` and not `<audio>`.** It is the same family as
+  `<span data-audio>` (same attributes, same guard), and like `a.modal-link` → `<button>`
+  (§7) the authored spelling is a hook, not the rendered element. An authored `<audio>`
+  would invite `controls`/`autoplay`/`<source>`, each needing rejection.
+- **A block element inside a paragraph is an error**, with a message saying it must be its
+  own entry — never silently flattened.
+
+### Node types
+
+The inline union (§4) is unchanged. Entries wrap it:
+
+```ts
+type RichTextEntry =
+  | { kind: 'paragraph'; children: RichTextNode[] }
+  | { kind: 'list'; ordered: boolean; items: RichTextNode[][] }
+  | { kind: 'table'; caption: RichTextNode[]; head: TableCell[][]; body: TableCell[][] }
+  | { kind: 'audioPlayer'; soundFile: string; label: string };
+type TableCell = { header: boolean; scope?: 'col' | 'row'; children: RichTextNode[] };
+```
+
+`AssembledLo.modals[id].content` and `TextBlockContentSchema.text` carry
+`RichTextEntry[]`. `parseRichText` (one inline string) is untouched; the new
+`parseRichTextEntry` decides paragraph vs block and hands each `<li>`, `<caption>`,
+`<th>` and `<td>` body to `parseRichText`.
+
+### Amends R7 — still hand-rolled
+
+§9 named `htmlparser2` as the swap point once block content arrived. Not taken: JS has
+~2.3 kB of headroom against the < 100 kB budget (`docs/TOOLING.md`), and the block grammar is
+still closed and tiny (seven structural tags, no attributes). The entry parser reuses the
+inline tokenizer; the node types stay the stable interface, so the swap remains available.
+
+### Examples
+
+- **Example LO:** a `conjugation` popup linked from the grammar block, holding a paragraph
+  with an inline speaker, a `<ul>`, an `<ol>`, a captioned table with a speaker in a cell,
+  and the audio player; the grammar block itself gains a list and the player, so page
+  prose shows the same shapes.
+- **Showcase:** a "Rich text & popups" section rendering every entry kind, plus a button
+  opening the same content as a popup — the authoring reference.
+
+### Tests
+
+`parse-rich-text-entry.test.ts` (every entry kind and every failure rule above, incl. block
+inside a paragraph, nested list, missing caption, ragged rows, body `<th>` not first,
+player not whole / non-empty / unlabelled); `RichTextEntries.test.tsx` (markup: `scope`,
+caption, scroll region named by the caption, native player labelled); `lo-rich-text.test.ts`
+extended so player paths meet the same guards and the example LO demonstrates every kind.
