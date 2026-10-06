@@ -1114,6 +1114,22 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   `exercise-showcase.html` only the four word-spot tokens above, both themes; `index` and
   `example` zero contrast failures, both themes. Suite 1129 → 1239.
 
+  **Known false positive — WAVE "Possible heading" ×5 on `exercise-showcase.html`
+  (decided 2026-10-06, maintainer's call: record, no change).** WAVE flags a `<p>` under
+  50 characters in large type. The five are the 18px exercise sentences: three
+  `word-spot-line` and two `drag-fill-gaps-line`. None is a heading, and a sentence of
+  running text IS a paragraph. They are Alerts, not Errors (WAVE: 0 errors, 0 contrast
+  errors). Swapping `<p>` for `<span>` was costed and rejected:
+  - `lang="es"` could not move up to the `<li>`, which also holds the speaker button with
+    its English label, so it would have to be a `<span lang="es">` anyway.
+  - It would cost screen-reader paragraph navigation (NVDA's `P`) and say less than the
+    truth, only to quiet a guess.
+  - It is whack-a-mole: other engines' sentences are `<p>` too and escape only by being
+    under 18px or over 50 characters, so the next short large-type sentence (or a real
+    lesson's fixtures) brings the alert back.
+
+  Reopen if WAVE's alerts are made a gate, or if a real heading is ever styled as a `<p>`.
+
 ---
 
 ## E. Before sharing with other developers
