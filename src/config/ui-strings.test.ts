@@ -29,3 +29,9 @@ test('ui-strings: resolveLabel — override wins, else global fallback', () => {
   expect(resolveLabel('showAnswer')).toBe('Show answer');
   expect(resolveLabel('check', {})).toBe('Check');
 });
+
+// The media transcript toggle's two labels (tabs spec 2a §4).
+test('ui-strings: transcript toggle labels exist', () => {
+  expect(resolveLabel('showTranscript')).toBe('Show transcript');
+  expect(resolveLabel('hideTranscript')).toBe('Hide transcript');
+});

@@ -47,6 +47,9 @@ export const UiStringsSchema = z.strictObject({
   listen: z.string().min(1),
   audioVolume: z.string().min(1),
   audioProgress: z.string().min(1),
+  // Media transcript toggle (tab media, spec 2026-10-07-tabs-media-design §4)
+  showTranscript: z.string().min(1),
+  hideTranscript: z.string().min(1),
 });
 
 /** Full required map (Layer 1). */
@@ -79,6 +82,8 @@ const raw: UiStrings = {
   listen: 'Listen',
   audioVolume: 'Audio volume',
   audioProgress: 'Audio progress',
+  showTranscript: 'Show transcript',
+  hideTranscript: 'Hide transcript',
 };
 
 /** Validate at load. A missing/blank/typo key throws here → build dies immediately. */
