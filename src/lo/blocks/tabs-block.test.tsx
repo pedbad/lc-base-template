@@ -17,8 +17,8 @@ import { TabsBlockContentSchema } from './tabs-block-schema';
 const valid = {
   label: 'Forms of address',
   tabs: [
-    { label: 'Tu', text: ['Informal.'] },
-    { label: 'Vous', text: ['Formal.'] },
+    { label: 'Tu', instructions: 'Read the informal form.', text: ['Informal.'] },
+    { label: 'Vous', instructions: 'Read the formal form.', text: ['Formal.'] },
   ],
 };
 
@@ -36,13 +36,13 @@ test('a blank tab label and an empty tab body are both rejected', () => {
   expect(
     TabsBlockContentSchema.safeParse({
       ...valid,
-      tabs: [{ label: '', text: ['x'] }, valid.tabs[1]],
+      tabs: [{ ...valid.tabs[0], label: '' }, valid.tabs[1]],
     }).success,
   ).toBe(false);
   expect(
     TabsBlockContentSchema.safeParse({
       ...valid,
-      tabs: [{ label: 'Tu', text: [] }, valid.tabs[1]],
+      tabs: [{ ...valid.tabs[0], text: [] }, valid.tabs[1]],
     }).success,
   ).toBe(false);
 });
@@ -50,12 +50,26 @@ test('a blank tab label and an empty tab body are both rejected', () => {
 test('two tabs with the same label are rejected, naming the second', () => {
   const result = TabsBlockContentSchema.safeParse({
     ...valid,
-    tabs: [valid.tabs[0], { label: 'Tu', text: ['Again.'] }],
+    tabs: [valid.tabs[0], { ...valid.tabs[1], label: 'Tu' }],
   });
 
   // Narrow before reading `.error`: safeParse returns a discriminated union.
   if (result.success) throw new Error('expected a validation failure');
   expect(result.error.issues[0]?.path).toEqual(['tabs', 1, 'label']);
+});
+
+test('every tab needs instructions — they open each panel', () => {
+  const bare = { label: valid.tabs[0].label, text: valid.tabs[0].text };
+  const result = TabsBlockContentSchema.safeParse({ ...valid, tabs: [bare, valid.tabs[1]] });
+
+  if (result.success) throw new Error('expected a validation failure');
+  expect(result.error.issues[0]?.path).toEqual(['tabs', 0, 'instructions']);
+  expect(
+    TabsBlockContentSchema.safeParse({
+      ...valid,
+      tabs: [{ ...valid.tabs[0], instructions: '' }, valid.tabs[1]],
+    }).success,
+  ).toBe(false);
 });
 
 test('the tab set needs a name, and a misspelt key fails instead of vanishing', () => {
@@ -86,9 +100,9 @@ const three = {
   label: 'Forms of address',
   intro: ['Pick a form.'],
   tabs: [
-    { label: 'Tu', text: ['Informal text.'] },
-    { label: 'Vous', text: ['Formal text.'] },
-    { label: 'On', text: ['Impersonal text.'] },
+    { label: 'Tu', instructions: 'Tu instructions.', text: ['Informal text.'] },
+    { label: 'Vous', instructions: 'Vous instructions.', text: ['Formal text.'] },
+    { label: 'On', instructions: 'On instructions.', text: ['Impersonal text.'] },
   ],
 };
 
@@ -134,4 +148,18 @@ test('the intro renders above the tablist', () => {
 
 test('content that breaks the contract fails loud, naming the type', () => {
   expect(() => renderTabs({ label: 'x', tabs: [] })).toThrow(/tabs/);
+});
+
+test('each panel opens with its instruction box, before the tab text', () => {
+  const html = renderTabs(three);
+  const panels = html.split(/<[a-z]+[^>]*role="tabpanel"/).slice(1);
+
+  expect(panels).toHaveLength(3);
+  panels.forEach((panel, index) => {
+    const tab = three.tabs[index];
+    // The same callout the accordions use: the `instructions` box with its info icon.
+    expect(panel).toMatch(/class="instructions[\s"]/);
+    expect(panel.indexOf(tab.instructions)).toBeGreaterThan(-1);
+    expect(panel.indexOf(tab.instructions)).toBeLessThan(panel.indexOf(tab.text[0]));
+  });
 });

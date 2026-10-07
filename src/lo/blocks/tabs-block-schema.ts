@@ -10,6 +10,11 @@
  * LABELS ARE UNIQUE within the block: the label is the only thing a learner tells
  * tabs apart by, so two "Tu" tabs is an authoring mistake, caught here.
  *
+ * EVERY TAB OPENS WITH INSTRUCTIONS (maintainer, 2026-10-07): `instructions` is
+ * required, plain text like an accordion's, and renders first in the panel in the
+ * same `InstructionsCallout` the accordions use. Required rather than optional so a
+ * tab can never ship without telling the learner what to do in it.
+ *
  * `text` is exactly a grammar block's `text` — reused, not copied — so a tab accepts
  * paragraphs, lists, tables, the audio player, inline audio and popup links.
  *
@@ -27,6 +32,8 @@ const RichTextEntriesSchema = TextBlockContentSchema.shape.text;
 export const TabSchema = z.strictObject({
   /** The tab's visible text. Also its accessible name. */
   label: z.string().min(1),
+  /** What to do in this tab. Shown first in the panel, in the instruction box. */
+  instructions: z.string().min(1),
   /** The panel body: one entry per paragraph or block. */
   text: RichTextEntriesSchema,
 });

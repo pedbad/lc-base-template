@@ -9,6 +9,7 @@
     "tabs": [
       {
         "label": "Placeholder form A",
+        "instructions": "Placeholder instructions for tab A — tell the learner what to do here, e.g. read the examples and play the clip.",
         "text": [
           "Placeholder: the <strong>informal</strong> form — friends, family, children. <span data-audio=\"audio/lo-00-example/placeholder.m4a\" data-audio-label=\"Play the placeholder clip\"></span>",
           "A second placeholder paragraph in the same tab."
@@ -16,6 +17,7 @@
       },
       {
         "label": "Placeholder form B",
+        "instructions": "Placeholder instructions for tab B — every tab opens with its own instruction box.",
         "text": [
           "Placeholder: the <strong>formal</strong> form — strangers, officials, <em>anyone you are unsure about</em>.",
           "<ul><li>Placeholder rule one.</li><li>Placeholder rule two.</li></ul>"
@@ -23,6 +25,7 @@
       },
       {
         "label": "Placeholder form C",
+        "instructions": "Placeholder instructions for tab C — instructions are plain text, like an accordion's.",
         "text": [
           "A tab takes everything a grammar block does, popup links included: <a class=\"modal-link\" href=\"#content\" data-modal-target=\"example-popup\">open the example popup</a>."
         ]

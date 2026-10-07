@@ -35,8 +35,12 @@ Slice 1 is deliberately small. It ships the tabs and nothing they could later ho
     "label": "Forms of address",
     "intro": ["Optional rich text above the tabs."],
     "tabs": [
-      { "label": "Tu", "text": ["Rich text, as in a grammar block."] },
-      { "label": "Vous", "text": ["…"] }
+      {
+        "label": "Tu",
+        "instructions": "What to do here.",
+        "text": ["Rich text, as in a grammar block."]
+      },
+      { "label": "Vous", "instructions": "…", "text": ["…"] }
     ]
   }
 }
@@ -50,6 +54,8 @@ Slice 1 is deliberately small. It ships the tabs and nothing they could later ho
   unique within the block (it is what a learner tells tabs apart by). Each `text` is
   the same rich-text entry array `TextBlockContentSchema.text` accepts: paragraphs,
   lists, tables, the audio player, inline audio and popup links.
+- `instructions` — **required on every tab** (maintainer, 2026-10-07). Plain text,
+  rendered first in the panel in `InstructionsCallout`, the accordions' info box.
 - The schema is strict: a misspelt key fails rather than being dropped.
 - `presentation` works as for every block: `plain` renders bare under the section
   `<h2>`; `card` wraps it in `LoAccordion`. Slice 1's example uses `plain`.

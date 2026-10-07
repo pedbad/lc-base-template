@@ -127,8 +127,16 @@ A set of labelled tabs, one panel showing at a time. Add it like any block: a
     "label": "Forms of address",
     "intro": ["Optional rich text above the tabs."],
     "tabs": [
-      { "label": "Tu", "text": ["Rich text, exactly as in a grammar block."] },
-      { "label": "Vous", "text": ["<ul><li>Lists, tables and audio work too.</li></ul>"] }
+      {
+        "label": "Tu",
+        "instructions": "Read the informal examples, then play the clip.",
+        "text": ["Rich text, exactly as in a grammar block."]
+      },
+      {
+        "label": "Vous",
+        "instructions": "Compare these with the informal forms.",
+        "text": ["<ul><li>Lists, tables and audio work too.</li></ul>"]
+      }
     ]
   }
 }
@@ -136,6 +144,8 @@ A set of labelled tabs, one panel showing at a time. Add it like any block: a
 
 - `label` names the tab set for screen readers, and is required.
 - At least two tabs, and every tab `label` is unique within the block.
+- Every tab needs `instructions`: plain text, shown first in the panel in the same
+  info box the accordions use. A tab without it fails the build.
 - Each tab's `text` takes what a grammar block's `text` takes: paragraphs, lists,
   tables, the audio player, inline audio and popup links.
 - `"presentation": "plain"` puts the tabs straight under the section heading;
