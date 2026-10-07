@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <!--
+    chart.svg — placeholder bar chart for the example tabs block (tab C,
+    lo-00-example/blocks/04-tabs): café visits per day, peaking on Saturday. The alt
+    text and caption in block.json carry its meaning. Hex literals are deliberate
+    HERE, as in hero.svg: an <img> cannot read the page's CSS tokens.
+  -->
+  <rect width="800" height="450" fill="#ffffff" />
+  <g fill="#1f4e6b">
+    <rect x="70" y="250" width="70" height="150" />
+    <rect x="170" y="230" width="70" height="170" />
+    <rect x="270" y="210" width="70" height="190" />
+    <rect x="370" y="190" width="70" height="210" />
+    <rect x="470" y="140" width="70" height="260" />
+    <rect x="570" y="60" width="70" height="340" />
+    <rect x="670" y="170" width="70" height="230" />
+  </g>
+  <line x1="50" y1="400" x2="760" y2="400" stroke="#333333" stroke-width="2" />
+  <g fill="#333333" font-family="sans-serif" font-size="22" text-anchor="middle">
+    <text x="105" y="430">Mon</text>
+    <text x="205" y="430">Tue</text>
+    <text x="305" y="430">Wed</text>
+    <text x="405" y="430">Thu</text>
+    <text x="505" y="430">Fri</text>
+    <text x="605" y="430">Sat</text>
+    <text x="705" y="430">Sun</text>
+  </g>
+</svg>

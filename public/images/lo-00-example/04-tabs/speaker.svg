@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <!--
+    speaker.svg — placeholder portrait for the example tabs block (tab B,
+    lo-00-example/blocks/04-tabs). Authors replace it with a photo of the speaker.
+    Hex literals are deliberate HERE, as in hero.svg: an <img> is a separate document
+    and cannot read the page's CSS tokens.
+  -->
+  <rect width="400" height="400" fill="#e6eef2" />
+  <circle cx="200" cy="155" r="70" fill="#8aa4b4" />
+  <path d="M70 400c0-80 58-140 130-140s130 60 130 140z" fill="#8aa4b4" />
+</svg>
