@@ -18,6 +18,11 @@
  * on the active tab, so every label stays visible at 320px. "Wide" is a container
  * query on this block, not the viewport, because a card is narrower than a plain block.
  *
+ * THE RULES ARE `primary`, NOT `accent`. The active tab's bar and border are its
+ * state indicator, so WCAG 1.4.11 wants 3:1 against the page. Cambridge Blue
+ * (`accent`) measured 1.36:1 on the light page; `primary` measured 11.9:1 there and
+ * 10.4:1 on the dark one (built-site check, 2026-10-07).
+ *
  * Spec: docs/specs/2026-10-07-tabs-block-design.md §4, §5.
  */
 import { FOCUS_OUTLINE } from '@/components/shell/focus-outline';
@@ -30,25 +35,25 @@ import { TabsBlockContentSchema } from './tabs-block-schema';
 const LIST_CLASSES = [
   'flex w-full flex-col items-stretch justify-start gap-1 rounded-none bg-transparent p-0',
   'text-foreground group-data-horizontal/tabs:h-auto',
-  '@xl:flex-row @xl:flex-wrap @xl:items-end @xl:gap-0 @xl:border-b-2 @xl:border-accent',
+  '@xl:flex-row @xl:flex-wrap @xl:items-end @xl:gap-0 @xl:border-b-2 @xl:border-primary',
 ].join(' ');
 
 /** Narrow: a list row with a leading bar when active. Wide: a folder tab. */
 const TRIGGER_CLASSES = [
   'h-auto flex-none justify-start rounded-md border-0 border-s-4 border-transparent px-4 py-2',
   'text-start text-base font-normal whitespace-normal text-foreground dark:text-foreground',
-  'hover:bg-card data-active:border-accent data-active:bg-card data-active:font-semibold',
-  'dark:data-active:border-accent dark:data-active:bg-card',
+  'hover:bg-card data-active:border-primary data-active:bg-card data-active:font-semibold',
+  'dark:data-active:border-primary dark:data-active:bg-card',
   'group-data-[variant=default]/tabs-list:data-active:shadow-none focus-visible:ring-0',
   FOCUS_OUTLINE,
   '@xl:rounded-none @xl:rounded-t-lg @xl:border-2 @xl:border-s-2 @xl:border-transparent',
   '@xl:px-5 @xl:py-3 @xl:text-center',
-  '@xl:data-active:-mb-0.5 @xl:data-active:border-accent @xl:data-active:border-b-card',
+  '@xl:data-active:-mb-0.5 @xl:data-active:border-primary @xl:data-active:border-b-card',
 ].join(' ');
 
 /** The panel the active tab opens onto. Wide: no top border — the list's rule is it. */
 const PANEL_CLASSES = [
-  'mt-2 rounded-lg border-2 border-accent bg-card p-4 text-base',
+  'mt-2 rounded-lg border-2 border-primary bg-card p-4 text-base',
   FOCUS_OUTLINE,
   '@xl:mt-0 @xl:rounded-t-none @xl:border-t-0',
 ].join(' ');
