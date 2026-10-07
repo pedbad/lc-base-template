@@ -13,13 +13,15 @@ describe('ResultSlot', () => {
     );
   });
 
-  // Maintainer's call 2026-10-07: the marks match the 2rem alert icons (Callout).
+  // Maintainer's call 2026-10-07: circled marks (lucide circle-check-big / circle-x)
+  // at the 2rem of the alert icons (Callout).
   test.each([
-    [true, 'text-success'],
-    [false, 'text-destructive'],
-  ])('isCorrect=%s draws a 2rem %s mark', (isCorrect, colour) => {
+    [true, 'lucide-circle-check-big', 'text-success'],
+    [false, 'lucide-circle-x', 'text-destructive'],
+  ])('isCorrect=%s draws a 2rem %s in %s', (isCorrect, icon, colour) => {
     const html = renderToStaticMarkup(<ResultSlot hasResult isCorrect={isCorrect} />);
 
+    expect(html).toMatch(new RegExp(`<svg[^>]*class="[^"]*\\b${icon}\\b`));
     expect(html).toMatch(new RegExp(`<svg[^>]*class="[^"]*\\bsize-8\\b[^"]*${colour}`));
   });
 });
