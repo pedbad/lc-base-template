@@ -45,6 +45,11 @@
     --destructive: var(--cam-dark-crest);
     --destructive-foreground: var(--white);
 
+    /* Red TEXT on a destructive tint (Reset). The crest itself is 3.81:1 on its 10%
+       tint, under the 4.5:1 text needs; pulled 30% toward --foreground it is 5.48:1,
+       4.71:1 on the 20% hover tint (2026-10-07). Icons and borders keep the crest. */
+    --destructive-text: color-mix(in oklab, var(--destructive) 70%, var(--foreground));
+
     /* Success — deepened Cambridge Green so white text / green-on-white text both
        clear WCAG AA 4.5:1 on the white card surface (bright cam-green was 2.5:1). */
     --success: var(--cam-green-deep);
@@ -147,6 +152,9 @@
     --accent-foreground: var(--slate-4);
     --destructive: var(--cam-dark-crest);
     --destructive-foreground: var(--white);
+
+    /* Toward the light foreground here: 5.08:1 on the 20% tint, 4.59:1 on hover. */
+    --destructive-text: color-mix(in oklab, var(--destructive) 60%, var(--foreground));
 
     /* Dark surface: lightened green reads as text on the dark card (4.9:1); dark ink
        on it clears AA for the solid success button. */

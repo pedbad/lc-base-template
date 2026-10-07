@@ -44,7 +44,7 @@ describe('ButtonsSection', () => {
   it.each([
     ['--primary', 'bg-primary text-primary-foreground'],
     ['--primary', EXERCISE_BUTTONS.showAnswer.className],
-    ['--destructive', 'bg-destructive/10 text-destructive'],
+    ['--destructive', 'text-destructive-text'],
     ['--success', EXERCISE_BUTTONS.check.className],
   ])('labels a %s button with its token', (token, classes) => {
     expect(html).toMatch(
