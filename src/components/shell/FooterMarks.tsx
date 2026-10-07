@@ -15,7 +15,7 @@
  *     prerendered markup, which the Phase D handover §3 forbids outright.
  *
  * So the pair is rendered and Tailwind's `dark:` variant hides one. That variant is
- * wired to the same `.dark` class at src/index.css:47 (`@custom-variant dark`), so it
+ * wired to the same `.dark` class at src/styles/app.css (`@custom-variant dark`), so it
  * cannot drift from ThemeToggle. `display: none` also removes the hidden copy from the
  * accessibility tree, so the duplicated `alt` is never announced twice.
  *

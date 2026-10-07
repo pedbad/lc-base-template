@@ -158,14 +158,20 @@ needs the number points here rather than restating it.
 | Asset        | Budget (gzipped) | Measured 2026-10-07 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
 | `main-*.js`  | **< 110 kB**     | 107.39 kB           | 2.61 kB  |
-| `main-*.css` | **< 18 kB**      | 17.98 kB            | 0.02 kB  |
+| `main-*.css` | **< 18 kB**      | 17.48 kB            | 0.52 kB  |
 
-- **CSS 17.82 → 17.98 kB (2026-10-07), the debug sandbox's alert examples.** A new
-  `--warning` token plus the four variants' tint/border/icon utilities. The sandbox is
-  not shipped, but Tailwind scans every file under `src/`, so its utilities land in
-  `main-*.css` all the same. **0.02 kB of headroom is none:** the next CSS change must
-  first decide between raising the line again and keeping debug pages out of the main
-  scan (a separate stylesheet for them, or `@source not` plus their own entry).
+- **CSS 17.98 → 17.48 kB (2026-10-07): the debug pages got their own stylesheet.**
+  Tailwind scans files on disk, so classes written only in `src/sandbox/` and
+  `src/showcase/` (the alert examples took the sheet to 17.98 kB, 0.02 under the line)
+  were shipping in `main-*.css` to every LO page. Now `src/index.css` excludes both
+  folders with `@source not`, and the two debug entries load `src/debug.css` instead: the
+  same base (`src/styles/app.css`, split out of `index.css` so both sheets share it)
+  without that exclusion. `debug.css` cannot simply import `index.css`, because an
+  imported `@source not` is not undone by a later `@source` (tried; the debug utilities
+  came out missing). Pinned by `src/build/debug-css.test.ts`.
+  **Measure with a plain `bun run build`, never `DEBUG=1`:** with the debug entries in
+  the graph, Vite moves the rich-text and audio styles the showcase shares into a shared
+  chunk, so `main-*.css` reads about 0.36 kB lighter (17.12 kB) than what ships.
 - **Both raised by the maintainer's decision (2026-10-07): JS < 105 → < 110 kB, CSS
   < 17 → < 18 kB.** The `tabs` block (spec `docs/specs/2026-10-07-tabs-block-design.md`)
   took JS from 100.21 to 107.39 kB (+7.18, almost all of it Base UI's Tabs and its

@@ -90,8 +90,9 @@ automatically — see [If a test goes red](#if-a-test-goes-red) below.
 | `tokens-variant-c-warm-blue.css`      | preset                | switching the primary / CTA colour                       |
 | `layout.css`                          | layout (not colour)   | changing the page width, gutter or reading measure       |
 
-All six are in **`src/styles/`**. `index.css` imports `palette.css`, then
-`tokens.css`, then `layout.css`; the three variant files sit beside them as
+All six are in **`src/styles/`**. `app.css` (beside them, imported by both the course
+stylesheet `src/index.css` and the debug pages' `src/debug.css`) imports `palette.css`,
+then `tokens.css`, then `layout.css`; the three variant files sit beside them as
 switchable presets. `layout.css` is not part of the colour chain and no preset
 copies it: it holds the one page width, the side gutter, the reading measure
 for running text and the exercise track, each explained in its own comment.
@@ -206,7 +207,7 @@ Swap `-a-cambridge-blue` for `-b-dark-blue` or `-c-warm-blue` as needed, then:
 bun run dev
 ```
 
-Nothing else changes — `index.css` already imports `tokens.css`. Because this
+Nothing else changes — `app.css` already imports `tokens.css`. Because this
 overwrites `tokens.css`, never hand-edit that file: your edit would be lost the
 next time anyone switches preset. Edit the **variant** file instead, then copy it
 across.
@@ -232,7 +233,7 @@ variant files — switching the `--primary` preset must never change the fonts:
 --font-body: 'Open Sans', 'Arial', sans-serif; /* body */
 ```
 
-`index.css` maps Tailwind's `--font-sans → --font-body` and
+`src/styles/app.css` maps Tailwind's `--font-sans → --font-body` and
 `--font-heading → --font-display`, which re-types every component at once. Those
 mappings live in `@theme inline`, so they are **not** runtime variables: plain-CSS
 components (the header, the footer) read `var(--font-display)` directly, and the
@@ -252,7 +253,7 @@ filenames the `@font-face` rules expect.
 
 ### Type baseline
 
-Set on `<html>` in `index.css`: `font-size: 100%` (16px, but it scales with the
+Set on `<html>` in `src/styles/app.css`: `font-size: 100%` (16px, but it scales with the
 reader's own browser setting — Cambridge minimum 16px, spec §7.2) and a
 **unitless** `line-height: 1.4` (140% leading; unitless so nested text scales
 rather than freezing). Change these knowingly; they are accessibility floors.

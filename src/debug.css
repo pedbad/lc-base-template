@@ -1,0 +1,14 @@
+/* debug.css — the stylesheet for the two debug pages, and only them.
+
+   The same base as index.css (Tailwind + styles/app.css) but a different SCAN: it keeps
+   the classes written in src/sandbox/ and src/showcase/, which index.css deliberately
+   excludes so they never reach the `main-*.css` a deployed course ships. It does not
+   import index.css, because an imported `@source not` cannot be undone by a later
+   `@source` (measured 2026-10-07: the alert utilities came out missing).
+   Loaded by src/sandbox/main.tsx and src/showcase/main.tsx instead of index.css.
+   Pinned by src/build/debug-css.test.ts. */
+@import 'tailwindcss';
+@import './styles/app.css';
+
+/* Same reason as in index.css: the docs are prose, never a class source. */
+@source not "../docs";

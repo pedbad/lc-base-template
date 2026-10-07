@@ -44,10 +44,11 @@ describe('layout tokens', () => {
     expect(ruleBody(layout, ':root')).toContain(`${token}: ${value};`);
   });
 
-  test('index.css imports layout.css, after the colour tokens', () => {
-    const index = read('index.css');
-    const tokens = index.indexOf("@import './styles/tokens.css';");
-    const layoutAt = index.indexOf("@import './styles/layout.css';");
+  // The shared base both stylesheets import (`index.css`, `debug.css`) since 2026-10-07.
+  test('styles/app.css imports layout.css, after the colour tokens', () => {
+    const app = read('styles/app.css');
+    const tokens = app.indexOf("@import './tokens.css';");
+    const layoutAt = app.indexOf("@import './layout.css';");
     expect(tokens).toBeGreaterThan(-1);
     expect(layoutAt).toBeGreaterThan(tokens);
   });
