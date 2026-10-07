@@ -29,7 +29,8 @@ broken link; do not treat either as a page of the course.
 
 An LO page is built from blocks declared in its JSON. Block types: `intro`,
 `prose`, `grammar`, `vocabulary`, `outcomes` and `tabs`. A `tabs` block is a
-WAI-ARIA tab set (arrow keys, Home/End) whose panels hold rich text; every
+WAI-ARIA tab set (arrow keys, Home/End) whose panels hold rich text and optional media (an image, an audio player and a
+transcript in a native `<details>` toggle); every
 panel is in the prerendered HTML, inactive ones carry `hidden`.
 
 ## Engines

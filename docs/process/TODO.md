@@ -1193,13 +1193,17 @@ the slice-1 scope and the open list live in
 
 - **F1 — `tabs` block, text only. DONE 2026-10-07** (`feat/tabs-block`). Plan:
   `2026-10-07-tabs-block-plan.md`.
-- **F2 — panel entries:** callout, media (image + audio + transcript, inline or popup),
-  exercise by folder ref. Verify: each entry in the example LO, guards b–h green.
+- **F2a — media in a tab. DONE 2026-10-07** (`feat/tabs-media`). Portrait or figure
+  image, audio player, Show/Hide transcript (`<details>`). Spec
+  `2026-10-07-tabs-media-design.md`, plan `2026-10-07-tabs-media-plan.md`.
+- **F2 — remaining panel entries:** callout, exercise by folder ref; transcript in the
+  popup (`{ "modal": id }`); media as a standalone block. Verify: each entry in the
+  example LO, guards b–h green.
 - **F3 — phones:** the dropdown chosen in the brainstorm (slice 1 stacks instead).
 - **F4 — `ui-showcase.html`** behind `DEBUG_ENTRY_FILES`, rendering through the same
   renderers. Verify: absent from `bun run build`, present under `DEBUG=1`.
-- **Budget:** JS headroom is 2.61 kB, CSS 0.18 kB (`docs/TOOLING.md`); F2 will likely
-  need per-LO chunking or build-time rich-text parsing first.
+- **Budget:** JS headroom is 0.90 kB, CSS 0.32 kB (`docs/TOOLING.md`); the next F2 entry
+  needs per-LO chunking or build-time rich-text parsing first.
 
 ---
 
@@ -1292,3 +1296,4 @@ build, so it cannot return. Two remain:
 | 2026-10-06 | —         | **§D6 closed** — sparse one-LO landing page left as is; it fills as LOs are added              |
 | 2026-10-07 | see §F    | **`tabs` block (§F1)** — shadcn/Base UI tabs, plain or card; budgets JS < 110, CSS < 18        |
 | 2026-10-07 | see git   | **one `Callout`** — tinted info/success/warning/danger; all instruction boxes + sandbox use it |
+| 2026-10-07 | see §F    | **tab media (§F2a)** — portrait/figure image, audio, Show/Hide transcript; JS 109.10 kB        |

@@ -148,12 +148,20 @@ A set of labelled tabs, one panel showing at a time. Add it like any block: a
   info box the accordions use. A tab without it fails the build.
 - Each tab's `text` takes what a grammar block's `text` takes: paragraphs, lists,
   tables, the audio player, inline audio and popup links.
+- A tab may add `media`, shown after its instructions: an `image`
+  (`"kind": "portrait"` beside the player, or `"figure"` full width with an optional
+  `caption`), an `audio` player (`src`, optional `label`) and its `transcript` (rich
+  text, behind a Show/Hide transcript toggle). Image, audio or both; audio needs a
+  transcript; every image needs `alt` (`""` only on a decorative portrait). Tabs B–D
+  in `lo-00-example` show each layout.
 - `"presentation": "plain"` puts the tabs straight under the section heading;
   `"card"` (with a `title`) wraps them in an accordion.
 - A misspelt key fails the build rather than being ignored.
 
-Design and what is coming next (callouts, media, exercises in a tab):
+Design and what is coming next (callouts and exercises in a tab):
 [`docs/specs/2026-10-07-tabs-block-design.md`](docs/specs/2026-10-07-tabs-block-design.md).
+Media in a tab:
+[`docs/specs/2026-10-07-tabs-media-design.md`](docs/specs/2026-10-07-tabs-media-design.md).
 
 ### The authoring loop
 
