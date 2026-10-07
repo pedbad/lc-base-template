@@ -113,6 +113,38 @@ It is sorted **numerically**, so `lo-9-` precedes `lo-10-` (alphabetically it wo
 not). `course.config.ts` has no order list — a second source for the same fact would
 be free to drift from the folders silently. **To reorder a course, rename folders.**
 
+### Tabs block
+
+A set of labelled tabs, one panel showing at a time. Add it like any block: a
+`blocks/NN-tabs/block.json` folder, listed in a section's `blocks` array in `lo.json`.
+`lo-00-example` has one in its Grammar section (`blocks/04-tabs/`).
+
+```json
+{
+  "type": "tabs",
+  "presentation": "plain",
+  "content": {
+    "label": "Forms of address",
+    "intro": ["Optional rich text above the tabs."],
+    "tabs": [
+      { "label": "Tu", "text": ["Rich text, exactly as in a grammar block."] },
+      { "label": "Vous", "text": ["<ul><li>Lists, tables and audio work too.</li></ul>"] }
+    ]
+  }
+}
+```
+
+- `label` names the tab set for screen readers, and is required.
+- At least two tabs, and every tab `label` is unique within the block.
+- Each tab's `text` takes what a grammar block's `text` takes: paragraphs, lists,
+  tables, the audio player, inline audio and popup links.
+- `"presentation": "plain"` puts the tabs straight under the section heading;
+  `"card"` (with a `title`) wraps them in an accordion.
+- A misspelt key fails the build rather than being ignored.
+
+Design and what is coming next (callouts, media, exercises in a tab):
+[`docs/specs/2026-10-07-tabs-block-design.md`](docs/specs/2026-10-07-tabs-block-design.md).
+
 ### The authoring loop
 
 ```bash

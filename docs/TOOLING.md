@@ -150,15 +150,26 @@ Layer 1 is the carrot; layers 2–3 are the stick.
   the prerender pass will later write — see _Dev-server LO pages_ below.
 - **Rejected:** Create-React-App (deprecated), Webpack (slower, heavier config).
 
-### Bundle budget — JS < 105 kB, CSS < 17 kB gzipped _(decisions 2026-10-05, 2026-10-06)_
+### Bundle budget — JS < 110 kB, CSS < 18 kB gzipped _(decisions 2026-10-05, 2026-10-06, 2026-10-07)_
 
 **This is the one place the budget is written down.** Every other doc and comment that
 needs the number points here rather than restating it.
 
-| Asset        | Budget (gzipped) | Measured 2026-10-06 | Headroom |
+| Asset        | Budget (gzipped) | Measured 2026-10-07 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 105 kB**     | 100.21 kB           | 4.79 kB  |
-| `main-*.css` | **< 17 kB**      | 16.68 kB            | 0.32 kB  |
+| `main-*.js`  | **< 110 kB**     | 107.39 kB           | 2.61 kB  |
+| `main-*.css` | **< 18 kB**      | 17.82 kB            | 0.18 kB  |
+
+- **Both raised by the maintainer's decision (2026-10-07): JS < 105 → < 110 kB, CSS
+  < 17 → < 18 kB.** The `tabs` block (spec `docs/specs/2026-10-07-tabs-block-design.md`)
+  took JS from 100.21 to 107.39 kB (+7.18, almost all of it Base UI's Tabs and its
+  composite-list machinery, plus 0.2 kB of example-LO content) and CSS from 16.68 to
+  17.82 kB (+1.14: the woken shadcn `tabs.tsx` wrapper's utilities plus the block's
+  overrides). The alternatives on the table were pulling the two recorded levers first
+  (per-LO chunking, build-time rich-text parsing) or hand-rolling tabs without Base UI;
+  the maintainer chose to keep shadcn components and raise the line. Headroom is now
+  thin again, so the next component that ships in `main-*.js` should expect to wake
+  one of those levers.
 
 - **JS was raised from < 80 kB to < 100 kB by the maintainer's decision.** The 80 kB
   figure is the generic "microsite" row from the maintainer's global ECC rules

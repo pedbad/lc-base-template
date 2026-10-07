@@ -25,6 +25,13 @@ or the older name `SHOWCASE=1`), so a deployed course contains neither unless
 that flag was set. They are listed here so their absence is not mistaken for a
 broken link; do not treat either as a page of the course.
 
+## Content blocks
+
+An LO page is built from blocks declared in its JSON. Block types: `intro`,
+`prose`, `grammar`, `vocabulary`, `outcomes` and `tabs`. A `tabs` block is a
+WAI-ARIA tab set (arrow keys, Home/End) whose panels hold rich text; every
+panel is in the prerendered HTML, inactive ones carry `hidden`.
+
 ## Engines
 
 Fifteen engines ship. Each lives under `src/exercises/<engine>/` with a pure

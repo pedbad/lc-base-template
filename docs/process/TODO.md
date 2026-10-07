@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-06 · **HEAD:** see `git log` · **Suite:** 103 files · 1070 tests green
+**Last updated:** 2026-10-07 · **HEAD:** see `git log` · **Suite:** 112 files · 1272 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -1185,6 +1185,24 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
 
 ---
 
+## F. Composite UI blocks — slice 1 of N done
+
+Reusable components authors drop into LO pages through config. Brainstorm decisions,
+the slice-1 scope and the open list live in
+[`docs/specs/2026-10-07-tabs-block-design.md`](../specs/2026-10-07-tabs-block-design.md) §2.
+
+- **F1 — `tabs` block, text only. DONE 2026-10-07** (`feat/tabs-block`). Plan:
+  `2026-10-07-tabs-block-plan.md`.
+- **F2 — panel entries:** callout, media (image + audio + transcript, inline or popup),
+  exercise by folder ref. Verify: each entry in the example LO, guards b–h green.
+- **F3 — phones:** the dropdown chosen in the brainstorm (slice 1 stacks instead).
+- **F4 — `ui-showcase.html`** behind `DEBUG_ENTRY_FILES`, rendering through the same
+  renderers. Verify: absent from `bun run build`, present under `DEBUG=1`.
+- **Budget:** JS headroom is 2.61 kB, CSS 0.18 kB (`docs/TOOLING.md`); F2 will likely
+  need per-LO chunking or build-time rich-text parsing first.
+
+---
+
 ## Deferred on purpose — each with a wake-up trigger
 
 Not forgotten. Decided.
@@ -1272,3 +1290,4 @@ build, so it cannot return. Two remain:
 | 2026-10-06 | `a82ef49` | **a11y follow-ups (§D10)** — speaker 24px floor, sandbox outline + code regions, AA pair |
 | 2026-10-06 | `b0c3d42` | **one page frame (§D11)** — 72rem frame, 60ch measure, 48rem exercise track, breakout    |
 | 2026-10-06 | —         | **§D6 closed** — sparse one-LO landing page left as is; it fills as LOs are added        |
+| 2026-10-07 | see §F    | **`tabs` block (§F1)** — shadcn/Base UI tabs, plain or card; budgets JS < 110, CSS < 18  |
