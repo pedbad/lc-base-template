@@ -1,0 +1,59 @@
+/**
+ * tabs-block-schema.ts — the per-type `content` contract for `type: "tabs"`,
+ * mirroring the per-engine `*-schema.ts` convention.
+ *
+ * `label` NAMES THE TAB SET and is required. A tablist without an accessible name
+ * fails WAI-ARIA, and a `plain` block has no heading of its own to borrow one from.
+ *
+ * AT LEAST TWO TABS: one tab is not a choice, it is a panel with a button on top.
+ *
+ * LABELS ARE UNIQUE within the block: the label is the only thing a learner tells
+ * tabs apart by, so two "Tu" tabs is an authoring mistake, caught here.
+ *
+ * `text` is exactly a grammar block's `text` — reused, not copied — so a tab accepts
+ * paragraphs, lists, tables, the audio player, inline audio and popup links.
+ *
+ * STRICT, so a misspelt key (`tabz`) fails at build time instead of silently
+ * rendering nothing.
+ *
+ * Spec: docs/specs/2026-10-07-tabs-block-design.md §3.
+ */
+import { z } from 'zod';
+import { TextBlockContentSchema } from './text-block-schema';
+
+/** One authored rich-text entry array, parsed to `RichTextEntry[]`. */
+const RichTextEntriesSchema = TextBlockContentSchema.shape.text;
+
+export const TabSchema = z.strictObject({
+  /** The tab's visible text. Also its accessible name. */
+  label: z.string().min(1),
+  /** The panel body: one entry per paragraph or block. */
+  text: RichTextEntriesSchema,
+});
+export type Tab = z.infer<typeof TabSchema>;
+
+export const TabsBlockContentSchema = z
+  .strictObject({
+    /** Block-level instructions, read generically by `sectionContent`. */
+    instructions: z.string().min(1).optional(),
+    /** The tab set's accessible name (`aria-label` on the tablist). */
+    label: z.string().min(1),
+    /** Optional rich text above the tabs. */
+    intro: RichTextEntriesSchema.optional(),
+    /** The tabs, in order. */
+    tabs: z.array(TabSchema).min(2),
+  })
+  .superRefine((content, ctx) => {
+    const seen = new Set<string>();
+    content.tabs.forEach((tab, index) => {
+      if (seen.has(tab.label)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `duplicate tab label "${tab.label}" — learners tell tabs apart by label`,
+          path: ['tabs', index, 'label'],
+        });
+      }
+      seen.add(tab.label);
+    });
+  });
+export type TabsBlockContent = z.infer<typeof TabsBlockContentSchema>;
