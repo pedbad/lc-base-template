@@ -34,28 +34,31 @@ describe('ExerciseHost server rendering', () => {
 describe('ExerciseHost layout', () => {
   test('caps the engine in the exercise track', () => {
     const html = renderToStaticMarkup(
-      <ExerciseHost type="radio-quiz" config={{ ...CONFIG, type: 'radio-quiz' }} />,
+      <ExerciseHost type="conjugation" config={{ ...CONFIG, type: 'conjugation' }} />,
     );
 
     expect(html).toMatch(/<div class="exercise-track"><p[^>]*>[^<]*needs JavaScript/i);
     expect(html).toMatch(/needs JavaScript[^<]*<\/p><\/div><\/div>$/i);
   });
 
-  // Maintainer's call 2026-10-07: select and inline-choice span the column like the
-  // instruction box above them; their dropdowns and pills are fixed-width, so nothing
-  // stretches (§D11's bug).
-  test.each(['select', 'inline-choice'] as const)('%s is not held to the track', (type) => {
-    const html = renderToStaticMarkup(<ExerciseHost type={type} config={{ ...CONFIG, type }} />);
+  // Maintainer's call 2026-10-07: select, inline-choice and radio-quiz span the column
+  // like the instruction box above them; their dropdowns and pills are fixed-width, so
+  // nothing stretches (§D11's bug).
+  test.each(['select', 'inline-choice', 'radio-quiz'] as const)(
+    '%s is not held to the track',
+    (type) => {
+      const html = renderToStaticMarkup(<ExerciseHost type={type} config={{ ...CONFIG, type }} />);
 
-    expect(html).not.toContain('exercise-track');
-  });
+      expect(html).not.toContain('exercise-track');
+    },
+  );
 
   test('other engines are', () => {
-    const quiz = renderToStaticMarkup(
-      <ExerciseHost type="radio-quiz" config={{ ...CONFIG, type: 'radio-quiz' }} />,
+    const conjugation = renderToStaticMarkup(
+      <ExerciseHost type="conjugation" config={{ ...CONFIG, type: 'conjugation' }} />,
     );
 
-    expect(quiz).toContain('<div class="exercise-track">');
+    expect(conjugation).toContain('<div class="exercise-track">');
   });
 
   // Maintainer's call 2026-10-07: the instruction box spans the whole column, so only

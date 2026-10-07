@@ -31,11 +31,16 @@ interface ExerciseHostProps {
 /**
  * Engines that span the whole column, like the instruction box above them (maintainer,
  * 2026-10-07). Only engines whose controls are fixed-width belong here: select's
- * dropdowns and inline-choice's pills do not stretch, so their rows simply get longer.
+ * dropdowns and the pills of inline-choice and radio-quiz do not stretch, so their rows
+ * simply get longer.
  * Every other engine stays on the track (§D11: at the full column, `width: 100%`
  * inputs went ~800px wide).
  */
-const FULL_WIDTH_TYPES: ReadonlySet<ExerciseType> = new Set(['select', 'inline-choice']);
+const FULL_WIDTH_TYPES: ReadonlySet<ExerciseType> = new Set([
+  'select',
+  'inline-choice',
+  'radio-quiz',
+]);
 
 /** Safely read `content.instructions` off an unknown config (author override). */
 function readInstructionsOverride(config: unknown): string | null | undefined {
