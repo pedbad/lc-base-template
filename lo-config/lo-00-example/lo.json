@@ -18,7 +18,7 @@
       "id": "grammar",
       "label": "Grammar: formal and informal address",
       "navLabel": "Grammar",
-      "blocks": ["01-grammar"]
+      "blocks": ["01-grammar", "04-tabs"]
     },
     {
       "id": "exercises",

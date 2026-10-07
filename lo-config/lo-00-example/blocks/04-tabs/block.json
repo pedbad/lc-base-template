@@ -1,0 +1,32 @@
+{
+  "type": "tabs",
+  "presentation": "plain",
+  "content": {
+    "label": "Placeholder forms of address",
+    "intro": [
+      "Placeholder tabs. Each tab below is one entry in <em>blocks/04-tabs/block.json</em>; click a tab, or use the arrow keys, to switch."
+    ],
+    "tabs": [
+      {
+        "label": "Placeholder form A",
+        "text": [
+          "Placeholder: the <strong>informal</strong> form — friends, family, children. <span data-audio=\"audio/lo-00-example/placeholder.m4a\" data-audio-label=\"Play the placeholder clip\"></span>",
+          "A second placeholder paragraph in the same tab."
+        ]
+      },
+      {
+        "label": "Placeholder form B",
+        "text": [
+          "Placeholder: the <strong>formal</strong> form — strangers, officials, <em>anyone you are unsure about</em>.",
+          "<ul><li>Placeholder rule one.</li><li>Placeholder rule two.</li></ul>"
+        ]
+      },
+      {
+        "label": "Placeholder form C",
+        "text": [
+          "A tab takes everything a grammar block does, popup links included: <a class=\"modal-link\" href=\"#content\" data-modal-target=\"example-popup\">open the example popup</a>."
+        ]
+      }
+    ]
+  }
+}

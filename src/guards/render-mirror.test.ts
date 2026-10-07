@@ -73,6 +73,7 @@ describe('presentParts — what is on disk', () => {
       '01-grammar',
       '02-vocabulary',
       '03-outcomes',
+      '04-tabs',
     ]);
     expect(present.exercises.map((part) => part.ref)).toEqual(['01-select', '02-radio-quiz']);
     expect(present.modals.map((part) => part.ref)).toEqual(['conjugation', 'example-popup']);
