@@ -158,7 +158,7 @@ test('each panel opens with its instruction box, before the tab text', () => {
   panels.forEach((panel, index) => {
     const tab = three.tabs[index];
     // The same callout the accordions use: the `instructions` box with its info icon.
-    expect(panel).toMatch(/class="instructions[\s"]/);
+    expect(panel).toMatch(/class="[^"]*\binstructions\b/);
     expect(panel.indexOf(tab.instructions)).toBeGreaterThan(-1);
     expect(panel.indexOf(tab.instructions)).toBeLessThan(panel.indexOf(tab.text[0]));
   });

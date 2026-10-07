@@ -162,7 +162,7 @@ test('toPageSections: a plain block renders instructions no accordion is there t
 
   const html = renderToStaticMarkup(<ModalProvider modals={{}}>{section?.content}</ModalProvider>);
 
-  expect(html).toContain('class="instructions');
+  expect(html).toMatch(/class="[^"]*\binstructions\b/);
   expect(html).toContain('Read this first.');
   expect(html).toContain('Body.');
   // Still plain: the callout arrives without an accordion wrapping it.

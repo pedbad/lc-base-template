@@ -18,8 +18,7 @@
  * BROWSER-SAFE: plain data, no `node:fs`, no Vite-only syntax. The test does the file
  * reading, not this module.
  */
-import { CircleAlert, CircleCheck, CircleX, Info } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+import type { CalloutVariant } from '@/components/shell/Callout';
 
 /** A group of primitive colour tokens — Layer 1, the only place real values live. */
 export interface PrimitiveGroup {
@@ -210,45 +209,19 @@ export const SANDBOX_ICON_IDS: readonly string[] = [
 ] as const;
 
 /**
- * The alert variants `AlertsSection` shows (maintainer, 2026-10-07). Each names ONE
- * semantic token for its border, tint and icon; see that section's header.
+ * The alert variants `AlertsSection` shows (maintainer, 2026-10-07): DATA ONLY. The
+ * look belongs to `Callout`, the component lessons render, so the sandbox can never
+ * drift from them — it holds no colour, icon or class of its own.
  */
-export interface AlertVariant {
-  readonly id: string;
+export interface AlertExample {
+  readonly variant: CalloutVariant;
   readonly title: string;
   readonly body: string;
-  readonly Icon: LucideIcon;
-  /** Border, tint and icon colour — all from one semantic token. */
-  readonly className: string;
 }
 
-export const ALERT_VARIANTS: readonly AlertVariant[] = [
-  {
-    id: 'info',
-    title: 'Info',
-    body: 'Neutral guidance and learning instructions.',
-    Icon: Info,
-    className: 'border-primary/40 bg-primary/10 *:[svg]:text-primary',
-  },
-  {
-    id: 'success',
-    title: 'Success',
-    body: 'The action worked and the learner can go on.',
-    Icon: CircleCheck,
-    className: 'border-success/40 bg-success/10 *:[svg]:text-success',
-  },
-  {
-    id: 'warning',
-    title: 'Warning',
-    body: 'Something needs attention before continuing.',
-    Icon: CircleAlert,
-    className: 'border-warning/40 bg-warning/10 *:[svg]:text-warning',
-  },
-  {
-    id: 'danger',
-    title: 'Danger',
-    body: 'An error occurred and needs correcting.',
-    Icon: CircleX,
-    className: 'border-destructive/40 bg-destructive/10 *:[svg]:text-destructive',
-  },
+export const ALERT_EXAMPLES: readonly AlertExample[] = [
+  { variant: 'info', title: 'Info', body: 'Neutral guidance and learning instructions.' },
+  { variant: 'success', title: 'Success', body: 'The action worked and the learner can go on.' },
+  { variant: 'warning', title: 'Warning', body: 'Something needs attention before continuing.' },
+  { variant: 'danger', title: 'Danger', body: 'An error occurred and needs correcting.' },
 ];

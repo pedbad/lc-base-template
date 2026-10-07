@@ -21,9 +21,9 @@
  * Spec: docs/process/2026-07-02-instructions-box-handover.md §3.
  */
 import { Fragment, type ComponentType } from 'react';
-import { CircleCheck, Eye, Info, RotateCcw } from 'lucide-react';
+import { CircleCheck, Eye, RotateCcw } from 'lucide-react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import Callout from '@/components/shell/Callout';
 
 interface ExerciseInstructionsProps {
   /** Resolved instruction copy, or `null`/empty to render nothing. */
@@ -65,12 +65,8 @@ export function ExerciseInstructions({ text }: ExerciseInstructionsProps) {
   if (text === null || text.trim() === '') return null;
 
   return (
-    // Info-alert styling: a light primary (blue) tint + border, with the leading
-    // glyph in the primary colour. There is no dedicated --info token, so --primary
-    // (the same blue as the Show-answers control) carries the "informational" role.
-    <Alert role="note" className="mb-4 border-primary/25 bg-primary/10 text-foreground">
-      <Info className="text-primary" />
-      <AlertDescription className="text-foreground/80">{renderWithBold(text)}</AlertDescription>
-    </Alert>
+    // The one tinted info box every page uses (`Callout`), so exercise instructions
+    // look exactly like accordion and tab instructions — and like the debug sandbox.
+    <Callout className="mb-4">{renderWithBold(text)}</Callout>
   );
 }
