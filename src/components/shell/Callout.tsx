@@ -34,9 +34,11 @@ interface CalloutProps {
   className?: string;
 }
 
-/** Icon and token classes per variant: border, tint and icon from one token. */
+/** Icon and token classes per variant: border, tint and icon from one token (info's
+ *  tint is its own token, --callout-info). */
 const VARIANTS = {
-  info: { Icon: Info, className: 'border-primary/40 bg-primary/10 *:[svg]:text-primary' },
+  // Cambridge Light Blue in light, the primary tint in dark (--callout-info).
+  info: { Icon: Info, className: 'border-primary/40 bg-callout-info *:[svg]:text-primary' },
   success: {
     Icon: CircleCheck,
     className: 'border-success/40 bg-success/10 *:[svg]:text-success',
@@ -56,7 +58,9 @@ export default function Callout({ variant = 'info', title, children, className }
 
   return (
     <Alert role="note" className={cn('text-foreground', variantClassName, className)}>
-      <Icon aria-hidden="true" />
+      {/* Twice shadcn's 16px (maintainer, 2026-10-07); a size class on the icon
+          opts it out of the vendored `size-4` default. */}
+      <Icon aria-hidden="true" className="size-8" />
       {title === undefined ? null : <AlertTitle className="font-semibold">{title}</AlertTitle>}
       <AlertDescription className="text-foreground">{children}</AlertDescription>
     </Alert>

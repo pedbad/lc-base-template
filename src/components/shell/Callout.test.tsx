@@ -7,7 +7,6 @@ import { describe, expect, test } from 'vitest';
 import Callout from './Callout';
 
 const VARIANT_TOKENS = [
-  ['info', 'primary'],
   ['success', 'success'],
   ['warning', 'warning'],
   ['danger', 'destructive'],
@@ -28,6 +27,27 @@ describe('Callout', () => {
     expect(html).toContain(`bg-${token}/10`);
     expect(html).toContain(`text-${token}`);
   });
+
+  // Maintainer's call 2026-10-07: info boxes are Cambridge Light Blue, through the
+  // --callout-info token (tokens.css), which keeps the old primary tint in dark mode.
+  test('info is tinted --callout-info, with a --primary border and icon', () => {
+    const html = renderToStaticMarkup(<Callout variant="info">Body.</Callout>);
+
+    expect(html).toContain('bg-callout-info');
+    expect(html).not.toContain('bg-primary/10');
+    expect(html).toContain('border-primary/40');
+    expect(html).toContain('text-primary');
+  });
+
+  // Maintainer's call 2026-10-07: every alert icon at twice the shadcn 16px.
+  test.each(['info', 'success', 'warning', 'danger'] as const)(
+    'the %s icon is 2rem (size-8)',
+    (variant) => {
+      const html = renderToStaticMarkup(<Callout variant={variant}>Body.</Callout>);
+
+      expect(html).toMatch(/<svg[^>]*class="[^"]*\bsize-8\b/);
+    },
+  );
 
   test('is a note, never an assertive live region', () => {
     const html = renderToStaticMarkup(<Callout variant="danger">Static.</Callout>);
