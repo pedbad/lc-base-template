@@ -163,3 +163,44 @@ test('each panel opens with its instruction box, before the tab text', () => {
     expect(panel.indexOf(tab.instructions)).toBeLessThan(panel.indexOf(tab.text[0]));
   });
 });
+
+const withMedia = {
+  ...three,
+  tabs: [
+    {
+      ...three.tabs[0],
+      media: { audio: { src: 'audio/lo-00-example/placeholder.m4a' }, transcript: ['Said.'] },
+    },
+    three.tabs[1],
+  ],
+};
+
+test('a tab may carry media; a bad media group is reported under the tab', () => {
+  expect(TabsBlockContentSchema.safeParse(withMedia).success).toBe(true);
+
+  const result = TabsBlockContentSchema.safeParse({
+    ...withMedia,
+    tabs: [{ ...withMedia.tabs[0], media: { audio: { src: 'a.m4a' } } }, three.tabs[1]],
+  });
+  if (result.success) throw new Error('expected a validation failure');
+  expect(result.error.issues[0]?.path).toEqual(['tabs', 0, 'media', 'transcript']);
+});
+
+test('a panel runs instruction box, then media, then text', () => {
+  const html = renderTabs(withMedia);
+  const panel = html.split(/<[a-z]+[^>]*role="tabpanel"/)[1] ?? '';
+
+  const instructions = panel.indexOf(three.tabs[0].instructions);
+  const media = panel.indexOf('<audio');
+  const text = panel.indexOf(three.tabs[0].text[0]);
+  expect(instructions).toBeGreaterThan(-1);
+  expect(media).toBeGreaterThan(instructions);
+  expect(text).toBeGreaterThan(media);
+});
+
+test('a tab without media renders no player', () => {
+  const html = renderTabs(three);
+
+  expect(html).not.toContain('<audio');
+  expect(html).not.toContain('<details');
+});

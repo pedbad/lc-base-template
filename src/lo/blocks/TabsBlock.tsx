@@ -29,6 +29,7 @@ import { FOCUS_OUTLINE } from '@/components/shell/focus-outline';
 import InstructionsCallout from '@/components/shell/InstructionsCallout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RichTextEntries } from '../rich-text/RichTextEntries';
+import { MediaPanel } from './MediaPanel';
 import { parseBlockContent } from './parse-block-content';
 import { TabsBlockContentSchema } from './tabs-block-schema';
 
@@ -82,6 +83,7 @@ export function TabsBlock({ content }: { content: unknown }) {
           <TabsContent key={tab.label} value={String(index)} keepMounted className={PANEL_CLASSES}>
             {/* The accordions' instruction box, first in every panel. */}
             <InstructionsCallout className="mt-0 mb-3">{tab.instructions}</InstructionsCallout>
+            {tab.media === undefined ? null : <MediaPanel media={tab.media} className="mb-4" />}
             <div className="space-y-3">
               <RichTextEntries entries={tab.text} paragraphClassName="text-foreground" />
             </div>

@@ -18,12 +18,17 @@
  * `text` is exactly a grammar block's `text` — reused, not copied — so a tab accepts
  * paragraphs, lists, tables, the audio player, inline audio and popup links.
  *
+ * `media` is OPTIONAL: an image and/or a long audio player with its transcript,
+ * rendered after the instruction box and before the text. Its rules live in
+ * `media-schema.ts` (spec docs/specs/2026-10-07-tabs-media-design.md §3).
+ *
  * STRICT, so a misspelt key (`tabz`) fails at build time instead of silently
  * rendering nothing.
  *
  * Spec: docs/specs/2026-10-07-tabs-block-design.md §3.
  */
 import { z } from 'zod';
+import { MediaSchema } from './media-schema';
 import { TextBlockContentSchema } from './text-block-schema';
 
 /** One authored rich-text entry array, parsed to `RichTextEntry[]`. */
@@ -34,6 +39,8 @@ export const TabSchema = z.strictObject({
   label: z.string().min(1),
   /** What to do in this tab. Shown first in the panel, in the instruction box. */
   instructions: z.string().min(1),
+  /** Optional image and/or audio with transcript, after the instructions. */
+  media: MediaSchema.optional(),
   /** The panel body: one entry per paragraph or block. */
   text: RichTextEntriesSchema,
 });
