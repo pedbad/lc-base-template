@@ -42,7 +42,8 @@ const LIST_CLASSES = [
 
 /** Narrow: a list row with a leading bar when active. Wide: a folder tab. */
 const TRIGGER_CLASSES = [
-  'h-auto flex-none justify-start rounded-md border-0 border-s-4 border-transparent px-4 py-2',
+  'h-auto flex-none cursor-pointer justify-start rounded-md border-0 border-s-4 border-transparent',
+  'px-4 py-2',
   'text-start text-base font-normal whitespace-normal text-foreground dark:text-foreground',
   'hover:bg-card data-active:border-primary data-active:bg-card data-active:font-semibold',
   'dark:data-active:border-primary dark:data-active:bg-card',

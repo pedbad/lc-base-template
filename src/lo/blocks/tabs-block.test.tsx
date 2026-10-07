@@ -226,3 +226,10 @@ test('the example tabs block demos every media layout, tabs A to D', () => {
   expect(tabs[3]?.media?.image).toBeUndefined();
   expect(tabs[3]?.media?.audio).toBeDefined();
 });
+
+test('every tab shows the hand cursor on hover, as an accordion trigger does', () => {
+  const tabs = tagsWithRole(renderTabs(three), 'tab');
+
+  expect(tabs).toHaveLength(3);
+  tabs.forEach((tab) => expect(tab).toMatch(/class="[^"]*\bcursor-pointer\b/));
+});
