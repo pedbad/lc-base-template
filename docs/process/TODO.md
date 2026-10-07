@@ -1202,7 +1202,7 @@ the slice-1 scope and the open list live in
 - **F3 — phones:** the dropdown chosen in the brainstorm (slice 1 stacks instead).
 - **F4 — `ui-showcase.html`** behind `DEBUG_ENTRY_FILES`, rendering through the same
   renderers. Verify: absent from `bun run build`, present under `DEBUG=1`.
-- **Budget:** JS headroom is 0.89 kB, CSS 0.31 kB (`docs/TOOLING.md`); the next F2 entry
+- **Budget:** JS headroom is 0.87 kB, CSS 0.29 kB (`docs/TOOLING.md`); the next F2 entry
   needs per-LO chunking or build-time rich-text parsing first.
 
 ---
@@ -1296,4 +1296,4 @@ build, so it cannot return. Two remain:
 | 2026-10-06 | —         | **§D6 closed** — sparse one-LO landing page left as is; it fills as LOs are added              |
 | 2026-10-07 | see §F    | **`tabs` block (§F1)** — shadcn/Base UI tabs, plain or card; budgets JS < 110, CSS < 18        |
 | 2026-10-07 | see git   | **one `Callout`** — tinted info/success/warning/danger; all instruction boxes + sandbox use it |
-| 2026-10-07 | see §F    | **tab media (§F2a)** — portrait/figure image, audio, Show/Hide transcript; JS 109.11 kB        |
+| 2026-10-07 | see §F    | **tab media (§F2a)** — portrait/figure image, audio, Show/Hide transcript; JS 109.13 kB        |

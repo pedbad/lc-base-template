@@ -157,11 +157,11 @@ needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-07 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 110 kB**     | 109.11 kB           | 0.89 kB  |
-| `main-*.css` | **< 18 kB**      | 17.69 kB            | 0.31 kB  |
+| `main-*.js`  | **< 110 kB**     | 109.13 kB           | 0.87 kB  |
+| `main-*.css` | **< 18 kB**      | 17.71 kB            | 0.29 kB  |
 
-- **Tab media (2026-10-07): JS 107.73 → 109.11 kB (+1.38), CSS 17.57 → 17.69 kB
-  (+0.12)** — `MediaPanel`, the lucide `Eye`/`EyeOff` icons, two ui-strings and the
+- **Tab media (2026-10-07): JS 107.73 → 109.13 kB (+1.40), CSS 17.57 → 17.71 kB
+  (+0.14)** — `MediaPanel`, the lucide `Eye`/`EyeOff` icons, two ui-strings and the
   example LO's media content (spec `docs/specs/2026-10-07-tabs-media-design.md`).
   Figures are Vite's reported gzip of a plain `bun run build`. Under 1 kB of JS headroom
   is left: the next entry that ships in `main-*.js` (callout, exercise by ref) should
