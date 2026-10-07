@@ -31,9 +31,9 @@ import DocsSection from './DocsSection';
 /** In-page nav. Ids match the `id` on each section below. */
 const SECTIONS = [
   { id: 'palette', label: 'Colour' },
+  { id: 'alerts', label: 'Alerts' },
   { id: 'type', label: 'Typography' },
   { id: 'icons', label: 'Icons' },
-  { id: 'alerts', label: 'Alerts' },
   { id: 'docs', label: 'Docs' },
 ] as const;
 
@@ -51,9 +51,9 @@ export default function Sandbox() {
 
       <main className="page-frame flex flex-col gap-14 py-10">
         <PaletteSection />
+        <AlertsSection />
         <TypographySection />
         <IconsSection />
-        <AlertsSection />
         <DocsSection />
       </main>
 
