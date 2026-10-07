@@ -41,15 +41,20 @@ describe('ExerciseHost layout', () => {
     expect(html).toMatch(/needs JavaScript[^<]*<\/p><\/div><\/div>$/i);
   });
 
-  // Maintainer's call 2026-10-07: select's rows span the column like the instruction
-  // box above them; its selects are fixed-width, so nothing stretches (§D11's bug).
-  test('select is not held to the track; other engines are', () => {
-    const select = renderToStaticMarkup(<ExerciseHost type="select" config={CONFIG} />);
+  // Maintainer's call 2026-10-07: select and inline-choice span the column like the
+  // instruction box above them; their dropdowns and pills are fixed-width, so nothing
+  // stretches (§D11's bug).
+  test.each(['select', 'inline-choice'] as const)('%s is not held to the track', (type) => {
+    const html = renderToStaticMarkup(<ExerciseHost type={type} config={{ ...CONFIG, type }} />);
+
+    expect(html).not.toContain('exercise-track');
+  });
+
+  test('other engines are', () => {
     const quiz = renderToStaticMarkup(
       <ExerciseHost type="radio-quiz" config={{ ...CONFIG, type: 'radio-quiz' }} />,
     );
 
-    expect(select).not.toContain('exercise-track');
     expect(quiz).toContain('<div class="exercise-track">');
   });
 
