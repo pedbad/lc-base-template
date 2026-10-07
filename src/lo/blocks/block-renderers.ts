@@ -17,6 +17,7 @@
  */
 import type { ComponentType } from 'react';
 import { OutcomesBlock } from './OutcomesBlock';
+import { TabsBlock } from './TabsBlock';
 import { ProseBlock, GrammarBlock, IntroBlock } from './TextBlock';
 import { VocabularyBlock } from './VocabularyBlock';
 
@@ -34,6 +35,7 @@ export const BLOCK_RENDERERS: Readonly<Record<string, BlockRenderer>> = {
   grammar: GrammarBlock,
   vocabulary: VocabularyBlock,
   outcomes: OutcomesBlock,
+  tabs: TabsBlock,
 };
 
 /** Resolve a block renderer by type, or `undefined` if no such type ships. */
