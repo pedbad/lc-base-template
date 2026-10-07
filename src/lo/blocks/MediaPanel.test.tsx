@@ -83,3 +83,14 @@ test('the transcript sits closed behind a summary carrying both labels', () => {
   // The text is in the static page, after the summary.
   expect(html.indexOf('Bonjour, je suis Claire.')).toBeGreaterThan(html.indexOf('</summary>'));
 });
+
+test('a portrait row is top-aligned, so a tall photo never pushes the player down', () => {
+  const html = render({
+    image: { kind: 'portrait', src: 'images/x/speaker.svg', alt: '' },
+    audio,
+    transcript,
+  });
+
+  expect(html).toContain('@md:items-start');
+  expect(html).not.toContain('@md:items-center');
+});

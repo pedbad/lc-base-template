@@ -98,7 +98,7 @@ export function MediaPanel({ media, className }: { media: Media; className?: str
   if (image?.kind === 'portrait') {
     return (
       <div className={cn('@container', className)}>
-        <div className="grid gap-4 @md:grid-cols-3 @md:items-center">
+        <div className="grid gap-4 @md:grid-cols-3 @md:items-start">
           <MediaImg image={image} className="h-auto w-full max-w-48 rounded-lg @md:max-w-none" />
           <div className="@md:col-span-2">{listening}</div>
         </div>
