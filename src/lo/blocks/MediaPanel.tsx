@@ -6,7 +6,7 @@
  * player once this group's own container is `@md` wide, and stacks above it below
  * that — a container query, because a tab panel inside a card is narrower than the
  * viewport. A `figure` (a chart the dialogue is about) spans the group in `<figure>`
- * with its caption, the player beneath.
+ * with its caption, the player beneath at the same width.
  *
  * THE TRANSCRIPT TOGGLE IS NATIVE `<details>`. The summary carries BOTH labels, each
  * with its icon, and `group-open:` shows the right one, so the accessible name is
@@ -73,13 +73,16 @@ function Transcript({ entries }: { entries: readonly RichTextEntry[] }) {
 function Listening({
   audio,
   transcript,
+  wide,
 }: {
   audio: MediaAudio;
   transcript: readonly RichTextEntry[];
+  /** Lift the player's 28rem cap so it spans a figure above it. */
+  wide: boolean;
 }) {
   return (
     <div className="space-y-3">
-      <div className="rich-text-player">
+      <div className={cn('rich-text-player', wide && '[&_audio]:max-w-none')}>
         <AudioClip soundFile={audio.src} listenText={audio.label ?? ''} />
       </div>
       <Transcript entries={transcript} />
@@ -92,7 +95,7 @@ export function MediaPanel({ media, className }: { media: Media; className?: str
   // The schema pairs audio with a transcript; the types cannot, so check both.
   const listening =
     audio !== undefined && transcript !== undefined ? (
-      <Listening audio={audio} transcript={transcript} />
+      <Listening audio={audio} transcript={transcript} wide={image?.kind === 'figure'} />
     ) : null;
 
   if (image?.kind === 'portrait') {

@@ -94,3 +94,15 @@ test('a portrait row is top-aligned, so a tall photo never pushes the player dow
   expect(html).toContain('@md:items-start');
   expect(html).not.toContain('@md:items-center');
 });
+
+test('under a figure the player spans the figure width; elsewhere it keeps its cap', () => {
+  const figure = render({
+    image: { kind: 'figure', src: 'images/x/chart.svg', alt: 'A chart' },
+    audio,
+    transcript,
+  });
+  const audioOnly = render({ audio, transcript });
+
+  expect(figure).toMatch(/class="rich-text-player [^"]*\[&amp;_audio\]:max-w-none/);
+  expect(audioOnly).not.toContain('max-w-none');
+});
