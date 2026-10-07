@@ -26,6 +26,7 @@ import { CircleCheck, Eye, RotateCcw } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
+import { EXERCISE_BUTTONS } from './exercise-buttons';
 
 interface ExerciseFooterProps {
   /** Check handler (grade the current answers). */
@@ -56,26 +57,18 @@ export function ExerciseFooter({
   return (
     <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border/60 pt-4">
       {showAnswers ? (
-        <Button
-          variant="ghost"
-          className="bg-primary/10 text-primary hover:bg-primary/20"
-          onClick={onShowAnswers}
-        >
+        <Button {...EXERCISE_BUTTONS.showAnswer} onClick={onShowAnswers}>
           <Eye />
           {resolveLabel('showAnswer', labels)}
         </Button>
       ) : null}
       {showReset ? (
-        <Button variant="destructive" onClick={onReset}>
+        <Button {...EXERCISE_BUTTONS.reset} onClick={onReset}>
           <RotateCcw />
           {resolveLabel('reset', labels)}
         </Button>
       ) : null}
-      <Button
-        className="bg-success text-success-foreground hover:bg-success/90"
-        onClick={onCheck}
-        disabled={checkDisabled}
-      >
+      <Button {...EXERCISE_BUTTONS.check} onClick={onCheck} disabled={checkDisabled}>
         <CircleCheck />
         {resolveLabel('check', labels)}
       </Button>

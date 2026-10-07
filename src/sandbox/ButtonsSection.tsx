@@ -12,6 +12,7 @@
 import type { ReactNode } from 'react';
 import { CircleCheck, Volume2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { EXERCISE_BUTTONS } from '@/exercises/lib/exercise-buttons';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { BUTTON_SIZES, BUTTON_VARIANTS } from './sandbox-catalog';
 
@@ -56,6 +57,22 @@ export default function ButtonsSection() {
               {label}
             </Button>
           ))}
+        </Row>
+
+        <Row
+          title="Colours the app uses"
+          note={
+            <>
+              Every coloured button in a lesson, labelled with the token its colour comes from:
+              solid primary (the default variant), and the exercise footer's Show answer, Reset and
+              Check (<code>EXERCISE_BUTTONS</code>).
+            </>
+          }
+        >
+          <Button>--primary</Button>
+          <Button {...EXERCISE_BUTTONS.showAnswer}>--primary</Button>
+          <Button {...EXERCISE_BUTTONS.reset}>--destructive</Button>
+          <Button {...EXERCISE_BUTTONS.check}>--success</Button>
         </Row>
 
         <Row title="Variants with an icon">

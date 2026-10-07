@@ -4,6 +4,7 @@
  */
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import { EXERCISE_BUTTONS } from '@/exercises/lib/exercise-buttons';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import ButtonsSection from './ButtonsSection';
 import { BUTTON_SIZES, BUTTON_VARIANTS } from './sandbox-catalog';
@@ -36,6 +37,21 @@ describe('ButtonsSection', () => {
 
   it('marks every icon decorative', () => {
     expect(count(/<svg/g)).toBe(count(/<svg[^>]*aria-hidden="true"/g));
+  });
+
+  // Maintainer's call 2026-10-07: each colour the app gives a button, labelled with the
+  // token it comes from, styled from the footer's own EXERCISE_BUTTONS (no copy).
+  it.each([
+    ['--primary', 'bg-primary text-primary-foreground'],
+    ['--primary', EXERCISE_BUTTONS.showAnswer.className],
+    ['--destructive', 'bg-destructive/10 text-destructive'],
+    ['--success', EXERCISE_BUTTONS.check.className],
+  ])('labels a %s button with its token', (token, classes) => {
+    expect(html).toMatch(
+      new RegExp(
+        `<button[^>]*class="[^"]*${classes.replace(/[/[\]]/g, '\\$&')}[^"]*"[^>]*>${token}`,
+      ),
+    );
   });
 
   it('renders the exercise footer exactly as an exercise does', () => {
