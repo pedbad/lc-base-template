@@ -32,10 +32,22 @@ describe('ExerciseHost server rendering', () => {
 // (conjugation inputs ~800px wide, Check a column away from the rows). Every engine
 // goes through this host, so one track caps them all.
 describe('ExerciseHost layout', () => {
-  test('wraps the instruction box and the engine in one exercise track', () => {
+  test('caps the engine in the exercise track', () => {
     const html = renderToStaticMarkup(<ExerciseHost type="select" config={CONFIG} />);
 
-    expect(html).toMatch(/^<div class="exercise-track">/);
-    expect(html).toMatch(/needs JavaScript[^<]*<\/p><\/div>$/i);
+    expect(html).toMatch(/<div class="exercise-track"><p[^>]*>[^<]*needs JavaScript/i);
+    expect(html).toMatch(/needs JavaScript[^<]*<\/p><\/div><\/div>$/i);
+  });
+
+  // Maintainer's call 2026-10-07: the instruction box spans the whole column, so only
+  // the engine is held to the track. It sits before the track, outside it.
+  test('puts the instruction box above the track, not inside it', () => {
+    const html = renderToStaticMarkup(<ExerciseHost type="select" config={CONFIG} />);
+    const instructions = html.indexOf('drop-down');
+    const track = html.indexOf('<div class="exercise-track">');
+
+    expect(html).toMatch(/^<div>/);
+    expect(instructions).toBeGreaterThan(-1);
+    expect(track).toBeGreaterThan(instructions);
   });
 });

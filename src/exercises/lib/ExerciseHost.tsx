@@ -50,25 +50,28 @@ export function ExerciseHost({ type, config }: ExerciseHostProps) {
   // exercise can work without it. Non-hydrating roots never see this branch.
   const isHydrated = useIsHydrated();
 
-  // One track for every engine (layout.css, TODO §D11): most engines are rows sized
+  // The instruction box spans the column (maintainer's call, 2026-10-07); only the
+  // engine sits on the track (layout.css, TODO §D11): most engines are rows sized
   // `width: 100%`, which stretch into empty space at the full page frame.
   return (
-    <div className="exercise-track">
+    <div>
       <ExerciseInstructions text={instructions} />
-      {Engine ? (
-        isHydrated ? (
-          <Suspense fallback={<p className="text-muted-foreground">Loading…</p>}>
-            {/* eslint-disable-next-line react-hooks/static-components */}
-            <Engine config={config} />
-          </Suspense>
+      <div className="exercise-track">
+        {Engine ? (
+          isHydrated ? (
+            <Suspense fallback={<p className="text-muted-foreground">Loading…</p>}>
+              {/* eslint-disable-next-line react-hooks/static-components */}
+              <Engine config={config} />
+            </Suspense>
+          ) : (
+            <p className="text-muted-foreground">This exercise needs JavaScript to run.</p>
+          )
         ) : (
-          <p className="text-muted-foreground">This exercise needs JavaScript to run.</p>
-        )
-      ) : (
-        <p className="text-destructive">
-          No engine registered for type <code>{type}</code>.
-        </p>
-      )}
+          <p className="text-destructive">
+            No engine registered for type <code>{type}</code>.
+          </p>
+        )}
+      </div>
     </div>
   );
 }
