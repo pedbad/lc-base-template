@@ -25,6 +25,7 @@ import { DebugPageHeader } from './DebugPageHeader';
 import PaletteSection from './PaletteSection';
 import TypographySection from './TypographySection';
 import IconsSection from './IconsSection';
+import AlertsSection from './AlertsSection';
 import DocsSection from './DocsSection';
 
 /** In-page nav. Ids match the `id` on each section below. */
@@ -32,6 +33,7 @@ const SECTIONS = [
   { id: 'palette', label: 'Colour' },
   { id: 'type', label: 'Typography' },
   { id: 'icons', label: 'Icons' },
+  { id: 'alerts', label: 'Alerts' },
   { id: 'docs', label: 'Docs' },
 ] as const;
 
@@ -51,6 +53,7 @@ export default function Sandbox() {
         <PaletteSection />
         <TypographySection />
         <IconsSection />
+        <AlertsSection />
         <DocsSection />
       </main>
 

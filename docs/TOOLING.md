@@ -158,8 +158,14 @@ needs the number points here rather than restating it.
 | Asset        | Budget (gzipped) | Measured 2026-10-07 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
 | `main-*.js`  | **< 110 kB**     | 107.39 kB           | 2.61 kB  |
-| `main-*.css` | **< 18 kB**      | 17.82 kB            | 0.18 kB  |
+| `main-*.css` | **< 18 kB**      | 17.98 kB            | 0.02 kB  |
 
+- **CSS 17.82 → 17.98 kB (2026-10-07), the debug sandbox's alert examples.** A new
+  `--warning` token plus the four variants' tint/border/icon utilities. The sandbox is
+  not shipped, but Tailwind scans every file under `src/`, so its utilities land in
+  `main-*.css` all the same. **0.02 kB of headroom is none:** the next CSS change must
+  first decide between raising the line again and keeping debug pages out of the main
+  scan (a separate stylesheet for them, or `@source not` plus their own entry).
 - **Both raised by the maintainer's decision (2026-10-07): JS < 105 → < 110 kB, CSS
   < 17 → < 18 kB.** The `tabs` block (spec `docs/specs/2026-10-07-tabs-block-design.md`)
   took JS from 100.21 to 107.39 kB (+7.18, almost all of it Base UI's Tabs and its

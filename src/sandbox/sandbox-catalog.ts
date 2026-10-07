@@ -18,6 +18,8 @@
  * BROWSER-SAFE: plain data, no `node:fs`, no Vite-only syntax. The test does the file
  * reading, not this module.
  */
+import { CircleAlert, CircleCheck, CircleX, Info } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 /** A group of primitive colour tokens — Layer 1, the only place real values live. */
 export interface PrimitiveGroup {
@@ -82,6 +84,11 @@ export const PRIMITIVE_SWATCHES: readonly PrimitiveGroup[] = [
     note: 'Bright for charts, deep for AA success text on light, soft for AA on dark.',
     tokens: ['--cam-green', '--cam-green-deep', '--cam-green-soft'],
   },
+  {
+    title: 'Ambers — two, for warnings',
+    note: 'Deep for AA warning text on light, soft for AA on dark.',
+    tokens: ['--amber-deep', '--amber-soft'],
+  },
 ] as const;
 
 /**
@@ -115,6 +122,7 @@ export const SEMANTIC_SWATCHES: readonly SemanticGroup[] = [
     pairs: [
       { token: '--destructive', on: '--destructive-foreground', use: 'wrong answers, errors' },
       { token: '--success', on: '--success-foreground', use: 'correct answers' },
+      { token: '--warning', on: '--warning-foreground', use: 'cautions' },
     ],
   },
   {
@@ -200,3 +208,47 @@ export const SANDBOX_ICON_IDS: readonly string[] = [
   'brand-linkedin',
   'brand-instagram',
 ] as const;
+
+/**
+ * The alert variants `AlertsSection` shows (maintainer, 2026-10-07). Each names ONE
+ * semantic token for its border, tint and icon; see that section's header.
+ */
+export interface AlertVariant {
+  readonly id: string;
+  readonly title: string;
+  readonly body: string;
+  readonly Icon: LucideIcon;
+  /** Border, tint and icon colour — all from one semantic token. */
+  readonly className: string;
+}
+
+export const ALERT_VARIANTS: readonly AlertVariant[] = [
+  {
+    id: 'info',
+    title: 'Info',
+    body: 'Neutral guidance and learning instructions.',
+    Icon: Info,
+    className: 'border-primary/40 bg-primary/10 *:[svg]:text-primary',
+  },
+  {
+    id: 'success',
+    title: 'Success',
+    body: 'The action worked and the learner can go on.',
+    Icon: CircleCheck,
+    className: 'border-success/40 bg-success/10 *:[svg]:text-success',
+  },
+  {
+    id: 'warning',
+    title: 'Warning',
+    body: 'Something needs attention before continuing.',
+    Icon: CircleAlert,
+    className: 'border-warning/40 bg-warning/10 *:[svg]:text-warning',
+  },
+  {
+    id: 'danger',
+    title: 'Danger',
+    body: 'An error occurred and needs correcting.',
+    Icon: CircleX,
+    className: 'border-destructive/40 bg-destructive/10 *:[svg]:text-destructive',
+  },
+];

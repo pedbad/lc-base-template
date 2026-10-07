@@ -46,6 +46,8 @@
     --cam-green-deep: #1f7d52; /* darkened — AA success on light surfaces (5.1:1 on white) */
     --cam-green-soft: #5fc79d; /* lightened — AA success text on dark surfaces (4.9:1 on dark card) */
     --cam-dark-crest: #dd3025; /* destructive / error */
+    --amber-deep: #8a5300; /* warning on light surfaces (6.4:1 on white) */
+    --amber-soft: #e9a93a; /* warning on dark surfaces */
 
     /* Typography — official Cambridge brand (spec §7.2).
        These live in Layer 1 (shared) — NOT in the per-preset token files — so
