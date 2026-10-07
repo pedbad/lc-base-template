@@ -24,9 +24,9 @@ export function ResultSlot({ hasResult, isCorrect }: ResultSlotProps) {
     <span aria-hidden className="flex items-center justify-center">
       {hasResult ? (
         isCorrect ? (
-          <CheckIcon className="size-5 text-success" />
+          <CheckIcon className="size-8 text-success" />
         ) : (
-          <XIcon className="size-5 text-destructive" />
+          <XIcon className="size-8 text-destructive" />
         )
       ) : null}
     </span>

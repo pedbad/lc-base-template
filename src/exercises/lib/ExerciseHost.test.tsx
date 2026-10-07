@@ -33,10 +33,24 @@ describe('ExerciseHost server rendering', () => {
 // goes through this host, so one track caps them all.
 describe('ExerciseHost layout', () => {
   test('caps the engine in the exercise track', () => {
-    const html = renderToStaticMarkup(<ExerciseHost type="select" config={CONFIG} />);
+    const html = renderToStaticMarkup(
+      <ExerciseHost type="radio-quiz" config={{ ...CONFIG, type: 'radio-quiz' }} />,
+    );
 
     expect(html).toMatch(/<div class="exercise-track"><p[^>]*>[^<]*needs JavaScript/i);
     expect(html).toMatch(/needs JavaScript[^<]*<\/p><\/div><\/div>$/i);
+  });
+
+  // Maintainer's call 2026-10-07: select's rows span the column like the instruction
+  // box above them; its selects are fixed-width, so nothing stretches (§D11's bug).
+  test('select is not held to the track; other engines are', () => {
+    const select = renderToStaticMarkup(<ExerciseHost type="select" config={CONFIG} />);
+    const quiz = renderToStaticMarkup(
+      <ExerciseHost type="radio-quiz" config={{ ...CONFIG, type: 'radio-quiz' }} />,
+    );
+
+    expect(select).not.toContain('exercise-track');
+    expect(quiz).toContain('<div class="exercise-track">');
   });
 
   // Maintainer's call 2026-10-07: the instruction box spans the whole column, so only
@@ -44,10 +58,10 @@ describe('ExerciseHost layout', () => {
   test('puts the instruction box above the track, not inside it', () => {
     const html = renderToStaticMarkup(<ExerciseHost type="select" config={CONFIG} />);
     const instructions = html.indexOf('drop-down');
-    const track = html.indexOf('<div class="exercise-track">');
+    const engine = html.search(/needs JavaScript/i);
 
     expect(html).toMatch(/^<div>/);
     expect(instructions).toBeGreaterThan(-1);
-    expect(track).toBeGreaterThan(instructions);
+    expect(engine).toBeGreaterThan(instructions);
   });
 });

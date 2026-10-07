@@ -28,6 +28,14 @@ interface ExerciseHostProps {
   config: unknown;
 }
 
+/**
+ * Engines that span the whole column, like the instruction box above them (maintainer,
+ * 2026-10-07). Only engines whose controls are fixed-width belong here: select's
+ * dropdowns do not stretch, so its rows simply get longer. Every other engine stays on
+ * the track (§D11: at the full column, `width: 100%` inputs went ~800px wide).
+ */
+const FULL_WIDTH_TYPES: ReadonlySet<ExerciseType> = new Set(['select']);
+
 /** Safely read `content.instructions` off an unknown config (author override). */
 function readInstructionsOverride(config: unknown): string | null | undefined {
   if (typeof config !== 'object' || config === null) return undefined;
@@ -50,13 +58,13 @@ export function ExerciseHost({ type, config }: ExerciseHostProps) {
   // exercise can work without it. Non-hydrating roots never see this branch.
   const isHydrated = useIsHydrated();
 
-  // The instruction box spans the column (maintainer's call, 2026-10-07); only the
-  // engine sits on the track (layout.css, TODO §D11): most engines are rows sized
+  // The instruction box spans the column (maintainer's call, 2026-10-07); the engine
+  // sits on the track unless it is in FULL_WIDTH_TYPES (layout.css, TODO §D11): most engines are rows sized
   // `width: 100%`, which stretch into empty space at the full page frame.
   return (
     <div>
       <ExerciseInstructions text={instructions} />
-      <div className="exercise-track">
+      <div className={FULL_WIDTH_TYPES.has(type) ? undefined : 'exercise-track'}>
         {Engine ? (
           isHydrated ? (
             <Suspense fallback={<p className="text-muted-foreground">Loading…</p>}>

@@ -240,7 +240,11 @@ export default function SelectExercise({ config }: ExerciseComponentProps) {
   });
 
   return (
-    <div className="flex flex-col gap-4">
+    // Rows span the column (ExerciseHost's FULL_WIDTH_TYPES); a passage is running
+    // text, so it keeps the 48rem track it always had, footer and all.
+    <div
+      className={isPassage ? 'flex max-w-(--exercise-track) flex-col gap-4' : 'flex flex-col gap-4'}
+    >
       {isPassage ? (
         <div className="rounded-xl border border-border/70 bg-card p-5 shadow-sm">
           <div className="space-y-2">{lines}</div>
