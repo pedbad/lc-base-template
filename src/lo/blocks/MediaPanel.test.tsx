@@ -83,3 +83,11 @@ test('the transcript sits closed behind a summary carrying both labels', () => {
   // The text is in the static page, after the summary.
   expect(html.indexOf('Bonjour, je suis Claire.')).toBeGreaterThan(html.indexOf('</summary>'));
 });
+
+test('a figure is capped in width, so a chart never fills a wide screen', () => {
+  const html = render({
+    image: { kind: 'figure', src: 'images/x/chart.svg', alt: 'A chart' },
+  });
+
+  expect(html).toMatch(/<figure[^>]*class="[^"]*\bmax-w-2xl\b/);
+});

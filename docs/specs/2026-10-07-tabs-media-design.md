@@ -12,10 +12,10 @@ player's transcript behind a "Show transcript" / "Hide transcript" toggle.
 
 Two kinds of image, because a face and a chart need different layouts:
 
-| `kind`       | For                                             | Layout                                                  |
-| ------------ | ----------------------------------------------- | ------------------------------------------------------- |
-| `"portrait"` | a photo of the speaker                          | modest, beside the player; stacks above it when narrow  |
-| `"figure"`   | a chart, graph or diagram the dialogue is about | full panel width in `<figure>`, optional `<figcaption>` |
+| `kind`       | For                                             | Layout                                                                             |
+| ------------ | ----------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `"portrait"` | a photo of the speaker                          | modest, beside the player; stacks above it when narrow                             |
+| `"figure"`   | a chart, graph or diagram the dialogue is about | panel width, capped at 42rem (`max-w-2xl`), in `<figure>`, optional `<figcaption>` |
 
 Any combination is valid except an empty one: image only, audio only, or both.
 

@@ -5,7 +5,7 @@
  * TWO LAYOUTS, picked by the image's kind (spec §1). A `portrait` sits beside the
  * player once this group's own container is `@md` wide, and stacks above it below
  * that — a container query, because a tab panel inside a card is narrower than the
- * viewport. A `figure` (a chart the dialogue is about) spans the group in `<figure>`
+ * viewport. A `figure` (a chart the dialogue is about) spans the group, capped at `max-w-2xl`, in `<figure>`
  * with its caption, the player beneath.
  *
  * THE TRANSCRIPT TOGGLE IS NATIVE `<details>`. The summary carries BOTH labels, each
@@ -109,7 +109,7 @@ export function MediaPanel({ media, className }: { media: Media; className?: str
   return (
     <div className={cn('@container space-y-4', className)}>
       {image === undefined ? null : (
-        <figure className="space-y-2">
+        <figure className="max-w-2xl space-y-2">
           <MediaImg image={image} className="h-auto w-full rounded-lg border border-border" />
           {image.caption === undefined ? null : (
             <figcaption className="text-sm text-muted-foreground">{image.caption}</figcaption>
