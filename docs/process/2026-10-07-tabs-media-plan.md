@@ -930,8 +930,12 @@ Re-read each file immediately before editing it (Prettier reflows markdown).
 ```
 
 And change the closing line's parenthesis from "(callouts, media, exercises in a tab)"
-to "(callouts and exercises in a tab)", adding the media spec link:
-`Media: [`docs/specs/2026-10-07-tabs-media-design.md`](docs/specs/2026-10-07-tabs-media-design.md).`
+to "(callouts and exercises in a tab)", and add one line after it:
+
+```md
+Media in a tab:
+[`docs/specs/2026-10-07-tabs-media-design.md`](docs/specs/2026-10-07-tabs-media-design.md).
+```
 
 - [ ] **Step 2: public/llms.txt** — replace "whose panels hold rich text;" with
       "whose panels hold rich text and optional media (an image, an audio player and a
