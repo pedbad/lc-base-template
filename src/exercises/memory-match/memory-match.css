@@ -18,7 +18,11 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
-    margin: 0 auto;
+
+    /* Centred in .memory-match's flex column. Not auto margins: a component chunk's
+       stylesheet can declare this layer before Tailwind's base, whose margin reset
+       then wins (memory-match-css.test.ts). */
+    align-self: center;
     padding: 0;
     width: 100%;
     max-width: 32rem;

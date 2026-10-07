@@ -34,7 +34,7 @@ describe('ExerciseHost server rendering', () => {
 describe('ExerciseHost layout', () => {
   test('caps the engine in the exercise track', () => {
     const html = renderToStaticMarkup(
-      <ExerciseHost type="conjugation" config={{ ...CONFIG, type: 'conjugation' }} />,
+      <ExerciseHost type="word-order" config={{ ...CONFIG, type: 'word-order' }} />,
     );
 
     expect(html).toMatch(/<div class="exercise-track"><p[^>]*>[^<]*needs JavaScript/i);
@@ -52,6 +52,7 @@ describe('ExerciseHost layout', () => {
     'typed-transform',
     'dictation',
     'line-match',
+    'memory-match',
   ] as const)('%s is not held to the track', (type) => {
     const html = renderToStaticMarkup(<ExerciseHost type={type} config={{ ...CONFIG, type }} />);
 
@@ -59,11 +60,11 @@ describe('ExerciseHost layout', () => {
   });
 
   test('other engines are', () => {
-    const conjugation = renderToStaticMarkup(
-      <ExerciseHost type="conjugation" config={{ ...CONFIG, type: 'conjugation' }} />,
+    const wordOrder = renderToStaticMarkup(
+      <ExerciseHost type="word-order" config={{ ...CONFIG, type: 'word-order' }} />,
     );
 
-    expect(conjugation).toContain('<div class="exercise-track">');
+    expect(wordOrder).toContain('<div class="exercise-track">');
   });
 
   // Maintainer's call 2026-10-07: the instruction box spans the whole column, so only
