@@ -18,7 +18,9 @@
  * BROWSER-SAFE: plain data, no `node:fs`, no Vite-only syntax. The test does the file
  * reading, not this module.
  */
+import type { VariantProps } from 'class-variance-authority';
 import type { CalloutVariant } from '@/components/shell/Callout';
+import type { buttonVariants } from '@/components/ui/button';
 
 /** A group of primitive colour tokens — Layer 1, the only place real values live. */
 export interface PrimitiveGroup {
@@ -225,3 +227,32 @@ export const ALERT_EXAMPLES: readonly AlertExample[] = [
   { variant: 'warning', title: 'Warning', body: 'Something needs attention before continuing.' },
   { variant: 'danger', title: 'Danger', body: 'An error occurred and needs correcting.' },
 ];
+
+type ButtonProps = VariantProps<typeof buttonVariants>;
+
+/**
+ * The `Button` variants and sizes `ButtonsSection` shows (maintainer, 2026-10-07, after
+ * the french-lo-1 sandbox's "Buttons (Current App Types)"): DATA ONLY, the look belongs
+ * to `src/components/ui/button.tsx`. Each is a `Record` over the cva keys, so a variant
+ * or size added to Button does not compile until it is listed here too.
+ */
+export const BUTTON_VARIANTS: Readonly<Record<NonNullable<ButtonProps['variant']>, string>> = {
+  default: 'Primary',
+  secondary: 'Secondary',
+  outline: 'Outline',
+  ghost: 'Ghost',
+  destructive: 'Destructive',
+  link: 'Link',
+};
+
+/** `text` sizes take a label; `icon` sizes are square and icon-only. */
+export const BUTTON_SIZES: Readonly<Record<NonNullable<ButtonProps['size']>, 'text' | 'icon'>> = {
+  xs: 'text',
+  sm: 'text',
+  default: 'text',
+  lg: 'text',
+  'icon-xs': 'icon',
+  'icon-sm': 'icon',
+  icon: 'icon',
+  'icon-lg': 'icon',
+};

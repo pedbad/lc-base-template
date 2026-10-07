@@ -25,12 +25,14 @@ import { DebugPageHeader } from './DebugPageHeader';
 import PaletteSection from './PaletteSection';
 import TypographySection from './TypographySection';
 import IconsSection from './IconsSection';
+import ButtonsSection from './ButtonsSection';
 import AlertsSection from './AlertsSection';
 import DocsSection from './DocsSection';
 
 /** In-page nav. Ids match the `id` on each section below. */
 const SECTIONS = [
   { id: 'palette', label: 'Colour' },
+  { id: 'buttons', label: 'Buttons' },
   { id: 'alerts', label: 'Alerts' },
   { id: 'type', label: 'Typography' },
   { id: 'icons', label: 'Icons' },
@@ -51,6 +53,7 @@ export default function Sandbox() {
 
       <main className="page-frame flex flex-col gap-14 py-10">
         <PaletteSection />
+        <ButtonsSection />
         <AlertsSection />
         <TypographySection />
         <IconsSection />
