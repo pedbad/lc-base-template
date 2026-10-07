@@ -426,7 +426,7 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
           aria-label={`Picture ${index + 1}${item.localLanguage ? ` (${item.localLanguage})` : ''}: select to connect`}
           aria-pressed={isActive}
           onClick={() => handleSourceActivate(key)}
-          className={`flex w-full items-center gap-3 rounded-xl border px-3 py-2 transition ${isCorrect ? 'border-success bg-success/10' : isActive ? 'border-primary bg-primary/10' : connected ? 'border-primary/50 bg-card' : 'border-border/70 bg-card hover:bg-accent/40'}`}
+          className={`flex h-full w-full items-center gap-3 rounded-xl border px-3 py-2 transition ${isCorrect ? 'border-success bg-success/10' : isActive ? 'border-primary bg-primary/10' : connected ? 'border-primary/50 bg-card' : 'border-border/70 bg-card hover:bg-accent/40'}`}
         >
           <img
             alt={item.alt ?? item.localLanguage ?? ''}
@@ -466,7 +466,7 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
           aria-label={`Word ${item.label}: select to connect`}
           aria-pressed={isActive}
           onClick={() => handleTargetActivate(key)}
-          className={`flex w-full items-center gap-3 rounded-lg border px-3 py-2 text-left transition ${isCorrect ? 'border-success bg-success/10' : isActive ? 'border-primary bg-primary/10' : connectedSource ? 'border-primary/50 bg-card' : 'border-border/70 bg-card hover:bg-accent/40'}`}
+          className={`flex h-full w-full items-center gap-3 rounded-lg border px-3 py-2 text-left transition ${isCorrect ? 'border-success bg-success/10' : isActive ? 'border-primary bg-primary/10' : connectedSource ? 'border-primary/50 bg-card' : 'border-border/70 bg-card hover:bg-accent/40'}`}
         >
           <span ref={(node) => setTargetNode(key, node)}>
             <span aria-hidden="true" className={dotClass(tone)} />
@@ -491,6 +491,8 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
     nCorrect: state.nCorrect,
   });
 
+  const stageRows = Math.max(state.sampledItems.length, state.wordBank.length);
+
   return (
     <div className="flex flex-col gap-4">
       {/* Mobile (<980px) */}
@@ -505,9 +507,19 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
           recoiling={state.recoiling}
           recoilProgress={state.recoilProgress}
         />
-        <div className="relative z-10 grid grid-cols-[minmax(0,1fr)_minmax(14rem,16rem)] gap-8">
-          <ol className="space-y-3">{state.sampledItems.map(renderSourceRow)}</ol>
-          <ol className="space-y-3">{state.wordBank.map(renderTargetRow)}</ol>
+        {/* Two equal halves, a 6rem gutter for the lines, and one shared row per pair
+            (subgrid): a word card is as tall as the picture beside it, so both columns
+            end together (maintainer, 2026-10-07). */}
+        <div
+          className="relative z-10 grid grid-cols-2 gap-x-24 gap-y-3"
+          style={{ gridTemplateRows: `repeat(${stageRows}, auto)` }}
+        >
+          <ol className="row-span-full grid grid-rows-subgrid">
+            {state.sampledItems.map(renderSourceRow)}
+          </ol>
+          <ol className="row-span-full grid grid-rows-subgrid">
+            {state.wordBank.map(renderTargetRow)}
+          </ol>
         </div>
       </div>
 

@@ -51,6 +51,7 @@ describe('ExerciseHost layout', () => {
     'inline-gap',
     'typed-transform',
     'dictation',
+    'line-match',
   ] as const)('%s is not held to the track', (type) => {
     const html = renderToStaticMarkup(<ExerciseHost type={type} config={{ ...CONFIG, type }} />);
 

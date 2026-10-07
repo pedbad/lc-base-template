@@ -33,7 +33,8 @@ interface ExerciseHostProps {
  * 2026-10-07, engine by engine). select's dropdowns, the pills of inline-choice and
  * radio-quiz, and inline-gap's inputs (sized in `ch` from the answer) are fixed-width,
  * so their rows simply get longer. The answer inputs of typed-transform and dictation
- * DO grow with the table — longer boxes, the maintainer's call. Every other engine stays on the track
+ * DO grow with the table — longer boxes, the maintainer's call. line-match splits the
+ * width into two equal halves with a gutter for its lines. Every other engine stays on the track
  * (§D11: at the full column, `width: 100%` inputs went ~800px wide).
  */
 const FULL_WIDTH_TYPES: ReadonlySet<ExerciseType> = new Set([
@@ -43,6 +44,7 @@ const FULL_WIDTH_TYPES: ReadonlySet<ExerciseType> = new Set([
   'inline-gap',
   'typed-transform',
   'dictation',
+  'line-match',
 ]);
 
 /** Safely read `content.instructions` off an unknown config (author override). */
