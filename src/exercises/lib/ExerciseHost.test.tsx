@@ -53,6 +53,8 @@ describe('ExerciseHost layout', () => {
     'dictation',
     'line-match',
     'memory-match',
+    'conjugation',
+    'reading',
   ] as const)('%s is not held to the track', (type) => {
     const html = renderToStaticMarkup(<ExerciseHost type={type} config={{ ...CONFIG, type }} />);
 
