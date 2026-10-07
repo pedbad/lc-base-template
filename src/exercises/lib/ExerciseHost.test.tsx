@@ -44,7 +44,7 @@ describe('ExerciseHost layout', () => {
   // Maintainer's call 2026-10-07: select, inline-choice and radio-quiz span the column
   // like the instruction box above them; their dropdowns and pills are fixed-width, so
   // nothing stretches (§D11's bug).
-  test.each(['select', 'inline-choice', 'radio-quiz'] as const)(
+  test.each(['select', 'inline-choice', 'radio-quiz', 'inline-gap'] as const)(
     '%s is not held to the track',
     (type) => {
       const html = renderToStaticMarkup(<ExerciseHost type={type} config={{ ...CONFIG, type }} />);
