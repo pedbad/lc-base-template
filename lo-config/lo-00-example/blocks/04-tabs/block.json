@@ -2,33 +2,74 @@
   "type": "tabs",
   "presentation": "plain",
   "content": {
-    "label": "Placeholder forms of address",
+    "label": "Placeholder tabs",
     "intro": [
-      "Placeholder tabs. Each tab below is one entry in <em>blocks/04-tabs/block.json</em>; click a tab, or use the arrow keys, to switch."
+      "Placeholder tabs. Each tab below is one entry in <em>blocks/04-tabs/block.json</em>; click a tab, or use the arrow keys, to switch. Tabs B to D show the media layouts."
     ],
     "tabs": [
       {
-        "label": "Placeholder form A",
+        "label": "Placeholder tab A",
         "instructions": "Placeholder instructions for tab A — tell the learner what to do here, e.g. read the examples and play the clip.",
         "text": [
           "Placeholder: the <strong>informal</strong> form — friends, family, children. <span data-audio=\"audio/lo-00-example/placeholder.m4a\" data-audio-label=\"Play the placeholder clip\"></span>",
-          "A second placeholder paragraph in the same tab."
+          "A second placeholder paragraph in the same tab. No media here: text only."
         ]
       },
       {
-        "label": "Placeholder form B",
-        "instructions": "Placeholder instructions for tab B — every tab opens with its own instruction box.",
+        "label": "Placeholder tab B",
+        "instructions": "Placeholder instructions for tab B — look at the speaker, play the recording, then open the transcript to check what you heard.",
+        "media": {
+          "image": {
+            "kind": "portrait",
+            "src": "images/lo-00-example/04-tabs/speaker.svg",
+            "alt": ""
+          },
+          "audio": {
+            "src": "audio/lo-00-example/placeholder.m4a",
+            "label": "Listen to the placeholder speaker"
+          },
+          "transcript": [
+            "Placeholder transcript, line one: what the speaker says.",
+            "Placeholder transcript, line two, with <em>emphasis</em> where the speaker stresses a word."
+          ]
+        },
         "text": [
-          "Placeholder: the <strong>formal</strong> form — strangers, officials, <em>anyone you are unsure about</em>.",
-          "<ul><li>Placeholder rule one.</li><li>Placeholder rule two.</li></ul>"
+          "A portrait sits beside the player on a wide screen and above it on a phone. Its alt is empty because the transcript carries the speaker's words."
         ]
       },
       {
-        "label": "Placeholder form C",
-        "instructions": "Placeholder instructions for tab C — instructions are plain text, like an accordion's.",
+        "label": "Placeholder tab C",
+        "instructions": "Placeholder instructions for tab C — study the chart, play the discussion, then open the transcript.",
+        "media": {
+          "image": {
+            "kind": "figure",
+            "src": "images/lo-00-example/04-tabs/chart.svg",
+            "alt": "Bar chart of café visits per day: they rise through the week and peak on Saturday.",
+            "caption": "Placeholder figure: café visits per day, one week."
+          },
+          "audio": {
+            "src": "audio/lo-00-example/placeholder.m4a",
+            "label": "Listen to the discussion of the chart"
+          },
+          "transcript": [
+            "Placeholder transcript: two speakers discuss the chart — visits climb from Monday and peak on Saturday."
+          ]
+        },
         "text": [
-          "A tab takes everything a grammar block does, popup links included: <a class=\"modal-link\" href=\"#content\" data-modal-target=\"example-popup\">open the example popup</a>."
+          "A figure spans the panel with its caption, the player below. A tab still takes everything a grammar block does, popup links included: <a class=\"modal-link\" href=\"#content\" data-modal-target=\"example-popup\">open the example popup</a>."
         ]
+      },
+      {
+        "label": "Placeholder tab D",
+        "instructions": "Placeholder instructions for tab D — play the recording, then open the transcript.",
+        "media": {
+          "audio": {
+            "src": "audio/lo-00-example/placeholder.m4a",
+            "label": "Listen to the placeholder recording"
+          },
+          "transcript": ["Placeholder transcript for an audio-only tab: no image at all."]
+        },
+        "text": ["Audio only: the player and the transcript toggle, nothing else."]
       }
     ]
   }

@@ -8,6 +8,7 @@
  *
  * Spec: docs/specs/2026-10-07-tabs-block-design.md §3, §4.
  */
+import { readFileSync } from 'node:fs';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { expect, test } from 'vitest';
 import { getBlockRenderer } from './block-renderers';
@@ -203,4 +204,25 @@ test('a tab without media renders no player', () => {
 
   expect(html).not.toContain('<audio');
   expect(html).not.toContain('<details');
+});
+
+test('the example tabs block demos every media layout, tabs A to D', () => {
+  const json: unknown = JSON.parse(
+    readFileSync('lo-config/lo-00-example/blocks/04-tabs/block.json', 'utf8'),
+  );
+  const { content } = json as { content: unknown };
+  const { tabs } = TabsBlockContentSchema.parse(content);
+
+  expect(tabs.map((tab) => tab.label)).toEqual([
+    'Placeholder tab A',
+    'Placeholder tab B',
+    'Placeholder tab C',
+    'Placeholder tab D',
+  ]);
+  expect(tabs[0]?.media).toBeUndefined();
+  expect(tabs[1]?.media?.image?.kind).toBe('portrait');
+  expect(tabs[2]?.media?.image?.kind).toBe('figure');
+  expect(tabs[2]?.media?.image?.caption).toBeDefined();
+  expect(tabs[3]?.media?.image).toBeUndefined();
+  expect(tabs[3]?.media?.audio).toBeDefined();
 });
