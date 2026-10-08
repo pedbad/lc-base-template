@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 133 files · 1433 tests green
+**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 134 files · 1439 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -1367,81 +1367,82 @@ build, so it cannot return. Two remain:
 
 ## Done recently (so a new session does not redo it)
 
-| Date       | Commit    | What                                                                                                     |
-| ---------- | --------- | -------------------------------------------------------------------------------------------------------- |
-| 2026-09-03 | `6c62d6d` | LICENSE added — MIT code + CC-BY-4.0 content (buildlist 28)                                              |
-| 2026-09-03 | `2104d13` | content licence changed to **CC BY-NC 4.0**, swept through every doc                                     |
-| 2026-09-03 | `f3f432e` | `main` stays open by decision; protection reframed as a pre-share gate                                   |
-| 2026-09-03 | `ef9ec8f` | exercise showcase **opt-in per build** — no longer ships (buildlist 17b)                                 |
-| 2026-09-03 | `2e3e4bd` | this TODO.md added as the live worklist; stale claims corrected                                          |
-| 2026-09-03 | `c239fa8` | **guard c — asset-path** (buildlist 21): `src/guards/` created, 21 tests                                 |
-| 2026-09-03 | `4367d31` | **guard d — asset-existence** (buildlist 22), 11 tests                                                   |
-| 2026-09-07 | `891511c` | **guard b — naming + render-mirror** (buildlist 20), 17 tests                                            |
-| 2026-09-07 | `22757f5` | **guard e — registry completeness** (buildlist 23), 30 tests                                             |
-| 2026-09-07 | `0891e27` | guard f **survey** banked in §A-f — the rule, not the guard yet                                          |
-| 2026-09-07 | —         | GitHub **template repository** box ticked (buildlist 33), verified                                       |
-| 2026-09-07 | see A8    | `bun run guards` fast subset added (buildlist 31 closed)                                                 |
-| 2026-09-07 | `df6c987` | **guard f — token integrity** (buildlist 24), 27 tests + shared reader                                   |
-| 2026-09-07 | `69c254b` | **guard g — CSS layer discipline** (buildlist 25), 21 tests                                              |
-| 2026-09-07 | `99cd77d` | **guard h — semantic DOM over rendered output** (buildlist 26), 84 tests                                 |
-| 2026-09-08 | `8c95085` | **DESIGNER / STRUCTURE / AGENTS** written (buildlist 29); §B closed                                      |
-| 2026-09-08 | `f06295a` | **`bun run docs:tree`** + freshness test (buildlist 30), 8 tests                                         |
-| 2026-09-08 | `99825af` | README + CONTRIBUTING now link the three new books                                                       |
-| 2026-09-08 | `0bcd7d7` | markdown **link-existence check** added (`src/docs/md-links.ts`)                                         |
-| 2026-09-08 | `c5dd291` | **debug sandbox** — palette / type / icons (buildlist 16), 10 tests                                      |
-| 2026-09-08 | `4029c9a` | **sandbox docs hub** — markdown→HTML (buildlist 18), 26 tests                                            |
-| 2026-09-09 | `23f1d15` | §D opened, branch protection renumbered to §E                                                            |
-| 2026-09-09 | `d863465` | **footer defect fixed** — schema-validated config; `href: '#'` now fails the build                       |
-| 2026-09-09 | `4c70955` | footer assets downscaled 264→52 KB, ratio-normalised, sprite marks themeable                             |
-| 2026-09-09 | `dad0428` | **preset drift fixed** — `--success` back-ported to all three presets + parity test                      |
-| 2026-09-09 | `c06a595` | `--footer` surface + six derived crest tokens                                                            |
-| 2026-09-09 | `6c6d429` | lockup, imprint marks and social row                                                                     |
-| 2026-09-09 | `999176c` | `footer.css` — editorial colophon, crest in both themes                                                  |
-| 2026-09-09 | `52e4ca4` | band kept mint; the two footer columns share a baseline                                                  |
-| 2026-09-10 | `40f4e1b` | mark and social rows share one width, so both edges flush                                                |
-| 2026-09-10 | `8e8ec94` | icon ink flushed; marks get the social hover + a focus ring they lacked                                  |
-| 2026-09-10 | `eac73fc` | `prefersReducedMotion` extracted to `src/lib/` — BackToTop is consumer two                               |
-| 2026-09-10 | `683d1ce` | **`BackToTopButton`** (§D4) — observer deleted, not fixed; unmounted, D2 mounts it                       |
-| 2026-09-10 | `97a5b4b` | landing page's Lessons heading id now comes from `headingId`, not a literal                              |
-| 2026-09-10 | `8e3c49f` | **`BackToTopButton` mounted** (§D2) — one per section + the Lessons grid                                 |
-| 2026-09-10 | `8b26e36` | in-page nav animates — one `scroll-behavior` on `<html>`, reduce-guarded                                 |
-| 2026-09-10 | `008b082` | back-to-top fades both ways, 3600ms in / 300ms out, after two wrong mechanisms                           |
-| 2026-09-11 | `7e22990` | `presentation: 'plain'` blocks; the **introduction is no longer an accordion**                           |
-| 2026-09-11 | `6310dad` | **guard d saw nothing under `image.src`** — nested asset paths now collected                             |
-| 2026-09-11 | `2592827` | **`outcomes` block** — ticked outcome list beside an illustration, split at `lg`                         |
-| 2026-09-11 | `f90ac40` | **`intro` block type** — rule down the leading edge; the intro's callout dropped                         |
-| 2026-09-14 | `d272093` | Header's mobile panel documented as a **disclosure, not a dialog** — no trap owed                        |
-| 2026-09-14 | `ad627ce` | D5 bundle **attributed by sourcemap** — data recorded, no fix attempted                                  |
-| 2026-09-14 | `e4b10b4` | **course mark in the header**; guard d now sweeps `course.config.ts`                                     |
-| 2026-09-14 | `1ca5f3b` | course mark **masked, not `<img>`** — it was invisible in dark                                           |
-| 2026-09-14 | see below | **vocabulary before grammar** in the example; per-term audio on the word list                            |
-| 2026-09-14 | `7d6216d` | vocabulary row **clickable end to end**, delegating to its speaker button                                |
-| 2026-09-14 | see below | page ground is **`--paper`, not white** — off-white for dyslexic readers                                 |
-| 2026-10-05 | —         | header **scroll-spy deferred** to a later version (§D6 → "Deferred on purpose")                          |
-| 2026-10-05 | —         | **JS budget raised to < 100 kB** gzipped; one home in `docs/TOOLING.md` (§D5)                            |
-| 2026-10-05 | `e4c9fe0` | **LO hero banner** — full-bleed, holds the `<h1>`, band fallback (§D9)                                   |
-| 2026-10-05 | —         | header **scroll-spy reopened** — out of "Deferred on purpose", back on §D6 as next                       |
-| 2026-10-06 | see §D6   | header **scroll-spy** — highlight follows the section on screen; hash-load parity fixed                  |
-| 2026-10-06 | see §D6   | **header a11y audit** — one forced-colours-safe focus outline, five fixes                                |
-| 2026-10-06 | `d72c02f` | **rich-text block entries** — lists, tables, audio player; JS budget < 105 kB                            |
-| 2026-10-06 | `a82ef49` | **a11y follow-ups (§D10)** — speaker 24px floor, sandbox outline + code regions, AA pair                 |
-| 2026-10-06 | `b0c3d42` | **one page frame (§D11)** — 72rem frame, 60ch measure, 48rem exercise track, breakout                    |
-| 2026-10-06 | —         | **§D6 closed** — sparse one-LO landing page left as is; it fills as LOs are added                        |
-| 2026-10-07 | see §F    | **`tabs` block (§F1)** — shadcn/Base UI tabs, plain or card; budgets JS < 110, CSS < 18                  |
-| 2026-10-07 | see git   | **one `Callout`** — tinted info/success/warning/danger; all instruction boxes + sandbox use it           |
-| 2026-10-07 | see §F    | **tab media (§F2a)** — portrait/figure image, audio, Show/Hide transcript; JS 109.13 kB                  |
-| 2026-10-07 | see §D12  | **full-width exercises (§D12)** — instruction box + 8 engines span the column                            |
-| 2026-10-07 | `8cc7e2f` | **Reset contrast** — `--destructive-text`, 5.48 / 5.08:1; sandbox Buttons section                        |
-| 2026-10-08 | `3b8f415` | **amber transcript toggle** with a `::details-content` slide; CSS 17.95 kB                               |
-| 2026-10-08 | `0b2eb8f` | **cascade-layer order** declared first in every HTML entry (DEBUG build bug)                             |
-| 2026-10-08 | `db4e238` | **conjugation full width** — one column, inputs grow with it (maintainer's call)                         |
-| 2026-10-08 | `09945e4` | **reading image** — one grey card, text left / image right, questions full width (§D12)                  |
-| 2026-10-08 | `81c942c` | **hand cursor** on every enabled button (Tailwind preflight reset it); CSS 17.98 kB                      |
-| 2026-10-08 | `3679fae` | **flashcards study stage** — centred deck, result circles, direction switch (§D12)                       |
-| 2026-10-08 | `f6b11ba` | **speakers doubled** — 27 → 54px stand-alone (flashcards 56, memory-match 48); 36px inline in text       |
-| 2026-10-08 | `035f2d7` | **rows centre on the bigger speakers** — text-entry, vocabulary, rich-text tables, 0px off               |
-| 2026-10-08 | `c16e781` | **reading image edge to edge** — 532 × 355 on an LO column, exactly the intro's                          |
-| 2026-10-08 | `f6af9b7` | **placeholders print their size** — supply (2×) and largest shown size, per slot                         |
-| 2026-10-08 | `47cf9bf` | **size labels restyled** — small top-right plate in the info alert's style, with the path                |
-| 2026-10-08 | see git   | **vocabulary summary + sort** — "You will learn" alert, Semantic / Alphabetical (A→Z, Z→A); JS < 120 kB  |
-| 2026-10-08 | see git   | **vocabulary intro quote** — optional `05-intro` block under the heading (list it in lo.json to show it) |
+| Date       | Commit    | What                                                                                                                          |
+| ---------- | --------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| 2026-09-03 | `6c62d6d` | LICENSE added — MIT code + CC-BY-4.0 content (buildlist 28)                                                                   |
+| 2026-09-03 | `2104d13` | content licence changed to **CC BY-NC 4.0**, swept through every doc                                                          |
+| 2026-09-03 | `f3f432e` | `main` stays open by decision; protection reframed as a pre-share gate                                                        |
+| 2026-09-03 | `ef9ec8f` | exercise showcase **opt-in per build** — no longer ships (buildlist 17b)                                                      |
+| 2026-09-03 | `2e3e4bd` | this TODO.md added as the live worklist; stale claims corrected                                                               |
+| 2026-09-03 | `c239fa8` | **guard c — asset-path** (buildlist 21): `src/guards/` created, 21 tests                                                      |
+| 2026-09-03 | `4367d31` | **guard d — asset-existence** (buildlist 22), 11 tests                                                                        |
+| 2026-09-07 | `891511c` | **guard b — naming + render-mirror** (buildlist 20), 17 tests                                                                 |
+| 2026-09-07 | `22757f5` | **guard e — registry completeness** (buildlist 23), 30 tests                                                                  |
+| 2026-09-07 | `0891e27` | guard f **survey** banked in §A-f — the rule, not the guard yet                                                               |
+| 2026-09-07 | —         | GitHub **template repository** box ticked (buildlist 33), verified                                                            |
+| 2026-09-07 | see A8    | `bun run guards` fast subset added (buildlist 31 closed)                                                                      |
+| 2026-09-07 | `df6c987` | **guard f — token integrity** (buildlist 24), 27 tests + shared reader                                                        |
+| 2026-09-07 | `69c254b` | **guard g — CSS layer discipline** (buildlist 25), 21 tests                                                                   |
+| 2026-09-07 | `99cd77d` | **guard h — semantic DOM over rendered output** (buildlist 26), 84 tests                                                      |
+| 2026-09-08 | `8c95085` | **DESIGNER / STRUCTURE / AGENTS** written (buildlist 29); §B closed                                                           |
+| 2026-09-08 | `f06295a` | **`bun run docs:tree`** + freshness test (buildlist 30), 8 tests                                                              |
+| 2026-09-08 | `99825af` | README + CONTRIBUTING now link the three new books                                                                            |
+| 2026-09-08 | `0bcd7d7` | markdown **link-existence check** added (`src/docs/md-links.ts`)                                                              |
+| 2026-09-08 | `c5dd291` | **debug sandbox** — palette / type / icons (buildlist 16), 10 tests                                                           |
+| 2026-09-08 | `4029c9a` | **sandbox docs hub** — markdown→HTML (buildlist 18), 26 tests                                                                 |
+| 2026-09-09 | `23f1d15` | §D opened, branch protection renumbered to §E                                                                                 |
+| 2026-09-09 | `d863465` | **footer defect fixed** — schema-validated config; `href: '#'` now fails the build                                            |
+| 2026-09-09 | `4c70955` | footer assets downscaled 264→52 KB, ratio-normalised, sprite marks themeable                                                  |
+| 2026-09-09 | `dad0428` | **preset drift fixed** — `--success` back-ported to all three presets + parity test                                           |
+| 2026-09-09 | `c06a595` | `--footer` surface + six derived crest tokens                                                                                 |
+| 2026-09-09 | `6c6d429` | lockup, imprint marks and social row                                                                                          |
+| 2026-09-09 | `999176c` | `footer.css` — editorial colophon, crest in both themes                                                                       |
+| 2026-09-09 | `52e4ca4` | band kept mint; the two footer columns share a baseline                                                                       |
+| 2026-09-10 | `40f4e1b` | mark and social rows share one width, so both edges flush                                                                     |
+| 2026-09-10 | `8e8ec94` | icon ink flushed; marks get the social hover + a focus ring they lacked                                                       |
+| 2026-09-10 | `eac73fc` | `prefersReducedMotion` extracted to `src/lib/` — BackToTop is consumer two                                                    |
+| 2026-09-10 | `683d1ce` | **`BackToTopButton`** (§D4) — observer deleted, not fixed; unmounted, D2 mounts it                                            |
+| 2026-09-10 | `97a5b4b` | landing page's Lessons heading id now comes from `headingId`, not a literal                                                   |
+| 2026-09-10 | `8e3c49f` | **`BackToTopButton` mounted** (§D2) — one per section + the Lessons grid                                                      |
+| 2026-09-10 | `8b26e36` | in-page nav animates — one `scroll-behavior` on `<html>`, reduce-guarded                                                      |
+| 2026-09-10 | `008b082` | back-to-top fades both ways, 3600ms in / 300ms out, after two wrong mechanisms                                                |
+| 2026-09-11 | `7e22990` | `presentation: 'plain'` blocks; the **introduction is no longer an accordion**                                                |
+| 2026-09-11 | `6310dad` | **guard d saw nothing under `image.src`** — nested asset paths now collected                                                  |
+| 2026-09-11 | `2592827` | **`outcomes` block** — ticked outcome list beside an illustration, split at `lg`                                              |
+| 2026-09-11 | `f90ac40` | **`intro` block type** — rule down the leading edge; the intro's callout dropped                                              |
+| 2026-09-14 | `d272093` | Header's mobile panel documented as a **disclosure, not a dialog** — no trap owed                                             |
+| 2026-09-14 | `ad627ce` | D5 bundle **attributed by sourcemap** — data recorded, no fix attempted                                                       |
+| 2026-09-14 | `e4b10b4` | **course mark in the header**; guard d now sweeps `course.config.ts`                                                          |
+| 2026-09-14 | `1ca5f3b` | course mark **masked, not `<img>`** — it was invisible in dark                                                                |
+| 2026-09-14 | see below | **vocabulary before grammar** in the example; per-term audio on the word list                                                 |
+| 2026-09-14 | `7d6216d` | vocabulary row **clickable end to end**, delegating to its speaker button                                                     |
+| 2026-09-14 | see below | page ground is **`--paper`, not white** — off-white for dyslexic readers                                                      |
+| 2026-10-05 | —         | header **scroll-spy deferred** to a later version (§D6 → "Deferred on purpose")                                               |
+| 2026-10-05 | —         | **JS budget raised to < 100 kB** gzipped; one home in `docs/TOOLING.md` (§D5)                                                 |
+| 2026-10-05 | `e4c9fe0` | **LO hero banner** — full-bleed, holds the `<h1>`, band fallback (§D9)                                                        |
+| 2026-10-05 | —         | header **scroll-spy reopened** — out of "Deferred on purpose", back on §D6 as next                                            |
+| 2026-10-06 | see §D6   | header **scroll-spy** — highlight follows the section on screen; hash-load parity fixed                                       |
+| 2026-10-06 | see §D6   | **header a11y audit** — one forced-colours-safe focus outline, five fixes                                                     |
+| 2026-10-06 | `d72c02f` | **rich-text block entries** — lists, tables, audio player; JS budget < 105 kB                                                 |
+| 2026-10-06 | `a82ef49` | **a11y follow-ups (§D10)** — speaker 24px floor, sandbox outline + code regions, AA pair                                      |
+| 2026-10-06 | `b0c3d42` | **one page frame (§D11)** — 72rem frame, 60ch measure, 48rem exercise track, breakout                                         |
+| 2026-10-06 | —         | **§D6 closed** — sparse one-LO landing page left as is; it fills as LOs are added                                             |
+| 2026-10-07 | see §F    | **`tabs` block (§F1)** — shadcn/Base UI tabs, plain or card; budgets JS < 110, CSS < 18                                       |
+| 2026-10-07 | see git   | **one `Callout`** — tinted info/success/warning/danger; all instruction boxes + sandbox use it                                |
+| 2026-10-07 | see §F    | **tab media (§F2a)** — portrait/figure image, audio, Show/Hide transcript; JS 109.13 kB                                       |
+| 2026-10-07 | see §D12  | **full-width exercises (§D12)** — instruction box + 8 engines span the column                                                 |
+| 2026-10-07 | `8cc7e2f` | **Reset contrast** — `--destructive-text`, 5.48 / 5.08:1; sandbox Buttons section                                             |
+| 2026-10-08 | `3b8f415` | **amber transcript toggle** with a `::details-content` slide; CSS 17.95 kB                                                    |
+| 2026-10-08 | `0b2eb8f` | **cascade-layer order** declared first in every HTML entry (DEBUG build bug)                                                  |
+| 2026-10-08 | `db4e238` | **conjugation full width** — one column, inputs grow with it (maintainer's call)                                              |
+| 2026-10-08 | `09945e4` | **reading image** — one grey card, text left / image right, questions full width (§D12)                                       |
+| 2026-10-08 | `81c942c` | **hand cursor** on every enabled button (Tailwind preflight reset it); CSS 17.98 kB                                           |
+| 2026-10-08 | `3679fae` | **flashcards study stage** — centred deck, result circles, direction switch (§D12)                                            |
+| 2026-10-08 | `f6b11ba` | **speakers doubled** — 27 → 54px stand-alone (flashcards 56, memory-match 48); 36px inline in text                            |
+| 2026-10-08 | `035f2d7` | **rows centre on the bigger speakers** — text-entry, vocabulary, rich-text tables, 0px off                                    |
+| 2026-10-08 | `c16e781` | **reading image edge to edge** — 532 × 355 on an LO column, exactly the intro's                                               |
+| 2026-10-08 | `f6af9b7` | **placeholders print their size** — supply (2×) and largest shown size, per slot                                              |
+| 2026-10-08 | `47cf9bf` | **size labels restyled** — small top-right plate in the info alert's style, with the path                                     |
+| 2026-10-08 | see git   | **vocabulary summary + sort** — "You will learn" alert, Semantic / Alphabetical (A→Z, Z→A); JS < 120 kB                       |
+| 2026-10-08 | see git   | **vocabulary intro quote** — optional `05-intro` block under the heading (list it in lo.json to show it)                      |
+| 2026-10-08 | see git   | **grammar intro + image** — `06-intro` under the Grammar heading; `intro` takes an optional image (outcomes split, 532 × 355) |
