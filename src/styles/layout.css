@@ -2,7 +2,7 @@
    layout.css — one page frame, one gutter, one reading measure (TODO §D11)
    ==========================================================================
    Widths used to be written per page: `max-w-5xl px-4` on the LO page, `max-w-5xl
-   px-6` on the sandbox, `max-w-3xl px-6` on the showcase. These four tokens replace
+   px-6` on the sandbox, `max-w-3xl px-6` on the showcase. These tokens replace
    all of them, and `.page-frame` is the one column box that reads them.
 
    Two widths, deliberately pulled apart:
@@ -11,8 +11,8 @@
      - the MEASURE is how long a line of running text is. Paragraphs, lists and doc
        headings are held to it wherever they sit, because a 1088px line of prose is
        about 130 characters, and reading needs about 60–75.
-   Exercise widgets sit between the two on their own track: most are rows sized
-   `width: 100%`, and at the full frame they stretch into rows of empty space.
+   Exercise widgets use the frame. They sat on a 48rem track between the two until
+   2026-10-08, when the last engines moved to the full column (TODO §D13).
 
    Not colour, so not in tokens.css: these do not change per theme or per preset, and
    tokens.css's token set is mirrored in every preset (token-presets.test.ts).
@@ -31,10 +31,6 @@
     /* `ch` is the width of "0", wider than the average Open Sans glyph: 68ch measured
        about 83 characters per line of lesson prose, 60ch about 74. */
     --measure: 60ch;
-
-    /* 768px: near the 720px column the showcase engines were reviewed at, and wide
-       enough for line-match's two columns. */
-    --exercise-track: 48rem;
   }
 }
 
@@ -46,11 +42,5 @@
     max-inline-size: var(--frame-width);
     margin-inline: auto;
     padding-inline: var(--frame-gutter);
-  }
-
-  /* Every exercise, on the LO page and the showcase, mounts inside one of these
-     (ExerciseHost). Left-aligned, like the text above it. */
-  .exercise-track {
-    max-inline-size: var(--exercise-track);
   }
 }

@@ -8,6 +8,7 @@
  */
 import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { EXERCISE_TYPE_KEYS } from '@/config/exercise-types';
 import { ExerciseHost } from './ExerciseHost';
 
 const CONFIG = { type: 'select', title: 'Placeholder', content: {} };
@@ -28,51 +29,22 @@ describe('ExerciseHost server rendering', () => {
   });
 });
 
-// §D11: the page frame grew to 72rem; widgets sized `width: 100%` stretched with it
-// (conjugation inputs ~800px wide, Check a column away from the rows). Every engine
-// goes through this host, so one track caps them all.
+// §D11 put every engine on a 48rem track: widgets sized `width: 100%` stretched with
+// the 72rem frame. The maintainer then moved them off it engine by engine (§D12,
+// 2026-10-07/08) and the last four — word-spot, word-order, phrase-reorder,
+// drag-fill-gaps — on 2026-10-08 (§D13), so the track is gone: every engine spans the
+// column, like the instruction box above it.
 describe('ExerciseHost layout', () => {
-  test('caps the engine in the exercise track', () => {
-    const html = renderToStaticMarkup(
-      <ExerciseHost type="word-order" config={{ ...CONFIG, type: 'word-order' }} />,
-    );
-
-    expect(html).toMatch(/<div class="exercise-track"><p[^>]*>[^<]*needs JavaScript/i);
-    expect(html).toMatch(/needs JavaScript[^<]*<\/p><\/div><\/div>$/i);
-  });
-
-  // Maintainer's call 2026-10-07: select, inline-choice and radio-quiz span the column
-  // like the instruction box above them; their dropdowns and pills are fixed-width, so
-  // nothing stretches (§D11's bug).
-  test.each([
-    'select',
-    'inline-choice',
-    'radio-quiz',
-    'inline-gap',
-    'typed-transform',
-    'dictation',
-    'line-match',
-    'memory-match',
-    'conjugation',
-    'reading',
-    'flashcards',
-  ] as const)('%s is not held to the track', (type) => {
+  test.each(EXERCISE_TYPE_KEYS)('%s spans the column: no track holds it', (type) => {
     const html = renderToStaticMarkup(<ExerciseHost type={type} config={{ ...CONFIG, type }} />);
 
     expect(html).not.toContain('exercise-track');
+    // The engine's slot sits straight inside the host's one wrapper.
+    expect(html).toMatch(/needs JavaScript[^<]*<\/p><\/div>$/i);
+    expect(html).not.toMatch(/needs JavaScript[^<]*<\/p><\/div><\/div>$/i);
   });
 
-  test('other engines are', () => {
-    const wordOrder = renderToStaticMarkup(
-      <ExerciseHost type="word-order" config={{ ...CONFIG, type: 'word-order' }} />,
-    );
-
-    expect(wordOrder).toContain('<div class="exercise-track">');
-  });
-
-  // Maintainer's call 2026-10-07: the instruction box spans the whole column, so only
-  // the engine is held to the track. It sits before the track, outside it.
-  test('puts the instruction box above the track, not inside it', () => {
+  test('puts the instruction box above the engine', () => {
     const html = renderToStaticMarkup(<ExerciseHost type="select" config={CONFIG} />);
     const instructions = html.indexOf('drop-down');
     const engine = html.search(/needs JavaScript/i);

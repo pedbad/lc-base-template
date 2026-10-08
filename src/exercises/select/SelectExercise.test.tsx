@@ -1,6 +1,6 @@
 /**
  * SelectExercise.test.tsx — width of the two layout modes. select is a full-width
- * engine (ExerciseHost's FULL_WIDTH_TYPES): its rows and its inline passage both span
+ * engine, like every engine since 2026-10-08 (ExerciseHost): its rows and its inline passage both span
  * the column.
  */
 import { renderToStaticMarkup } from 'react-dom/server';

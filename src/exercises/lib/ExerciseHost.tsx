@@ -28,36 +28,6 @@ interface ExerciseHostProps {
   config: unknown;
 }
 
-/**
- * Engines that span the whole column, like the instruction box above them (maintainer,
- * 2026-10-07, engine by engine). select's dropdowns, the pills of inline-choice and
- * radio-quiz, and inline-gap's inputs (sized in `ch` from the answer) are fixed-width,
- * so their rows simply get longer. The answer inputs of typed-transform and dictation
- * DO grow with the table — longer boxes, the maintainer's call; so do conjugation's,
- * in one column (maintainer, 2026-10-08: a two-column paradigm was built and dropped).
- * line-match splits the width into two equal halves with a gutter for its lines.
- * memory-match's deck keeps its 32rem cap and centres in the column (`margin: 0 auto`,
- * memory-match.css). reading's passage shares a row with its image at a wide exercise
- * width and its questions run full width below (reading.css); the paragraphs keep
- * the measure. flashcards centres its 36rem study stage in the column, under the
- * instruction box (flashcards.css).
- * Every other engine stays on the track
- * (§D11: at the full column, `width: 100%` inputs went ~800px wide).
- */
-const FULL_WIDTH_TYPES: ReadonlySet<ExerciseType> = new Set([
-  'select',
-  'inline-choice',
-  'radio-quiz',
-  'inline-gap',
-  'typed-transform',
-  'dictation',
-  'line-match',
-  'memory-match',
-  'conjugation',
-  'reading',
-  'flashcards',
-]);
-
 /** Safely read `content.instructions` off an unknown config (author override). */
 function readInstructionsOverride(config: unknown): string | null | undefined {
   if (typeof config !== 'object' || config === null) return undefined;
@@ -80,28 +50,29 @@ export function ExerciseHost({ type, config }: ExerciseHostProps) {
   // exercise can work without it. Non-hydrating roots never see this branch.
   const isHydrated = useIsHydrated();
 
-  // The instruction box spans the column (maintainer's call, 2026-10-07); the engine
-  // sits on the track unless it is in FULL_WIDTH_TYPES (layout.css, TODO §D11): most engines are rows sized
-  // `width: 100%`, which stretch into empty space at the full page frame.
+  // Every engine spans the column, like the instruction box above it. §D11 held them
+  // to a 48rem track (widgets sized `width: 100%` stretched into empty space at the
+  // 72rem frame); the maintainer moved them off it engine by engine (§D12, 2026-10-07/08)
+  // and the track went with the last four on 2026-10-08 (§D13). How each one uses the
+  // width — and which inputs grow with it, by the maintainer's choice — lives in its
+  // own CSS; do not bring back a shared cap to "fix" a wide row.
   return (
     <div>
       <ExerciseInstructions text={instructions} />
-      <div className={FULL_WIDTH_TYPES.has(type) ? undefined : 'exercise-track'}>
-        {Engine ? (
-          isHydrated ? (
-            <Suspense fallback={<p className="text-muted-foreground">Loading…</p>}>
-              {/* eslint-disable-next-line react-hooks/static-components */}
-              <Engine config={config} />
-            </Suspense>
-          ) : (
-            <p className="text-muted-foreground">This exercise needs JavaScript to run.</p>
-          )
+      {Engine ? (
+        isHydrated ? (
+          <Suspense fallback={<p className="text-muted-foreground">Loading…</p>}>
+            {/* eslint-disable-next-line react-hooks/static-components */}
+            <Engine config={config} />
+          </Suspense>
         ) : (
-          <p className="text-destructive">
-            No engine registered for type <code>{type}</code>.
-          </p>
-        )}
-      </div>
+          <p className="text-muted-foreground">This exercise needs JavaScript to run.</p>
+        )
+      ) : (
+        <p className="text-destructive">
+          No engine registered for type <code>{type}</code>.
+        </p>
+      )}
     </div>
   );
 }

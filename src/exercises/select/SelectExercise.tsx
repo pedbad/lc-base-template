@@ -240,7 +240,7 @@ export default function SelectExercise({ config }: ExerciseComponentProps) {
   });
 
   return (
-    // Rows and passage both span the column (ExerciseHost's FULL_WIDTH_TYPES).
+    // Rows and passage both span the column, as every engine does (ExerciseHost).
     <div className="flex flex-col gap-4">
       {isPassage ? (
         <div className="rounded-xl border border-border/70 bg-card p-5 shadow-sm">

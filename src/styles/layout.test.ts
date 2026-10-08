@@ -1,18 +1,19 @@
 /**
- * layout.test.ts — one page frame, one gutter, one reading measure, one exercise track
- * (TODO §D11).
+ * layout.test.ts — one page frame, one gutter, one reading measure (TODO §D11). A
+ * fourth token, the 48rem exercise track, went on 2026-10-08 when the last engines
+ * moved to the full column (TODO §D13).
  *
  * THE BUG CLASS. Width was written down per page: `max-w-5xl px-4` on the LO page,
  * `max-w-5xl px-6` on the sandbox, `max-w-3xl px-6` on the showcase. Three columns,
  * two gutters, and one cap (`.doc-prose`'s 68ch) that held code blocks to a text
  * measure, so nine of them scrolled sideways inside a 976px column. These tests pin
- * the four layout tokens and the rules that read them, so a page cannot quietly grow
+ * the layout tokens and the rules that read them, so a page cannot quietly grow
  * its own width again.
  *
  * WHY 60ch AND NOT 68ch. `ch` is the width of "0", which in Open Sans is wider than
  * the average glyph. Measured on the built site (2026-10-06): 68ch gave lesson prose
  * about 83 characters per line; 60ch gives about 74, inside the 60–75 a reading measure
- * is for. Maintainer's decision, with the 72rem frame and the 48rem exercise track.
+ * is for. Maintainer's decision, with the 72rem frame.
  *
  * Browser behaviour (overflow, line length, edge alignment) cannot be seen from jsdom;
  * it was measured on the built site and the figures are in TODO §D11. These tests hold
@@ -39,7 +40,6 @@ describe('layout tokens', () => {
     ['--frame-width', '72rem'],
     ['--frame-gutter', 'clamp(1rem, 4vw, 2rem)'],
     ['--measure', '60ch'],
-    ['--exercise-track', '48rem'],
   ])('%s is %s', (token, value) => {
     expect(ruleBody(layout, ':root')).toContain(`${token}: ${value};`);
   });
@@ -67,12 +67,10 @@ describe('.page-frame — the one column box', () => {
   });
 });
 
-describe('.exercise-track — exercise widgets stop growing with the frame', () => {
-  test('caps the widget at the track width', () => {
-    expect(ruleBody(layout, '.exercise-track')).toContain(
-      'max-inline-size: var(--exercise-track);',
-    );
-  });
+// Every engine spans the column since 2026-10-08 (TODO §D13); a track nobody uses is
+// a width nobody checks.
+test('there is no exercise track any more', () => {
+  expect(layout).not.toContain('exercise-track');
 });
 
 describe('sandbox docs: text keeps the measure, wide blocks break out', () => {
