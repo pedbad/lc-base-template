@@ -79,6 +79,8 @@
   --color-destructive: var(--destructive);
   --color-success: var(--success);
   --color-callout-info: var(--callout-info);
+  --color-transcript-toggle: var(--transcript-toggle);
+  --color-transcript-toggle-foreground: var(--transcript-toggle-foreground);
   --color-destructive-text: var(--destructive-text);
   --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);

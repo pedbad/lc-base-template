@@ -106,3 +106,23 @@ test('under a figure the player spans the figure width; elsewhere it keeps its c
   expect(figure).toMatch(/class="rich-text-player [^"]*\[&amp;_audio\]:max-w-none/);
   expect(audioOnly).not.toContain('max-w-none');
 });
+
+// Maintainer's call 2026-10-08: the Show/Hide transcript toggle is --amber-soft (via
+// the --transcript-toggle token), with dark ink on it (7.2:1) and a --warning outline
+// so its edge still reads on the paper background (the fill alone is 1.96:1).
+test('the transcript toggle is the amber transcript-toggle button', () => {
+  const html = render({ audio, transcript });
+  const summary = /<summary[^>]*class="([^"]*)"/.exec(html)?.[1].split(' ') ?? [];
+
+  expect(summary).toContain('bg-transcript-toggle');
+  expect(summary).toContain('text-transcript-toggle-foreground');
+  expect(summary).toContain('border-warning');
+  expect(summary).not.toContain('border-primary');
+});
+
+// The open/close slide lives in media-panel.css, keyed on this class.
+test('the transcript details carries the class its slide animation targets', () => {
+  const html = render({ audio, transcript });
+
+  expect(html).toMatch(/<details class="[^"]*\bmedia-transcript\b/);
+});

@@ -27,12 +27,14 @@ import { cn } from '@/lib/utils';
 import { RichTextEntries } from '../rich-text/RichTextEntries';
 import type { RichTextEntry } from '../rich-text/rich-text-nodes';
 import type { Media, MediaAudio, MediaImage } from './media-schema';
+import './media-panel.css';
 
-/** The summary, styled as an outlined button; full width when narrow. */
+/** The summary, styled as an amber button (--transcript-toggle); full width when narrow. */
 const SUMMARY_CLASSES = [
   'inline-flex w-full cursor-pointer list-none items-center justify-center gap-2',
-  'rounded-md border-2 border-primary px-4 py-2 font-semibold text-foreground',
-  'hover:bg-primary/10 [&::-webkit-details-marker]:hidden @md:w-auto',
+  'rounded-md border-2 border-warning bg-transcript-toggle px-4 py-2 font-semibold',
+  'text-transcript-toggle-foreground hover:bg-transcript-toggle/85',
+  '[&::-webkit-details-marker]:hidden @md:w-auto',
   FOCUS_OUTLINE,
 ].join(' ');
 
@@ -52,7 +54,8 @@ function MediaImg({ image, className }: { image: MediaImage; className: string }
 
 function Transcript({ entries }: { entries: readonly RichTextEntry[] }) {
   return (
-    <details className="group">
+    // `media-transcript`: the open/close slide in media-panel.css.
+    <details className="media-transcript group">
       <summary className={SUMMARY_CLASSES}>
         <span className="inline-flex items-center gap-2 group-open:hidden">
           <Eye aria-hidden="true" className="size-4" />

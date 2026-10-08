@@ -1,0 +1,34 @@
+/**
+ * media-panel.css — the transcript's open/close slide (maintainer, 2026-10-08).
+ *
+ * The toggle is a native <details> (MediaPanel.tsx), so the slide is CSS on its
+ * ::details-content box: `interpolate-size` lets `block-size: auto` tween, and
+ * `content-visibility … allow-discrete` keeps the text painted until the close has
+ * finished. A browser without ::details-content opens and closes instantly, as
+ * before. Plain CSS rather than Tailwind utilities: the same rules as arbitrary
+ * values would be unreadable, and reduced motion is one @media block here.
+ * Pinned by media-panel-css.test.ts.
+ */
+@layer components {
+  .media-transcript {
+    interpolate-size: allow-keywords;
+  }
+
+  .media-transcript::details-content {
+    block-size: 0;
+    overflow-y: clip;
+    transition:
+      block-size 300ms ease-out,
+      content-visibility 300ms allow-discrete;
+  }
+
+  .media-transcript[open]::details-content {
+    block-size: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .media-transcript::details-content {
+      transition: none;
+    }
+  }
+}
