@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 139 files · 1468 tests green
+**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 141 files · 1507 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -1375,10 +1375,13 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     screen grew (≈ 250px mid-size, 119px at 1440). Now 2 columns below a 30rem exercise
     width, 4 from there (container query), capped at 65rem: 113 / 141 / 117 / 155 / 219
     / 251 / 251px at 320 / 375 / 600 / 768 / 1024 / 1440 / 1920. Lazy
-    `memory-match.css`; main bundles unchanged. axe clean both themes.
+    `memory-match.css`; main bundles unchanged. axe clean both themes (`2cac630`).
   - **Hero placeholder plate under the title** at 320, 375 and 768: the LO title's first
     line runs across the plate (at 375 the line spans x 16–276, y 21–63; the plate
     171–366 × 36–65). Clear from 1024. Placeholder only; real artwork has no plate.
+  - **Typed-answer feedback in a visible browser** (§D15): the `<mark>` highlight's colour
+    in both themes, and the hint line under an inline-gap blank (it runs wider than the
+    blank: 149px under a 62px input). Verified by measurement only; the pane was hidden.
   - **Sandbox Docs hub at 375:** two rendered tables (Preset, Font) scroll sideways
     with no keyboard focus — axe `scrollable-region-focusable`. Debug page only.
 
@@ -1555,4 +1558,5 @@ build, so it cannot return. Two remain:
 | 2026-10-08 | `1c57985` | **conjugation + answer pills on a phone** — pronoun above input, pills stack below 30rem (§D13)                               |
 | 2026-10-08 | `9e0de04` | **phrase-reorder on a phone** — phrase under its prompt below 30rem (§D13)                                                    |
 | 2026-10-08 | `181d0e4` | **destructive button contrast** — variant uses `--destructive-text`; Reset's override gone (§D13)                             |
-| 2026-10-08 | see git   | **typed-answer feedback** — hint naming the error first, the answer on the second wrong Check (§D15)                          |
+| 2026-10-08 | `2cac630` | **memory-match card size** — 2 → 4 columns at a 30rem exercise width, deck capped at 65rem; 251px cards at 1440 (§D14)        |
+| 2026-10-08 | `bc2a829` | **typed-answer feedback** — hint naming the error first, the answer on the second wrong Check (§D15)                          |
