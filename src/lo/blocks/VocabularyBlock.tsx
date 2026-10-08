@@ -58,7 +58,9 @@ export function VocabularyBlock({ content }: { content: unknown }) {
   return (
     <div className="grid gap-6">
       {summary === undefined ? null : (
-        <Callout variant="info" title={<RichText nodes={summary.lead} />}>
+        // mt-2: inside the accordion the body has no top padding, so the alert sat flush
+        // against the header (maintainer, 2026-10-08).
+        <Callout variant="info" className="mt-2" title={<RichText nodes={summary.lead} />}>
           {/* The outcomes block's ticked list: semantics from <ul>/<li>, ticks aria-hidden. */}
           <ul className="mt-3 grid gap-2">
             {summary.items.map((item, index) => (

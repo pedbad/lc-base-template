@@ -57,6 +57,17 @@ describe('vocabulary summary and sort', () => {
     expect(html.indexOf('Salut')).toBeLessThan(html.indexOf('Bonjour'));
   });
 
+  // Maintainer, 2026-10-08: inside the accordion the alert sat flush against the header
+  // (the accordion body has no top padding), so it keeps a little air above it.
+  test('gives the summary alert a little space above it', () => {
+    const html = renderToStaticMarkup(
+      <VocabularyBlock
+        content={{ summary: { lead: 'You will learn:', items: ['Greetings'] }, items }}
+      />,
+    );
+    expect(html).toMatch(/role="note"[^>]*class="[^"]*\bmt-2\b/);
+  });
+
   test('hides the sort buttons when there is nothing to sort', () => {
     const html = renderToStaticMarkup(
       <VocabularyBlock content={{ items: [{ term: 'Hola', gloss: 'hello' }] }} />,
