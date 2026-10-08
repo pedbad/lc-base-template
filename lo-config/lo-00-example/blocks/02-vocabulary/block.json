@@ -2,7 +2,14 @@
   "type": "vocabulary",
   "title": "Placeholder vocabulary list",
   "content": {
-    "instructions": "Placeholder vocabulary note \u2014 list the words this accordion introduces, each with its gloss and, when you have a recording, a clip of the word being said.",
+    "summary": {
+      "lead": "You will learn:",
+      "items": [
+        "Placeholder group one (<em>term one, term two</em>).",
+        "Placeholder group two (<em>term three</em>).",
+        "Replace these lines with what the list teaches — the sort buttons below reorder it semantically or alphabetically."
+      ]
+    },
     "items": [
       {
         "term": "Placeholder term one",
