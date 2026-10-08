@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 134 files · 1441 tests green
+**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 136 files · 1446 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -1467,3 +1467,4 @@ build, so it cannot return. Two remain:
 | 2026-10-08 | `378ffa8` | **vocabulary intro quote** — optional `05-intro` block under the heading (list it in lo.json to show it)                      |
 | 2026-10-08 | `8f947a0` | **grammar intro + image** — `06-intro` under the Grammar heading; `intro` takes an optional image (outcomes split, 532 × 355) |
 | 2026-10-08 | `5376189` | **exercises intro + image** — `07-intro` under the Exercises heading, same split as the grammar intro                         |
+| 2026-10-08 | see git   | **sandbox: every icon and image** — lucide icons under the sprite; new Images section; both kept complete by a scan test      |
