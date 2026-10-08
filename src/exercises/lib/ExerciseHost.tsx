@@ -33,7 +33,8 @@ interface ExerciseHostProps {
  * 2026-10-07, engine by engine). select's dropdowns, the pills of inline-choice and
  * radio-quiz, and inline-gap's inputs (sized in `ch` from the answer) are fixed-width,
  * so their rows simply get longer. The answer inputs of typed-transform and dictation
- * DO grow with the table — longer boxes, the maintainer's call; so do conjugation's.
+ * DO grow with the table — longer boxes, the maintainer's call; so do conjugation's,
+ * in one column (maintainer, 2026-10-08: a two-column paradigm was built and dropped).
  * line-match splits the width into two equal halves with a gutter for its lines.
  * memory-match's deck keeps its 32rem cap and centres in the column (`margin: 0 auto`,
  * memory-match.css). reading puts its passage beside the questions at a wide exercise
