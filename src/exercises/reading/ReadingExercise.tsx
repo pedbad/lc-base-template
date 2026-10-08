@@ -15,6 +15,8 @@
  *     question is WRONG — derived from checkedResults, no extra state (matches
  *     radio-quiz), so a re-answer or Show-answers hides it automatically.
  *   - chrome text via resolveLabel(key, labels) (ui-strings §9).
+ *   - layout: passage above the questions, or beside them at a wide exercise width
+ *     (container query, reading.css; TODO §D13).
  *
  * `options.shuffle`/`sampleSize` are N/A (question + option order are authored — a
  * true-false must read True-then-False); only `allowShowAnswers` applies.
@@ -44,6 +46,7 @@ import {
   prepareReadingQuestions,
   type PreparedReadingQuestion,
 } from './reading-grading';
+import './reading.css';
 
 interface ReadingState extends ScoringState {
   /** questionIndex → selected option index. */
@@ -175,23 +178,26 @@ export default function ReadingExercise({ config }: ExerciseComponentProps) {
   });
 
   return (
-    <div className="flex flex-col gap-4">
-      <article
-        className="rounded-lg border border-border/60 bg-muted/30 px-4 py-3 text-base leading-relaxed text-foreground"
-        lang={TARGET_LANG}
-      >
-        {paragraphs.map((paragraph, index) => (
-          // The passage is running text: it keeps the reading measure (TODO §D11).
-          <p
-            key={`${uid}-p-${index}`}
-            className={index > 0 ? 'mt-3 max-w-(--measure)' : 'max-w-(--measure)'}
-          >
-            {paragraph}
-          </p>
-        ))}
-      </article>
+    <div className="reading flex flex-col gap-4">
+      {/* Passage beside the questions at a wide exercise width (reading.css). */}
+      <div className="reading-body">
+        <article
+          className="rounded-lg border border-border/60 bg-muted/30 px-4 py-3 text-base leading-relaxed text-foreground"
+          lang={TARGET_LANG}
+        >
+          {paragraphs.map((paragraph, index) => (
+            // The passage is running text: it keeps the reading measure (TODO §D11).
+            <p
+              key={`${uid}-p-${index}`}
+              className={index > 0 ? 'mt-3 max-w-(--measure)' : 'max-w-(--measure)'}
+            >
+              {paragraph}
+            </p>
+          ))}
+        </article>
 
-      <div className="space-y-3">{cards}</div>
+        <div className="space-y-3">{cards}</div>
+      </div>
 
       {state.hasChecked ? (
         <p

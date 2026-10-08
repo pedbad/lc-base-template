@@ -45,6 +45,24 @@ describe('ReadingExercise', () => {
     expect(html).toContain('<p class="mt-3 max-w-(--measure)">Trabaja en una oficina.</p>');
   });
 
+  // §D13 option 2a: at a wide exercise width the passage sits beside the questions.
+  // The view groups the two; reading.css decides when they go side by side. Status,
+  // footer and footnote stay outside the group, so they run under both columns.
+  test('groups the passage and the questions, and nothing else', () => {
+    const html = renderToStaticMarkup(<ReadingExercise config={baseConfig} />);
+    const body = html.indexOf('<div class="reading-body"><article');
+    const footer = html.indexOf('Check');
+    // Every <div> opened from the group's start is closed again before the footer.
+    const between = html.slice(body, html.lastIndexOf('<div', footer));
+    const depth = (between.match(/<div/g) ?? []).length - (between.match(/<\/div>/g) ?? []).length;
+
+    expect(html).toMatch(/^<div class="reading flex flex-col gap-4">/);
+    expect(body).toBeGreaterThan(-1);
+    expect(html.indexOf('role="radiogroup"')).toBeGreaterThan(body);
+    expect(depth).toBe(0);
+    expect(html.indexOf('Lee con atención.')).toBeGreaterThan(footer);
+  });
+
   test('renders one radiogroup per question', () => {
     const html = renderToStaticMarkup(<ReadingExercise config={baseConfig} />);
     expect((html.match(/role="radiogroup"/g) ?? []).length).toBe(2);

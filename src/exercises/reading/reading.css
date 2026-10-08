@@ -1,0 +1,37 @@
+/**
+ * reading.css — passage beside the questions (TODO §D13, option 2a). Layered under
+ * `components`; no colours, no raw px. Lives in the engine's lazy chunk, not in
+ * `main-*.css` (budget: docs/TOOLING.md).
+ *
+ * At a wide EXERCISE width the passage takes the left column and the questions the
+ * right, both from the top, so the learner reads and answers without scrolling back
+ * up. A container query, not a viewport one: an exercise can sit in an accordion card
+ * or a tab panel. Status, footer and footnote sit outside `.reading-body` and run
+ * under both columns.
+ *
+ * 29rem is the questions' floor: the widest pill row in the showcase ("Son las dos de
+ * la tarde" and two more, 367px) plus the card's padding, gap and verdict slot (82px)
+ * is 449px, and at exactly 28rem (448px) those pills wrapped inside themselves. The
+ * spare rem absorbs font-metric drift between browsers. 55rem leaves the passage at
+ * least 25rem, about 40 characters a line; on a full LO column both halves are ~33rem
+ * and the paragraphs keep their 60ch cap. Below 55rem the two stack exactly as before
+ * (gap-4).
+ */
+@layer components {
+  .reading {
+    container: reading / inline-size;
+  }
+
+  .reading-body {
+    display: grid;
+    row-gap: 1rem;
+  }
+
+  @container reading (width >= 55rem) {
+    .reading-body {
+      grid-template-columns: minmax(0, 1fr) minmax(29rem, 1fr);
+      align-items: start;
+      column-gap: 1rem;
+    }
+  }
+}

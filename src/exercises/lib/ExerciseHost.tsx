@@ -36,7 +36,8 @@ interface ExerciseHostProps {
  * DO grow with the table — longer boxes, the maintainer's call; so do conjugation's.
  * line-match splits the width into two equal halves with a gutter for its lines.
  * memory-match's deck keeps its 32rem cap and centres in the column (`margin: 0 auto`,
- * memory-match.css). reading's passage card widens but its text keeps the measure.
+ * memory-match.css). reading puts its passage beside the questions at a wide exercise
+ * width (reading.css); the paragraphs keep the measure.
  * Every other engine stays on the track
  * (§D11: at the full column, `width: 100%` inputs went ~800px wide).
  */
