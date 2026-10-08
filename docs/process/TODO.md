@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-07 · **HEAD:** see `git log` · **Suite:** 112 files · 1272 tests green
+**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 125 files · 1382 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -317,7 +317,7 @@ file as its home), `STRUCTURE.md`'s `src/sandbox/` row, README's build section,
 CONTRIBUTING's command table, `AGENTS.md`'s two new house rules, `docs/TOOLING.md`'s two
 new decision entries.
 
-## D. Design & accessibility polish — 0 of 11 open
+## D. Design & accessibility polish — 1 of 13 open
 
 Design and a11y come before branch protection **by decision 2026-09-09**: a footer that
 ships internal build chatter and two dead links is a defect on every page of a live
@@ -1173,6 +1173,65 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   theme. axe: zero violations on all three pages, both themes. CSS 16.55 → **16.67 kB**
   gzip (budget < 17), JS 100.21 kB.
 
+- **D12 — exercises use the page width, alerts and buttons polished. DONE 2026-10-07/08**
+  (`cb98d5d`…`0b2eb8f`), one maintainer instruction at a time. A first attempt (an
+  instructions rail plus per-engine container-query layouts) was built and **reverted
+  unmerged** — the maintainer's call; the spec for it is gone with the branch.
+  - **Instruction box spans the column** in every exercise; only the engine stays on the
+    48rem track (`ExerciseHost`).
+  - **Full-width engines** — `FULL_WIDTH_TYPES` in `ExerciseHost.tsx`: select (rows and
+    inline passage), inline-choice, radio-quiz, inline-gap, typed-transform, dictation,
+    line-match, memory-match. typed-transform's and dictation's inputs grow with the
+    table (749 / 990px at 1440) — the maintainer's call, written into the comment so it
+    is not "fixed" back. line-match: two equal halves, a 6rem gutter for the lines, one
+    subgrid row per pair so both columns end together. memory-match: the 32rem deck
+    centres (`align-self`).
+  - **Alerts:** info `Callout` is `--callout-info` (Cambridge Light Blue in light; the
+    primary tint in dark); every alert icon 2rem.
+  - **Row verdicts** (`ResultSlot`, 10 engines): lucide `circle-check-big` / `circle-x`
+    at 2rem.
+  - **Reset contrast:** new `--destructive-text` (crest red mixed toward `--foreground`):
+    3.81 → 5.48:1 light, 2.74 → 5.08:1 dark; hover tints ≥ 4.59:1. axe on the showcase
+    after Check: zero contrast failures, both themes.
+  - **Sandbox Buttons section** above Alerts: every `Button` variant and size (a
+    `Record` over the cva keys, so a new one will not compile unlisted), icon-only,
+    the real `ExerciseFooter`, and "Colours the app uses" labelled with tokens. The
+    footer's looks live in `src/exercises/lib/exercise-buttons.ts`, shared by both.
+  - **Transcript toggle** (`MediaPanel`): `--transcript-toggle` (`--amber-soft`, slate
+    ink 7.2:1, `--warning` outline) and an open/close slide in `media-panel.css`
+    (`::details-content` + `interpolate-size`; instant without support or under reduced
+    motion). **The slide was not watched running** — the browser pane was hidden; see
+    §D13.
+  - **Cascade-layer order** (`0b2eb8f`): under `DEBUG=1` a shared chunk
+    (`ModalProvider-*.css`) linked before `main-*.css` named `components` before
+    Tailwind's `base`, so base's reset beat component margins and paddings on the debug
+    pages and the debug-built LO. Each HTML entry now declares
+    `@layer properties, theme, base, components, utilities;` first
+    (`src/build/layer-order.test.ts`). The plain build was never affected. After the
+    fix: 52 / 52 non-zero component margin/padding rules apply across the three
+    debug-built pages.
+
+  Each step verified on the built site (375 and 1440 at least, no horizontal scroll).
+  Budget: `docs/TOOLING.md`.
+
+- **D13 — exercise width, the rest. OPEN.**
+  - **conjugation + reading full width — parked** on `feat/full-width-conjugation-reading`
+    (`df3488b`, needs a rebase onto `main`). Built and measured, held by the maintainer:
+    conjugation's one-word inputs go 876px wide (recommended: two columns, yo/tú/él |
+    nosotros/vosotros/ellos), and reading's passage card is 1102px with its text at the
+    534px measure (recommended: passage beside the questions).
+  - **Still on the 48rem track:** word-spot, word-order, phrase-reorder, drag-fill-gaps,
+    flashcards.
+  - **Watch the transcript slide** in a visible browser (Chrome ≥ 131 / Safari) at both
+    themes and with reduced motion on.
+  - **Pre-existing, unexplained:** on the DEBUG showcase in the dark theme axe reported 27
+    `color-contrast` failures on inline-gap's empty gap inputs (1.46:1, `#232830`),
+    identical on `main` before §D12; zero after a Check. Real bug or axe reading an
+    empty input's text colour — check.
+  - The sandbox's plain **Destructive** samples still fail (3.81 / 2.74:1): the vendored
+    shadcn variant, which no lesson uses alone any more. Fixing it means editing
+    `src/components/ui/button.tsx`.
+
 ---
 
 ## E. Before sharing with other developers
@@ -1297,3 +1356,7 @@ build, so it cannot return. Two remain:
 | 2026-10-07 | see §F    | **`tabs` block (§F1)** — shadcn/Base UI tabs, plain or card; budgets JS < 110, CSS < 18        |
 | 2026-10-07 | see git   | **one `Callout`** — tinted info/success/warning/danger; all instruction boxes + sandbox use it |
 | 2026-10-07 | see §F    | **tab media (§F2a)** — portrait/figure image, audio, Show/Hide transcript; JS 109.13 kB        |
+| 2026-10-07 | see §D12  | **full-width exercises (§D12)** — instruction box + 8 engines span the column                  |
+| 2026-10-07 | `8cc7e2f` | **Reset contrast** — `--destructive-text`, 5.48 / 5.08:1; sandbox Buttons section              |
+| 2026-10-08 | `3b8f415` | **amber transcript toggle** with a `::details-content` slide; CSS 17.95 kB                     |
+| 2026-10-08 | `0b2eb8f` | **cascade-layer order** declared first in every HTML entry (DEBUG build bug)                   |

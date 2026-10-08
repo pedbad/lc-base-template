@@ -150,15 +150,24 @@ Layer 1 is the carrot; layers 2–3 are the stick.
   the prerender pass will later write — see _Dev-server LO pages_ below.
 - **Rejected:** Create-React-App (deprecated), Webpack (slower, heavier config).
 
-### Bundle budget — JS < 110 kB, CSS < 18 kB gzipped _(decisions 2026-10-05, 2026-10-06, 2026-10-07)_
+### Bundle budget — JS < 110 kB, CSS < 18 kB gzipped _(decisions 2026-10-05, 2026-10-06, 2026-10-07, 2026-10-08)_
 
 **This is the one place the budget is written down.** Every other doc and comment that
 needs the number points here rather than restating it.
 
-| Asset        | Budget (gzipped) | Measured 2026-10-07 | Headroom |
+| Asset        | Budget (gzipped) | Measured 2026-10-08 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 110 kB**     | 109.13 kB           | 0.87 kB  |
-| `main-*.css` | **< 18 kB**      | 17.71 kB            | 0.29 kB  |
+| `main-*.js`  | **< 110 kB**     | 109.24 kB           | 0.76 kB  |
+| `main-*.css` | **< 18 kB**      | 17.95 kB            | 0.05 kB  |
+
+- **Exercise polish (2026-10-07/08, TODO §D12): JS 109.13 → 109.24 kB (+0.11), CSS
+  17.71 → 17.95 kB (+0.24).** Biggest CSS steps: the transcript toggle's slide sheet and
+  `--transcript-toggle` tokens (+0.14), `--callout-info` (+0.03), `--destructive-text`
+  (+0.05); the full-width engines and line-match's subgrid cost ~0.02. The layer-order
+  fix is an inline `<style>` in each HTML entry, so it costs nothing here. **0.05 kB of
+  CSS headroom is left: the next CSS change must pull a lever first** — e.g. move
+  per-engine rules out of `main-*.css` into the lazy engine chunks, as memory-match,
+  flashcards and the drag engines already do.
 
 - **Tab media (2026-10-07): JS 107.73 → 109.13 kB (+1.40), CSS 17.57 → 17.71 kB
   (+0.14)** — `MediaPanel`, the lucide `Eye`/`EyeOff` icons, two ui-strings and the
