@@ -157,8 +157,12 @@ needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-08 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 120 kB**     | 110.47 kB           | 9.53 kB  |
-| `main-*.css` | **< 18 kB**      | 17.66 kB            | 0.34 kB  |
+| `main-*.js`  | **< 120 kB**     | 110.48 kB           | 9.52 kB  |
+| `main-*.css` | **< 18 kB**      | 17.61 kB            | 0.39 kB  |
+
+- **Typed-answer feedback (2026-10-08, TODO §D15): JS 110.47 → 110.48 kB, CSS 17.66 →
+  17.61 kB.** The interleaved diff's colour and dotted-underline utilities left the
+  sheet; the new line reuses existing ones. The seven new UI strings are the JS.
 
 - **TODO §D13 (2026-10-08): JS 110.51 → 110.47 kB, CSS 17.66 → 17.66 kB**, step by
   step on a plain build:

@@ -2,14 +2,15 @@
  * TextEntryRuntime.tsx — shared runtime for the typed-response table engines
  * (typed-transform #5, dictation #6; spec §9). Renders a table of rows: optional
  * audio + optional prompt cue + a typed-answer Input with a per-row verdict and a
- * character diff under it. Each engine is a thin wrapper that passes its
+ * feedback line under a wrong answer. Each engine is a thin wrapper that passes its
  * `comparisonMode`; the only behavioural difference is how answers are normalized.
  *
  * Ported from french-lo-1's TextEntryExerciseRuntime, typed and trimmed:
  *   - phrases tuples → typed `rows` objects (text-entry-schema).
  *   - grading via the M1 answer helpers (strict = normalizeAnswer, dictation =
  *     normalizeForDictation) instead of raw trim-equality.
- *   - diff via diffChars → <TextDiff> (React nodes, no innerHTML / DOMPurify).
+ *   - a wrong row gets <AnswerFeedback>: a hint naming the error, then the answer on
+ *     the second wrong Check (answer-feedback.ts, TODO §D15).
  *   - per-row audio via <AudioClip> (independent click-to-play); no master player.
  *   - shared ExerciseFooter + ResultSlot; canRevealAnswers gates Show-answers.
  *   - dropped (YAGNI): htmlContent, Mars/Venus gender-icon header heuristics,
@@ -32,8 +33,11 @@ import AudioManager from '@/audio/AudioManager';
 import { AudioClip } from '@/components/audio/AudioClip';
 import type { ExerciseOptions } from '@/config/lo-schema';
 import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
-import { type DiffPart } from '@/exercises/lib/charDiff';
-import { TextDiff } from '@/exercises/lib/TextDiff';
+import { AnswerFeedback } from '@/exercises/lib/AnswerFeedback';
+import {
+  firstMarkedReveal,
+  type AnswerFeedback as Feedback,
+} from '@/exercises/lib/answer-feedback';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
 import { commitCheck, getInitialScoringState, type ScoringState } from '@/exercises/lib/scoring';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
@@ -56,8 +60,10 @@ interface TextEntryRuntimeProps {
 interface TextEntryState extends ScoringState {
   /** rowIndex → typed text. */
   values: Record<number, string>;
-  /** rowIndex → character diff parts (filled on Check / Show-answers). */
-  diffs: Record<number, DiffPart[]>;
+  /** rowIndex → the hint or revealed answer under a wrong answer (answer-feedback). */
+  feedback: Record<number, Feedback>;
+  /** rowIndex → wrong Checks so far: the first gets a hint, the second the answer. */
+  misses: Record<number, number>;
 }
 
 /** Shared merge reducer (partial/function patch); answer fields are interdependent. */
@@ -66,7 +72,8 @@ const reducer = createExerciseReducer<TextEntryState>();
 const buildState = (): TextEntryState => ({
   ...getInitialScoringState(),
   values: {},
-  diffs: {},
+  feedback: {},
+  misses: {},
 });
 
 export function TextEntryRuntime({
@@ -90,10 +97,10 @@ export function TextEntryRuntime({
       const values = { ...prev.values, [rowIndex]: value };
       if (!prev.hasChecked) return { values };
       const checkedResults = { ...prev.checkedResults };
-      const diffs = { ...prev.diffs };
+      const feedback = { ...prev.feedback };
       delete checkedResults[rowIndex];
-      delete diffs[rowIndex];
-      return { values, diffs, ...commitCheck(checkedResults) };
+      delete feedback[rowIndex];
+      return { values, feedback, ...commitCheck(checkedResults) };
     });
   };
 
@@ -107,13 +114,19 @@ export function TextEntryRuntime({
   };
 
   const handleCheck = () => {
-    const { checkedResults, diffs } = gradeTextEntry(rows, state.values, comparisonMode);
-    dispatch({ ...commitCheck(checkedResults), diffs });
+    const { checkedResults, feedback, misses } = gradeTextEntry(
+      rows,
+      state.values,
+      comparisonMode,
+      state.misses,
+      options.caseSensitive,
+    );
+    dispatch({ ...commitCheck(checkedResults), feedback, misses });
   };
 
   const handleShowAnswers = () => {
-    const { values, checkedResults, diffs } = fillAnswers(rows, comparisonMode);
-    dispatch({ values, ...commitCheck(checkedResults), diffs });
+    const { values, checkedResults } = fillAnswers(rows);
+    dispatch({ values, ...commitCheck(checkedResults), feedback: {} });
   };
 
   const handleReset = () => {
@@ -121,11 +134,14 @@ export function TextEntryRuntime({
     dispatch(buildState());
   };
 
+  // The one-line key under the first revealed answer with something marked.
+  const keyIndex = firstMarkedReveal(state.feedback);
+
   const renderRow = (rowIndex: number): ReactNode => {
     const row = rows[rowIndex];
     const value = state.values[rowIndex] ?? '';
     const result = state.checkedResults[rowIndex];
-    const diff = state.diffs[rowIndex];
+    const feedback = state.feedback[rowIndex];
     const isWrong = state.hasChecked && result === false;
     const isRight = state.hasChecked && result === true;
     const hasResult = state.hasChecked && typeof result === 'boolean';
@@ -168,10 +184,13 @@ export function TextEntryRuntime({
             />
             <ResultSlot hasResult={hasResult} isCorrect={isRight} />
           </div>
-          {state.hasChecked && diff ? (
-            <div className="mt-1.5" lang={TARGET_LANG}>
-              <TextDiff parts={diff} />
-            </div>
+          {state.hasChecked && feedback ? (
+            <AnswerFeedback
+              feedback={feedback}
+              contentLang={TARGET_LANG}
+              labels={labels}
+              showKey={rowIndex === keyIndex}
+            />
           ) : null}
         </TableCell>
       </TableRow>

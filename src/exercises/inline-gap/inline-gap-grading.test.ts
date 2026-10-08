@@ -22,9 +22,9 @@ test('gradeInlineGap: tolerates whitespace and apostrophe variants', () => {
 });
 
 test('gradeInlineGap: empty/whitespace-only blanks are skipped', () => {
-  const { checkedResults, diffs } = gradeInlineGap([meta('un'), meta('deux')], { 0: '   ' }, 2);
+  const { checkedResults, feedback } = gradeInlineGap([meta('un'), meta('deux')], { 0: '   ' }, 2);
   expect(0 in checkedResults).toBe(false);
-  expect(0 in diffs).toBe(false);
+  expect(0 in feedback).toBe(false);
   expect(1 in checkedResults).toBe(false);
 });
 
@@ -33,17 +33,19 @@ test('gradeInlineGap: only filled blanks appear', () => {
   expect(checkedResults).toEqual({ 1: true });
 });
 
-test('gradeInlineGap: diff parts produced for graded blanks', () => {
-  const { diffs } = gradeInlineGap([meta('chat')], { 0: 'chien' }, 1);
-  expect(diffs[0].length).toBeGreaterThan(0);
-  expect(diffs[0].some((part) => part.kind !== 'same')).toBe(true);
+// TODO §D15: a hint on the first wrong Check, the answer on the second.
+test('gradeInlineGap: a wrong blank gets a hint, then the answer', () => {
+  const first = gradeInlineGap([meta('chat')], { 0: 'chien' }, 1);
+  expect(first.feedback[0]?.kind).toBe('hint');
+  expect(gradeInlineGap([meta('chat')], { 0: 'chien' }, 1, first.misses).feedback[0]?.kind).toBe(
+    'reveal',
+  );
 });
 
-test('fillInlineGapAnswers: reveals expected answers, all correct, all-same diffs', () => {
-  const { values, checkedResults, diffs } = fillInlineGapAnswers([meta('un'), meta('deux')], 2);
+test('fillInlineGapAnswers: reveals expected answers, all correct', () => {
+  const { values, checkedResults } = fillInlineGapAnswers([meta('un'), meta('deux')], 2);
   expect(values).toEqual({ 0: 'un', 1: 'deux' });
   expect(checkedResults).toEqual({ 0: true, 1: true });
-  expect(diffs[0].every((part) => part.kind === 'same')).toBe(true);
 });
 
 test('fillInlineGapAnswers: missing meta yields empty-string value', () => {

@@ -26,10 +26,20 @@ describe('gradeConjugation', () => {
   });
 
   test('skips rows the learner left blank or whitespace-only', () => {
-    const { checkedResults, diffs } = gradeConjugation(rows, { 0: 'suis', 1: '  ' });
+    const { checkedResults, feedback } = gradeConjugation(rows, { 0: 'suis', 1: '  ' });
     expect(checkedResults[0]).toBe(true);
     expect(checkedResults[1]).toBeUndefined();
-    expect(diffs[1]).toBeUndefined();
+    expect(feedback[1]).toBeUndefined();
+  });
+
+  // TODO §D15: an accent-only miss is still wrong, but named.
+  test('names an accent-only miss, then reveals on the second wrong Check', () => {
+    const accented: ConjugationRow[] = [{ person: 'vous', answer: 'êtes' }];
+    const first = gradeConjugation(accented, { 0: 'etes' });
+    expect(first.feedback[0]).toEqual({ kind: 'hint', reason: 'accent' });
+    expect(gradeConjugation(accented, { 0: 'etes' }, first.misses).feedback[0]?.kind).toBe(
+      'reveal',
+    );
   });
 });
 

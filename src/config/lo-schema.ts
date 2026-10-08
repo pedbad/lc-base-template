@@ -54,6 +54,12 @@ export const ExerciseOptionsSchema = z.object({
   sampleSize: z.number().int().positive().optional(),
   /** false removes the Show-answers control entirely (e.g. a pure game). */
   allowShowAnswers: z.boolean().default(true),
+  /**
+   * Typed answers only: true makes capitals count ("Los gatos" ≠ "los gatos"). Off by
+   * default (maintainer, 2026-10-08, TODO §D15): in a gap-fill a capital is rarely the
+   * point. Accents always count either way.
+   */
+  caseSensitive: z.boolean().default(false),
 });
 export type ExerciseOptions = z.infer<typeof ExerciseOptionsSchema>;
 

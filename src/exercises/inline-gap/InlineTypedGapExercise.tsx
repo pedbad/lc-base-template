@@ -8,8 +8,9 @@
  * template's foundation:
  *   - parseInputBlank + parseSentence (M1) build per-blank metadata in a render-local
  *     value; grading handlers close over it (no ref-during-render, react-hooks/refs).
- *   - On Check, each filled blank is graded and a character diff (diffChars, M1) is
- *     rendered below the input via <TextDiff> — plain React nodes, no innerHTML.
+ *   - On Check, each filled blank is graded; a wrong one gets <AnswerFeedback> below
+ *     its input — a hint naming the error first, the answer on the second wrong Check
+ *     (answer-feedback.ts, TODO §D15).
  *   - shared shell: ExerciseFooter (Check/Reset/Show-answers) + ResultSlot (per-row
  *     tick/cross). canRevealAnswers gates Show-answers (spec §5.3). Reset clears all.
  *   - chrome text via resolveLabel(key, labels) (ui-strings §9).
@@ -34,8 +35,11 @@ import {
 } from '@/components/audio/SequenceAudioController';
 import { ExerciseOptionsSchema, type ExerciseOptions } from '@/config/lo-schema';
 import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
-import { type DiffPart } from '@/exercises/lib/charDiff';
-import { TextDiff } from '@/exercises/lib/TextDiff';
+import { AnswerFeedback } from '@/exercises/lib/AnswerFeedback';
+import {
+  firstMarkedReveal,
+  type AnswerFeedback as Feedback,
+} from '@/exercises/lib/answer-feedback';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
 import { commitCheck, getInitialScoringState, type ScoringState } from '@/exercises/lib/scoring';
 import {
@@ -57,8 +61,10 @@ import { useRowAudio } from './useRowAudio';
 interface InlineGapState extends ScoringState {
   /** blankIndex → typed text. */
   values: Record<number, string>;
-  /** blankIndex → character diff parts (filled on Check / Show-answers). */
-  diffs: Record<number, DiffPart[]>;
+  /** blankIndex → the hint or revealed answer under a wrong answer (answer-feedback). */
+  feedback: Record<number, Feedback>;
+  /** blankIndex → wrong Checks so far: the first gets a hint, the second the answer. */
+  misses: Record<number, number>;
 }
 
 /** Shared merge reducer (partial/function patch); answer fields are interdependent. */
@@ -67,7 +73,8 @@ const reducer = createExerciseReducer<InlineGapState>();
 const buildState = (): InlineGapState => ({
   ...getInitialScoringState(),
   values: {},
-  diffs: {},
+  feedback: {},
+  misses: {},
 });
 
 export default function InlineTypedGapExercise({ config }: ExerciseComponentProps) {
@@ -90,12 +97,12 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
     dispatch((prev) => {
       const values = { ...prev.values, [blankIndex]: value };
       if (!prev.hasChecked) return { values };
-      // Editing a blank after checking clears its old verdict + diff.
+      // Editing a blank after checking clears its old verdict + feedback.
       const checkedResults = { ...prev.checkedResults };
-      const diffs = { ...prev.diffs };
+      const feedback = { ...prev.feedback };
       delete checkedResults[blankIndex];
-      delete diffs[blankIndex];
-      return { values, diffs, ...commitCheck(checkedResults) };
+      delete feedback[blankIndex];
+      return { values, feedback, ...commitCheck(checkedResults) };
     });
   };
 
@@ -167,7 +174,7 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
     const meta = blanksMeta[blankIndex];
     const value = state.values[blankIndex] ?? '';
     const result = state.checkedResults[blankIndex];
-    const diff = state.diffs[blankIndex];
+    const feedback = state.feedback[blankIndex];
     const isWrong = state.hasChecked && result === false;
     const isRight = state.hasChecked && result === true;
     const id = inputId(blankIndex);
@@ -187,10 +194,13 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
           className={`inline-flex h-9 cursor-text transition-colors hover:border-primary/60 hover:bg-muted/40 ${isRight ? 'border-success' : ''}`}
           style={{ width: `${meta?.widthCh ?? 8}ch`, maxWidth: '100%' }}
         />
-        {state.hasChecked && diff ? (
-          <span className="mt-1" lang={TARGET_LANG}>
-            <TextDiff parts={diff} />
-          </span>
+        {state.hasChecked && feedback ? (
+          <AnswerFeedback
+            feedback={feedback}
+            contentLang={TARGET_LANG}
+            labels={labels}
+            showKey={blankIndex === firstMarkedReveal(state.feedback)}
+          />
         ) : null}
       </span>
     );
@@ -260,13 +270,19 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
   const nToSolve = blankCursor;
 
   const handleCheck = () => {
-    const { checkedResults, diffs } = gradeInlineGap(blanksMeta, state.values, nToSolve);
-    dispatch({ ...commitCheck(checkedResults), diffs });
+    const { checkedResults, feedback, misses } = gradeInlineGap(
+      blanksMeta,
+      state.values,
+      nToSolve,
+      state.misses,
+      options.caseSensitive,
+    );
+    dispatch({ ...commitCheck(checkedResults), feedback, misses });
   };
 
   const handleShowAnswers = () => {
-    const { values, checkedResults, diffs } = fillInlineGapAnswers(blanksMeta, nToSolve);
-    dispatch({ values, ...commitCheck(checkedResults), diffs });
+    const { values, checkedResults } = fillInlineGapAnswers(blanksMeta, nToSolve);
+    dispatch({ values, ...commitCheck(checkedResults), feedback: {} });
   };
 
   const hasInput = Object.values(state.values).some((v) => v.trim() !== '');

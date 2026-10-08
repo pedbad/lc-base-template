@@ -1382,6 +1382,31 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   - **Sandbox Docs hub at 375:** two rendered tables (Preset, Font) scroll sideways
     with no keyboard focus — axe `scrollable-region-focusable`. Debug page only.
 
+- **D15 — feedback under a wrong typed answer. DONE 2026-10-08** (maintainer's three
+  calls: hint first, capitals ignored by default, accent-only misses still wrong). The
+  old line was a character diff weaving the attempt and the answer into one string
+  (`gtererger` → `los gatos` rendered "losgaterergeros"): it named no error, was noise
+  on a far miss, and gave the answer away on the first try.
+  - **First wrong Check:** a hint naming the kind of error, no answer — accent ("Almost.
+    Check the accents."), ending ("Close. Look at the ending."), missing letters, close
+    ("Check the spelling"), far ("Not quite. Try again."). Far = similarity
+    2·LCS/(|a|+|b|) below 0.6.
+  - **Second wrong Check on that answer:** "Answer:" and the answer as authored, in the
+    course language; on a close miss the differing letters sit in a `<mark>`, said in
+    words for a screen reader; a far miss shows the answer plain. A one-line key under
+    the first marked answer in an exercise. Editing an answer clears its line; misses
+    are counted per answer until Reset. Show answer still fills the inputs.
+  - **Capitals** no longer count by default; `options.caseSensitive: true` makes them
+    count. Accents always count. Dictation still ignores sentence punctuation.
+  - Code: `src/exercises/lib/answer-feedback.ts` (pure: classify, similarity, marked
+    segments, `gradeTypedAnswers`) and `AnswerFeedback.tsx`; the four engines
+    (inline-gap, conjugation, typed-transform, dictation) grade through it. `TextDiff`
+    is gone; `charDiff` stays as the alignment underneath. Messages are UI strings
+    (`hintAccent` … `answerKey`), so an exercise can reword them in `labels`.
+  - Verified on the built showcase: each engine hint → answer, line cleared on edit;
+    axe zero in both themes with seven lines showing; no overflow at 320. Budget: CSS
+    17.66 → 17.61 kB (the diff's utilities left), JS 110.47 → 110.48 kB.
+
 ---
 
 ## E. Before sharing with other developers
@@ -1530,3 +1555,4 @@ build, so it cannot return. Two remain:
 | 2026-10-08 | `1c57985` | **conjugation + answer pills on a phone** — pronoun above input, pills stack below 30rem (§D13)                               |
 | 2026-10-08 | `9e0de04` | **phrase-reorder on a phone** — phrase under its prompt below 30rem (§D13)                                                    |
 | 2026-10-08 | `181d0e4` | **destructive button contrast** — variant uses `--destructive-text`; Reset's override gone (§D13)                             |
+| 2026-10-08 | see git   | **typed-answer feedback** — hint naming the error first, the answer on the second wrong Check (§D15)                          |

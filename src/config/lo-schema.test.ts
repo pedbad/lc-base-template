@@ -288,7 +288,18 @@ test('lo-schema: options carries per-instance shuffle + sampleSize', () => {
     content: {},
     options: { shuffle: true, sampleSize: 5 },
   });
-  expect(parsed.options).toEqual({ shuffle: true, sampleSize: 5, allowShowAnswers: true });
+  expect(parsed.options).toEqual({
+    shuffle: true,
+    sampleSize: 5,
+    allowShowAnswers: true,
+    caseSensitive: false,
+  });
+});
+
+// TODO §D15: capitals in typed answers count only when the author opts in.
+test('lo-schema: options.caseSensitive defaults to false and can be turned on', () => {
+  expect(ExerciseOptionsSchema.parse({}).caseSensitive).toBe(false);
+  expect(ExerciseOptionsSchema.parse({ caseSensitive: true }).caseSensitive).toBe(true);
 });
 
 // Guard: sampleSize must be a positive integer.

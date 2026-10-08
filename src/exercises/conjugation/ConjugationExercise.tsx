@@ -6,8 +6,9 @@
  * grading model as inline-gap, so this view is thin wiring over pure
  * `conjugation-grading.ts`.
  *
- *   - On Check, each filled row is graded and a character diff (diffChars) renders under
- *     the input via <TextDiff> (plain React nodes, no innerHTML).
+ *   - On Check, each filled row is graded; a wrong one gets <AnswerFeedback> under its
+ *     input — a hint naming the error first, the answer on the second wrong Check
+ *     (answer-feedback.ts, TODO §D15).
  *   - shared shell: ExerciseFooter (Check/Reset/Show-answers) + ResultSlot (per-row
  *     tick/cross). canRevealAnswers gates Show-answers (spec §5.3). Reset clears all.
  *   - chrome text via resolveLabel(key, labels) (ui-strings §9).
@@ -28,8 +29,11 @@ import { Input } from '@/components/ui/input';
 import AudioManager from '@/audio/AudioManager';
 import { ExerciseOptionsSchema, type ExerciseOptions } from '@/config/lo-schema';
 import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
-import { type DiffPart } from '@/exercises/lib/charDiff';
-import { TextDiff } from '@/exercises/lib/TextDiff';
+import { AnswerFeedback } from '@/exercises/lib/AnswerFeedback';
+import {
+  firstMarkedReveal,
+  type AnswerFeedback as Feedback,
+} from '@/exercises/lib/answer-feedback';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
 import { commitCheck, getInitialScoringState, type ScoringState } from '@/exercises/lib/scoring';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
@@ -44,8 +48,10 @@ import './conjugation.css';
 interface ConjugationState extends ScoringState {
   /** rowIndex → typed text. */
   values: Record<number, string>;
-  /** rowIndex → character diff parts (filled on Check / Show-answers). */
-  diffs: Record<number, DiffPart[]>;
+  /** rowIndex → the hint or revealed answer under a wrong answer (answer-feedback). */
+  feedback: Record<number, Feedback>;
+  /** rowIndex → wrong Checks so far: the first gets a hint, the second the answer. */
+  misses: Record<number, number>;
 }
 
 /** Shared merge reducer (partial/function patch); answer fields are interdependent. */
@@ -54,7 +60,8 @@ const reducer = createExerciseReducer<ConjugationState>();
 const buildState = (): ConjugationState => ({
   ...getInitialScoringState(),
   values: {},
-  diffs: {},
+  feedback: {},
+  misses: {},
 });
 
 export default function ConjugationExercise({ config }: ExerciseComponentProps) {
@@ -76,12 +83,12 @@ export default function ConjugationExercise({ config }: ExerciseComponentProps) 
     dispatch((prev) => {
       const values = { ...prev.values, [rowIndex]: value };
       if (!prev.hasChecked) return { values };
-      // Editing a row after checking clears its old verdict + diff.
+      // Editing a row after checking clears its old verdict + feedback.
       const checkedResults = { ...prev.checkedResults };
-      const diffs = { ...prev.diffs };
+      const feedback = { ...prev.feedback };
       delete checkedResults[rowIndex];
-      delete diffs[rowIndex];
-      return { values, diffs, ...commitCheck(checkedResults) };
+      delete feedback[rowIndex];
+      return { values, feedback, ...commitCheck(checkedResults) };
     });
   };
 
@@ -100,13 +107,18 @@ export default function ConjugationExercise({ config }: ExerciseComponentProps) 
   };
 
   const handleCheck = () => {
-    const { checkedResults, diffs } = gradeConjugation(rows, state.values);
-    dispatch({ ...commitCheck(checkedResults), diffs });
+    const { checkedResults, feedback, misses } = gradeConjugation(
+      rows,
+      state.values,
+      state.misses,
+      options.caseSensitive,
+    );
+    dispatch({ ...commitCheck(checkedResults), feedback, misses });
   };
 
   const handleShowAnswers = () => {
-    const { values, checkedResults, diffs } = fillConjugationAnswers(rows);
-    dispatch({ values, ...commitCheck(checkedResults), diffs });
+    const { values, checkedResults } = fillConjugationAnswers(rows);
+    dispatch({ values, ...commitCheck(checkedResults), feedback: {} });
   };
 
   if (!parsed.success || !content) {
@@ -140,10 +152,13 @@ export default function ConjugationExercise({ config }: ExerciseComponentProps) 
 
   const heading = content.tense ? `${content.verb} — ${content.tense}` : content.verb;
 
+  // The one-line key under the first revealed answer with something marked.
+  const keyIndex = firstMarkedReveal(state.feedback);
+
   const renderRow = (row: ConjugationRow, rowIndex: number): ReactNode => {
     const value = state.values[rowIndex] ?? '';
     const result = state.checkedResults[rowIndex];
-    const diff = state.diffs[rowIndex];
+    const feedback = state.feedback[rowIndex];
     const isWrong = state.hasChecked && result === false;
     const isRight = state.hasChecked && result === true;
     const attempted = value.trim() !== '';
@@ -176,10 +191,13 @@ export default function ConjugationExercise({ config }: ExerciseComponentProps) 
             aria-invalid={isWrong}
             className={`h-9 cursor-text transition-colors hover:border-primary/60 hover:bg-muted/40 ${isRight ? 'border-success' : ''}`}
           />
-          {state.hasChecked && diff ? (
-            <span className="mt-1" lang={TARGET_LANG}>
-              <TextDiff parts={diff} />
-            </span>
+          {state.hasChecked && feedback ? (
+            <AnswerFeedback
+              feedback={feedback}
+              contentLang={TARGET_LANG}
+              labels={labels}
+              showKey={rowIndex === keyIndex}
+            />
           ) : null}
         </span>
         <span className="self-center">

@@ -39,6 +39,15 @@ export const UiStringsSchema = z.strictObject({
   correct: z.string().min(1),
   incorrect: z.string().min(1),
   showHints: z.string().min(1),
+  // Feedback under a wrong typed answer (AnswerFeedback, TODO §D15): a hint naming the
+  // kind of error on the first wrong Check, the answer on the second.
+  hintAccent: z.string().min(1),
+  hintEnding: z.string().min(1),
+  hintMissing: z.string().min(1),
+  hintClose: z.string().min(1),
+  hintFar: z.string().min(1),
+  answerLabel: z.string().min(1),
+  answerKey: z.string().min(1),
   // Accessible names for controls with no readable text of their own
   blank: z.string().min(1),
   // Audio controls (listening / dictation exercises)
@@ -76,6 +85,13 @@ const raw: UiStrings = {
   correct: 'Correct!',
   incorrect: 'Incorrect',
   showHints: 'Show hints',
+  hintAccent: 'Almost. Check the accents.',
+  hintEnding: 'Close. Look at the ending.',
+  hintMissing: 'Close. Something is missing.',
+  hintClose: 'Close. Check the spelling.',
+  hintFar: 'Not quite. Try again.',
+  answerLabel: 'Answer:',
+  answerKey: 'Highlighted: what differs from yours',
   blank: 'Blank',
   play: 'Play',
   pause: 'Pause',

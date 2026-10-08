@@ -15,9 +15,11 @@ test('gradeTextEntry: wrong answer fails', () => {
   expect(checkedResults[0]).toBe(false);
 });
 
-test('gradeTextEntry: strict mode is case-sensitive', () => {
+// Maintainer, 2026-10-08 (TODO §D15): capitals no longer count by default; an exercise
+// sets `options.caseSensitive` to make them count.
+test('gradeTextEntry: strict mode ignores capitals by default', () => {
   const { checkedResults } = gradeTextEntry(rows('Bonjour'), { 0: 'bonjour' }, 'strict');
-  expect(checkedResults[0]).toBe(false);
+  expect(checkedResults[0]).toBe(true);
 });
 
 test('gradeTextEntry: strict mode is accent-sensitive (é ≠ e)', () => {
@@ -51,16 +53,16 @@ test('gradeTextEntry: strict mode does NOT ignore punctuation (comma is signific
 });
 
 test('gradeTextEntry: empty rows are skipped (not graded)', () => {
-  const { checkedResults, diffs } = gradeTextEntry(rows('un', 'deux'), { 0: '' }, 'strict');
+  const { checkedResults, feedback } = gradeTextEntry(rows('un', 'deux'), { 0: '' }, 'strict');
   expect(0 in checkedResults).toBe(false);
-  expect(0 in diffs).toBe(false);
+  expect(0 in feedback).toBe(false);
   expect(1 in checkedResults).toBe(false); // no value supplied → skipped
 });
 
 test('gradeTextEntry: whitespace-only rows are skipped (not graded)', () => {
-  const { checkedResults, diffs } = gradeTextEntry(rows('un'), { 0: '   ' }, 'strict');
+  const { checkedResults, feedback } = gradeTextEntry(rows('un'), { 0: '   ' }, 'strict');
   expect(0 in checkedResults).toBe(false);
-  expect(0 in diffs).toBe(false);
+  expect(0 in feedback).toBe(false);
 });
 
 test('gradeTextEntry: only filled rows appear; others untouched', () => {
@@ -72,35 +74,35 @@ test('gradeTextEntry: only filled rows appear; others untouched', () => {
   expect(checkedResults).toEqual({ 0: true, 2: false });
 });
 
-test('gradeTextEntry: diff parts are produced for graded rows', () => {
-  const { diffs } = gradeTextEntry(rows('chat'), { 0: 'chien' }, 'strict');
-  expect(Array.isArray(diffs[0])).toBe(true);
-  expect(diffs[0].length).toBeGreaterThan(0);
-  // A mismatch yields at least one non-'same' part.
-  expect(diffs[0].some((part) => part.kind !== 'same')).toBe(true);
+// TODO §D15: a hint on the first wrong Check, the answer on the second.
+test('gradeTextEntry: a wrong row gets a hint, then the answer', () => {
+  const first = gradeTextEntry(rows('chat'), { 0: 'chats' }, 'strict');
+  expect(first.feedback[0]).toEqual({ kind: 'hint', reason: 'ending' });
+
+  const second = gradeTextEntry(rows('chat'), { 0: 'chats' }, 'strict', first.misses);
+  expect(second.feedback[0]?.kind).toBe('reveal');
 });
 
-test('gradeTextEntry: correct row diff is all "same" parts', () => {
-  const { diffs } = gradeTextEntry(rows('chat'), { 0: 'chat' }, 'strict');
-  expect(diffs[0].every((part) => part.kind === 'same')).toBe(true);
-  expect(diffs[0].map((part) => part.char).join('')).toBe('chat');
+test('gradeTextEntry: a right row gets no feedback line', () => {
+  expect(gradeTextEntry(rows('chat'), { 0: 'chat' }, 'strict').feedback).toEqual({});
+});
+
+test('gradeTextEntry: capitals count only when the author asks', () => {
+  expect(gradeTextEntry(rows('Chat'), { 0: 'chat' }, 'strict').checkedResults[0]).toBe(true);
+  expect(gradeTextEntry(rows('Chat'), { 0: 'chat' }, 'strict', {}, true).checkedResults[0]).toBe(
+    false,
+  );
 });
 
 test('fillAnswers: reveals every expected answer, all marked correct', () => {
-  const { values, checkedResults } = fillAnswers(rows('un', 'deux'), 'strict');
+  const { values, checkedResults } = fillAnswers(rows('un', 'deux'));
   expect(values).toEqual({ 0: 'un', 1: 'deux' });
   expect(checkedResults).toEqual({ 0: true, 1: true });
 });
 
-test('fillAnswers: produces an all-"same" diff for every row', () => {
-  const { diffs } = fillAnswers(rows('un', 'deux'), 'strict');
-  expect(diffs[0].every((part) => part.kind === 'same')).toBe(true);
-  expect(diffs[1].every((part) => part.kind === 'same')).toBe(true);
-});
-
-test('fillAnswers: dictation mode reveals raw answer verbatim as the value', () => {
+test('fillAnswers: reveals the raw answer verbatim as the value', () => {
   // The revealed *value* is the raw answer (what the learner sees typed in), even
-  // though the diff is computed on the normalized form.
-  const { values } = fillAnswers(rows('Bonjour, ça va ?'), 'dictation');
+  // though grading compares the normalized form.
+  const { values } = fillAnswers(rows('Bonjour, ça va ?'));
   expect(values[0]).toBe('Bonjour, ça va ?');
 });
