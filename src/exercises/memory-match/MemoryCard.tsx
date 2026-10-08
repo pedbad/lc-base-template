@@ -94,7 +94,7 @@ function MemoryCardComponent({
         <AudioClip
           className="super-compact-speaker memory-card-audio"
           soundFile={card.audio ?? ''}
-          size={24}
+          size={48}
           inline
         />
       ) : null}

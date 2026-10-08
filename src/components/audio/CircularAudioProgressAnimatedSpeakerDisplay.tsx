@@ -26,8 +26,9 @@ const CENTER = VIEWBOX / 2;
 const RADIUS = 11;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 const STROKE_WIDTH = 1.8;
-/** Rendered pixel size; mirrors french-lo-1's --compact-dimension default. */
-const DEFAULT_SIZE = 27;
+/** Rendered pixel size. Was 27 (french-lo-1's --compact-dimension); doubled to 54
+ *  by the maintainer, 2026-10-08 — every circular speaker read too small. */
+const DEFAULT_SIZE = 54;
 /** WCAG 2.2 SC 2.5.8 floor, CSS px. Callers that overlay another target (flashcards,
  *  memory-match) cannot claim the spacing exception, so the button never goes under. */
 const MIN_TARGET_SIZE = 24;

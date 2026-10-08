@@ -27,8 +27,9 @@ describe('speaker hit target (SC 2.5.8)', () => {
     expect(buttonStyle(27)).toBe('width:27px;height:27px');
   });
 
-  test('the default size already clears the floor', () => {
-    expect(buttonStyle()).toBe('width:27px;height:27px');
+  // Maintainer, 2026-10-08: every circular speaker doubled, 27 → 54px.
+  test('the default size is 54px, double the old 27px', () => {
+    expect(buttonStyle()).toBe('width:54px;height:54px');
   });
 
   test('the non-interactive glyph is not a target, so it keeps its drawn size', () => {
