@@ -1,0 +1,37 @@
+/**
+ * conjugation.css — the paradigm's rows (TODO §D13, 2026-10-08). Layered under
+ * `components`; no colours, no raw px. Lives in the engine's lazy chunk, not in
+ * `main-*.css` (budget: docs/TOOLING.md).
+ *
+ * Narrow: the pronoun takes its own line above the input and its verdict. Beside it,
+ * the 5–8rem pronoun column left the input 22px wide at 320px (67px at 375).
+ *
+ * From 30rem: pronoun | input | verdict on one line, the pronoun right-aligned against
+ * its input. The input grows with the column (maintainer, 2026-10-08: one column at
+ * the full width, as typed-transform's). A container query, not a viewport one (as
+ * reading.css): an exercise can sit in an accordion card or a tab panel.
+ */
+@layer components {
+  .conjugation {
+    container: conjugation / inline-size;
+  }
+
+  .conjugation-row {
+    grid-template-columns: minmax(0, 1fr) 2.5rem;
+  }
+
+  .conjugation-person {
+    grid-column: 1 / -1;
+  }
+
+  @container conjugation (width >= 30rem) {
+    .conjugation-row {
+      grid-template-columns: minmax(5rem, 8rem) minmax(0, 1fr) 2.5rem;
+    }
+
+    .conjugation-person {
+      grid-column: auto;
+      text-align: end;
+    }
+  }
+}

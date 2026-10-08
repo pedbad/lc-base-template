@@ -31,6 +31,7 @@
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §5, §7, §8.
  */
 import { type KeyboardEvent } from 'react';
+import './choice-pill-group.css';
 
 interface ChoicePillGroupProps {
   /** The option labels, in render order. */
@@ -53,7 +54,21 @@ interface ChoicePillGroupProps {
    * radiogroup's `aria-label`, which is course-author English chrome.
    */
   contentLang?: string;
+  /**
+   * Stack the pills into a vertical list while the group's column is narrower than
+   * 30rem (TODO §D13, 2026-10-08): on a phone a row of options is wider than the
+   * question's column and each pill wrapped inside itself. For a block-level group
+   * only (radio-quiz, reading); inline-choice's group sits inside a sentence and stays
+   * a row. Layout in `choice-pill-group.css`.
+   */
+  stacksWhenNarrow?: boolean;
 }
+
+/** One outer border, outer corners rounded; the separators come with the layout. */
+const GROUP_BASE =
+  'items-stretch overflow-hidden rounded-lg border border-border bg-background align-middle';
+/** The connected row at every width: `divide-x` draws the separators. */
+const GROUP_ROW = 'inline-flex divide-x divide-border';
 
 /**
  * Segment base — layout + inset focus ring (--ring). No border/radius of its own;
@@ -72,6 +87,7 @@ export function ChoicePillGroup({
   groupLabel,
   onSelect,
   contentLang,
+  stacksWhenNarrow = false,
 }: ChoicePillGroupProps) {
   // Arrow keys move the selection within the group (roving focus); Space/Enter
   // re-commit the focused pill. Ported from inline-choice's handleChoiceKeyDown.
@@ -109,10 +125,10 @@ export function ChoicePillGroup({
     onSelect(nextIndex);
   };
 
-  return (
+  const group = (
     <div
       aria-label={groupLabel}
-      className="inline-flex items-stretch divide-x divide-border overflow-hidden rounded-lg border border-border bg-background align-middle"
+      className={`${stacksWhenNarrow ? 'choice-pills-group' : GROUP_ROW} ${GROUP_BASE}`}
       role="radiogroup"
     >
       {options.map((option, optionIndex) => {
@@ -148,4 +164,7 @@ export function ChoicePillGroup({
       })}
     </div>
   );
+
+  // The wrapper is the container the group's layout queries (choice-pill-group.css).
+  return stacksWhenNarrow ? <div className="choice-pills">{group}</div> : group;
 }

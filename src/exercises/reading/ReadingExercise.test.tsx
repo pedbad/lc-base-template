@@ -9,6 +9,7 @@ import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { TARGET_LANG } from '@/lib/lang';
 import ReadingExercise from './ReadingExercise';
+import { readingFixtures } from './reading.fixture';
 
 const baseConfig = {
   type: 'reading',
@@ -157,4 +158,14 @@ describe('ReadingExercise', () => {
     const html = renderToStaticMarkup(<ReadingExercise config={{ type: 'reading' }} />);
     expect(html).toContain('Invalid');
   });
+});
+
+// TODO §D13 (2026-10-08): reading's answer pills wrapped inside themselves at 320 and
+// 375px; its groups are block-level, so they stack while narrow (ChoicePillGroup).
+test("stacks every question's pills while its column is narrow", () => {
+  const html = renderToStaticMarkup(<ReadingExercise config={readingFixtures[0].config} />);
+  const groups = [...html.matchAll(/<div[^>]*class="([^"]*)"[^>]*role="radiogroup"/g)];
+
+  expect(groups.length).toBeGreaterThan(0);
+  for (const [, classes] of groups) expect(classes.split(' ')).toContain('choice-pills-group');
 });

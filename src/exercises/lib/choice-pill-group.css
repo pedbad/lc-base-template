@@ -1,0 +1,44 @@
+/**
+ * choice-pill-group.css — a block-level pill group that stacks while its column is
+ * narrow (TODO §D13, 2026-10-08). At 320 and 375px a row of three answer pills was
+ * wider than the question's column, so each pill wrapped inside itself. Here the
+ * options become a vertical list, one per line, separated by the same hairline the
+ * row draws between segments; from 30rem they are the connected row again.
+ *
+ * Only for `stacksWhenNarrow` groups (radio-quiz, reading). inline-choice's group sits
+ * inside a sentence and keeps its utilities. A stacking group carries no layout
+ * utility at all: a utility would beat these `components` rules whatever their
+ * specificity.
+ *
+ * A container query, not a viewport one (as reading.css): an exercise can sit in an
+ * accordion card or a tab panel. 30rem fits the widest showcase row, three time
+ * phrases, with room to spare. Lazy, like the engines that import it; not in
+ * `main-*.css` (budget: docs/TOOLING.md). No colours but the border token, no raw px
+ * outside a border.
+ */
+@layer components {
+  .choice-pills {
+    container: choice-pills / inline-size;
+  }
+
+  .choice-pills-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .choice-pills-group > :not(:last-child) {
+    border-block-end: 1px solid var(--border);
+  }
+
+  @container choice-pills (width >= 30rem) {
+    .choice-pills-group {
+      display: inline-flex;
+      flex-direction: row;
+    }
+
+    .choice-pills-group > :not(:last-child) {
+      border-block-end: 0;
+      border-inline-end: 1px solid var(--border);
+    }
+  }
+}

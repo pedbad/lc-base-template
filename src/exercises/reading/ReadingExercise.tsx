@@ -165,6 +165,7 @@ export default function ReadingExercise({ config }: ExerciseComponentProps) {
                 onSelect={(optionIndex) => handleChoiceChange(questionIndex, optionIndex)}
                 options={question.options}
                 selectedIndex={selectedIndex}
+                stacksWhenNarrow
                 verdict={verdict}
               />
             </div>

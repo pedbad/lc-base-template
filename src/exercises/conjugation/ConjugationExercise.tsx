@@ -39,6 +39,7 @@ import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { TARGET_LANG } from '@/lib/lang';
 import { ConjugationExerciseConfigSchema, type ConjugationRow } from './conjugation-schema';
 import { fillConjugationAnswers, gradeConjugation } from './conjugation-grading';
+import './conjugation.css';
 
 interface ConjugationState extends ScoringState {
   /** rowIndex → typed text. */
@@ -150,12 +151,14 @@ export default function ConjugationExercise({ config }: ExerciseComponentProps) 
     const id = inputId(rowIndex);
 
     return (
+      // Columns from conjugation.css: the pronoun above the input while the exercise is
+      // narrow, beside it from 30rem (TODO §D13).
       <div
         key={id}
-        className="grid grid-cols-[minmax(5rem,8rem)_minmax(0,1fr)_2.5rem] items-start gap-3 rounded-lg border border-border/70 bg-card px-4 py-3"
+        className="conjugation-row grid items-start gap-3 rounded-lg border border-border/70 bg-card px-4 py-3"
       >
         <span
-          className="self-center text-right font-medium text-muted-foreground"
+          className="conjugation-person self-center font-medium text-muted-foreground"
           lang={TARGET_LANG}
         >
           {row.person}
@@ -187,7 +190,7 @@ export default function ConjugationExercise({ config }: ExerciseComponentProps) 
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="conjugation flex flex-col gap-4">
       <div>
         <h3 className="text-lg font-semibold text-foreground" lang={TARGET_LANG}>
           {heading}
