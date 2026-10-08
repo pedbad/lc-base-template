@@ -157,8 +157,15 @@ needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-08 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 110 kB**     | 109.24 kB           | 0.76 kB  |
+| `main-*.js`  | **< 110 kB**     | 109.26 kB           | 0.74 kB  |
 | `main-*.css` | **< 18 kB**      | 17.95 kB            | 0.05 kB  |
+
+- **conjugation + reading full width (2026-10-08, TODO §D12): JS 109.24 → 109.26 kB
+  (+0.02), CSS 17.95 → 17.95 kB (byte-identical sheet).** reading's side-by-side layout
+  is a container query in a new engine-local `reading.css` (0.17 kB), shipped in the
+  engine's lazy chunk, so `main-*.css` did not grow. This is the existing memory-match
+  recipe for new rules, not the lever below: no rule moved out of `main-*.css`, and the
+  0.05 kB of headroom still stands.
 
 - **Exercise polish (2026-10-07/08, TODO §D12): JS 109.13 → 109.24 kB (+0.11), CSS
   17.71 → 17.95 kB (+0.24).** Biggest CSS steps: the transcript toggle's slide sheet and

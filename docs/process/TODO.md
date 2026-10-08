@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 125 files · 1382 tests green
+**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 126 files · 1388 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -1174,18 +1174,42 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   gzip (budget < 17), JS 100.21 kB.
 
 - **D12 — exercises use the page width, alerts and buttons polished. DONE 2026-10-07/08**
-  (`cb98d5d`…`0b2eb8f`), one maintainer instruction at a time. A first attempt (an
+  (`cb98d5d`…`dacdf79`), one maintainer instruction at a time. A first attempt (an
   instructions rail plus per-engine container-query layouts) was built and **reverted
   unmerged** — the maintainer's call; the spec for it is gone with the branch.
   - **Instruction box spans the column** in every exercise; only the engine stays on the
     48rem track (`ExerciseHost`).
   - **Full-width engines** — `FULL_WIDTH_TYPES` in `ExerciseHost.tsx`: select (rows and
     inline passage), inline-choice, radio-quiz, inline-gap, typed-transform, dictation,
-    line-match, memory-match. typed-transform's and dictation's inputs grow with the
+    line-match, memory-match, conjugation, reading. typed-transform's and dictation's inputs grow with the
     table (749 / 990px at 1440) — the maintainer's call, written into the comment so it
     is not "fixed" back. line-match: two equal halves, a 6rem gutter for the lines, one
     subgrid row per pair so both columns end together. memory-match: the 32rem deck
     centres (`align-self`).
+  - **conjugation + reading** (`db4e238`, `dacdf79`; 2026-10-08). Measured on the DEBUG showcase:
+
+    | Width | conjugation input (one column) | reading passage / questions, before → now |
+    | ----- | ------------------------------ | ----------------------------------------- |
+    | 320   | 22px                           | 238 / 238, stacked (unchanged)            |
+    | 375   | 67px                           | 293 / 293, stacked (unchanged)            |
+    | 768   | 431px                          | 657 / 657, stacked (unchanged)            |
+    | 1024  | 684px                          | 910 / 910 → **430 / 464, side by side**   |
+    | 1440  | 812px (876px on an LO page)    | 1038 / 1038 → **511 / 511, side by side** |
+    | 1920  | 812px                          | 1038 / 1038 → **511 / 511, side by side** |
+    - **conjugation: one column at the full width**, inputs growing with it like
+      typed-transform's — the maintainer's call (2026-10-08). A two-column paradigm
+      (yo / tú / él | nosotros / vosotros / ellos from a 44rem container) was built,
+      verified and **dropped unmerged**; do not bring it back as a "fix".
+    - **reading** from a **55rem** exercise width (container query in the lazy
+      `reading.css`, so `main-*.css` did not change): passage left, questions right,
+      top-aligned; status, footer and footnote stay below at full width. Questions get
+      a **29rem** floor — the widest showcase pill row ("Son las dos de la tarde" + two)
+      plus card chrome is 449px, and at exactly 28rem those pills wrapped inside
+      themselves. The passage keeps ≥ 25rem (366px of text at the threshold, 477px at
+      1440); paragraphs keep their 60ch cap. Tab walks question 1 → 4.
+    - axe on all three fixtures, both themes, empty and after Check: zero violations.
+      No horizontal scroll at any width.
+
   - **Alerts:** info `Callout` is `--callout-info` (Cambridge Light Blue in light; the
     primary tint in dark); every alert icon 2rem.
   - **Row verdicts** (`ResultSlot`, 10 engines): lucide `circle-check-big` / `circle-x`
@@ -1215,19 +1239,21 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   Budget: `docs/TOOLING.md`.
 
 - **D13 — exercise width, the rest. OPEN.**
-  - **conjugation + reading full width — parked** on `feat/full-width-conjugation-reading`
-    (`df3488b`, needs a rebase onto `main`). Built and measured, held by the maintainer:
-    conjugation's one-word inputs go 876px wide (recommended: two columns, yo/tú/él |
-    nosotros/vosotros/ellos), and reading's passage card is 1102px with its text at the
-    534px measure (recommended: passage beside the questions).
   - **Still on the 48rem track:** word-spot, word-order, phrase-reorder, drag-fill-gaps,
     flashcards.
   - **Watch the transcript slide** in a visible browser (Chrome ≥ 131 / Safari) at both
     themes and with reduced motion on.
-  - **Pre-existing, unexplained:** on the DEBUG showcase in the dark theme axe reported 27
-    `color-contrast` failures on inline-gap's empty gap inputs (1.46:1, `#232830`),
-    identical on `main` before §D12; zero after a Check. Real bug or axe reading an
-    empty input's text colour — check.
+  - **Narrow phones, pre-existing (seen 2026-10-08, not changed by §D12):** at 320px
+    conjugation's input is 22px wide (the 8rem pronoun column is filled before the
+    input's `1fr` gets anything) and reading's pill rows wrap inside their pills at 320
+    and 375. Both are the stacked layouts, as they were before.
+  - **Explained, not a bug (2026-10-08):** the 27 dark-theme `color-contrast` hits on
+    inline-gap's empty inputs (1.46:1, `#232830`) are axe catching `transition-colors`
+    mid-flight: the theme was switched by script and axe ran ~100ms later, inside the
+    inputs' 150ms colour transition, which a hidden browser pane also stalls. The same
+    12 hits appeared on conjugation's inputs. Waiting for the transitions to finish
+    (`document.getAnimations()`) gives zero on inline-gap and conjugation, both themes.
+    When auditing the dark theme by script, let transitions settle first.
   - The sandbox's plain **Destructive** samples still fail (3.81 / 2.74:1): the vendored
     shadcn variant, which no lesson uses alone any more. Fixing it means editing
     `src/components/ui/button.tsx`.
@@ -1360,3 +1386,5 @@ build, so it cannot return. Two remain:
 | 2026-10-07 | `8cc7e2f` | **Reset contrast** — `--destructive-text`, 5.48 / 5.08:1; sandbox Buttons section              |
 | 2026-10-08 | `3b8f415` | **amber transcript toggle** with a `::details-content` slide; CSS 17.95 kB                     |
 | 2026-10-08 | `0b2eb8f` | **cascade-layer order** declared first in every HTML entry (DEBUG build bug)                   |
+| 2026-10-08 | `db4e238` | **conjugation full width** — one column, inputs grow with it (maintainer's call)               |
+| 2026-10-08 | `dacdf79` | **reading side by side** — passage beside the questions from 55rem (§D12)                      |
