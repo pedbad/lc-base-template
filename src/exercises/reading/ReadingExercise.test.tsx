@@ -59,7 +59,7 @@ describe('ReadingExercise', () => {
       const html = renderToStaticMarkup(<ReadingExercise config={withImage} />);
       const card = html.indexOf('<article class="reading-passage');
       const image = html.indexOf('reading-image');
-      const text = html.indexOf('<div class="reading-text" lang=');
+      const text = html.indexOf('<div class="reading-text px-4 py-3" lang=');
       const close = html.indexOf('</article>');
 
       expect(html).toMatch(/^<div class="reading flex flex-col gap-4">/);
@@ -76,7 +76,7 @@ describe('ReadingExercise', () => {
     test('tags the passage text, not the card, with the target language', () => {
       const html = renderToStaticMarkup(<ReadingExercise config={withImage} />);
 
-      expect(html).toContain(`<div class="reading-text" lang="${TARGET_LANG}">`);
+      expect(html).toContain(`<div class="reading-text px-4 py-3" lang="${TARGET_LANG}">`);
       expect(html).toMatch(/<article class="reading-passage[^"]*">/);
     });
 

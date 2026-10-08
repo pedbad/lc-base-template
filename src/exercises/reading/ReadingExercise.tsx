@@ -183,10 +183,10 @@ export default function ReadingExercise({ config }: ExerciseComponentProps) {
   return (
     <div className="reading flex flex-col gap-4">
       {/* One grey card holds the image and the text, so the card runs as tall as the
-          row with no empty band under shorter text (maintainer, 2026-10-08). Image
-          first: that is the phone order. At a wide exercise width reading.css puts the
+          row with no empty band under shorter text (maintainer, 2026-10-08). The image
+          runs edge to edge; only the text is padded. Image first: the phone order. At a wide exercise width reading.css puts the
           text left and the image right. */}
-      <article className="reading-passage rounded-lg border border-border/60 bg-muted/30 px-4 py-3 text-base leading-relaxed text-foreground">
+      <article className="reading-passage rounded-lg border border-border/60 bg-muted/30 text-base leading-relaxed text-foreground">
         {content.image === undefined ? null : (
           <div className="reading-image aspect-[3/2] w-full">
             <img
@@ -201,7 +201,7 @@ export default function ReadingExercise({ config }: ExerciseComponentProps) {
           </div>
         )}
         {/* Only the text is target language: an authored alt is in the UI language. */}
-        <div className="reading-text" lang={TARGET_LANG}>
+        <div className="reading-text px-4 py-3" lang={TARGET_LANG}>
           {paragraphs.map((paragraph, index) => (
             // The passage is running text: it keeps the reading measure (TODO §D11).
             <p

@@ -20,20 +20,25 @@ describe('reading.css', () => {
     expect(rule('.reading', css)).toContain('container: reading / inline-size;');
   });
 
-  test('below the breakpoint the card stacks image over text, 1rem apart', () => {
+  // Edge to edge (maintainer, 2026-10-08): the image meets the card's border and the
+  // card's rounded corners clip it; only the text keeps the padding.
+  test('below the breakpoint the card stacks image over text and clips its corners', () => {
     const body = rule('.reading-passage', css);
 
     expect(body).toContain('display: grid;');
-    expect(body).toContain('row-gap: 1rem;');
+    expect(body).toContain('overflow: hidden;');
     expect(body).not.toContain('grid-template-columns');
   });
 
-  // Two equal halves with the outcomes block's gap-6.
-  test('from a 55rem exercise width, with an image, text left and image right', () => {
+  // The image column is half the card's OUTER width less the outcomes block's 1.5rem
+  // gap — the intro image's exact size (532px on a 1088px LO column). 100% is the
+  // content box, so the card's two 1px borders (0.125rem) are added back.
+  test('from a 55rem exercise width, with an image, text left and an intro-sized image right', () => {
     const body = rule('.reading-passage:has(> .reading-image)', query);
 
-    expect(body).toContain('grid-template-columns: repeat(2, minmax(0, 1fr));');
-    expect(body).toContain('column-gap: 1.5rem;');
+    expect(body).toContain(
+      'grid-template-columns: minmax(0, 1fr) calc((100% + 0.125rem - 1.5rem) / 2);',
+    );
     expect(body).toContain('align-items: start;');
     expect(rule('.reading-text', query)).toContain('grid-area: 1 / 1;');
     expect(rule('.reading-image', query)).toContain('grid-area: 1 / 2;');

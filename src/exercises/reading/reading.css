@@ -6,12 +6,16 @@
  * One grey card (`.reading-passage`) holds the image and the text, so the card runs as
  * tall as the row and no empty band shows under text shorter than the picture.
  *
- * Narrow: inside the card, image on top, then the text; the questions follow full
- * width. The DOM is in that order, so a phone needs no rule beyond the stack.
+ * The image runs EDGE TO EDGE (maintainer, 2026-10-08): it meets the card's border
+ * and the rounded corners clip it; only the text carries padding.
  *
- * Wide: the card splits into two equal halves, text left and image right, both from
- * the top, 1.5rem apart like the outcomes block. The image keeps the outcomes block's
- * 3:2 contain box. A container query, not a viewport one: an exercise can sit in an
+ * Narrow: inside the card, image across the top, then the text; the questions follow
+ * full width. The DOM is in that order, so a phone needs no rule beyond the stack.
+ *
+ * Wide: text left, image right, both from the top. The image column is half the
+ * card's outer width less the outcomes block's 1.5rem gap, so it is exactly the intro
+ * image's size (532 × 355 on a 1088px LO column, the same 3:2 contain box). `100%`
+ * there is the content box, so the two 1px borders (0.125rem) are added back. A container query, not a viewport one: an exercise can sit in an
  * accordion card or a tab panel. 55rem leaves the text about 26rem, roughly 40
  * characters a line; the paragraphs keep their 60ch cap above that. With no image the
  * text keeps the whole card.
@@ -23,14 +27,13 @@
 
   .reading-passage {
     display: grid;
-    row-gap: 1rem;
+    overflow: hidden;
   }
 
   @container reading (width >= 55rem) {
     .reading-passage:has(> .reading-image) {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: minmax(0, 1fr) calc((100% + 0.125rem - 1.5rem) / 2);
       align-items: start;
-      column-gap: 1.5rem;
     }
 
     .reading-text {
