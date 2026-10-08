@@ -1,0 +1,14 @@
+{
+  "type": "intro",
+  "presentation": "plain",
+  "content": {
+    "text": [
+      "Placeholder exercises introduction. It sits directly under the section heading and tells the learner what the exercises below practise and how to work through them.",
+      "Replace this filler with the real introduction, and the illustration beside it with artwork for the topic."
+    ],
+    "image": {
+      "src": "images/lo-00-example/07-intro/illustration.svg",
+      "alt": ""
+    }
+  }
+}

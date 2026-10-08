@@ -25,6 +25,12 @@ const SLOTS = [
     'supply 1920 × 1280 px',
     'up to 959 × 639',
   ],
+  [
+    'images/lo-00-example/07-intro/illustration.svg',
+    'Exercises intro illustration',
+    'supply 1920 × 1280 px',
+    'up to 959 × 639',
+  ],
   ['images/placeholders/reading.svg', 'Reading image', 'supply 1800 × 1200 px', 'up to 877 × 585'],
   ['images/lo-00-example/hero.svg', 'Hero banner', 'supply 3840 × 896 px', '224–448 tall'],
   [

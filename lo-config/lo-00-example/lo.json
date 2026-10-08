@@ -23,6 +23,7 @@
     {
       "id": "exercises",
       "label": "Exercises",
+      "blocks": ["07-intro"],
       "exercises": ["01-select", "02-radio-quiz"]
     }
   ],
