@@ -121,6 +121,15 @@
     line-height: 1.4;
   }
 
+  /* HAND CURSOR ON EVERY ENABLED BUTTON. Tailwind v4's preflight sets buttons to
+     `cursor: default`, so shadcn's Button, the speakers and bare <button>s all showed
+     the arrow (maintainer, 2026-10-08). Disabled controls keep the arrow. Pinned by
+     button-cursor.test.ts. */
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
+
   html {
     @apply font-sans;
 
