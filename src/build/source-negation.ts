@@ -163,12 +163,23 @@ function importsUiModule(rawText: string, moduleName: string): boolean {
 export function findUnusedUiModules(input: {
   uiModules: readonly string[];
   sources: readonly SourceFile[];
+  /**
+   * Repo-relative folders (`src/sandbox/`) that index.css ITSELF keeps out of the main
+   * scan. An import there is not use, for the same reason a test's is not: the main
+   * sheet never sees that file, so it cannot need the wrapper's classes. The debug
+   * pages load `debug.css`, which scans every wrapper, so they keep their styles.
+   * Narrowed 2026-10-08, when the sandbox's Images section became badge's only
+   * importer and would otherwise have put badge's classes in main-*.css.
+   */
+  unscannedDirs?: readonly string[];
 }): string[] {
-  const { uiModules, sources } = input;
+  const { uiModules, sources, unscannedDirs = [] } = input;
   const uiPath = (name: string): string => `${UI_DIR}/${name}.tsx`;
   const appSources = sources.filter(
     (file) =>
-      !TEST_FILE_RE.test(file.path) && !uiModules.some((name) => file.path === uiPath(name)),
+      !TEST_FILE_RE.test(file.path) &&
+      !unscannedDirs.some((dir) => file.path.startsWith(dir)) &&
+      !uiModules.some((name) => file.path === uiPath(name)),
   );
 
   const live = new Set<string>();
@@ -192,4 +203,14 @@ export function findUnusedUiModules(input: {
   }
 
   return uiModules.filter((name) => !live.has(name)).sort();
+}
+
+/** The FOLDERS index.css's `@source not` lines remove (files aside), as `src/…/` prefixes. */
+export function unscannedDirsFrom(css: string): string[] {
+  const paths = [...stripCssComments(css).matchAll(/@source\s+not\s+["']([^"']+)["']/g)].map(
+    (match) => match[1] ?? '',
+  );
+  return paths
+    .filter((entry) => entry !== '' && !/\.[a-z]+$/i.test(entry))
+    .map((entry) => path.posix.join('src', entry).replace(/\/?$/, '/'));
 }

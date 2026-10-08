@@ -158,7 +158,16 @@ needs the number points here rather than restating it.
 | Asset        | Budget (gzipped) | Measured 2026-10-08 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
 | `main-*.js`  | **< 120 kB**     | 110.51 kB           | 9.49 kB  |
-| `main-*.css` | **< 18 kB**      | 17.98 kB            | 0.02 kB  |
+| `main-*.css` | **< 18 kB**      | 17.66 kB            | 0.34 kB  |
+
+- **CSS 17.98 → 17.66 kB (2026-10-08): `dropdown-menu` left the main scan.** The
+  `@source not` guard (`src/build/source-negation.test.ts`) now ignores importers inside
+  folders index.css itself negates (`src/sandbox/`, `src/showcase/`, `docs/`) — their
+  files never reach the main sheet, so they cannot make it need a wrapper; the debug
+  pages load `debug.css`, which scans every wrapper. That showed `dropdown-menu` was
+  imported only by the debug pages, so it joined the negated list and 0.32 kB of
+  headroom came back. Badge, newly used by the sandbox, stays negated for the same
+  reason.
 
 - **Section intros (2026-10-08, TODO §D12): JS 110.08 → 110.51 kB (+0.43), CSS 17.98 kB
   unchanged.** The three new intro blocks' text sits in the example LO's JSON, which

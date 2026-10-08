@@ -19,12 +19,20 @@ import {
   readAppSources,
   readIndexCss,
   readUiModules,
+  unscannedDirsFrom,
 } from './source-negation';
 
 const uiModules = readUiModules();
 const sources = readAppSources();
-const unused = findUnusedUiModules({ uiModules, sources });
 const negated = parseSourceNegations(readIndexCss());
+// Folders index.css already keeps out of the main scan (src/sandbox/, src/showcase/,
+// docs/): their imports are not use. Derived from index.css itself, so the two lists
+// cannot drift apart.
+const unused = findUnusedUiModules({
+  uiModules,
+  sources,
+  unscannedDirs: unscannedDirsFrom(readIndexCss()),
+});
 
 describe('the @source not list', () => {
   // THE LOAD-BEARING TEST. Equality both ways in one assertion.
@@ -175,5 +183,34 @@ describe('parseSourceNegations', () => {
 
   it('ignores negations pointing outside the ui folder', () => {
     expect(parseSourceNegations('@source not "./lib/thing.ts";')).toEqual([]);
+  });
+});
+
+describe('importers the main scan never sees', () => {
+  const ui = ['badge', 'button'];
+  const sources = [
+    {
+      path: 'src/sandbox/ImagesSection.tsx',
+      text: "import { Badge } from '@/components/ui/badge';",
+    },
+    { path: 'src/lo/Page.tsx', text: "import { Button } from '@/components/ui/button';" },
+  ];
+
+  it('an import from a folder index.css negates is not use', () => {
+    expect(
+      findUnusedUiModules({ uiModules: ui, sources, unscannedDirs: ['src/sandbox/'] }),
+    ).toEqual(['badge']);
+  });
+
+  it('without the narrowing the same import counts', () => {
+    expect(findUnusedUiModules({ uiModules: ui, sources })).toEqual([]);
+  });
+
+  it('the folders come from index.css, files skipped', () => {
+    expect(
+      unscannedDirsFrom(
+        '@source not "./sandbox";\n@source not "./showcase";\n@source not "../docs";\n@source not "./components/ui/badge.tsx";',
+      ),
+    ).toEqual(['src/sandbox/', 'src/showcase/', 'docs/']);
   });
 });

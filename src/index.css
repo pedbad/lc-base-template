@@ -20,6 +20,7 @@
    walks the real import graph and fails if this list and reality disagree either way. */
 @source not "./components/ui/badge.tsx";
 @source not "./components/ui/card.tsx";
+@source not "./components/ui/dropdown-menu.tsx";
 @source not "./components/ui/label.tsx";
 @source not "./components/ui/navigation-menu.tsx";
 @source not "./components/ui/separator.tsx";
