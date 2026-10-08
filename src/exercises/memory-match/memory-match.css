@@ -46,6 +46,7 @@
   /* Positioning context for the optional speaker overlay (a sibling of the flip
      button, never nested inside it — a button-in-button is invalid HTML). */
   .memory-card-wrap {
+    container: memory-card / inline-size;
     position: relative;
     display: block;
   }
@@ -174,6 +175,17 @@
     color: var(--muted-foreground);
     background-color: var(--card);
     border-radius: var(--radius);
+  }
+
+  /* A small card (under 10rem: 320px screens, and just past the 4-column switch) scales
+     the 48px speaker to 36px from its bottom-right corner, clear of the centred word
+     (TODO §D14, 2026-10-08). Its size is an inline px prop, so scale is the lever;
+     36px stays above the 24px minimum target. */
+  @container memory-card (width < 10rem) {
+    .memory-card-audio {
+      transform: scale(0.75);
+      transform-origin: 100% 100%;
+    }
   }
 
   .memory-match-status {

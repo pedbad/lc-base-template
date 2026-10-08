@@ -51,3 +51,23 @@ describe('four columns from a 30rem exercise width', () => {
     expect(css).not.toMatch(/@media \(width >= 48rem\)/);
   });
 });
+
+// TODO §D14 (2026-10-08): the 48px speaker overlapped the word on cards under ≈ 120px
+// (320px screens, and just past the 4-column switch). Its size is an inline px prop,
+// so a small card scales it to 0.75 (36px, above the 24px minimum target) from its own
+// bottom-right corner; the word stays centred.
+describe('the speaker on a small card', () => {
+  test('each card is a named inline-size container', () => {
+    const wrap = /\.memory-card-wrap\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
+    expect(wrap).toContain('container: memory-card / inline-size;');
+  });
+
+  test('below 10rem the speaker scales to 0.75 from the bottom-right corner', () => {
+    const small =
+      /@container memory-card \(width < 10rem\)\s*\{\s*\.memory-card-audio\s*\{([^}]*)\}/.exec(
+        css,
+      )?.[1] ?? '';
+    expect(small).toContain('transform: scale(0.75);');
+    expect(small).toContain('transform-origin: 100% 100%;');
+  });
+});

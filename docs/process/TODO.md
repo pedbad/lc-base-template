@@ -1365,11 +1365,12 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   - **Watch the transcript slide** in a visible browser (Chrome ≥ 131 / Safari) at both
     themes and with reduced motion on. Still not seen running: the pane was hidden
     again.
-  - **memory-match speaker over the word, small cards only:** since the card-size
-    change below, the 48px speaker clears the word from 155px cards up (768+); it still
-    overlaps the word's line box on cards of ≈ 113–120px (320, and a ≈ 480–600px exercise
-    just past the 4-column switch). Design call: smaller speaker on small cards, or the
-    word nudged up.
+  - **memory-match speaker over the word DONE 2026-10-08:** each card is a container;
+    under 10rem the 48px speaker scales to 0.75 (36px, above the 24px minimum target)
+    from its bottom-right corner. Clear of the word at every measured size: 36px on
+    113 / 141 / 117px cards (320 / 375 / 600), 48px from 155px up. The speaker's own
+    160ms transform transition animates the change; with the browser pane hidden it
+    stalls, so `finish()` animations before measuring.
   - **memory-match card size DONE 2026-10-08** (maintainer): the deck was 32rem wide at
     every width and went 2 → 4 columns at a 48rem viewport, so cards shrank as the
     screen grew (≈ 250px mid-size, 119px at 1440). Now 2 columns below a 30rem exercise
