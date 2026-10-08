@@ -1174,7 +1174,7 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   gzip (budget < 17), JS 100.21 kB.
 
 - **D12 — exercises use the page width, alerts and buttons polished. DONE 2026-10-07/08**
-  (`cb98d5d`…`3679fae`), one maintainer instruction at a time. A first attempt (an
+  (`cb98d5d`…`0339e97`), one maintainer instruction at a time. A first attempt (an
   instructions rail plus per-engine container-query layouts) was built and **reverted
   unmerged** — the maintainer's call; the spec for it is gone with the branch.
   - **Instruction box spans the column** in every exercise; only the engine stays on the
@@ -1201,19 +1201,21 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
       (yo / tú / él | nosotros / vosotros / ellos from a 44rem container) was built,
       verified and **dropped unmerged**; do not bring it back as a "fix".
     - **reading: one passage card holding text + image, questions full width**
-      (maintainer, 2026-10-08, `09945e4` + `f6909ed`; it replaced a passage-beside-
+      (maintainer, 2026-10-08, `09945e4` + `f6909ed` + `c16e781`; it replaced a passage-beside-
       questions layout from `dacdf79`, and a first cut with the image outside the card,
       which left an empty band under the text). Optional `content.image` `{ src, alt }`,
       the outcomes block's contract and 3:2 contain box. The grey card holds both, so
       it runs as tall as the row. From a **55rem** exercise width (container query in
       the lazy `reading.css`; main CSS unchanged) the card splits: text left, image
-      right, top-aligned, 1.5rem apart like the outcomes block. On a 1088px LO column
-      the picture is ~515×343, a card's padding short of the intro's 532×355. Questions
-      run full width below. Narrow: image on top inside the card, then the text (DOM
-      order). No image: the text keeps the card. Showcase widths, text / image: 320
-      204 / 204×136, 375 259 / 259×173, 768 623 / 623×415 (stacked); 1024 426 /
-      426×284; 1440 and 1920 490 / 490×327. Only the text is `lang`-tagged; an
-      authored alt is in the UI language. Tab walks question 1 → 4.
+      right, top-aligned. The image runs **edge to edge** (it meets the card's border,
+      the rounded corners clip it, only the text is padded) and its column is half the
+      card's outer width less the outcomes block's 1.5rem gap, so on a 1088px LO column
+      it is **532 × 355, exactly the intro's**. Stacked it spans the card's top, up to
+      877 × 585 just below the breakpoint. Questions run full width below. No image:
+      the text keeps the card. Only the text is `lang`-tagged; an authored alt is in
+      the UI language. Tab walks question 1 → 4.
+    - axe on all three fixtures, both themes, empty and after Check: zero violations.
+      No horizontal scroll at any width.
 
   - **flashcards study stage** (`3679fae`, option A from a mockup, maintainer
     2026-10-08). The deck is a 36rem stage centred under the instruction box — it was
@@ -1231,8 +1233,25 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     resets buttons to `cursor: default`; one base rule in `app.css` restores the
     pointer for enabled buttons and `role="button"`. Built sandbox 38 / 38, showcase
     149 / 149; disabled controls keep the arrow. CSS 17.95 → 17.98 kB.
-    - axe on all three fixtures, both themes, empty and after Check: zero violations.
-      No horizontal scroll at any width.
+  - **Speakers doubled** (`f6b11ba`, `cf8c65b`): every circular speaker 27 → 54px
+    (flashcards 28 → 56, memory-match 24 → 48); a speaker inside a line of text
+    (rich-text prose, list items, table cells) stays at 36px so the line keeps its
+    rhythm. Sizes are a JS prop, so no CSS cost. memory-match's 48px was not measured
+    on the built site (its speakers did not render in the sweep).
+  - **Rows centre on the bigger speakers** (`035f2d7`): typed-transform and dictation
+    (`TextEntryRuntime`) drop their `align-top` cells for TableCell's own
+    `align-middle` and render the speaker `inline` (it sat 3px high on the text
+    baseline); the vocabulary gloss is `self-center`; rich-text table cells are
+    `vertical-align: middle` (the Listen column was 29px off). Every speaker row
+    measured 0px off centre on the built showcase and example LO.
+  - **Placeholder images state their size** (`f6af9b7`…`47cf9bf`): one placeholder per
+    image slot, each printing a small top-right plate in the info alert's style — the
+    slot and the size to supply (2×), the largest size it is shown at (measured on the
+    built site, 320–2560px), and its own path under `public/`. The outcomes block and
+    the reading fixture got their own files; `lo-placeholder.svg` stays the lesson
+    card's. The table lives once, in `src/build/placeholder-labels.test.ts`, which also
+    rejects `--` inside an SVG comment (a comment naming a CSS token broke all six
+    images once). How a designer uses it: `DESIGNER.md`, "Job 4".
 
   - **Alerts:** info `Callout` is `--callout-info` (Cambridge Light Blue in light; the
     primary tint in dark); every alert icon 2rem.
@@ -1277,6 +1296,12 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     12 hits appeared on conjugation's inputs. Waiting for the transitions to finish
     (`document.getAnimations()`) gives zero on inline-gap and conjugation, both themes.
     When auditing the dark theme by script, let transitions settle first.
+  - **Placeholder labels on a phone:** the hero plate's position comes from the crop
+    maths (a phone keeps x ≈ 381–1219 of 1600), not from a phone screenshot; the
+    reading, tab portrait and tab figure plates were last screenshotted in their
+    previous amber style. Look at all six in a visible browser at 375 once.
+  - **CSS headroom is 0.02 kB** (`docs/TOOLING.md`): the next rule in `main-*.css` needs
+    a lever pulled first.
   - The sandbox's plain **Destructive** samples still fail (3.81 / 2.74:1): the vendored
     shadcn variant, which no lesson uses alone any more. Fixing it means editing
     `src/components/ui/button.tsx`.
@@ -1413,7 +1438,8 @@ build, so it cannot return. Two remain:
 | 2026-10-08 | `09945e4` | **reading image** — one grey card, text left / image right, questions full width (§D12)            |
 | 2026-10-08 | `81c942c` | **hand cursor** on every enabled button (Tailwind preflight reset it); CSS 17.98 kB                |
 | 2026-10-08 | `3679fae` | **flashcards study stage** — centred deck, result circles, direction switch (§D12)                 |
-| 2026-10-08 | see git   | **speakers doubled** — 27 → 54px stand-alone (flashcards 56, memory-match 48); 36px inline in text |
-| 2026-10-08 | see git   | **rows centre on the bigger speakers** — text-entry, vocabulary, rich-text tables, 0px off         |
+| 2026-10-08 | `f6b11ba` | **speakers doubled** — 27 → 54px stand-alone (flashcards 56, memory-match 48); 36px inline in text |
+| 2026-10-08 | `035f2d7` | **rows centre on the bigger speakers** — text-entry, vocabulary, rich-text tables, 0px off         |
 | 2026-10-08 | `c16e781` | **reading image edge to edge** — 532 × 355 on an LO column, exactly the intro's                    |
 | 2026-10-08 | `f6af9b7` | **placeholders print their size** — supply (2×) and largest shown size, per slot                   |
+| 2026-10-08 | `47cf9bf` | **size labels restyled** — small top-right plate in the info alert's style, with the path          |

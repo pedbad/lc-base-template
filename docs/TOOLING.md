@@ -157,8 +157,14 @@ needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-08 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 110 kB**     | 109.29 kB           | 0.71 kB  |
+| `main-*.js`  | **< 110 kB**     | 109.34 kB           | 0.66 kB  |
 | `main-*.css` | **< 18 kB**      | 17.98 kB            | 0.02 kB  |
+
+- **Speakers, row alignment, placeholder labels (2026-10-08, TODO §D12): JS 109.29 →
+  109.34 kB (+0.05), CSS 17.98 → 17.98 kB.** Speaker sizes are a JS prop (the inline
+  36px constant, the rich-text and text-entry wiring); rich-text table cells going
+  `vertical-align: top` → `middle` left the gzipped sheet unchanged. The placeholder
+  labels live inside the SVGs under `public/`, outside every bundle.
 
 - **Hand cursor + flashcards stage (2026-10-08, TODO §D12): JS 109.26 → 109.29 kB
   (+0.03), CSS 17.95 → 17.98 kB (+0.03).** The CSS step is the one base rule giving
