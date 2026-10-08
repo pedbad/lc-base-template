@@ -47,15 +47,20 @@
 
   <!-- Size label for designers (maintainer, 2026-10-08): the slot, the size to SUPPLY
        (2x), the largest size it is SHOWN at (measured on the built site) and this
-       file's path. Discreet, bottom-left, on the amber-soft token with slate ink (literals:
-       an <img> cannot read CSS tokens). Replace the whole file with the real artwork.
-       Pinned by src/build/placeholder-labels.test.ts. -->
-  <g data-label-position="bottom-left" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
-    <rect x="11.8" y="319.8" width="367" height="68.4" rx="4.7" fill="#e9a93a" />
+       file's path. Discreet, top-right, in the info alert's style: callout-info ground,
+       primary border and icon, foreground text (literals: an <img> cannot read CSS
+       tokens). Replace the whole file with the real artwork. Pinned by
+       src/build/placeholder-labels.test.ts. -->
+  <g data-label-position="top-right" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
+    <rect x="197.5" y="11.8" width="390.7" height="68.4" rx="5.9" fill="#d1f9f1" stroke="#133844" stroke-width="1.2" />
+    <g fill="none" stroke="#133844" stroke-width="1.8" stroke-linecap="round">
+      <circle cx="215.2" cy="27.2" r="7.4" />
+      <path d="M215.2 26.8v3.7M215.2 24.1h0.01" />
+    </g>
     <g fill="#232830">
-      <text x="21.3" y="341.1" font-size="14.2" font-weight="700">Reading image · supply 1800 × 1200 px (3:2)</text>
-      <text x="21.3" y="359.3" font-size="13">Shown up to 877 × 585 (532 × 355 side by side)</text>
-      <text x="21.3" y="377.5" font-size="13" font-family="ui-monospace, 'SF Mono', Menlo, monospace">public/images/placeholders/reading.svg</text>
+      <text x="230.6" y="33.1" font-size="14.2" font-weight="700">Reading image · supply 1800 × 1200 px (3:2)</text>
+      <text x="230.6" y="51.4" font-size="13">Shown up to 877 × 585 (532 × 355 side by side)</text>
+      <text x="230.6" y="69.6" font-size="13" font-family="ui-monospace, 'SF Mono', Menlo, monospace">public/images/placeholders/reading.svg</text>
     </g>
   </g>
 </svg>

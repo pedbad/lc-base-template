@@ -47,16 +47,20 @@
 
   <!-- Size label for designers (maintainer, 2026-10-08): the slot, the size to SUPPLY
        (2x), the largest size it is SHOWN at (measured on the built site) and this
-       file's path. Discreet, bottom-left, on the amber-soft token with slate ink (literals:
-       an <img> cannot read CSS tokens). Replace the whole file with the real artwork.
-       Pinned by src/build/placeholder-labels.test.ts. Raised here: the
-       card's title bar overlays the bottom ~22% of the band (home.css). -->
-  <g data-label-position="bottom-left" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
-    <rect x="16.9" y="189.4" width="558.8" height="97.7" rx="6.8" fill="#e9a93a" />
+       file's path. Discreet, top-right, in the info alert's style: callout-info ground,
+       primary border and icon, foreground text (literals: an <img> cannot read CSS
+       tokens). Replace the whole file with the real artwork. Pinned by
+       src/build/placeholder-labels.test.ts. -->
+  <g data-label-position="top-right" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
+    <rect x="16.9" y="16.9" width="566.2" height="93.3" rx="8.5" fill="#d1f9f1" stroke="#133844" stroke-width="1.7" />
+    <g fill="none" stroke="#133844" stroke-width="2.5" stroke-linecap="round">
+      <circle cx="41.1" cy="37.9" r="10" />
+      <path d="M41.1 37.4v5M41.1 33.7h0.01" />
+    </g>
     <g fill="#232830">
-      <text x="30.4" y="219.8" font-size="20.3" font-weight="700">Lesson card image · supply 1200 × 800 px (3:2)</text>
-      <text x="30.4" y="245.9" font-size="18.6">Shown up to 557 × 371</text>
-      <text x="30.4" y="271.9" font-size="18.6" font-family="ui-monospace, 'SF Mono', Menlo, monospace">public/images/lo-placeholder.svg</text>
+      <text x="62.1" y="46" font-size="19.4" font-weight="700">Lesson card image · supply 1200 × 800 px (3:2)</text>
+      <text x="62.1" y="70.8" font-size="17.8">Shown up to 557 × 371</text>
+      <text x="62.1" y="95.7" font-size="17.8" font-family="ui-monospace, 'SF Mono', Menlo, monospace">public/images/lo-placeholder.svg</text>
     </g>
   </g>
 </svg>

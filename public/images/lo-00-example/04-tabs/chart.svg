@@ -28,15 +28,20 @@
 
   <!-- Size label for designers (maintainer, 2026-10-08): the slot, the size to SUPPLY
        (2x), the largest size it is SHOWN at (measured on the built site) and this
-       file's path. Discreet, bottom-left, on the amber-soft token with slate ink (literals:
-       an <img> cannot read CSS tokens). Replace the whole file with the real artwork.
-       Pinned by src/build/placeholder-labels.test.ts. -->
-  <g data-label-position="bottom-left" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
-    <rect x="7.6" y="398.4" width="238" height="44" rx="3" fill="#e9a93a" />
+       file's path. Discreet, top-right, in the info alert's style: callout-info ground,
+       primary border and icon, foreground text (literals: an <img> cannot read CSS
+       tokens). Replace the whole file with the real artwork. Pinned by
+       src/build/placeholder-labels.test.ts. -->
+  <g data-label-position="top-right" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
+    <rect x="539.2" y="7.6" width="253.2" height="44" rx="3.8" fill="#d1f9f1" stroke="#133844" stroke-width="0.8" />
+    <g fill="none" stroke="#133844" stroke-width="1.1" stroke-linecap="round">
+      <circle cx="550.6" cy="17.5" r="4.8" />
+      <path d="M550.6 17.3v2.4M550.6 15.5h0.01" />
+    </g>
     <g fill="#232830">
-      <text x="13.7" y="412.1" font-size="9.1" font-weight="700">Tab figure · supply 2112 × 1188 px (16:9)</text>
-      <text x="13.7" y="423.8" font-size="8.4">Shown up to 1052 × 593</text>
-      <text x="13.7" y="435.6" font-size="8.4" font-family="ui-monospace, 'SF Mono', Menlo, monospace">public/images/lo-00-example/04-tabs/chart.svg</text>
+      <text x="560.5" y="21.3" font-size="9.1" font-weight="700">Tab figure · supply 2112 × 1188 px (16:9)</text>
+      <text x="560.5" y="33" font-size="8.4">Shown up to 1052 × 593</text>
+      <text x="560.5" y="44.7" font-size="8.4" font-family="ui-monospace, 'SF Mono', Menlo, monospace">public/images/lo-00-example/04-tabs/chart.svg</text>
     </g>
   </g>
 </svg>

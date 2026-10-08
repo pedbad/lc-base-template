@@ -35,10 +35,12 @@ const SLOTS = [
   ],
 ] as const;
 
-/** The label's `--amber-soft` ground and slate ink, as literals: an <img> cannot read
- *  the page's CSS tokens (palette.css: --amber-soft #e9a93a, --slate-4 #232830). */
-const AMBER_SOFT = '#e9a93a';
-const SLATE_INK = '#232830';
+/** The info alert's look (Callout `info`), as literals: an <img> cannot read the
+ *  page's CSS tokens. Ground = callout-info (cam-light-blue #d1f9f1), border and icon
+ *  = primary (cam-dark-blue #133844), text = foreground (slate-4 #232830). */
+const INFO_GROUND = '#d1f9f1';
+const INFO_BORDER = '#133844';
+const INFO_TEXT = '#232830';
 
 describe('placeholder images state their size', () => {
   test.each(SLOTS)('%s', (file, name, supply, shown) => {
@@ -49,12 +51,13 @@ describe('placeholder images state their size', () => {
     expect(svg).toContain(shown);
     // Where to drop the real file (maintainer, 2026-10-08).
     expect(svg).toContain(`public/${file}`);
-    // Discreet, bottom-left, on --amber-soft (maintainer, 2026-10-08).
-    expect(svg).toContain(`fill="${AMBER_SOFT}"`);
-    expect(svg).toContain(`fill="${SLATE_INK}"`);
-    expect(svg).toContain('data-label-position="bottom-left"');
+    // Discreet, top-right, in the info alert's style (maintainer, 2026-10-08).
+    expect(svg).toContain(`fill="${INFO_GROUND}"`);
+    expect(svg).toContain(`stroke="${INFO_BORDER}"`);
+    expect(svg).toContain(`fill="${INFO_TEXT}"`);
+    expect(svg).toContain('data-label-position="top-right"');
     // XML forbids `--` inside a comment, and a browser then refuses the whole image
-    // (2026-10-08: a comment naming the --amber-soft token broke all six).
+    // (2026-10-08: a comment naming a CSS token broke all six).
     for (const comment of svg.match(/<!--([\s\S]*?)-->/g) ?? []) {
       expect(comment.slice(4, -3)).not.toContain('--');
     }

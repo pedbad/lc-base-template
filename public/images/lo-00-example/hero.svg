@@ -46,15 +46,20 @@
 
   <!-- Size label for designers (maintainer, 2026-10-08): the slot, the size to SUPPLY
        (2x), the largest size it is SHOWN at (measured on the built site) and this
-       file's path. Discreet, bottom-left, on the amber-soft token with slate ink (literals:
-       an <img> cannot read CSS tokens). Replace the whole file with the real artwork.
-       Pinned by src/build/placeholder-labels.test.ts. -->
-  <g data-label-position="bottom-left" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
-    <rect x="400" y="354.7" width="412.9" height="64.2" rx="4.4" fill="#e9a93a" />
+       file's path. Discreet, top-right, in the info alert's style: callout-info ground,
+       primary border and icon, foreground text (literals: an <img> cannot read CSS
+       tokens). Replace the whole file with the real artwork. Pinned by
+       src/build/placeholder-labels.test.ts. -->
+  <g data-label-position="top-right" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
+    <rect x="763.7" y="80" width="435.1" height="64.2" rx="5.6" fill="#d1f9f1" stroke="#133844" stroke-width="1.1" />
+    <g fill="none" stroke="#133844" stroke-width="1.7" stroke-linecap="round">
+      <circle cx="780.4" cy="94.4" r="6.9" />
+      <path d="M780.4 94.1v3.5M780.4 91.5h0.01" />
+    </g>
     <g fill="#232830">
-      <text x="408.9" y="374.7" font-size="13.3" font-weight="700">Hero banner · supply 3840 × 896 px</text>
-      <text x="408.9" y="391.8" font-size="12.2">Shown full width, 224–448 tall, cropped: keep content central</text>
-      <text x="408.9" y="408.9" font-size="12.2" font-family="ui-monospace, 'SF Mono', Menlo, monospace">public/images/lo-00-example/hero.svg</text>
+      <text x="794.9" y="100" font-size="13.3" font-weight="700">Hero banner · supply 3840 × 896 px</text>
+      <text x="794.9" y="117.1" font-size="12.2">Shown full width, 224–448 tall, cropped: keep content central</text>
+      <text x="794.9" y="134.2" font-size="12.2" font-family="ui-monospace, 'SF Mono', Menlo, monospace">public/images/lo-00-example/hero.svg</text>
     </g>
   </g>
 </svg>
