@@ -21,10 +21,11 @@
  * would announce a quotation to a screen reader that is not there, so the rule is
  * carried by a border on a plain wrapper and the accessibility tree stays honest.
  */
+import { resolveAsset } from '@/lib/assets';
 import { TARGET_LANG } from '@/lib/lang';
 import { RichTextEntries } from '../rich-text/RichTextEntries';
 import { parseBlockContent } from './parse-block-content';
-import { TextBlockContentSchema } from './text-block-schema';
+import { IntroBlockContentSchema, TextBlockContentSchema } from './text-block-schema';
 
 interface TextBlockProps {
   /** The block's `content`, validated here against TextBlockContentSchema. */
@@ -62,9 +63,32 @@ export function ProseBlock({ content }: { content: unknown }) {
  * direction instead of hardcoding "left" for a template meant to be cloned per course.
  */
 export function IntroBlock({ content }: { content: unknown }) {
-  return (
+  const { image } = parseBlockContent('intro', IntroBlockContentSchema, content);
+  const ruled = (
     <div className="rich-text-full border-s-4 border-accent ps-5">
       <TextBlock content={content} type="intro" />
+    </div>
+  );
+  if (image === undefined) return ruled;
+
+  // With an illustration (maintainer, 2026-10-08, after french-lo-1's
+  // instructions-media): the outcomes block's split — text left, picture right from
+  // `lg`, text first on a phone — and its 3:2 contain box, so the picture is the
+  // introduction illustration's size. Same classes, so no new CSS.
+  return (
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start">
+      {ruled}
+      <div className="aspect-[3/2] w-full">
+        <img
+          src={resolveAsset(image.src)}
+          alt={image.alt}
+          // An empty alt is the author saying "decoration"; take it out of the tree.
+          aria-hidden={image.alt === '' ? true : undefined}
+          loading="lazy"
+          decoding="async"
+          className="size-full object-contain"
+        />
+      </div>
     </div>
   );
 }

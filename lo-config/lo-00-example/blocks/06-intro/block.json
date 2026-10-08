@@ -1,0 +1,14 @@
+{
+  "type": "intro",
+  "presentation": "plain",
+  "content": {
+    "text": [
+      "Placeholder grammar introduction. It sits directly under the section heading and sets up the grammar point the blocks below explain — what it is, when it is used, and what to listen for.",
+      "Replace this filler with the real introduction, and the illustration beside it with artwork for the topic."
+    ],
+    "image": {
+      "src": "images/lo-00-example/06-intro/illustration.svg",
+      "alt": ""
+    }
+  }
+}

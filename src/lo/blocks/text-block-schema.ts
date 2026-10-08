@@ -8,6 +8,7 @@
  * quotations, and the author already knows where the breaks belong.
  */
 import { z } from 'zod';
+import { OutcomesImageSchema } from './outcomes-block-schema';
 import { parseRichTextEntry } from '../rich-text/parse-rich-text-entry';
 
 export const TextBlockContentSchema = z.object({
@@ -27,3 +28,12 @@ export const TextBlockContentSchema = z.object({
     .transform((entries) => entries.map((entry) => parseRichTextEntry(entry))),
 });
 export type TextBlockContent = z.infer<typeof TextBlockContentSchema>;
+
+/**
+ * `type: "intro"` adds an optional illustration beside the text (maintainer,
+ * 2026-10-08). The outcomes block's image contract: `alt` required, `''` meaning
+ * decoration. Prose and grammar blocks stay text-only.
+ */
+export const IntroBlockContentSchema = TextBlockContentSchema.extend({
+  image: OutcomesImageSchema.optional(),
+});
