@@ -1317,8 +1317,8 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     maths (a phone keeps x ≈ 381–1219 of 1600), not from a phone screenshot; the
     reading, tab portrait and tab figure plates were last screenshotted in their
     previous amber style. Look at all six in a visible browser at 375 once.
-  - **CSS headroom is 0.02 kB** (`docs/TOOLING.md`): the next rule in `main-*.css` needs
-    a lever pulled first. Two asks are waiting on it: an intro's image ON TOP on a phone
+  - **CSS headroom is 0.34 kB** (`docs/TOOLING.md`; it was 0.02 kB until `dropdown-menu`
+    left the main scan, `a29e29a`). Two asks were waiting on it: an intro's image ON TOP on a phone
     (as the reading exercise does; today text comes first, as in french-lo-1 and the
     outcomes block), and top padding for every accordion body (only the vocabulary
     summary has its 8px; an instructions box opening an accordion still sits flush).
@@ -1355,8 +1355,8 @@ the slice-1 scope and the open list live in
 - **F3 — phones:** the dropdown chosen in the brainstorm (slice 1 stacks instead).
 - **F4 — `ui-showcase.html`** behind `DEBUG_ENTRY_FILES`, rendering through the same
   renderers. Verify: absent from `bun run build`, present under `DEBUG=1`.
-- **Budget:** JS headroom is 0.87 kB, CSS 0.29 kB (`docs/TOOLING.md`); the next F2 entry
-  needs per-LO chunking or build-time rich-text parsing first.
+- **Budget:** headroom is in `docs/TOOLING.md`; the next F2 entry likely needs per-LO
+  chunking or build-time rich-text parsing first.
 
 ---
 
