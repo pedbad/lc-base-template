@@ -73,10 +73,14 @@ export function IntroBlock({ content }: { content: unknown }) {
 
   // With an illustration (maintainer, 2026-10-08, after french-lo-1's
   // instructions-media): the outcomes block's split — text left, picture right from
-  // `lg`, text first on a phone — and its 3:2 contain box, so the picture is the
-  // introduction illustration's size. Same classes, so no new CSS.
+  // `lg` — and its 3:2 contain box, so the picture is the introduction illustration's
+  // size. On a phone the picture sits ON TOP (maintainer, 2026-10-08, as the reading
+  // exercise does), but by `flex-col-reverse`, not by moving it: the DOM keeps the text
+  // first, so a screen reader meets the words before the picture. `lg:grid` is the one
+  // rule this adds to the main sheet; moving the image first in the DOM and placing it
+  // back with `lg:col-start-2 lg:row-start-1` would have cost two.
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start">
+    <div className="flex flex-col-reverse gap-6 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start">
       {ruled}
       <div className="aspect-[3/2] w-full">
         <img

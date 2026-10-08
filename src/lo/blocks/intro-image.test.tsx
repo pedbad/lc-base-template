@@ -1,9 +1,11 @@
 /**
  * intro-image.test.tsx — an intro may carry an illustration beside it (maintainer,
  * 2026-10-08, after french-lo-1's instructions-media): text left, picture right from
- * `lg`, text first on a phone. It reuses the outcomes block's layout and 3:2 contain
- * box, so the picture is the introduction illustration's size; with no image the
- * intro renders exactly as before.
+ * `lg`, the outcomes block's split and 3:2 contain box, so the picture is the
+ * introduction illustration's size. On a phone the picture sits ON TOP (maintainer,
+ * 2026-10-08, as the reading exercise does) while the DOM keeps the text first, so a
+ * screen reader still meets the words before the picture. With no image the intro
+ * renders exactly as before.
  */
 import { expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -18,13 +20,13 @@ test('without an image the intro is the ruled text alone, as before', () => {
   expect(html).not.toContain('<img');
 });
 
-test('with an image: the outcomes split, ruled text first, then the 3:2 picture', () => {
+test('with an image: picture on top on a phone, the outcomes split from lg, text first in the DOM', () => {
   const html = renderToStaticMarkup(
     <IntroBlock content={{ text, image: { src: 'images/a.svg', alt: '' } }} />,
   );
 
   expect(html).toMatch(
-    /^<div class="grid gap-6 lg:grid-cols-\[minmax\(0,1fr\)_minmax\(0,1fr\)\] lg:items-start">/,
+    /^<div class="flex flex-col-reverse gap-6 lg:grid lg:grid-cols-\[minmax\(0,1fr\)_minmax\(0,1fr\)\] lg:items-start">/,
   );
   expect(html.indexOf('border-s-4')).toBeLessThan(html.indexOf('<img'));
   expect(html).toContain('<div class="aspect-[3/2] w-full"><img');
