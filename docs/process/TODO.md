@@ -1220,7 +1220,7 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     135px left of centre on the 48rem track. Toolbar: **one circle per card** in place
     of "Card 1 of N" (empty, then a happy face for Got it or a sad face for Again,
     latest rating wins, current card ringed; an sr-only status says it in words) and a
-    two-option ES → EN | EN → ES switch. Card 576×384 at desktop (238×208 at 320):
+    two-option "Spanish to English | English to Spanish" switch. Card 576×384 at desktop (238×208 at 320):
     language label per face, the prompt kept small above the answer on the back, a
     flip hint, up to two spare cards stacked behind. One fixed-height action row: Show
     answer, then Again | Got it (282px each). Restart / Reset progress quiet and
@@ -1412,4 +1412,4 @@ build, so it cannot return. Two remain:
 | 2026-10-08 | `db4e238` | **conjugation full width** — one column, inputs grow with it (maintainer's call)               |
 | 2026-10-08 | `09945e4` | **reading image** — one grey card, text left / image right, questions full width (§D12)        |
 | 2026-10-08 | `81c942c` | **hand cursor** on every enabled button (Tailwind preflight reset it); CSS 17.98 kB            |
-| 2026-10-08 | `3679fae` | **flashcards study stage** — centred deck, result circles, ES/EN switch (§D12)                 |
+| 2026-10-08 | `3679fae` | **flashcards study stage** — centred deck, result circles, direction switch (§D12)             |
