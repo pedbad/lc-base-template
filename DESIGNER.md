@@ -260,6 +260,15 @@ rather than freezing). Change these knowingly; they are accessibility floors.
 
 ---
 
+## Job 4 — supply the images
+
+Every image slot ships with a placeholder that prints its own size on the artwork:
+the size to **supply** (2×, for sharp screens) and the largest size it is **shown**
+at. Open the page, read the label, export at the supply size, and drop your file in
+over the placeholder (or point the config at it). The slots and their numbers are
+listed once, in [`src/build/placeholder-labels.test.ts`](src/build/placeholder-labels.test.ts);
+if a layout changes a slot's size, that test and the label are updated together.
+
 ## If a test goes red
 
 **The tooling is not broken.** Two automated checks watch the token chain, and

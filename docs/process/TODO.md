@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 131 files · 1417 tests green
+**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 132 files · 1423 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -1415,3 +1415,5 @@ build, so it cannot return. Two remain:
 | 2026-10-08 | `3679fae` | **flashcards study stage** — centred deck, result circles, direction switch (§D12)                 |
 | 2026-10-08 | see git   | **speakers doubled** — 27 → 54px stand-alone (flashcards 56, memory-match 48); 36px inline in text |
 | 2026-10-08 | see git   | **rows centre on the bigger speakers** — text-entry, vocabulary, rich-text tables, 0px off         |
+| 2026-10-08 | `c16e781` | **reading image edge to edge** — 532 × 355 on an LO column, exactly the intro's                    |
+| 2026-10-08 | `f6af9b7` | **placeholders print their size** — supply (2×) and largest shown size, per slot                   |
