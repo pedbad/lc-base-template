@@ -60,12 +60,9 @@ import './flashcards.css';
 /** The learner's own language; the deck's `native` side. */
 const NATIVE_LANG = 'en';
 const languageNames = new Intl.DisplayNames(['en'], { type: 'language' });
-/** Face labels, e.g. "Spanish" / "English", from the course's language code. */
+/** Face and direction labels, e.g. "Spanish" / "English", from the language code. */
 const TARGET_NAME = languageNames.of(TARGET_LANG) ?? TARGET_LANG;
 const NATIVE_NAME = languageNames.of(NATIVE_LANG) ?? NATIVE_LANG;
-/** Direction-switch labels, e.g. "ES → EN". */
-const TARGET_CODE = TARGET_LANG.toUpperCase();
-const NATIVE_CODE = NATIVE_LANG.toUpperCase();
 
 /**
  * Reorder a freshly-built deck so the most-due cards lead (SRS load-order). A fresh
@@ -215,14 +212,14 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
               aria-pressed={targetOnFront}
               onClick={() => setDirection('target-native')}
             >
-              {`${TARGET_CODE} → ${NATIVE_CODE}`}
+              {`${TARGET_NAME} to ${NATIVE_NAME}`}
             </button>
             <button
               type="button"
               aria-pressed={!targetOnFront}
               onClick={() => setDirection('native-target')}
             >
-              {`${NATIVE_CODE} → ${TARGET_CODE}`}
+              {`${NATIVE_NAME} to ${TARGET_NAME}`}
             </button>
           </div>
         )}

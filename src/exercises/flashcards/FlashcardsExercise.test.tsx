@@ -49,8 +49,9 @@ describe('FlashcardsExercise study stage', () => {
   test('offers the direction as a two-option switch, unless locked', () => {
     const html = render();
     expect(html).toContain('role="group" aria-label="Card direction"');
-    expect(html).toMatch(/aria-pressed="true"[^>]*>ES → EN</);
-    expect(html).toMatch(/aria-pressed="false"[^>]*>EN → ES</);
+    // Full language names, not codes (maintainer, 2026-10-08).
+    expect(html).toMatch(/aria-pressed="true"[^>]*>Spanish to English</);
+    expect(html).toMatch(/aria-pressed="false"[^>]*>English to Spanish</);
 
     expect(render({ lockDirection: true })).not.toContain('Card direction');
   });

@@ -77,7 +77,8 @@
     color: var(--destructive-text);
   }
 
-  /* Two-option direction switch (ES → EN | EN → ES): real buttons, aria-pressed. */
+  /* Two-option direction switch (Spanish to English | English to Spanish): real
+     buttons, aria-pressed. */
   .flashcards-direction {
     display: inline-flex;
     overflow: hidden;
@@ -92,7 +93,6 @@
     color: var(--muted-foreground);
     font-size: 0.8125rem;
     font-weight: 500;
-    font-variant-numeric: tabular-nums;
   }
 
   .flashcards-direction button + button {
