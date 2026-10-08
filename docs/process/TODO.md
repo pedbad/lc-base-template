@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 128 files · 1412 tests green
+**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 131 files · 1417 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -1414,3 +1414,4 @@ build, so it cannot return. Two remain:
 | 2026-10-08 | `81c942c` | **hand cursor** on every enabled button (Tailwind preflight reset it); CSS 17.98 kB                |
 | 2026-10-08 | `3679fae` | **flashcards study stage** — centred deck, result circles, direction switch (§D12)                 |
 | 2026-10-08 | see git   | **speakers doubled** — 27 → 54px stand-alone (flashcards 56, memory-match 48); 36px inline in text |
+| 2026-10-08 | see git   | **rows centre on the bigger speakers** — text-entry, vocabulary, rich-text tables, 0px off         |
