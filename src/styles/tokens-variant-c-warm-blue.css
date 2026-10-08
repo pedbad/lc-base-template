@@ -43,7 +43,7 @@
     --destructive: var(--cam-dark-crest);
     --destructive-foreground: var(--white);
 
-    /* Red TEXT on a destructive tint (Reset). The crest itself is 3.81:1 on its 10%
+    /* Red TEXT on a destructive tint (the destructive Button). The crest itself is 3.81:1 on its 10%
        tint, under the 4.5:1 text needs; pulled 30% toward --foreground it is 5.48:1,
        4.71:1 on the 20% hover tint (2026-10-07). Icons and borders keep the crest. */
     --destructive-text: color-mix(in oklab, var(--destructive) 70%, var(--foreground));
