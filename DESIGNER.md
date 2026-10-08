@@ -94,8 +94,9 @@ All six are in **`src/styles/`**. `app.css` (beside them, imported by both the c
 stylesheet `src/index.css` and the debug pages' `src/debug.css`) imports `palette.css`,
 then `tokens.css`, then `layout.css`; the three variant files sit beside them as
 switchable presets. `layout.css` is not part of the colour chain and no preset
-copies it: it holds the one page width, the side gutter, the reading measure
-for running text and the exercise track, each explained in its own comment.
+copies it: it holds the one page width, the side gutter and the reading measure
+for running text, each explained in its own comment. Exercises use the full page
+width (the 48rem exercise track went on 2026-10-08).
 
 ---
 

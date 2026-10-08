@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 136 files · 1446 tests green
+**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 139 files · 1468 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -1264,7 +1264,8 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     introduction's ruled quote) now opens Vocabulary (`05-intro`, text only), Grammar
     (`06-intro`) and Exercises (`07-intro`, a section's blocks render before its
     exercises). `intro` takes an optional `content.image { src, alt }`: the outcomes
-    split (text left, picture right from `lg`, text first on a phone) in the same
+    split (text left, picture right from `lg`; on a phone text first until §D13 put the
+    picture on top) in the same
     3:2 contain box, so the picture is the introduction's size at every width (532 ×
     355 at 1440, 959 × 639 at 1023, 343 × 229 at 375). Each image has a labelled
     placeholder. Like every block, an intro is shown by listing it in the section's
@@ -1285,7 +1286,7 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     ink 7.2:1, `--warning` outline) and an open/close slide in `media-panel.css`
     (`::details-content` + `interpolate-size`; instant without support or under reduced
     motion). **The slide was not watched running** — the browser pane was hidden; see
-    §D13.
+    §D14.
   - **Cascade-layer order** (`0b2eb8f`): under `DEBUG=1` a shared chunk
     (`ModalProvider-*.css`) linked before `main-*.css` named `components` before
     Tailwind's `base`, so base's reset beat component margins and paddings on the debug
@@ -1298,33 +1299,81 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   Each step verified on the built site (375 and 1440 at least, no horizontal scroll).
   Budget: `docs/TOOLING.md`.
 
-- **D13 — exercise width, the rest. OPEN.**
-  - **Still on the 48rem track:** word-spot, word-order, phrase-reorder, drag-fill-gaps.
-  - **Watch the transcript slide** in a visible browser (Chrome ≥ 131 / Safari) at both
-    themes and with reduced motion on.
-  - **Narrow phones, pre-existing (seen 2026-10-08, not changed by §D12):** at 320px
-    conjugation's input is 22px wide (the 8rem pronoun column is filled before the
-    input's `1fr` gets anything) and reading's pill rows wrap inside their pills at 320
-    and 375. Both are the stacked layouts, as they were before.
+- **D13 — exercise width, the rest. DONE 2026-10-08** (`54b664b`…`181d0e4`), one
+  change per branch, each verified on the built site at 320–1920 with axe in both
+  themes (zero violations on the example LO, the showcase and the sandbox, transitions
+  settled first). Budget after all of it: JS 110.47 kB, CSS 17.66 kB
+  (`docs/TOOLING.md`).
+  - **Intro image on top on a phone** (`54b664b`): `flex-col-reverse` below `lg`, so the
+    DOM keeps the text first for a screen reader; `lg:grid` restores the split. 288 × 192
+    at 320, 343 × 229 at 375, 707 × 471 at 768 (all on top); side by side from 1024
+    (468 × 312), 532 × 355 at 1440 and 1920. Both intros (`06-intro`, `07-intro`).
+  - **Accordion bodies have 8px of top padding** (`5106807`): `pt-2` on LoAccordion's
+    body wrapper. The vocabulary summary dropped its own `mt-2`; the accordion's
+    instructions box passes `mt-0` (the primitive's `mt-2` stays for plain blocks, which
+    have no accordion body around them). Every accordion on the example LO: 8px from
+    header to first child at 320–1920 (the grammar note was 16px before the `mt-0`).
+  - **Every engine spans the column; the 48rem track is gone** (`b2cbb41`): word-spot,
+    word-order, phrase-reorder and drag-fill-gaps were the last on it. Chips, tiles and
+    slots are fixed-width, so their rows just lengthen; phrase-reorder's phrase buttons
+    grow with their `1fr` column (289 / 416 / 480px at 768 / 1024 / 1440), as
+    typed-transform's inputs do. With no engine left on it, `FULL_WIDTH_TYPES`, the
+    host's wrapper `div`, `.exercise-track` and `--exercise-track` were removed. Do not
+    bring back a shared cap to "fix" a wide row; each engine owns its layout.
+  - **Narrow phones** (`1c57985`, `9e0de04`). All three are container queries at
+    **30rem** in the engines' lazy CSS (as reading.css), so `main-*.css` went down,
+    not up:
+    - conjugation: the pronoun takes its own line above the input. Input 22 → 152px at
+      320, 67 → 207px at 375; from 30rem the pronoun | input | verdict row, unchanged
+      at 768+ (431 / 684 / 812px). `conjugation.css`.
+    - radio-quiz and reading: a block-level `ChoicePillGroup` (`stacksWhenNarrow`)
+      becomes a vertical list instead of wrapping inside each pill, hairlines between
+      options; the connected row from 30rem. inline-choice's group, inside a sentence,
+      never stacks. At 320 one long option ("Son las dos de la tarde") still runs to
+      two lines inside its full-width list item — ordinary wrapping, not the squeezed
+      pill. `choice-pill-group.css`.
+    - phrase-reorder (found in this sweep): at 320 the speaker | prompt | phrase columns
+      left each phrase button 78px and "¿Cómo estás?" ran out of it. Below 30rem the
+      phrase sits under its prompt (172px at 320). Click-to-swap verified stacked.
+  - **Destructive button** (`181d0e4`): the vendored variant letters its label in
+    `--destructive-text`, so the sandbox's plain Destructive samples pass (axe: zero
+    contrast hits, both themes) and Reset's override is gone. Tested in
+    `exercise-buttons.test.tsx`, not beside `button.tsx`: the `@source not` guard reads
+    every file in `src/components/ui/` as a wrapper.
+  - **Visual checks, by measurement** — the browser pane was hidden all session, so
+    screenshots came back stale and animations stalled; every figure here is a DOM
+    measurement on the built site, not a picture.
+    - Vocabulary block: summary 8px under the header, sort buttons, 54px speakers, axe
+      clean both themes.
+    - Section intros: sizes above.
+    - memory-match speaker: **48 × 48**, bottom-right of a matched card, 6px inset
+      (119px card at 1440, 113px at 320).
+    - Placeholder plates at 375: all six fully inside their image (hero 171–366 ×
+      36–65 of 375 × 224; outcomes and both intros 7.1px text; reading 6.3px; tab
+      portrait 5.8px; tab figure 3.2px; lesson card 8.7px). Readable on a desktop, a
+      zoom on a phone.
   - **Explained, not a bug (2026-10-08):** the 27 dark-theme `color-contrast` hits on
     inline-gap's empty inputs (1.46:1, `#232830`) are axe catching `transition-colors`
     mid-flight: the theme was switched by script and axe ran ~100ms later, inside the
     inputs' 150ms colour transition, which a hidden browser pane also stalls. The same
     12 hits appeared on conjugation's inputs. Waiting for the transitions to finish
-    (`document.getAnimations()`) gives zero on inline-gap and conjugation, both themes.
-    When auditing the dark theme by script, let transitions settle first.
-  - **Placeholder labels on a phone:** the hero plate's position comes from the crop
-    maths (a phone keeps x ≈ 381–1219 of 1600), not from a phone screenshot; the
-    reading, tab portrait and tab figure plates were last screenshotted in their
-    previous amber style. Look at all six in a visible browser at 375 once.
-  - **CSS headroom is 0.34 kB** (`docs/TOOLING.md`; it was 0.02 kB until `dropdown-menu`
-    left the main scan, `a29e29a`). Two asks were waiting on it: an intro's image ON TOP on a phone
-    (as the reading exercise does; today text comes first, as in french-lo-1 and the
-    outcomes block), and top padding for every accordion body (only the vocabulary
-    summary has its 8px; an instructions box opening an accordion still sits flush).
-  - The sandbox's plain **Destructive** samples still fail (3.81 / 2.74:1): the vendored
-    shadcn variant, which no lesson uses alone any more. Fixing it means editing
-    `src/components/ui/button.tsx`.
+    gives zero on inline-gap and conjugation, both themes. With the pane hidden,
+    `await animation.finished` never resolves: call `finish()` on
+    `document.getAnimations()` instead, then run axe.
+
+- **D14 — found while closing §D13. OPEN.**
+  - **Watch the transcript slide** in a visible browser (Chrome ≥ 131 / Safari) at both
+    themes and with reduced motion on. Still not seen running: the pane was hidden
+    again.
+  - **memory-match speaker over the word:** the 48px speaker's box overlaps the word's
+    line box by 2px at 1440 and 5px at 320 (speaker top 59 vs word bottom 64 on a 113px
+    card). Needs a look in a visible browser; the fix is a design call (smaller
+    speaker on this engine, or the word nudged up).
+  - **Hero placeholder plate under the title** at 320, 375 and 768: the LO title's first
+    line runs across the plate (at 375 the line spans x 16–276, y 21–63; the plate
+    171–366 × 36–65). Clear from 1024. Placeholder only; real artwork has no plate.
+  - **Sandbox Docs hub at 375:** two rendered tables (Preset, Font) scroll sideways
+    with no keyboard focus — axe `scrollable-region-focusable`. Debug page only.
 
 ---
 
@@ -1468,3 +1517,9 @@ build, so it cannot return. Two remain:
 | 2026-10-08 | `8f947a0` | **grammar intro + image** — `06-intro` under the Grammar heading; `intro` takes an optional image (outcomes split, 532 × 355) |
 | 2026-10-08 | `5376189` | **exercises intro + image** — `07-intro` under the Exercises heading, same split as the grammar intro                         |
 | 2026-10-08 | see git   | **sandbox: every icon and image** — lucide icons under the sprite; new Images section; both kept complete by a scan test      |
+| 2026-10-08 | `54b664b` | **intro image on top on a phone** — `flex-col-reverse` below `lg`, DOM still text-first (§D13)                                |
+| 2026-10-08 | `5106807` | **accordion bodies 8px top padding** — vocabulary summary and instructions box drop their own margin (§D13)                   |
+| 2026-10-08 | `b2cbb41` | **every engine full width** — last four off the 48rem track; the track removed (§D13)                                         |
+| 2026-10-08 | `1c57985` | **conjugation + answer pills on a phone** — pronoun above input, pills stack below 30rem (§D13)                               |
+| 2026-10-08 | `9e0de04` | **phrase-reorder on a phone** — phrase under its prompt below 30rem (§D13)                                                    |
+| 2026-10-08 | `181d0e4` | **destructive button contrast** — variant uses `--destructive-text`; Reset's override gone (§D13)                             |

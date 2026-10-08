@@ -157,8 +157,26 @@ needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-08 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 120 kB**     | 110.51 kB           | 9.49 kB  |
+| `main-*.js`  | **< 120 kB**     | 110.47 kB           | 9.53 kB  |
 | `main-*.css` | **< 18 kB**      | 17.66 kB            | 0.34 kB  |
+
+- **TODO §D13 (2026-10-08): JS 110.51 → 110.47 kB, CSS 17.66 → 17.66 kB**, step by
+  step on a plain build:
+
+  | Step                                   | JS kB  | CSS kB | Why                                                                   |
+  | -------------------------------------- | ------ | ------ | --------------------------------------------------------------------- |
+  | intro image on top on a phone          | 110.54 | 17.69  | one new rule, `lg:grid`; `flex-col-reverse` already shipped           |
+  | accordion bodies 8px top padding       | 110.52 | 17.70  | `pt-2`; `mt-0` already shipped                                        |
+  | every engine full width, track removed | 110.44 | 17.68  | `.exercise-track`, its token and `FULL_WIDTH_TYPES` deleted           |
+  | conjugation + answer pills on a phone  | 110.47 | 17.66  | container queries in lazy `conjugation.css` / `choice-pill-group.css` |
+  | phrase-reorder on a phone              | 110.46 | 17.66  | lazy `phrase-reorder.css`                                             |
+  | destructive button contrast            | 110.47 | 17.66  | `text-destructive-text` already shipped (Reset used it)               |
+
+  The narrow-phone fixes were first written as `sm:` utilities: **+0.16 kB** of main
+  CSS (`divide-y`, `sm:divide-x`, an arbitrary `sm:grid-cols-[…]`). Moved to the
+  engines' lazy sheets as container queries — the reading.css pattern, and right on its
+  own terms, since an exercise can sit in an accordion or a tab panel — main CSS went
+  down by 0.02 kB instead.
 
 - **CSS 17.98 → 17.66 kB (2026-10-08): `dropdown-menu` left the main scan.** The
   `@source not` guard (`src/build/source-negation.test.ts`) now ignores importers inside
