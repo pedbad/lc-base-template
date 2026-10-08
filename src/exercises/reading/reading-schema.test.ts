@@ -61,6 +61,31 @@ describe('ReadingContentSchema', () => {
   });
 });
 
+// The illustration beside the passage: the outcomes block's image contract, so an
+// author learns one shape. `alt` is required but may be '' (decoration).
+describe('ReadingContentSchema image', () => {
+  test('is optional', () => {
+    expect(ReadingContentSchema.parse(validContent).image).toBeUndefined();
+  });
+
+  test('accepts a src with alt text, or with an empty alt for decoration', () => {
+    for (const alt of ['Marta en bicicleta', '']) {
+      const result = ReadingContentSchema.safeParse({
+        ...validContent,
+        image: { src: 'images/lo-placeholder.svg', alt },
+      });
+      expect(result.success).toBe(true);
+    }
+  });
+
+  test('rejects a missing alt and an empty src', () => {
+    const noAlt = { ...validContent, image: { src: 'images/a.svg' } };
+    const noSrc = { ...validContent, image: { src: '', alt: '' } };
+    expect(ReadingContentSchema.safeParse(noAlt).success).toBe(false);
+    expect(ReadingContentSchema.safeParse(noSrc).success).toBe(false);
+  });
+});
+
 describe('ReadingExerciseConfigSchema', () => {
   test('accepts the full envelope with type pinned to "reading"', () => {
     const result = ReadingExerciseConfigSchema.safeParse({

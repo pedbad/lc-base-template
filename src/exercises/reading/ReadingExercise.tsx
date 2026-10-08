@@ -15,8 +15,9 @@
  *     question is WRONG — derived from checkedResults, no extra state (matches
  *     radio-quiz), so a re-answer or Show-answers hides it automatically.
  *   - chrome text via resolveLabel(key, labels) (ui-strings §9).
- *   - layout: passage above the questions, or beside them at a wide exercise width
- *     (container query, reading.css; TODO §D13).
+ *   - layout: an optional image, then the passage, then the questions full width. At
+ *     a wide exercise width the passage and image share a row, text left (container
+ *     query, reading.css). The image box is the outcomes block's: 3:2, contain.
  *
  * `options.shuffle`/`sampleSize` are N/A (question + option order are authored — a
  * true-false must read True-then-False); only `allowShowAnswers` applies.
@@ -34,6 +35,7 @@ import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
 import { createExerciseReducer } from '@/exercises/lib/exerciseScaffold';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
+import { resolveAsset } from '@/lib/assets';
 import { TARGET_LANG } from '@/lib/lang';
 import {
   DEFAULT_FALSE_LABEL,
@@ -179,10 +181,24 @@ export default function ReadingExercise({ config }: ExerciseComponentProps) {
 
   return (
     <div className="reading flex flex-col gap-4">
-      {/* Passage beside the questions at a wide exercise width (reading.css). */}
+      {/* Image first: that is the phone order. At a wide exercise width reading.css
+          puts the passage left and the image right. */}
       <div className="reading-body">
+        {content.image === undefined ? null : (
+          <div className="reading-image aspect-[3/2] w-full">
+            <img
+              src={resolveAsset(content.image.src)}
+              alt={content.image.alt}
+              // An empty alt is the author saying "decoration"; take it out of the tree.
+              aria-hidden={content.image.alt === '' ? true : undefined}
+              loading="lazy"
+              decoding="async"
+              className="size-full object-contain"
+            />
+          </div>
+        )}
         <article
-          className="rounded-lg border border-border/60 bg-muted/30 px-4 py-3 text-base leading-relaxed text-foreground"
+          className="reading-passage rounded-lg border border-border/60 bg-muted/30 px-4 py-3 text-base leading-relaxed text-foreground"
           lang={TARGET_LANG}
         >
           {paragraphs.map((paragraph, index) => (
@@ -195,9 +211,9 @@ export default function ReadingExercise({ config }: ExerciseComponentProps) {
             </p>
           ))}
         </article>
-
-        <div className="space-y-3">{cards}</div>
       </div>
+
+      <div className="space-y-3">{cards}</div>
 
       {state.hasChecked ? (
         <p

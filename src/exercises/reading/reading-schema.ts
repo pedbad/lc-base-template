@@ -24,6 +24,9 @@
  *
  * Content shape:
  *   - passage      the reading text (plain; newlines become paragraph breaks).
+ *   - image?       an illustration beside the passage: `{ src, alt }`, the outcomes
+ *                  block's contract. `alt` is required but may be '' — the author's
+ *                  explicit "decoration", rendered `alt=""` + `aria-hidden`.
  *   - questions[]  one comprehension question each (discriminated on `type`).
  *   - trueLabel?   label for the "true" option (default "True").
  *   - falseLabel?  label for the "false" option (default "False").
@@ -76,11 +79,20 @@ export type ReadingQuestion = z.infer<typeof ReadingQuestionSchema>;
 export type ReadingRadioQuestion = z.infer<typeof ReadingRadioQuestionSchema>;
 export type ReadingTrueFalseQuestion = z.infer<typeof ReadingTrueFalseQuestionSchema>;
 
+/** The passage's illustration; same shape and alt rule as the outcomes block's image. */
+export const ReadingImageSchema = z.object({
+  /** Project-relative asset path; the view resolves it through `resolveAsset()`. */
+  src: z.string().min(1),
+  /** Required. `''` is the explicit decorative choice. */
+  alt: z.string(),
+});
+
 /** The `content` block for a reading exercise. */
 export const ReadingContentSchema = z
   .object({
     ...instructionsField,
     passage: z.string().min(1),
+    image: ReadingImageSchema.optional(),
     questions: z.array(ReadingQuestionSchema).min(1),
     trueLabel: z.string().min(1).optional(),
     falseLabel: z.string().min(1).optional(),

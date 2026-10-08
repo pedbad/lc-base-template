@@ -37,8 +37,9 @@ interface ExerciseHostProps {
  * in one column (maintainer, 2026-10-08: a two-column paradigm was built and dropped).
  * line-match splits the width into two equal halves with a gutter for its lines.
  * memory-match's deck keeps its 32rem cap and centres in the column (`margin: 0 auto`,
- * memory-match.css). reading puts its passage beside the questions at a wide exercise
- * width (reading.css); the paragraphs keep the measure.
+ * memory-match.css). reading's passage shares a row with its image at a wide exercise
+ * width and its questions run full width below (reading.css); the paragraphs keep
+ * the measure.
  * Every other engine stays on the track
  * (§D11: at the full column, `width: 100%` inputs went ~800px wide).
  */

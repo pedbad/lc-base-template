@@ -45,22 +45,70 @@ describe('ReadingExercise', () => {
     expect(html).toContain('<p class="mt-3 max-w-(--measure)">Trabaja en una oficina.</p>');
   });
 
-  // §D13 option 2a: at a wide exercise width the passage sits beside the questions.
-  // The view groups the two; reading.css decides when they go side by side. Status,
-  // footer and footnote stay outside the group, so they run under both columns.
-  test('groups the passage and the questions, and nothing else', () => {
-    const html = renderToStaticMarkup(<ReadingExercise config={baseConfig} />);
-    const body = html.indexOf('<div class="reading-body"><article');
-    const footer = html.indexOf('Check');
-    // Every <div> opened from the group's start is closed again before the footer.
-    const between = html.slice(body, html.lastIndexOf('<div', footer));
-    const depth = (between.match(/<div/g) ?? []).length - (between.match(/<\/div>/g) ?? []).length;
+  // The passage and its illustration share a row at a wide exercise width; the
+  // questions run full width under them. reading.css decides when they split.
+  describe('passage, image and questions', () => {
+    const withImage = {
+      ...baseConfig,
+      content: { ...baseConfig.content, image: { src: 'images/lo-placeholder.svg', alt: '' } },
+    };
 
-    expect(html).toMatch(/^<div class="reading flex flex-col gap-4">/);
-    expect(body).toBeGreaterThan(-1);
-    expect(html.indexOf('role="radiogroup"')).toBeGreaterThan(body);
-    expect(depth).toBe(0);
-    expect(html.indexOf('Lee con atención.')).toBeGreaterThan(footer);
+    test('groups the image and the passage, image first, and leaves the questions out', () => {
+      const html = renderToStaticMarkup(<ReadingExercise config={withImage} />);
+      const body = html.indexOf('<div class="reading-body">');
+      const image = html.indexOf('reading-image');
+      const passage = html.indexOf('<article');
+      const questions = html.indexOf('role="radiogroup"');
+      // Every <div> opened from the group's start is closed again before the questions.
+      const between = html.slice(body, html.lastIndexOf('<div class="space-y-3">', questions));
+      const depth =
+        (between.match(/<div/g) ?? []).length - (between.match(/<\/div>/g) ?? []).length;
+
+      expect(html).toMatch(/^<div class="reading flex flex-col gap-4">/);
+      expect(body).toBeGreaterThan(-1);
+      // DOM order is the phone order: picture, then text.
+      expect(image).toBeGreaterThan(body);
+      expect(passage).toBeGreaterThan(image);
+      expect(depth).toBe(0);
+    });
+
+    test("draws the image in the outcomes block's 3:2 contain box", () => {
+      const html = renderToStaticMarkup(<ReadingExercise config={withImage} />);
+
+      expect(html).toContain('<div class="reading-image aspect-[3/2] w-full"><img');
+      expect(html).toMatch(/<img src="[^"]*images\/lo-placeholder\.svg" alt=""/);
+      expect(html).toContain('class="size-full object-contain"');
+    });
+
+    test('takes a decorative image out of the accessibility tree', () => {
+      const html = renderToStaticMarkup(<ReadingExercise config={withImage} />);
+      expect(html).toContain('aria-hidden="true"');
+
+      const described = renderToStaticMarkup(
+        <ReadingExercise
+          config={{
+            ...baseConfig,
+            content: { ...baseConfig.content, image: { src: 'images/a.svg', alt: 'Ana' } },
+          }}
+        />,
+      );
+      expect(described).toContain('alt="Ana"');
+      expect(described).not.toMatch(/<img[^>]*aria-hidden/);
+    });
+
+    test('renders no image box when none is authored', () => {
+      const html = renderToStaticMarkup(<ReadingExercise config={baseConfig} />);
+      expect(html).not.toContain('reading-image');
+      expect(html).not.toContain('<img');
+    });
+
+    test('keeps status, footer and footnote after the questions', () => {
+      const html = renderToStaticMarkup(<ReadingExercise config={withImage} />);
+      const lastQuestion = html.lastIndexOf('role="radiogroup"');
+
+      expect(html.indexOf('Check')).toBeGreaterThan(lastQuestion);
+      expect(html.indexOf('Lee con atención.')).toBeGreaterThan(html.indexOf('Check'));
+    });
   });
 
   test('renders one radiogroup per question', () => {
