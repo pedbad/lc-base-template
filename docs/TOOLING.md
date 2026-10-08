@@ -161,8 +161,9 @@ needs the number points here rather than restating it.
 | `main-*.css` | **< 18 kB**      | 17.95 kB            | 0.05 kB  |
 
 - **conjugation + reading full width (2026-10-08, TODO §D12): JS 109.24 → 109.26 kB
-  (+0.02), CSS 17.95 → 17.95 kB (byte-identical sheet).** reading's side-by-side layout
-  is a container query in a new engine-local `reading.css` (0.17 kB), shipped in the
+  (+0.02), CSS 17.95 → 17.95 kB (byte-identical sheet).** reading's passage + image
+  row is a container query in a new engine-local `reading.css` (0.21 kB; its image box
+  reuses the outcomes block's utilities, already in the sheet), shipped in the
   engine's lazy chunk, so `main-*.css` did not grow. This is the existing memory-match
   recipe for new rules, not the lever below: no rule moved out of `main-*.css`, and the
   0.05 kB of headroom still stands.

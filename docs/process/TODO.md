@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 126 files · 1388 tests green
+**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 126 files · 1396 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -1174,7 +1174,7 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   gzip (budget < 17), JS 100.21 kB.
 
 - **D12 — exercises use the page width, alerts and buttons polished. DONE 2026-10-07/08**
-  (`cb98d5d`…`dacdf79`), one maintainer instruction at a time. A first attempt (an
+  (`cb98d5d`…`09945e4`), one maintainer instruction at a time. A first attempt (an
   instructions rail plus per-engine container-query layouts) was built and **reverted
   unmerged** — the maintainer's call; the spec for it is gone with the branch.
   - **Instruction box spans the column** in every exercise; only the engine stays on the
@@ -1200,13 +1200,17 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
       typed-transform's — the maintainer's call (2026-10-08). A two-column paradigm
       (yo / tú / él | nosotros / vosotros / ellos from a 44rem container) was built,
       verified and **dropped unmerged**; do not bring it back as a "fix".
-    - **reading** from a **55rem** exercise width (container query in the lazy
-      `reading.css`, so `main-*.css` did not change): passage left, questions right,
-      top-aligned; status, footer and footnote stay below at full width. Questions get
-      a **29rem** floor — the widest showcase pill row ("Son las dos de la tarde" + two)
-      plus card chrome is 449px, and at exactly 28rem those pills wrapped inside
-      themselves. The passage keeps ≥ 25rem (366px of text at the threshold, 477px at
-      1440); paragraphs keep their 60ch cap. Tab walks question 1 → 4.
+    - **reading: passage + image, questions full width** (maintainer, 2026-10-08,
+      `09945e4`; it replaced a passage-beside-questions layout from `dacdf79`). Optional
+      `content.image` `{ src, alt }`, the outcomes block's contract and 3:2 contain box.
+      From a **55rem** exercise width (container query in the lazy `reading.css`; main
+      CSS unchanged) the passage takes the left half and the image the right,
+      top-aligned, 1.5rem apart like the outcomes block, so on a 1088px LO column the
+      picture is **532×355, the intro's size** (507×338 on the narrower showcase card).
+      Questions run full width below. Narrow: image, passage, questions (DOM order).
+      No image: the passage keeps the row. Showcase widths, passage / image: 320–768
+      stacked, image 238×159 / 293×195 / 657×438; 1024 443 / 443×295; 1440 and 1920
+      507 / 507×338. Tab walks question 1 → 4.
     - axe on all three fixtures, both themes, empty and after Check: zero violations.
       No horizontal scroll at any width.
 
@@ -1387,4 +1391,4 @@ build, so it cannot return. Two remain:
 | 2026-10-08 | `3b8f415` | **amber transcript toggle** with a `::details-content` slide; CSS 17.95 kB                     |
 | 2026-10-08 | `0b2eb8f` | **cascade-layer order** declared first in every HTML entry (DEBUG build bug)                   |
 | 2026-10-08 | `db4e238` | **conjugation full width** — one column, inputs grow with it (maintainer's call)               |
-| 2026-10-08 | `dacdf79` | **reading side by side** — passage beside the questions from 55rem (§D12)                      |
+| 2026-10-08 | `09945e4` | **reading image** — passage left, image right (intro size), questions full width (§D12)        |
