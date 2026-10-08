@@ -1,0 +1,10 @@
+{
+  "type": "intro",
+  "presentation": "plain",
+  "content": {
+    "text": [
+      "Placeholder vocabulary introduction. This optional quote sits directly under a section heading — use it to set the scene for the words that follow, or leave it out.",
+      "It is a block like any other: list \"05-intro\" first in the section's blocks in lo.json to show it, and remove it from that list to hide it."
+    ]
+  }
+}

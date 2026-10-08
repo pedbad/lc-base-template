@@ -12,7 +12,7 @@
     {
       "id": "vocabulary",
       "label": "Vocabulary",
-      "blocks": ["02-vocabulary"]
+      "blocks": ["05-intro", "02-vocabulary"]
     },
     {
       "id": "grammar",
