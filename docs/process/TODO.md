@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 126 files · 1397 tests green
+**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 128 files · 1411 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -1174,7 +1174,7 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   gzip (budget < 17), JS 100.21 kB.
 
 - **D12 — exercises use the page width, alerts and buttons polished. DONE 2026-10-07/08**
-  (`cb98d5d`…`f6909ed`), one maintainer instruction at a time. A first attempt (an
+  (`cb98d5d`…`3679fae`), one maintainer instruction at a time. A first attempt (an
   instructions rail plus per-engine container-query layouts) was built and **reverted
   unmerged** — the maintainer's call; the spec for it is gone with the branch.
   - **Instruction box spans the column** in every exercise; only the engine stays on the
@@ -1214,6 +1214,23 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
       204 / 204×136, 375 259 / 259×173, 768 623 / 623×415 (stacked); 1024 426 /
       426×284; 1440 and 1920 490 / 490×327. Only the text is `lang`-tagged; an
       authored alt is in the UI language. Tab walks question 1 → 4.
+
+  - **flashcards study stage** (`3679fae`, option A from a mockup, maintainer
+    2026-10-08). The deck is a 36rem stage centred under the instruction box — it was
+    135px left of centre on the 48rem track. Toolbar: **one circle per card** in place
+    of "Card 1 of N" (empty, then a happy face for Got it or a sad face for Again,
+    latest rating wins, current card ringed; an sr-only status says it in words) and a
+    two-option ES → EN | EN → ES switch. Card 576×384 at desktop (238×208 at 320):
+    language label per face, the prompt kept small above the answer on the back, a
+    flip hint, up to two spare cards stacked behind. One fixed-height action row: Show
+    answer, then Again | Got it (282px each). Restart / Reset progress quiet and
+    right-aligned behind a hairline. Rules in the lazy `flashcards.css`; main CSS
+    unchanged. Centred (offset 0) at 320–1920, no horizontal scroll, axe zero in both
+    themes after a full pass.
+  - **Hand cursor on every enabled button** (`81c942c`): Tailwind v4's preflight
+    resets buttons to `cursor: default`; one base rule in `app.css` restores the
+    pointer for enabled buttons and `role="button"`. Built sandbox 38 / 38, showcase
+    149 / 149; disabled controls keep the arrow. CSS 17.95 → 17.98 kB.
     - axe on all three fixtures, both themes, empty and after Check: zero violations.
       No horizontal scroll at any width.
 
@@ -1246,8 +1263,7 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   Budget: `docs/TOOLING.md`.
 
 - **D13 — exercise width, the rest. OPEN.**
-  - **Still on the 48rem track:** word-spot, word-order, phrase-reorder, drag-fill-gaps,
-    flashcards.
+  - **Still on the 48rem track:** word-spot, word-order, phrase-reorder, drag-fill-gaps.
   - **Watch the transcript slide** in a visible browser (Chrome ≥ 131 / Safari) at both
     themes and with reduced motion on.
   - **Narrow phones, pre-existing (seen 2026-10-08, not changed by §D12):** at 320px
@@ -1395,3 +1411,5 @@ build, so it cannot return. Two remain:
 | 2026-10-08 | `0b2eb8f` | **cascade-layer order** declared first in every HTML entry (DEBUG build bug)                   |
 | 2026-10-08 | `db4e238` | **conjugation full width** — one column, inputs grow with it (maintainer's call)               |
 | 2026-10-08 | `09945e4` | **reading image** — one grey card, text left / image right, questions full width (§D12)        |
+| 2026-10-08 | `81c942c` | **hand cursor** on every enabled button (Tailwind preflight reset it); CSS 17.98 kB            |
+| 2026-10-08 | `3679fae` | **flashcards study stage** — centred deck, result circles, ES/EN switch (§D12)                 |

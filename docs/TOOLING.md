@@ -157,8 +157,14 @@ needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-08 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 110 kB**     | 109.26 kB           | 0.74 kB  |
-| `main-*.css` | **< 18 kB**      | 17.95 kB            | 0.05 kB  |
+| `main-*.js`  | **< 110 kB**     | 109.29 kB           | 0.71 kB  |
+| `main-*.css` | **< 18 kB**      | 17.98 kB            | 0.02 kB  |
+
+- **Hand cursor + flashcards stage (2026-10-08, TODO §D12): JS 109.26 → 109.29 kB
+  (+0.03), CSS 17.95 → 17.98 kB (+0.03).** The CSS step is the one base rule giving
+  enabled buttons `cursor: pointer`. The flashcards redesign added nothing to
+  `main-*.css`: its rules are in the lazy `flashcards.css` (1.47 kB). **0.02 kB of CSS
+  headroom is left — the next main-sheet rule must pull a lever first.**
 
 - **conjugation + reading full width (2026-10-08, TODO §D12): JS 109.24 → 109.26 kB
   (+0.02), CSS 17.95 → 17.95 kB (byte-identical sheet).** reading's passage + image
@@ -166,7 +172,7 @@ needs the number points here rather than restating it.
   reuses the outcomes block's utilities, already in the sheet), shipped in the
   engine's lazy chunk, so `main-*.css` did not grow. This is the existing memory-match
   recipe for new rules, not the lever below: no rule moved out of `main-*.css`, and the
-  0.05 kB of headroom still stands.
+  0.05 kB of headroom stood (0.02 kB after the hand cursor, below).
 
 - **Exercise polish (2026-10-07/08, TODO §D12): JS 109.13 → 109.24 kB (+0.11), CSS
   17.71 → 17.95 kB (+0.24).** Biggest CSS steps: the transcript toggle's slide sheet and
