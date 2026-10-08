@@ -25,6 +25,7 @@ import { DebugPageHeader } from './DebugPageHeader';
 import PaletteSection from './PaletteSection';
 import TypographySection from './TypographySection';
 import IconsSection from './IconsSection';
+import ImagesSection from './ImagesSection';
 import ButtonsSection from './ButtonsSection';
 import AlertsSection from './AlertsSection';
 import DocsSection from './DocsSection';
@@ -36,6 +37,7 @@ const SECTIONS = [
   { id: 'alerts', label: 'Alerts' },
   { id: 'type', label: 'Typography' },
   { id: 'icons', label: 'Icons' },
+  { id: 'images', label: 'Images' },
   { id: 'docs', label: 'Docs' },
 ] as const;
 
@@ -57,6 +59,7 @@ export default function Sandbox() {
         <AlertsSection />
         <TypographySection />
         <IconsSection />
+        <ImagesSection />
         <DocsSection />
       </main>
 

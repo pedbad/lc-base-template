@@ -17,6 +17,7 @@
  * different (and better) sprite, but that is a content decision, not a sandbox one.
  */
 import { spriteHref } from '@/lib/sprite';
+import { APP_ICONS } from './app-assets';
 import { SANDBOX_ICON_IDS } from './sandbox-catalog';
 
 export default function IconsSection() {
@@ -43,6 +44,21 @@ export default function IconsSection() {
               <use href={spriteHref(id)} />
             </svg>
             <code className="text-center text-xs break-all">{id}</code>
+          </li>
+        ))}
+      </ul>
+
+      {/* Every lucide icon the app imports (APP_ICONS, kept complete by
+          app-assets.test.ts) — added 2026-10-08 when new ones went unlisted. */}
+      <h3 className="mt-10 font-heading text-xl font-bold">Lucide icons the app uses</h3>
+      <ul className="mt-6 grid grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] gap-4">
+        {Object.entries(APP_ICONS).map(([name, Icon]) => (
+          <li
+            key={name}
+            className="flex flex-col items-center gap-3 rounded-md border border-border bg-card p-4"
+          >
+            <Icon className="size-8" aria-hidden="true" />
+            <code className="text-center text-xs break-all">{name}</code>
           </li>
         ))}
       </ul>
