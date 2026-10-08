@@ -82,7 +82,8 @@ export function VocabularyBlock({ content }: { content: unknown }) {
             )}
             {item.term}
           </dt>
-          <dd className="text-muted-foreground">{item.gloss}</dd>
+          {/* Centred like the term, which sits beside a 54px speaker. */}
+          <dd className="self-center text-muted-foreground">{item.gloss}</dd>
         </div>
       ))}
     </dl>

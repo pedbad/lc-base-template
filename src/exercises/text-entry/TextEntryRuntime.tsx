@@ -131,13 +131,16 @@ export function TextEntryRuntime({
     const hasResult = state.hasChecked && typeof result === 'boolean';
     const id = answerId(rowIndex);
 
+    // Cells keep TableCell's align-middle: the 54px speaker is taller than the input,
+    // so top-aligned cells left the prompt and input riding high (2026-10-08).
     return (
       <TableRow key={`row-${rowIndex}`}>
         {hasAudio ? (
-          <TableCell className="w-12 align-top">
+          <TableCell className="w-12">
             {row.audio ? (
               <AudioClip
                 className="super-compact-speaker"
+                inline
                 id={`${uid}-audio-${rowIndex}`}
                 soundFile={row.audio}
               />
@@ -145,11 +148,11 @@ export function TextEntryRuntime({
           </TableCell>
         ) : null}
         {hasPrompt ? (
-          <TableCell className="align-top text-foreground" lang={TARGET_LANG}>
+          <TableCell className="text-foreground" lang={TARGET_LANG}>
             {row.prompt}
           </TableCell>
         ) : null}
-        <TableCell className="align-top">
+        <TableCell>
           <div className="grid grid-cols-[minmax(0,1fr)_2.5rem] items-center gap-2">
             <Input
               id={id}
