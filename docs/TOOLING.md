@@ -150,15 +150,24 @@ Layer 1 is the carrot; layers 2–3 are the stick.
   the prerender pass will later write — see _Dev-server LO pages_ below.
 - **Rejected:** Create-React-App (deprecated), Webpack (slower, heavier config).
 
-### Bundle budget — JS < 110 kB, CSS < 18 kB gzipped _(decisions 2026-10-05, 2026-10-06, 2026-10-07, 2026-10-08)_
+### Bundle budget — JS < 120 kB, CSS < 18 kB gzipped _(decisions 2026-10-05, 2026-10-06, 2026-10-07, 2026-10-08)_
 
 **This is the one place the budget is written down.** Every other doc and comment that
 needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-08 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 110 kB**     | 109.34 kB           | 0.66 kB  |
+| `main-*.js`  | **< 120 kB**     | 110.08 kB           | 9.92 kB  |
 | `main-*.css` | **< 18 kB**      | 17.98 kB            | 0.02 kB  |
+
+- **JS raised by the maintainer's decision (2026-10-08): < 110 → < 120 kB.** The
+  vocabulary block's "You will learn" summary and Semantic | Alphabetical sort (TODO
+  §D12) took main JS from 109.34 to 110.08 kB: ~0.29 kB for the three lucide icons,
+  ~0.5 kB for the alert, the sort logic and the example LO's summary text (every LO's
+  JSON is in main until per-LO chunking). The levers on the table were dropping the
+  icons (≈ 109.8 kB) or loading the block lazily; the maintainer kept the icons and
+  raised the line. Using shadcn's `Button` there would have added Base UI's primitive
+  too, so the block uses native buttons styled by `buttonVariants`.
 
 - **Speakers, row alignment, placeholder labels (2026-10-08, TODO §D12): JS 109.29 →
   109.34 kB (+0.05), CSS 17.98 → 17.98 kB.** Speaker sizes are a JS prop (the inline
