@@ -5,6 +5,7 @@
  * show their size label; marks meant for a dark ground (`-white`, `-dark`) sit on one.
  */
 import { useEffect, useRef, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 import { resolveAsset } from '@/lib/assets';
 import { APP_IMAGES } from './app-assets';
 
@@ -35,7 +36,8 @@ function ImageTile({ file }: { file: string }) {
         />
       </div>
       <code className="text-xs break-all">{`public/${file}`}</code>
-      <span className="text-xs text-muted-foreground">{size ?? 'loading…'}</span>
+      {/* The file's pixel size in a shadcn Badge, so it stands out (2026-10-08). */}
+      <Badge className="self-start tabular-nums">{size ?? 'loading…'}</Badge>
     </li>
   );
 }

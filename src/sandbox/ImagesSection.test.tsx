@@ -31,3 +31,9 @@ test('the Icons section also shows every lucide icon the app uses', () => {
   expect(html).toContain('Lucide icons the app uses');
   for (const name of Object.keys(APP_ICONS)) expect(html).toContain(`>${name}</code>`);
 });
+
+// Maintainer, 2026-10-08: the pixel size sits in a shadcn Badge so it stands out.
+test('shows each image size in a shadcn badge', () => {
+  const html = renderToStaticMarkup(<ImagesSection />);
+  expect((html.match(/data-slot="badge"/g) ?? []).length).toBe(APP_IMAGES.length);
+});
