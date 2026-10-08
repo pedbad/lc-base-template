@@ -55,7 +55,7 @@ export function AnswerFeedback({ feedback, contentLang, showKey, labels }: Answe
           <span lang={contentLang} className="font-medium">
             {feedback.segments.map((segment, index) =>
               segment.differs ? (
-                <mark key={index} className="rounded-sm bg-success/15 text-foreground">
+                <mark key={index} className="rounded-sm bg-callout-info text-foreground">
                   {segment.text}
                 </mark>
               ) : (

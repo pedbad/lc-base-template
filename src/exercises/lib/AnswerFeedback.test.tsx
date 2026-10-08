@@ -43,6 +43,9 @@ describe('AnswerFeedback', () => {
 
     expect(html).toContain('Answer:');
     expect(html).toMatch(/<span lang="es"[^>]*>los gat<mark[^>]*>o<\/mark>s<\/span>/);
+    // Cambridge Light Blue in light, the primary tint in dark: the info alert's ground
+    // (maintainer, 2026-10-08).
+    expect(html).toMatch(/<mark class="[^"]*\bbg-callout-info\b/);
     expect(html).toMatch(/class="sr-only"[^>]*>[^<]*Highlighted: what differs from yours/);
   });
 
