@@ -1365,10 +1365,17 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   - **Watch the transcript slide** in a visible browser (Chrome ≥ 131 / Safari) at both
     themes and with reduced motion on. Still not seen running: the pane was hidden
     again.
-  - **memory-match speaker over the word:** the 48px speaker's box overlaps the word's
-    line box by 2px at 1440 and 5px at 320 (speaker top 59 vs word bottom 64 on a 113px
-    card). Needs a look in a visible browser; the fix is a design call (smaller
-    speaker on this engine, or the word nudged up).
+  - **memory-match speaker over the word, small cards only:** since the card-size
+    change below, the 48px speaker clears the word from 155px cards up (768+); it still
+    overlaps the word's line box on cards of ≈ 113–120px (320, and a ≈ 480–600px exercise
+    just past the 4-column switch). Design call: smaller speaker on small cards, or the
+    word nudged up.
+  - **memory-match card size DONE 2026-10-08** (maintainer): the deck was 32rem wide at
+    every width and went 2 → 4 columns at a 48rem viewport, so cards shrank as the
+    screen grew (≈ 250px mid-size, 119px at 1440). Now 2 columns below a 30rem exercise
+    width, 4 from there (container query), capped at 65rem: 113 / 141 / 117 / 155 / 219
+    / 251 / 251px at 320 / 375 / 600 / 768 / 1024 / 1440 / 1920. Lazy
+    `memory-match.css`; main bundles unchanged. axe clean both themes.
   - **Hero placeholder plate under the title** at 320, 375 and 768: the LO title's first
     line runs across the plate (at 375 the line spans x 16–276, y 21–63; the plate
     171–366 × 36–65). Clear from 1024. Placeholder only; real artwork has no plate.

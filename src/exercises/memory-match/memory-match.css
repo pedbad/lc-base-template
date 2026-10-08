@@ -9,6 +9,7 @@
  */
 @layer components {
   .memory-match {
+    container: memory-match / inline-size;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -25,11 +26,18 @@
     align-self: center;
     padding: 0;
     width: 100%;
-    max-width: 32rem;
+
+    /* 4 × 250px cards + 3 × 0.75rem gaps = 1036px (maintainer, 2026-10-08). The old
+       32rem cap made cards SHRINK as the screen grew: ≈ 250px in two columns on a
+       mid-size screen, 119px in four at 1440. */
+    max-width: 65rem;
     list-style: none;
   }
 
-  @media (width >= 48rem) {
+  /* Two columns only on a phone-width exercise, four from 30rem, so a card only ever
+     grows with the space. A container query, not a viewport one (as reading.css): an
+     exercise can sit in an accordion card or a tab panel. */
+  @container memory-match (width >= 30rem) {
     .memory-match-deck {
       grid-template-columns: repeat(4, 1fr);
     }
