@@ -19,9 +19,9 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
 
-    /* Centred in .memory-match's flex column. Not auto margins: a component chunk's
-       stylesheet can declare this layer before Tailwind's base, whose margin reset
-       then wins (memory-match-css.test.ts). */
+    /* Centred in .memory-match's flex column with align-self, a property Tailwind's
+       base reset never sets, so it holds even if the layer order is ever lost again
+       (fixed 2026-10-08 in the HTML heads, src/build/layer-order.test.ts). */
     align-self: center;
     padding: 0;
     width: 100%;

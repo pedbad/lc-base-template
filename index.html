@@ -2,6 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!-- Cascade-layer order, declared before any stylesheet: layers rank by
+         first appearance, and a shared component chunk linked ahead of the main
+         sheet would otherwise rank `components` below Tailwind's `base`
+         (src/build/layer-order.test.ts). -->
+    <style>
+      @layer properties, theme, base, components, utilities;
+    </style>
     <!-- Head asset hrefs go through Vite's BASE_URL token, never a relative or
          root-absolute path (carry-forward anti-pattern #28): a relative href resolves
          against the CURRENT page URL, so it 404s on any path-slug route, and a

@@ -1,10 +1,10 @@
 /**
  * memory-match-css.test.ts — the deck centres in its column (maintainer, 2026-10-07).
  *
- * `margin: 0 auto` did not centre it: on built pages a component chunk's stylesheet
- * declares `@layer components` before Tailwind's `base`, so base's margin reset
- * outranks every component margin. `align-self` is a property base never sets, so it
- * centres the deck in `.memory-match`'s flex column whatever the layer order.
+ * `margin: 0 auto` did not centre it on the DEBUG=1 build, where a shared chunk's
+ * stylesheet named `@layer components` before Tailwind's `base` (fixed 2026-10-08,
+ * src/build/layer-order.test.ts). `align-self` stays: base never sets it, so the deck
+ * centres in `.memory-match`'s flex column whatever the layer order.
  */
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
