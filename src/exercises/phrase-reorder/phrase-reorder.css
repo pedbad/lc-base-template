@@ -7,6 +7,7 @@
  */
 @layer components {
   .phrase-reorder {
+    container: phrase-reorder / inline-size;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -26,10 +27,6 @@
     grid-template-columns: auto minmax(0, 1fr);
     align-items: center;
     gap: 0.75rem;
-  }
-
-  .phrase-reorder-row[data-has-prompt='true'] {
-    grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr);
   }
 
   .phrase-reorder-audio {
@@ -135,5 +132,31 @@
     margin: 0;
     font-size: var(--text-sm, 0.875rem);
     color: var(--muted-foreground);
+  }
+
+  /* A prompted row on a narrow exercise (TODO §D13, 2026-10-08): speaker, then the
+     prompt with its phrase underneath. Three columns left each phrase 78px at 320px
+     and its text ran out of the button. From 30rem: speaker | prompt | phrase. A
+     container query, not a viewport one (as reading.css). */
+  .phrase-reorder-row[data-has-prompt='true'] .phrase-reorder-audio {
+    grid-row: span 2;
+  }
+
+  .phrase-reorder-row[data-has-prompt='true'] .phrase-reorder-token {
+    grid-column: 2;
+  }
+
+  @container phrase-reorder (width >= 30rem) {
+    .phrase-reorder-row[data-has-prompt='true'] {
+      grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .phrase-reorder-row[data-has-prompt='true'] .phrase-reorder-audio {
+      grid-row: auto;
+    }
+
+    .phrase-reorder-row[data-has-prompt='true'] .phrase-reorder-token {
+      grid-column: auto;
+    }
   }
 }
