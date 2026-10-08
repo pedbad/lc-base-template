@@ -53,23 +53,31 @@ describe('ReadingExercise', () => {
       content: { ...baseConfig.content, image: { src: 'images/lo-placeholder.svg', alt: '' } },
     };
 
-    test('groups the image and the passage, image first, and leaves the questions out', () => {
+    // Maintainer, 2026-10-08: the picture sits INSIDE the grey passage card, so the
+    // card runs as tall as the row and leaves no empty band under shorter text.
+    test('puts the image inside the passage card, before the text', () => {
       const html = renderToStaticMarkup(<ReadingExercise config={withImage} />);
-      const body = html.indexOf('<div class="reading-body">');
+      const card = html.indexOf('<article class="reading-passage');
       const image = html.indexOf('reading-image');
-      const passage = html.indexOf('<article');
-      const questions = html.indexOf('role="radiogroup"');
-      // Every <div> opened from the group's start is closed again before the questions.
-      const between = html.slice(body, html.lastIndexOf('<div class="space-y-3">', questions));
-      const depth =
-        (between.match(/<div/g) ?? []).length - (between.match(/<\/div>/g) ?? []).length;
+      const text = html.indexOf('<div class="reading-text" lang=');
+      const close = html.indexOf('</article>');
 
       expect(html).toMatch(/^<div class="reading flex flex-col gap-4">/);
-      expect(body).toBeGreaterThan(-1);
-      // DOM order is the phone order: picture, then text.
-      expect(image).toBeGreaterThan(body);
-      expect(passage).toBeGreaterThan(image);
-      expect(depth).toBe(0);
+      expect(card).toBeGreaterThan(-1);
+      // DOM order is the phone order: picture, then text, both inside the card.
+      expect(image).toBeGreaterThan(card);
+      expect(text).toBeGreaterThan(image);
+      expect(close).toBeGreaterThan(text);
+      expect(html.indexOf('role="radiogroup"')).toBeGreaterThan(close);
+    });
+
+    // An authored alt describes the picture in the course's UI language, so only the
+    // passage text carries the target-language tag, not the card around the image.
+    test('tags the passage text, not the card, with the target language', () => {
+      const html = renderToStaticMarkup(<ReadingExercise config={withImage} />);
+
+      expect(html).toContain(`<div class="reading-text" lang="${TARGET_LANG}">`);
+      expect(html).toMatch(/<article class="reading-passage[^"]*">/);
     });
 
     test("draws the image in the outcomes block's 3:2 contain box", () => {

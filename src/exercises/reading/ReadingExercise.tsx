@@ -15,9 +15,10 @@
  *     question is WRONG — derived from checkedResults, no extra state (matches
  *     radio-quiz), so a re-answer or Show-answers hides it automatically.
  *   - chrome text via resolveLabel(key, labels) (ui-strings §9).
- *   - layout: an optional image, then the passage, then the questions full width. At
- *     a wide exercise width the passage and image share a row, text left (container
- *     query, reading.css). The image box is the outcomes block's: 3:2, contain.
+ *   - layout: one grey passage card holding an optional image and the text, then the
+ *     questions full width. At a wide exercise width the card splits, text left and
+ *     image right (container query, reading.css). The image box is the outcomes
+ *     block's: 3:2, contain.
  *
  * `options.shuffle`/`sampleSize` are N/A (question + option order are authored — a
  * true-false must read True-then-False); only `allowShowAnswers` applies.
@@ -181,9 +182,11 @@ export default function ReadingExercise({ config }: ExerciseComponentProps) {
 
   return (
     <div className="reading flex flex-col gap-4">
-      {/* Image first: that is the phone order. At a wide exercise width reading.css
-          puts the passage left and the image right. */}
-      <div className="reading-body">
+      {/* One grey card holds the image and the text, so the card runs as tall as the
+          row with no empty band under shorter text (maintainer, 2026-10-08). Image
+          first: that is the phone order. At a wide exercise width reading.css puts the
+          text left and the image right. */}
+      <article className="reading-passage rounded-lg border border-border/60 bg-muted/30 px-4 py-3 text-base leading-relaxed text-foreground">
         {content.image === undefined ? null : (
           <div className="reading-image aspect-[3/2] w-full">
             <img
@@ -197,10 +200,8 @@ export default function ReadingExercise({ config }: ExerciseComponentProps) {
             />
           </div>
         )}
-        <article
-          className="reading-passage rounded-lg border border-border/60 bg-muted/30 px-4 py-3 text-base leading-relaxed text-foreground"
-          lang={TARGET_LANG}
-        >
+        {/* Only the text is target language: an authored alt is in the UI language. */}
+        <div className="reading-text" lang={TARGET_LANG}>
           {paragraphs.map((paragraph, index) => (
             // The passage is running text: it keeps the reading measure (TODO §D11).
             <p
@@ -210,8 +211,8 @@ export default function ReadingExercise({ config }: ExerciseComponentProps) {
               {paragraph}
             </p>
           ))}
-        </article>
-      </div>
+        </div>
+      </article>
 
       <div className="space-y-3">{cards}</div>
 

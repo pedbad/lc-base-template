@@ -1,6 +1,6 @@
 /**
- * reading-css.test.ts — at a wide EXERCISE width the passage and its illustration
- * share a row, text left and picture right; the questions run full width below. A
+ * reading-css.test.ts — at a wide EXERCISE width the passage card holds its text on
+ * the left and its illustration on the right; the questions run full width below. A
  * container query, not a viewport one: an exercise can sit in an accordion card or a
  * tab panel, where the viewport says nothing about its width.
  */
@@ -20,27 +20,26 @@ describe('reading.css', () => {
     expect(rule('.reading', css)).toContain('container: reading / inline-size;');
   });
 
-  test('below the breakpoint image and passage stack 1rem apart, image first', () => {
-    const body = rule('.reading-body', css);
+  test('below the breakpoint the card stacks image over text, 1rem apart', () => {
+    const body = rule('.reading-passage', css);
 
     expect(body).toContain('display: grid;');
     expect(body).toContain('row-gap: 1rem;');
     expect(body).not.toContain('grid-template-columns');
   });
 
-  // Two equal halves with the outcomes block's gap-6, so the picture is the same size
-  // as the introduction's on an LO page.
-  test('from a 55rem exercise width, with an image, passage left and image right', () => {
-    const body = rule('.reading-body:has(> .reading-image)', query);
+  // Two equal halves with the outcomes block's gap-6.
+  test('from a 55rem exercise width, with an image, text left and image right', () => {
+    const body = rule('.reading-passage:has(> .reading-image)', query);
 
     expect(body).toContain('grid-template-columns: repeat(2, minmax(0, 1fr));');
     expect(body).toContain('column-gap: 1.5rem;');
     expect(body).toContain('align-items: start;');
-    expect(rule('.reading-passage', query)).toContain('grid-area: 1 / 1;');
+    expect(rule('.reading-text', query)).toContain('grid-area: 1 / 1;');
     expect(rule('.reading-image', query)).toContain('grid-area: 1 / 2;');
   });
 
-  test('without an image the passage keeps the whole row', () => {
-    expect(query).not.toMatch(/\.reading-body\s*\{/);
+  test('without an image the text keeps the whole card', () => {
+    expect(query).not.toMatch(/\.reading-passage\s*\{/);
   });
 });

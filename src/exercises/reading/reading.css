@@ -1,37 +1,39 @@
 /**
- * reading.css — the passage and its illustration (maintainer, 2026-10-08). Layered
- * under `components`; no colours, no raw px. Lives in the engine's lazy chunk, not in
- * `main-*.css` (budget: docs/TOOLING.md).
+ * reading.css — the passage card and its illustration (maintainer, 2026-10-08).
+ * Layered under `components`; no colours, no raw px. Lives in the engine's lazy chunk,
+ * not in `main-*.css` (budget: docs/TOOLING.md).
  *
- * Narrow: image on top, then the passage, then the questions, each full width. The
- * DOM is in that order, so a phone needs no rule at all.
+ * One grey card (`.reading-passage`) holds the image and the text, so the card runs as
+ * tall as the row and no empty band shows under text shorter than the picture.
  *
- * Wide: the passage takes the left half and the image the right, both from the top;
- * the questions stay full width below. Two equal halves with the outcomes block's
- * gap-6 make the picture the size of the introduction's on an LO page (532px wide at
- * a 1088px column, in the same 3:2 contain box). A container query, not a viewport
- * one: an exercise can sit in an accordion card or a tab panel. 55rem leaves the
- * passage about 26.5rem, roughly 40 characters a line; the paragraphs keep their 60ch
- * cap above that. With no image the passage keeps the whole row.
+ * Narrow: inside the card, image on top, then the text; the questions follow full
+ * width. The DOM is in that order, so a phone needs no rule beyond the stack.
+ *
+ * Wide: the card splits into two equal halves, text left and image right, both from
+ * the top, 1.5rem apart like the outcomes block. The image keeps the outcomes block's
+ * 3:2 contain box. A container query, not a viewport one: an exercise can sit in an
+ * accordion card or a tab panel. 55rem leaves the text about 26rem, roughly 40
+ * characters a line; the paragraphs keep their 60ch cap above that. With no image the
+ * text keeps the whole card.
  */
 @layer components {
   .reading {
     container: reading / inline-size;
   }
 
-  .reading-body {
+  .reading-passage {
     display: grid;
     row-gap: 1rem;
   }
 
   @container reading (width >= 55rem) {
-    .reading-body:has(> .reading-image) {
+    .reading-passage:has(> .reading-image) {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       align-items: start;
       column-gap: 1.5rem;
     }
 
-    .reading-passage {
+    .reading-text {
       grid-area: 1 / 1;
     }
 
