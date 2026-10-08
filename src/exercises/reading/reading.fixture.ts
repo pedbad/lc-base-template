@@ -24,9 +24,9 @@ export const readingFixtures: ShowcaseFixture[] = [
       content: {
         passage:
           'Marta se levanta temprano cada mañana. Desayuna un café con tostadas y sale de casa a las ocho. Va al trabajo en bicicleta porque vive cerca de la oficina.\n\nPor la tarde, después del trabajo, Marta estudia italiano en una academia del centro. Los fines de semana le gusta pasear por el parque con su perro.',
-        // The shared placeholder until a lesson supplies its own picture; decorative,
-        // so the alt is empty (the outcomes block's convention).
-        image: { src: 'images/lo-placeholder.svg', alt: '' },
+        // The reading slot's labelled placeholder (it prints the size to supply);
+        // decorative, so the alt is empty (the outcomes block's convention).
+        image: { src: 'images/placeholders/reading.svg', alt: '' },
         questions: [
           {
             type: 'radio',

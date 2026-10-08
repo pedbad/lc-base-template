@@ -7,8 +7,8 @@
   aria-hidden="true"
 >
   <!--
-    lo-placeholder.svg — the out-of-box illustration for a Learning Object card on
-    the course landing page (`"image"` in an LO's lo.json).
+    reading.svg — placeholder for a reading exercise's image (`content.image`), used by
+    the showcase fixture. Same art as lo-placeholder.svg, its own size label.
 
     Purely decorative: cards render it with alt="" and aria-hidden, so it carries no
     text and needs no accessible name. Authors replace it per LO; it exists so a
@@ -47,12 +47,11 @@
 
   <!-- Size label for designers (maintainer, 2026-10-08): the size to SUPPLY (2x) and
        the largest size the slot is SHOWN at, measured on the built site. Replace the
-       whole file with the real artwork. Top-left here: the card's title plate
-       overlaps the band's bottom edge. Pinned by src/build/placeholder-labels.test.ts. -->
+       whole file with the real artwork. Pinned by src/build/placeholder-labels.test.ts. -->
   <g font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" fill="#133844">
-    <rect x="21" y="21" width="389" height="153" rx="14" fill="#ffffff" fill-opacity="0.88" stroke="#133844" stroke-opacity="0.2" />
-    <text x="42" y="70" font-size="33" font-weight="700">Lesson card image</text>
-    <text x="42" y="109" font-size="25">Supply 1200 × 800 px · 3:2</text>
-    <text x="42" y="145" font-size="25" fill-opacity="0.8">Shown up to 557 × 371</text>
+    <rect x="20" y="270" width="469" height="110" rx="10" fill="#ffffff" fill-opacity="0.88" stroke="#133844" stroke-opacity="0.2" />
+    <text x="35" y="306" font-size="24" font-weight="700">Reading image</text>
+    <text x="35" y="334" font-size="18">Supply 1800 × 1200 px · 3:2</text>
+    <text x="35" y="360" font-size="18" fill-opacity="0.8">Shown up to 877 × 585 (532 × 355 side by side)</text>
   </g>
 </svg>

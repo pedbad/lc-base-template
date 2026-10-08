@@ -8,4 +8,14 @@
   <rect width="400" height="400" fill="#e6eef2" />
   <circle cx="200" cy="155" r="70" fill="#8aa4b4" />
   <path d="M70 400c0-80 58-140 130-140s130 60 130 140z" fill="#8aa4b4" />
+
+  <!-- Size label for designers (maintainer, 2026-10-08): the size to SUPPLY (2x) and
+       the largest size the slot is SHOWN at, measured on the built site. Replace the
+       whole file with the real artwork. Pinned by src/build/placeholder-labels.test.ts. -->
+  <g font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" fill="#133844">
+    <rect x="20" y="270" width="268" height="110" rx="10" fill="#ffffff" fill-opacity="0.88" stroke="#133844" stroke-opacity="0.2" />
+    <text x="35" y="306" font-size="24" font-weight="700">Tab portrait</text>
+    <text x="35" y="334" font-size="18">Supply 680 × 680 px · 1:1</text>
+    <text x="35" y="360" font-size="18" fill-opacity="0.8">Shown up to 340 × 340</text>
+  </g>
 </svg>
