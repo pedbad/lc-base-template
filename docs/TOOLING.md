@@ -157,8 +157,14 @@ needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-08 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 120 kB**     | 110.08 kB           | 9.92 kB  |
+| `main-*.js`  | **< 120 kB**     | 110.51 kB           | 9.49 kB  |
 | `main-*.css` | **< 18 kB**      | 17.98 kB            | 0.02 kB  |
+
+- **Section intros (2026-10-08, TODO §D12): JS 110.08 → 110.51 kB (+0.43), CSS 17.98 kB
+  unchanged.** The three new intro blocks' text sits in the example LO's JSON, which
+  ships in `main-*.js` until per-LO chunking; the intro-with-image layout reuses the
+  outcomes block's classes, so the sheet did not move. The vocabulary summary's 8px
+  (`mt-2`) is an existing utility.
 
 - **JS raised by the maintainer's decision (2026-10-08): < 110 → < 120 kB.** The
   vocabulary block's "You will learn" summary and Semantic | Alphabetical sort (TODO

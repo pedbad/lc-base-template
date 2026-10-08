@@ -1174,7 +1174,7 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   gzip (budget < 17), JS 100.21 kB.
 
 - **D12 — exercises use the page width, alerts and buttons polished. DONE 2026-10-07/08**
-  (`cb98d5d`…`0339e97`), one maintainer instruction at a time. A first attempt (an
+  (`cb98d5d`…`5376189`), one maintainer instruction at a time. A first attempt (an
   instructions rail plus per-engine container-query layouts) was built and **reverted
   unmerged** — the maintainer's call; the spec for it is gone with the branch.
   - **Instruction box spans the column** in every exercise; only the engine stays on the
@@ -1252,6 +1252,23 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     card's. The table lives once, in `src/build/placeholder-labels.test.ts`, which also
     rejects `--` inside an SVG comment (a comment naming a CSS token broke all six
     images once). How a designer uses it: `DESIGNER.md`, "Job 4".
+  - **Vocabulary summary + sort** (`c475fe9`, after french-lo-1's PhraseTable):
+    `content.summary { lead, items[] }` renders as an info `Callout` with a ticked
+    list, 8px below the accordion header (`7f6d491`); Semantic | Alphabetical buttons
+    sit above the terms (from two items up) — authored order, then by term in the
+    course language ignoring case and accents, a second press reversing it (Z→A).
+    Pure ordering in `vocabulary-sort.ts`. Native buttons styled by `buttonVariants`,
+    so Base UI's button primitive stays out of `main-*.js`. Took JS to 110.08 kB, over
+    the old line: the budget went to < 120 kB (`9d0224c`, `docs/TOOLING.md`).
+  - **Section intros** (`378ffa8`, `8f947a0`, `5376189`): an `intro` block (the
+    introduction's ruled quote) now opens Vocabulary (`05-intro`, text only), Grammar
+    (`06-intro`) and Exercises (`07-intro`, a section's blocks render before its
+    exercises). `intro` takes an optional `content.image { src, alt }`: the outcomes
+    split (text left, picture right from `lg`, text first on a phone) in the same
+    3:2 contain box, so the picture is the introduction's size at every width (532 ×
+    355 at 1440, 959 × 639 at 1023, 343 × 229 at 375). Each image has a labelled
+    placeholder. Like every block, an intro is shown by listing it in the section's
+    `blocks` in `lo.json`.
 
   - **Alerts:** info `Callout` is `--callout-info` (Cambridge Light Blue in light; the
     primary tint in dark); every alert icon 2rem.
@@ -1301,7 +1318,10 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     reading, tab portrait and tab figure plates were last screenshotted in their
     previous amber style. Look at all six in a visible browser at 375 once.
   - **CSS headroom is 0.02 kB** (`docs/TOOLING.md`): the next rule in `main-*.css` needs
-    a lever pulled first.
+    a lever pulled first. Two asks are waiting on it: an intro's image ON TOP on a phone
+    (as the reading exercise does; today text comes first, as in french-lo-1 and the
+    outcomes block), and top padding for every accordion body (only the vocabulary
+    summary has its 8px; an instructions box opening an accordion still sits flush).
   - The sandbox's plain **Destructive** samples still fail (3.81 / 2.74:1): the vendored
     shadcn variant, which no lesson uses alone any more. Fixing it means editing
     `src/components/ui/button.tsx`.
@@ -1443,7 +1463,7 @@ build, so it cannot return. Two remain:
 | 2026-10-08 | `c16e781` | **reading image edge to edge** — 532 × 355 on an LO column, exactly the intro's                                               |
 | 2026-10-08 | `f6af9b7` | **placeholders print their size** — supply (2×) and largest shown size, per slot                                              |
 | 2026-10-08 | `47cf9bf` | **size labels restyled** — small top-right plate in the info alert's style, with the path                                     |
-| 2026-10-08 | see git   | **vocabulary summary + sort** — "You will learn" alert, Semantic / Alphabetical (A→Z, Z→A); JS < 120 kB                       |
-| 2026-10-08 | see git   | **vocabulary intro quote** — optional `05-intro` block under the heading (list it in lo.json to show it)                      |
-| 2026-10-08 | see git   | **grammar intro + image** — `06-intro` under the Grammar heading; `intro` takes an optional image (outcomes split, 532 × 355) |
-| 2026-10-08 | see git   | **exercises intro + image** — `07-intro` under the Exercises heading, same split as the grammar intro                         |
+| 2026-10-08 | `c475fe9` | **vocabulary summary + sort** — "You will learn" alert, Semantic / Alphabetical (A→Z, Z→A); JS < 120 kB                       |
+| 2026-10-08 | `378ffa8` | **vocabulary intro quote** — optional `05-intro` block under the heading (list it in lo.json to show it)                      |
+| 2026-10-08 | `8f947a0` | **grammar intro + image** — `06-intro` under the Grammar heading; `intro` takes an optional image (outcomes split, 532 × 355) |
+| 2026-10-08 | `5376189` | **exercises intro + image** — `07-intro` under the Exercises heading, same split as the grammar intro                         |
