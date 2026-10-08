@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 126 files · 1396 tests green
+**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 126 files · 1397 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -1174,7 +1174,7 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   gzip (budget < 17), JS 100.21 kB.
 
 - **D12 — exercises use the page width, alerts and buttons polished. DONE 2026-10-07/08**
-  (`cb98d5d`…`09945e4`), one maintainer instruction at a time. A first attempt (an
+  (`cb98d5d`…`f6909ed`), one maintainer instruction at a time. A first attempt (an
   instructions rail plus per-engine container-query layouts) was built and **reverted
   unmerged** — the maintainer's call; the spec for it is gone with the branch.
   - **Instruction box spans the column** in every exercise; only the engine stays on the
@@ -1200,17 +1200,20 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
       typed-transform's — the maintainer's call (2026-10-08). A two-column paradigm
       (yo / tú / él | nosotros / vosotros / ellos from a 44rem container) was built,
       verified and **dropped unmerged**; do not bring it back as a "fix".
-    - **reading: passage + image, questions full width** (maintainer, 2026-10-08,
-      `09945e4`; it replaced a passage-beside-questions layout from `dacdf79`). Optional
-      `content.image` `{ src, alt }`, the outcomes block's contract and 3:2 contain box.
-      From a **55rem** exercise width (container query in the lazy `reading.css`; main
-      CSS unchanged) the passage takes the left half and the image the right,
-      top-aligned, 1.5rem apart like the outcomes block, so on a 1088px LO column the
-      picture is **532×355, the intro's size** (507×338 on the narrower showcase card).
-      Questions run full width below. Narrow: image, passage, questions (DOM order).
-      No image: the passage keeps the row. Showcase widths, passage / image: 320–768
-      stacked, image 238×159 / 293×195 / 657×438; 1024 443 / 443×295; 1440 and 1920
-      507 / 507×338. Tab walks question 1 → 4.
+    - **reading: one passage card holding text + image, questions full width**
+      (maintainer, 2026-10-08, `09945e4` + `f6909ed`; it replaced a passage-beside-
+      questions layout from `dacdf79`, and a first cut with the image outside the card,
+      which left an empty band under the text). Optional `content.image` `{ src, alt }`,
+      the outcomes block's contract and 3:2 contain box. The grey card holds both, so
+      it runs as tall as the row. From a **55rem** exercise width (container query in
+      the lazy `reading.css`; main CSS unchanged) the card splits: text left, image
+      right, top-aligned, 1.5rem apart like the outcomes block. On a 1088px LO column
+      the picture is ~515×343, a card's padding short of the intro's 532×355. Questions
+      run full width below. Narrow: image on top inside the card, then the text (DOM
+      order). No image: the text keeps the card. Showcase widths, text / image: 320
+      204 / 204×136, 375 259 / 259×173, 768 623 / 623×415 (stacked); 1024 426 /
+      426×284; 1440 and 1920 490 / 490×327. Only the text is `lang`-tagged; an
+      authored alt is in the UI language. Tab walks question 1 → 4.
     - axe on all three fixtures, both themes, empty and after Check: zero violations.
       No horizontal scroll at any width.
 
@@ -1391,4 +1394,4 @@ build, so it cannot return. Two remain:
 | 2026-10-08 | `3b8f415` | **amber transcript toggle** with a `::details-content` slide; CSS 17.95 kB                     |
 | 2026-10-08 | `0b2eb8f` | **cascade-layer order** declared first in every HTML entry (DEBUG build bug)                   |
 | 2026-10-08 | `db4e238` | **conjugation full width** — one column, inputs grow with it (maintainer's call)               |
-| 2026-10-08 | `09945e4` | **reading image** — passage left, image right (intro size), questions full width (§D12)        |
+| 2026-10-08 | `09945e4` | **reading image** — one grey card, text left / image right, questions full width (§D12)        |
