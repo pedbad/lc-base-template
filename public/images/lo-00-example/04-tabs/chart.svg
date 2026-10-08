@@ -26,13 +26,17 @@
     <text x="705" y="430">Sun</text>
   </g>
 
-  <!-- Size label for designers (maintainer, 2026-10-08): the size to SUPPLY (2x) and
-       the largest size the slot is SHOWN at, measured on the built site. Replace the
-       whole file with the real artwork. Pinned by src/build/placeholder-labels.test.ts. -->
-  <g font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" fill="#133844">
-    <rect x="22" y="22" width="334" height="123" rx="11" fill="#ffffff" fill-opacity="0.88" stroke="#133844" stroke-opacity="0.2" />
-    <text x="39" y="62" font-size="27" font-weight="700">Tab figure</text>
-    <text x="39" y="93" font-size="20">Supply 2112 × 1188 px · 16:9</text>
-    <text x="39" y="123" font-size="20" fill-opacity="0.8">Shown up to 1052 × 593</text>
+  <!-- Size label for designers (maintainer, 2026-10-08): the slot, the size to SUPPLY
+       (2x), the largest size it is SHOWN at (measured on the built site) and this
+       file's path. Discreet, bottom-left, on the amber-soft token with slate ink (literals:
+       an <img> cannot read CSS tokens). Replace the whole file with the real artwork.
+       Pinned by src/build/placeholder-labels.test.ts. -->
+  <g data-label-position="bottom-left" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
+    <rect x="7.6" y="398.4" width="238" height="44" rx="3" fill="#e9a93a" />
+    <g fill="#232830">
+      <text x="13.7" y="412.1" font-size="9.1" font-weight="700">Tab figure · supply 2112 × 1188 px (16:9)</text>
+      <text x="13.7" y="423.8" font-size="8.4">Shown up to 1052 × 593</text>
+      <text x="13.7" y="435.6" font-size="8.4" font-family="ui-monospace, 'SF Mono', Menlo, monospace">public/images/lo-00-example/04-tabs/chart.svg</text>
+    </g>
   </g>
 </svg>
