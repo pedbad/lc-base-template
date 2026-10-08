@@ -75,3 +75,32 @@ describe('placeholder images state their size', () => {
     }
   });
 });
+
+// The hero is cropped (`object-fit: cover` in a 16:5 box, 224–448px tall), so a label
+// drawn in the artwork's own top-right corner falls outside the banner on a phone and
+// at wide screens; it used to sit mid-artwork, in the crop-safe area, and did not read
+// as top-right (maintainer, 2026-10-08). The file now has no intrinsic size, so it
+// fills the banner exactly; the art keeps its cover crop through `slice`, and the
+// label is pinned to the BOX's top-right corner, scaled down on a narrow banner.
+describe('hero.svg pins its label to the banner, not the artwork', () => {
+  const svg = readFileSync(path.join(PUBLIC, 'images/lo-00-example/hero.svg'), 'utf8');
+  const root = /<svg\b[^>]*>/.exec(svg)?.[0] ?? '';
+
+  test('the root fills the <img> box: no viewBox, 100% by 100%', () => {
+    expect(root).not.toContain('viewBox');
+    expect(root).toContain('width="100%"');
+    expect(root).toContain('height="100%"');
+  });
+
+  test('the artwork keeps the cover crop inside it', () => {
+    expect(svg).toMatch(/viewBox="0 0 1600 500"[^>]*preserveAspectRatio="xMidYMid slice"/);
+  });
+
+  test('the label hangs from the box’s right edge', () => {
+    expect(svg).toMatch(/<svg x="100%"[^>]*>\s*<g[^>]*data-label-position="top-right"/);
+  });
+
+  test('a narrow banner scales the label down to fit', () => {
+    expect(svg).toMatch(/@media \(max-width: \d+px\)/);
+  });
+});
