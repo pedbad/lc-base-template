@@ -55,6 +55,31 @@ describe('LoAccordion', () => {
     expect(html).toContain('Fill each blank.');
   });
 
+  // The primitive's own mt-2 is for a plain (accordion-less) block; inside an accordion
+  // the body's pt-2 already gives that 8px, so the box must not add a second.
+  test('the instructions box adds no top margin of its own inside an accordion', () => {
+    const html = renderToStaticMarkup(
+      <LoAccordion id="g" title="T" instructions="Fill each blank.">
+        <p>x</p>
+      </LoAccordion>,
+    );
+    const box = html.match(/<div[^>]*class="([^"]*\binstructions\b[^"]*)"/)?.[1] ?? '';
+    expect(box).toMatch(/\bmt-0\b/);
+    expect(box).not.toMatch(/\bmt-2\b/);
+  });
+
+  // Maintainer, 2026-10-08: whatever opens an accordion body (an instructions box, the
+  // vocabulary summary, a block) sat flush against the header. The body's wrapper owns
+  // 8px of top padding so no block has to carry its own.
+  test('gives every accordion body 8px of top padding', () => {
+    const html = renderToStaticMarkup(
+      <LoAccordion id="ex-pad" title="Exercise">
+        <p>Body</p>
+      </LoAccordion>,
+    );
+    expect(html).toContain('<div class="px-4 pt-2 pb-4"><p>Body</p>');
+  });
+
   test('omits the instructions slot when none is provided', () => {
     const html = renderToStaticMarkup(
       <LoAccordion id="g" title="T">

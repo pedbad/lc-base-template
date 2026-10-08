@@ -166,11 +166,16 @@ export default function LoAccordion({
           {/* .details-inner is the collapsing grid item: overflow-hidden + min-h-0,
               and NO padding of its own (padding on this element would leak past a
               0fr track). The padding lives on the nested wrapper it clips. It is also
-              the element whose height is animated. */}
+              the element whose height is animated. pt-2 (maintainer, 2026-10-08): the
+              first thing in a body — an instructions box, the vocabulary summary — sat
+              flush against the header, so the body owns 8px above it; no block adds
+              its own. */}
           <div ref={innerRef} className="details-inner">
-            <div className="px-4 pb-4">
+            <div className="px-4 pt-2 pb-4">
               {instructions ? (
-                <InstructionsCallout className="mb-3">{instructions}</InstructionsCallout>
+                // mt-0: the body's pt-2 is this box's 8px here; the primitive's own
+                // mt-2 is for a plain block, which has no accordion body around it.
+                <InstructionsCallout className="mt-0 mb-3">{instructions}</InstructionsCallout>
               ) : null}
               {children}
             </div>

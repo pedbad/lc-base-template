@@ -9,11 +9,11 @@
  * accordion-level instruction slots both reuse (§3: one field, one name).
  *
  * `mt-2` is on the PRIMITIVE, not on each caller, because every instructions box
- * wants the same breathing room above it — inside an accordion the body has no top
- * padding, so without this the callout butts straight against the summary and the
- * summary's hover highlight runs right into it. A caller that needs different spacing
- * passes its own `mt-*`: `cn()` is tailwind-merge, so the caller's class wins rather
- * than both landing in the list.
+ * wants the same breathing room above it. Since 2026-10-08 an accordion body carries
+ * that 8px as its own top padding (LoAccordion), so the accordion passes `mt-0`; the
+ * margin here serves a plain block's box (`lo-page-sections.tsx`). A caller that needs
+ * different spacing passes its own `mt-*`: `cn()` is tailwind-merge, so the caller's
+ * class wins rather than both landing in the list.
  */
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';

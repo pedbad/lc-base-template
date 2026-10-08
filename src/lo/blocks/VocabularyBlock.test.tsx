@@ -57,15 +57,17 @@ describe('vocabulary summary and sort', () => {
     expect(html.indexOf('Salut')).toBeLessThan(html.indexOf('Bonjour'));
   });
 
-  // Maintainer, 2026-10-08: inside the accordion the alert sat flush against the header
-  // (the accordion body has no top padding), so it keeps a little air above it.
-  test('gives the summary alert a little space above it', () => {
+  // Maintainer, 2026-10-08: the alert once sat flush against the accordion header and
+  // carried its own mt-2. Every accordion body now has that 8px of top padding
+  // (LoAccordion), so the alert must not add a second 8px on top of it.
+  test('leaves the space above the summary alert to the accordion body', () => {
     const html = renderToStaticMarkup(
       <VocabularyBlock
         content={{ summary: { lead: 'You will learn:', items: ['Greetings'] }, items }}
       />,
     );
-    expect(html).toMatch(/role="note"[^>]*class="[^"]*\bmt-2\b/);
+    expect(html).toMatch(/role="note"/);
+    expect(html).not.toMatch(/role="note"[^>]*class="[^"]*\bmt-2\b/);
   });
 
   test('hides the sort buttons when there is nothing to sort', () => {
