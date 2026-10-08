@@ -57,7 +57,7 @@ export const EXERCISE_INSTRUCTIONS: Record<ExerciseType, string> = {
   'word-spot':
     'Click every part of the text that matches the target. Select **Check** to mark your selection, **Reset** to clear it, or **Show answers** to reveal the correct parts.',
   flashcards:
-    'Read the card, then select **Flip** to reveal the other side. Rate yourself: **Again** if you missed it (the card comes back later) or **Good** if you knew it. Use **Switch direction** to change which language shows first, and **Restart** to shuffle and start over.',
+    'Read the card, then select **Show answer** to turn it over. Rate yourself: **Again** if you missed it (the card comes back later) or **Got it** if you knew it. Each circle shows how you rated a card. Switch the direction above the card to change which language shows first, and **Restart** to start over.',
   conjugation:
     'Type the correct verb form for each person; press Enter to jump to the next one. Select **Check** to mark your answers, **Reset** to clear them, or **Show answers** to reveal the correct forms.',
   reading:

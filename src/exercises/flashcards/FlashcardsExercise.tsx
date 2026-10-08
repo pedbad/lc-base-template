@@ -34,6 +34,7 @@
  * Spec: docs/specs/2026-07-03-new-exercise-engines-design.md §4.
  */
 import { useReducer, useState } from 'react';
+import { Check, Frown, RotateCcw, Smile } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AudioClip } from '@/components/audio/AudioClip';
 import { resolveAsset } from '@/lib/assets';
@@ -44,10 +45,27 @@ import {
   FlashcardsOptionsSchema,
   type FlashcardDirection,
 } from './flashcards-schema';
-import { buildDeck, deckReducer, initDeckState, type DeckCard } from './flashcards-deck';
+import {
+  buildDeck,
+  deckReducer,
+  initDeckState,
+  type DeckCard,
+  type DeckGrade,
+} from './flashcards-deck';
 import { initSrsState, gradeCard, dueOrder, type SrsGrade, type SrsState } from './srs-scheduler';
 import { storageKey, loadSrsState, saveSrsState, clearSrsState } from './flashcards-storage';
+import { EXERCISE_BUTTONS } from '@/exercises/lib/exercise-buttons';
 import './flashcards.css';
+
+/** The learner's own language; the deck's `native` side. */
+const NATIVE_LANG = 'en';
+const languageNames = new Intl.DisplayNames(['en'], { type: 'language' });
+/** Face labels, e.g. "Spanish" / "English", from the course's language code. */
+const TARGET_NAME = languageNames.of(TARGET_LANG) ?? TARGET_LANG;
+const NATIVE_NAME = languageNames.of(NATIVE_LANG) ?? NATIVE_LANG;
+/** Direction-switch labels, e.g. "ES → EN". */
+const TARGET_CODE = TARGET_LANG.toUpperCase();
+const NATIVE_CODE = NATIVE_LANG.toUpperCase();
 
 /**
  * Reorder a freshly-built deck so the most-due cards lead (SRS load-order). A fresh
@@ -105,11 +123,7 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
     );
   }
 
-  const { queue, flipped, known, total } = state;
-  const current = queue[0];
-
-  const handleToggleDirection = () =>
-    setDirection((d) => (d === 'target-native' ? 'native-target' : 'target-native'));
+  const current = state.queue[0];
 
   // Rebuild the deck for another pass. SRS progress persists, so the fresh deck is
   // re-ordered by the current due-state (struggled cards lead again).
@@ -138,52 +152,83 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
     dispatch({ kind: 'restart', queue: freshQueue(fresh) });
   };
 
+  const { queue, flipped, known, total, order, results } = state;
+  const recognised = order.filter((id) => results[id] === 'good').length;
+  const progress = <ProgressDots order={order} results={results} currentId={current?.id ?? null} />;
+
+  const housekeeping = (
+    <div className="flashcards-footer">
+      <Button variant="ghost" size="sm" onClick={handleRestart}>
+        <RotateCcw aria-hidden="true" />
+        Restart
+      </Button>
+      {srsEnabled ? (
+        <Button variant="ghost" size="sm" onClick={handleResetProgress}>
+          Reset progress
+        </Button>
+      ) : null}
+    </div>
+  );
+
   if (!current) {
     return (
       <div className="flashcards">
+        <div className="flashcards-toolbar">{progress}</div>
         <p className="flashcards-status" role="status" aria-live="polite">
           Deck complete — {total} {total === 1 ? 'card' : 'cards'} learned.
         </p>
-        <div className="flashcards-footer">
-          <Button onClick={handleRestart}>Restart</Button>
-          {srsEnabled ? (
-            <Button variant="ghost" onClick={handleResetProgress}>
-              Reset progress
-            </Button>
-          ) : null}
-        </div>
+        {housekeeping}
       </div>
     );
   }
 
-  // Which role faces front. The audio speaker rides inside whichever face carries the
-  // Spanish (target) term, so it sits beside the word and rotates with the flip.
   const targetOnFront = direction === 'target-native';
   const frontText = targetOnFront ? current.target : current.native;
   const backText = targetOnFront ? current.native : current.target;
   const faceLang = (isTarget: boolean) => (isTarget ? TARGET_LANG : undefined);
+  const langName = (isTarget: boolean) => (isTarget ? TARGET_NAME : NATIVE_NAME);
+  // The cards still waiting behind this one, capped at the two drawn (flashcards.css).
+  const stack = Math.min(queue.length - 1, 2);
 
-  // The speaker is a real <button>, so it can't nest inside a <button> card. The card
-  // instead layers a transparent flip-hit <button> UNDER the faces (pointer-events
-  // routing in CSS): clicks on empty card area fall through to it and flip, while the
-  // inline speaker keeps its own clicks. Both stay keyboard-reachable, no nesting.
   const speaker = (isTarget: boolean) =>
     isTarget && current.audio ? (
       <AudioClip
         className="super-compact-speaker flashcards-audio"
         soundFile={current.audio}
-        size={24}
+        size={28}
         inline
       />
     ) : null;
 
   return (
     <div className="flashcards">
-      <p className="flashcards-progress" role="status" aria-live="polite">
-        Card {known + 1} of {total}
+      <p className="sr-only" role="status" aria-live="polite">
+        {`Card ${known + 1} of ${total}. ${recognised} recognised.`}
       </p>
 
-      <div className="flashcards-card-wrap">
+      <div className="flashcards-toolbar">
+        {progress}
+        {options.lockDirection ? null : (
+          <div className="flashcards-direction" role="group" aria-label="Card direction">
+            <button
+              type="button"
+              aria-pressed={targetOnFront}
+              onClick={() => setDirection('target-native')}
+            >
+              {`${TARGET_CODE} → ${NATIVE_CODE}`}
+            </button>
+            <button
+              type="button"
+              aria-pressed={!targetOnFront}
+              onClick={() => setDirection('native-target')}
+            >
+              {`${NATIVE_CODE} → ${TARGET_CODE}`}
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="flashcards-card-wrap" data-stack={stack}>
         <div className="flashcards-card" data-flipped={flipped}>
           <span className="flashcards-card-inner">
             <span
@@ -191,11 +236,13 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
               aria-hidden={flipped}
               inert={flipped}
             >
-              <span className="flashcards-term-row">
-                <span className="flashcards-term" lang={faceLang(targetOnFront)}>
-                  {frontText}
-                </span>
-                {speaker(targetOnFront)}
+              <span className="flashcards-lang">{langName(targetOnFront)}</span>
+              <span className="flashcards-term" lang={faceLang(targetOnFront)}>
+                {frontText}
+              </span>
+              {speaker(targetOnFront)}
+              <span className="flashcards-hint" aria-hidden="true">
+                Select the card to flip
               </span>
             </span>
             <span
@@ -203,12 +250,15 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
               aria-hidden={!flipped}
               inert={!flipped}
             >
-              <span className="flashcards-term-row">
-                <span className="flashcards-term" lang={faceLang(!targetOnFront)}>
-                  {backText}
-                </span>
-                {speaker(!targetOnFront)}
+              <span className="flashcards-lang">{langName(!targetOnFront)}</span>
+              {/* The prompt stays, small, so the learner can compare the two sides. */}
+              <span className="flashcards-prompt" lang={faceLang(targetOnFront)}>
+                {frontText}
               </span>
+              <span className="flashcards-term" lang={faceLang(!targetOnFront)}>
+                {backText}
+              </span>
+              {speaker(!targetOnFront)}
               {current.image ? (
                 <img className="flashcards-image" src={resolveAsset(current.image)} alt="" />
               ) : null}
@@ -226,16 +276,27 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
         </div>
       </div>
 
-      <div className="flashcards-actions">
+      {/* One row, one height in both states, so nothing below it jumps on a flip. */}
+      <div className="flashcards-actions" data-flipped={flipped}>
         {flipped ? (
           <>
-            <Button variant="outline" onClick={() => handleRate('again')}>
+            <Button variant="outline" size="lg" onClick={() => handleRate('again')}>
+              <RotateCcw aria-hidden="true" />
               Again
             </Button>
-            <Button onClick={() => handleRate('good')}>Good</Button>
+            <Button
+              size="lg"
+              className={EXERCISE_BUTTONS.check.className}
+              onClick={() => handleRate('good')}
+            >
+              <Check aria-hidden="true" />
+              Got it
+            </Button>
           </>
         ) : (
-          <Button onClick={() => dispatch({ kind: 'flip' })}>Flip</Button>
+          <Button size="lg" onClick={() => dispatch({ kind: 'flip' })}>
+            Show answer
+          </Button>
         )}
       </div>
 
@@ -245,21 +306,38 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
         </p>
       ) : null}
 
-      <div className="flashcards-footer">
-        {options.lockDirection ? null : (
-          <Button variant="ghost" onClick={handleToggleDirection}>
-            Switch direction ({targetOnFront ? 'Spanish → English' : 'English → Spanish'})
-          </Button>
-        )}
-        <Button variant="ghost" onClick={handleRestart}>
-          Restart
-        </Button>
-        {srsEnabled ? (
-          <Button variant="ghost" onClick={handleResetProgress}>
-            Reset progress
-          </Button>
-        ) : null}
-      </div>
+      {housekeeping}
     </div>
+  );
+}
+
+interface ProgressDotsProps {
+  order: readonly string[];
+  results: Readonly<Record<string, DeckGrade>>;
+  currentId: string | null;
+}
+
+/**
+ * One circle per card, in the order the session started: empty until rated, then a
+ * happy face (Got it) or a sad face (Again), the latest rating winning. Decorative —
+ * the sr-only status line above says the same in words.
+ */
+function ProgressDots({ order, results, currentId }: ProgressDotsProps) {
+  return (
+    <ol className="flashcards-dots" aria-hidden="true">
+      {order.map((id) => {
+        const result = results[id] ?? 'pending';
+        return (
+          <li
+            key={id}
+            className="flashcards-dot"
+            data-result={result}
+            data-current={id === currentId ? 'true' : undefined}
+          >
+            {result === 'good' ? <Smile /> : result === 'again' ? <Frown /> : null}
+          </li>
+        );
+      })}
+    </ol>
   );
 }

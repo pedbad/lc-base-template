@@ -39,7 +39,8 @@ interface ExerciseHostProps {
  * memory-match's deck keeps its 32rem cap and centres in the column (`margin: 0 auto`,
  * memory-match.css). reading's passage shares a row with its image at a wide exercise
  * width and its questions run full width below (reading.css); the paragraphs keep
- * the measure.
+ * the measure. flashcards centres its 36rem study stage in the column, under the
+ * instruction box (flashcards.css).
  * Every other engine stays on the track
  * (§D11: at the full column, `width: 100%` inputs went ~800px wide).
  */
@@ -54,6 +55,7 @@ const FULL_WIDTH_TYPES: ReadonlySet<ExerciseType> = new Set([
   'memory-match',
   'conjugation',
   'reading',
+  'flashcards',
 ]);
 
 /** Safely read `content.instructions` off an unknown config (author override). */

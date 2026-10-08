@@ -48,23 +48,38 @@ export interface DeckState {
   known: number;
   /** Total unique cards in the deck. */
   total: number;
+  /** Card ids in the order the session started: one progress circle each, fixed. */
+  order: readonly string[];
+  /** Each rated card's latest self-rating; an unrated card is absent. */
+  results: Readonly<Record<string, DeckGrade>>;
 }
+
+/** A self-rating: missed it (comes back later) or knew it. */
+export type DeckGrade = 'again' | 'good';
 
 export type DeckAction =
   | { kind: 'flip' }
-  | { kind: 'rate'; grade: 'again' | 'good' }
+  | { kind: 'rate'; grade: DeckGrade }
   | { kind: 'restart'; queue: DeckCard[] };
 
 /** Build the initial session state from a freshly-built deck. */
 export function initDeckState(queue: DeckCard[]): DeckState {
-  return { queue, flipped: false, known: 0, total: queue.length };
+  return {
+    queue,
+    flipped: false,
+    known: 0,
+    total: queue.length,
+    order: queue.map((card) => card.id),
+    results: {},
+  };
 }
 
 /**
  * The whole Step 1 session model, as a pure reducer:
  *   - flip    toggles the current card's face.
  *   - rate    'good' retires the current card; 'again' sends it to the back so it
- *             resurfaces this session. Either way the next card starts face-down.
+ *             resurfaces this session. Either way the next card starts face-down,
+ *             and the rating is recorded against the card for its progress circle.
  *   - restart replaces the queue with a fresh (optionally re-shuffled) deck.
  */
 export function deckReducer(state: DeckState, action: DeckAction): DeckState {
@@ -76,7 +91,8 @@ export function deckReducer(state: DeckState, action: DeckAction): DeckState {
       if (!current) return state;
       const queue = action.grade === 'good' ? rest : [...rest, current];
       const known = action.grade === 'good' ? state.known + 1 : state.known;
-      return { ...state, queue, known, flipped: false };
+      const results = { ...state.results, [current.id]: action.grade };
+      return { ...state, queue, known, results, flipped: false };
     }
     case 'restart':
       return initDeckState(action.queue);

@@ -115,3 +115,43 @@ test('deckReducer: restart rebuilds the queue and resets progress', () => {
   expect(restarted.known).toBe(0);
   expect(restarted.flipped).toBe(false);
 });
+
+// Progress circles (maintainer, 2026-10-08): one circle per card in the order the
+// session started, each showing the card's latest self-rating.
+const three = () =>
+  buildDeck(
+    {
+      cards: [
+        { target: 'uno', native: 'one' },
+        { target: 'dos', native: 'two' },
+        { target: 'tres', native: 'three' },
+      ],
+    },
+    false,
+  );
+
+test('initDeckState: fixes the circle order to the starting queue, no results yet', () => {
+  const state = initDeckState(three());
+  expect(state.order).toEqual(['0', '1', '2']);
+  expect(state.results).toEqual({});
+});
+
+test('rate: records again and good against the card, and the latest rating wins', () => {
+  let state = initDeckState(three());
+  state = deckReducer(state, { kind: 'rate', grade: 'again' }); // uno → back of queue
+  expect(state.results).toEqual({ '0': 'again' });
+  state = deckReducer(state, { kind: 'rate', grade: 'good' }); // dos
+  state = deckReducer(state, { kind: 'rate', grade: 'good' }); // tres
+  state = deckReducer(state, { kind: 'rate', grade: 'good' }); // uno again, now known
+  expect(state.results).toEqual({ '0': 'good', '1': 'good', '2': 'good' });
+  // The circle order never moves, even though uno was re-queued.
+  expect(state.order).toEqual(['0', '1', '2']);
+});
+
+test('restart: clears the results and takes the new queue order', () => {
+  let state = deckReducer(initDeckState(three()), { kind: 'rate', grade: 'good' });
+  const reversed = [...three()].reverse();
+  state = deckReducer(state, { kind: 'restart', queue: reversed });
+  expect(state.results).toEqual({});
+  expect(state.order).toEqual(['2', '1', '0']);
+});

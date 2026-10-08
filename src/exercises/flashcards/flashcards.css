@@ -7,6 +7,13 @@
  * Motion is compositor-friendly (transform/opacity only). The flip is disabled under
  * prefers-reduced-motion: the visible face is chosen by the state attribute instead.
  *
+ * STUDY STAGE (maintainer, 2026-10-08, option A). The deck is a 36rem stage centred
+ * in the column, under the instruction box. Spacing is grouped, not uniform: the
+ * toolbar sits tight on the card (0.75rem), the actions a step further (1.5rem from
+ * the card's edge), housekeeping furthest away behind a hairline (2rem). Progress is
+ * one circle per card — empty, then a happy or sad face. Spare cards stack behind the
+ * current one and drop away as the queue empties.
+ *
  * Spec: docs/specs/2026-07-03-new-exercise-engines-design.md §4.
  */
 @layer components {
@@ -14,21 +21,131 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 1rem;
-    max-width: 30rem;
-    margin: 0 auto;
+    width: 100%;
+    max-width: 36rem;
+    margin-inline: auto;
   }
 
+  /* Progress circles left, direction switch right; wraps on a narrow phone. */
+  .flashcards-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .flashcards-dots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .flashcards-dot {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 1.5px solid var(--border);
+    border-radius: 50%;
+    color: var(--muted-foreground);
+  }
+
+  .flashcards-dot svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .flashcards-dot[data-current='true'] {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--primary) 25%, transparent);
+  }
+
+  .flashcards-dot[data-result='good'] {
+    border-color: var(--success);
+    background-color: color-mix(in oklab, var(--success) 12%, transparent);
+    color: var(--success);
+  }
+
+  .flashcards-dot[data-result='again'] {
+    border-color: var(--destructive-text);
+    background-color: color-mix(in oklab, var(--destructive-text) 10%, transparent);
+    color: var(--destructive-text);
+  }
+
+  /* Two-option direction switch (ES → EN | EN → ES): real buttons, aria-pressed. */
+  .flashcards-direction {
+    display: inline-flex;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .flashcards-direction button {
+    padding: 0.25rem 0.75rem;
+    border: 0;
+    background: transparent;
+    color: var(--muted-foreground);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .flashcards-direction button + button {
+    border-inline-start: 1px solid var(--border);
+  }
+
+  .flashcards-direction button:hover {
+    background-color: var(--muted);
+  }
+
+  .flashcards-direction button[aria-pressed='true'] {
+    background-color: color-mix(in oklab, var(--primary) 12%, var(--card));
+    color: var(--foreground);
+  }
+
+  .flashcards-direction button:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+
+  /* The deck: the card plus up to two spare cards peeking out below it. */
   .flashcards-card-wrap {
+    position: relative;
     display: block;
+    padding-bottom: 0.875rem;
+  }
+
+  .flashcards-card-wrap::before,
+  .flashcards-card-wrap::after {
+    position: absolute;
+    z-index: 0;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) + 4px);
+    background-color: color-mix(in oklab, var(--primary) 5%, var(--card));
+    content: '';
+  }
+
+  .flashcards-card-wrap[data-stack='2']::before {
+    inset: 0.875rem 1.5rem 0;
+  }
+
+  .flashcards-card-wrap:not([data-stack='0'])::after {
+    inset: 0.4375rem 0.75rem;
   }
 
   /* The card is the 3D stage + hit-target anchor (no longer a button — the flip
      control is the transparent .flashcards-flip-hit layered under the faces). */
   .flashcards-card {
     position: relative;
+    z-index: 1;
     display: block;
     width: 100%;
+    min-height: 13rem;
     aspect-ratio: 3 / 2;
     perspective: 1400px;
   }
@@ -78,7 +195,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.75rem;
-    padding: 1.5rem;
+    padding: 2.5rem 1.5rem;
     border: 1px solid var(--border);
     border-radius: calc(var(--radius) + 4px);
     backface-visibility: hidden;
@@ -99,16 +216,34 @@
     transform: rotateY(180deg);
   }
 
-  /* Term + inline speaker on one row, so the icon sits just right of the word. */
-  .flashcards-term-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
+  /* Which language this face is in, top-left. */
+  .flashcards-lang {
+    position: absolute;
+    top: 1rem;
+    left: 1.25rem;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .flashcards-hint {
+    position: absolute;
+    right: 1.25rem;
+    bottom: 0.875rem;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+  }
+
+  /* On the back: the prompt, small, above the answer. */
+  .flashcards-prompt {
+    color: var(--muted-foreground);
+    font-size: 0.9375rem;
   }
 
   .flashcards-term {
-    font-size: clamp(1.5rem, 1rem + 2.5vw, 2.25rem);
+    font-size: clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem);
     font-weight: 650;
     line-height: 1.15;
     text-align: center;
@@ -147,43 +282,46 @@
     color: var(--muted-foreground);
   }
 
-  .flashcards-progress {
-    margin: 0;
-    font-size: var(--text-sm, 0.875rem);
-    font-variant-numeric: tabular-nums;
-    color: var(--muted-foreground);
-  }
-
   .flashcards-status {
-    margin: 0;
+    margin: 1.5rem 0;
     font-weight: 600;
     text-align: center;
   }
 
+  /* One row, one height in both states: Show answer spans it; after the flip it
+     splits into Again | Got it. min-height, because the Button's own height is a
+     utility (a later layer than this one). */
   .flashcards-actions {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.75rem;
-    justify-content: center;
+    margin-top: 0.625rem;
+  }
+
+  .flashcards-actions[data-flipped='true'] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .flashcards-actions > * {
-    min-width: 7rem;
+    min-height: 2.75rem;
   }
 
   .flashcards-footnote {
-    margin: 0;
+    margin: 1rem 0 0;
     font-size: var(--text-sm, 0.875rem);
     color: var(--muted-foreground);
     text-align: center;
   }
 
+  /* Housekeeping: quiet, right-aligned like every other engine's footer. */
   .flashcards-footer {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding-top: 1rem;
+    justify-content: flex-end;
+    gap: 0.25rem;
+    margin-top: 2rem;
+    padding-top: 0.75rem;
     border-top: 1px solid var(--border);
   }
 
