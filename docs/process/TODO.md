@@ -1376,9 +1376,11 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     width, 4 from there (container query), capped at 65rem: 113 / 141 / 117 / 155 / 219
     / 251 / 251px at 320 / 375 / 600 / 768 / 1024 / 1440 / 1920. Lazy
     `memory-match.css`; main bundles unchanged. axe clean both themes (`2cac630`).
-  - **Hero placeholder plate under the title** at 320, 375 and 768: the LO title's first
-    line runs across the plate (at 375 the line spans x 16–276, y 21–63; the plate
-    171–366 × 36–65). Clear from 1024. Placeholder only; real artwork has no plate.
+  - **Hero placeholder plate under the title on a phone.** Since 2026-10-08 the plate
+    hangs from the banner's top-right corner at every width (12px in from 768, 8–9px
+    and scaled below 480; hero.svg has no intrinsic size and fills the banner), so it
+    is clear of the title from tablet up. At 320–375 the title's first line still runs
+    across it. Placeholder only; real artwork has no plate.
   - **Typed-answer feedback in a visible browser** (§D15): the `<mark>` highlight's colour
     in both themes, and the hint line under an inline-gap blank (it runs wider than the
     blank: 149px under a 62px input). Verified by measurement only; the pane was hidden.
@@ -1395,7 +1397,8 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     ("Check the spelling"), far ("Not quite. Try again."). Far = similarity
     2·LCS/(|a|+|b|) below 0.6.
   - **Second wrong Check on that answer:** "Answer:" and the answer as authored, in the
-    course language; on a close miss the differing letters sit in a `<mark>`, said in
+    course language; on a close miss the differing letters sit in a `<mark>` (Cambridge
+    Light Blue, `bg-callout-info`, maintainer 2026-10-08), said in
     words for a screen reader; a far miss shows the answer plain. A one-line key under
     the first marked answer in an exercise. Editing an answer clears its line; misses
     are counted per answer until Reset. Show answer still fills the inputs.
