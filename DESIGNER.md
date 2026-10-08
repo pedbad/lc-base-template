@@ -264,8 +264,9 @@ rather than freezing). Change these knowingly; they are accessibility floors.
 
 Every image slot ships with a placeholder that prints its own size on the artwork:
 the size to **supply** (2×, for sharp screens) and the largest size it is **shown**
-at. Open the page, read the label, export at the supply size, and drop your file in
-over the placeholder (or point the config at it). The slots and their numbers are
+at, plus the file's path under `public/`. Open the page, read the label (a small amber
+plate, bottom-left), export at the supply size, and drop your file in over that path
+(or point the config at a new one). The slots and their numbers are
 listed once, in [`src/build/placeholder-labels.test.ts`](src/build/placeholder-labels.test.ts);
 if a layout changes a slot's size, that test and the label are updated together.
 
