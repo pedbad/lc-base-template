@@ -16,6 +16,10 @@ import { AudioClip } from '@/components/audio/AudioClip';
 import type { RichTextNode } from './rich-text-nodes';
 import { ModalLink } from './modal/ModalLink';
 
+/** A speaker inside a line of text: 36px, so the line keeps its rhythm. Stand-alone
+ *  speakers are 54px (maintainer, 2026-10-08). */
+const INLINE_SPEAKER_SIZE = 36;
+
 /** Render one node. Split out so parents can recurse over their children. */
 function RichTextNodeView({ node }: { node: RichTextNode }) {
   switch (node.kind) {
@@ -48,6 +52,7 @@ function RichTextNodeView({ node }: { node: RichTextNode }) {
         <AudioClip
           className="super-compact-speaker"
           inline
+          size={INLINE_SPEAKER_SIZE}
           soundFile={node.soundFile}
           title={node.label}
         />

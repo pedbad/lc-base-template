@@ -102,6 +102,13 @@ describe('audio icons', () => {
     expect(html).toContain('aria-label="Click to play"');
   });
 
+  // Maintainer, 2026-10-08: speakers doubled to 54px, but one sitting inside a line of
+  // text stays at 36px so the line keeps its rhythm.
+  test('an inline speaker is 36px, smaller than the 54px stand-alone default', () => {
+    const html = renderAuthored('<span data-audio="audio/lo-00-example/tu.mp3"></span>');
+    expect(html).toContain('style="width:36px;height:36px"');
+  });
+
   test('uses data-audio-label as the accessible name when authored', () => {
     const html = renderAuthored(
       '<span data-audio="a.mp3" data-audio-label="Play tu, informal"></span>',
