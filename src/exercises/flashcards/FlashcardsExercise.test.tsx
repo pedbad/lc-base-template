@@ -90,8 +90,8 @@ describe('FlashcardsExercise study stage', () => {
   });
 
   // Maintainer, 2026-10-09: the front's "Select the card to flip" read as stray text.
-  // It now sits in a coloured bottom-right corner with a pointer icon.
-  test('puts the flip hint in a coloured corner with a pointer icon', () => {
+  // A Warm Blue triangle now holds a pointer icon in the corner, the words beside it.
+  test('puts a pointer icon before the flip hint, for the corner triangle', () => {
     const html = render();
     expect(html).toMatch(
       /<span class="flashcards-hint" aria-hidden="true"><svg[^>]*lucide-spline-pointer[^>]*>[\s\S]*?<\/svg>Select the card to flip<\/span>/,

@@ -228,28 +228,32 @@
     text-transform: uppercase;
   }
 
-  /* The flip cue (maintainer, 2026-10-09): a --primary tab in the front's bottom-right
-     corner, a pointer icon before the words. Its outer corner follows the face's,
-     less the face's 1px border it sits inside. */
+  /* The flip cue (maintainer, 2026-10-09): a --flip-cue triangle in the front's
+     bottom-right corner holding the pointer icon, the words in grey to its left. The
+     triangle is the hint's own background, a diagonal gradient at its corner, rounded
+     with the face (less the face's 1px border). */
   .flashcards-hint {
     position: absolute;
     right: 0;
     bottom: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    padding: 0.5rem 1rem 0.5rem 0.875rem;
-    border-radius: var(--radius) 0 calc(var(--radius) + 3px) 0;
-    background-color: var(--primary);
-    color: var(--primary-foreground);
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: flex-end;
+    gap: 1.25rem;
+    min-height: 3.5rem;
+    padding: 0 0.5rem 0.5rem 0;
+    border-bottom-right-radius: calc(var(--radius) + 3px);
+    background: linear-gradient(to bottom right, transparent 50%, var(--flip-cue) 50%) right
+      bottom / 3.5rem 3.5rem no-repeat;
+    color: var(--muted-foreground);
     font-size: 0.75rem;
-    font-weight: 600;
   }
 
   .flashcards-hint svg {
     flex: none;
-    width: 1rem;
-    height: 1rem;
+    width: 1.125rem;
+    height: 1.125rem;
+    color: var(--flip-cue-foreground);
   }
 
   /* On the back: the prompt, small, above the answer. */
