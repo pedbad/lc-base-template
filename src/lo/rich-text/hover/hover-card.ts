@@ -4,10 +4,14 @@
  * unit-tested without a DOM; HoverTerm.tsx is thin wiring over them.
  *
  * OPEN/CLOSE (WCAG 1.4.13 content on hover or focus, 2.1.1 keyboard): a mouse hover
- * opens it and leaving closes it (after a short delay, so the pointer can cross into
- * the card); keyboard focus opens it and focus leaving closes it; a press (tap, click,
- * Enter, Space) toggles it and PINS it open, so a touch user can read it without a
- * hover; Escape always closes it.
+ * opens it and keyboard focus opens it, and it stays open while EITHER trigger remains
+ * — the pointer crossing a focused term does not close it, nor does Tab with the
+ * pointer still resting on it (leaving is delayed in HoverTerm, so the pointer can
+ * cross into the card). A pointer press (tap, click) toggles it and PINS it open, so a
+ * touch user can read it without a hover; a tap's own focus opens it first, so the tap
+ * pins rather than closes. Enter and Space toggle what the reader sees: on a card focus
+ * opened, they close it (the disclosure pattern). Escape always closes it, and it stays
+ * closed until a trigger starts again.
  */
 
 /** One drawn line of a path's folder tree. */
@@ -36,8 +40,10 @@ export function pathTree(path: string): readonly TreeLine[] {
 
 export interface HoverCardState {
   readonly isOpen: boolean;
-  /** Opened by a press: stays open when the pointer leaves, until pressed again. */
+  /** Opened by a press: stays open when the pointer and focus leave, until pressed again. */
   readonly isPinned: boolean;
+  readonly isHovered: boolean;
+  readonly isFocused: boolean;
 }
 
 export type HoverCardEvent =
@@ -45,23 +51,44 @@ export type HoverCardEvent =
   | { readonly type: 'hoverEnd' }
   | { readonly type: 'focus' }
   | { readonly type: 'blur' }
-  | { readonly type: 'press' }
+  | { readonly type: 'press'; readonly via: 'pointer' | 'keyboard' }
   | { readonly type: 'escape' };
 
-export const CLOSED: HoverCardState = { isOpen: false, isPinned: false };
-const PINNED: HoverCardState = { isOpen: true, isPinned: true };
+export const CLOSED: HoverCardState = {
+  isOpen: false,
+  isPinned: false,
+  isHovered: false,
+  isFocused: false,
+};
+/** Open and pinned, no trigger held: the debug pages' `defaultOpen`. */
+export const PINNED: HoverCardState = { ...CLOSED, isOpen: true, isPinned: true };
 
 export function hoverCardReducer(state: HoverCardState, event: HoverCardEvent): HoverCardState {
   switch (event.type) {
     case 'hoverStart':
+      return { ...state, isHovered: true, isOpen: true };
     case 'focus':
-      return state.isOpen ? state : { isOpen: true, isPinned: false };
+      return { ...state, isFocused: true, isOpen: true };
     case 'hoverEnd':
-      return state.isPinned ? state : CLOSED;
-    case 'press':
-      return state.isPinned ? CLOSED : PINNED;
+      return {
+        ...state,
+        isHovered: false,
+        isOpen: state.isOpen && (state.isPinned || state.isFocused),
+      };
     case 'blur':
+      return {
+        ...state,
+        isFocused: false,
+        isPinned: false,
+        isOpen: state.isOpen && state.isHovered,
+      };
+    case 'press': {
+      const isClosing = event.via === 'keyboard' ? state.isOpen : state.isPinned;
+      return isClosing
+        ? { ...state, isOpen: false, isPinned: false }
+        : { ...state, isOpen: true, isPinned: true };
+    }
     case 'escape':
-      return CLOSED;
+      return { ...state, isOpen: false, isPinned: false };
   }
 }

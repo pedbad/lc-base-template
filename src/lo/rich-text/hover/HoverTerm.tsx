@@ -20,7 +20,7 @@
  */
 import { useEffect, useId, useLayoutEffect, useReducer, useRef, type ReactNode } from 'react';
 import { RichText } from '../RichText';
-import { CLOSED, hoverCardReducer, pathTree } from './hover-card';
+import { CLOSED, hoverCardReducer, pathTree, PINNED } from './hover-card';
 import { useHoverCard } from './hover-context';
 
 /** Pointer leaves → close after this long, so the pointer can cross into the card. */
@@ -38,10 +38,7 @@ interface HoverTermProps {
 
 export function HoverTerm({ target, children, defaultOpen = false }: HoverTermProps) {
   const card = useHoverCard(target);
-  const [state, dispatch] = useReducer(
-    hoverCardReducer,
-    defaultOpen ? { isOpen: true, isPinned: true } : CLOSED,
-  );
+  const [state, dispatch] = useReducer(hoverCardReducer, defaultOpen ? PINNED : CLOSED);
   const cardId = useId();
   const cardRef = useRef<HTMLSpanElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -101,7 +98,10 @@ export function HoverTerm({ target, children, defaultOpen = false }: HoverTermPr
         aria-expanded={state.isOpen}
         // Only while the card exists: a closed card has no element to point at.
         aria-controls={state.isOpen ? cardId : undefined}
-        onClick={() => dispatch({ type: 'press' })}
+        // detail 0: a click synthesised by Enter or Space rather than a pointer.
+        onClick={(event) =>
+          dispatch({ type: 'press', via: event.detail === 0 ? 'keyboard' : 'pointer' })
+        }
       >
         {children}
       </button>
