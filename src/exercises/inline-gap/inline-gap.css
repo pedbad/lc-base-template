@@ -1,0 +1,31 @@
+/**
+ * inline-gap.css — a blank's feedback line hangs under it (maintainer, 2026-10-09;
+ * TODO §D15). Lazy: only InlineTypedGapExercise imports it.
+ *
+ * `.gap-hang` takes no width from the blank (`contain: inline-size`), so a 149–212px
+ * hint under a 62px input no longer pushes the rest of the sentence right. Its line
+ * sizes to its text, capped, and overflows to the right under the following words;
+ * the engine sets `--gap-hang-max` and `--gap-hang-offset` from hang-under.ts to keep
+ * it inside the row and clear of the next wrong blank's line. Without them (before the
+ * first measure) it simply hangs at the cap. Pinned by inline-gap-css.test.ts.
+ */
+@layer components {
+  /* Baseline, not middle: an inline-flex box's baseline is its input's, so the input
+     stays on the sentence's line and feedback only grows the box downward. Middle-
+     aligned, a taller box (answer + key) rode up past its neighbour, and two lines on
+     one text line no longer shared a top. */
+  .gap-blank {
+    vertical-align: baseline;
+  }
+
+  .gap-hang {
+    contain: inline-size;
+  }
+
+  .gap-hang > * {
+    position: relative;
+    inset-inline-start: var(--gap-hang-offset, 0);
+    inline-size: max-content;
+    max-inline-size: var(--gap-hang-max, 14rem);
+  }
+}

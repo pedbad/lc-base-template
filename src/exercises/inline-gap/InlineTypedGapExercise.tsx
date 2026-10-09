@@ -10,7 +10,8 @@
  *     value; grading handlers close over it (no ref-during-render, react-hooks/refs).
  *   - On Check, each filled blank is graded; a wrong one gets <AnswerFeedback> below
  *     its input — a hint naming the error first, the answer on the second wrong Check
- *     (answer-feedback.ts, TODO §D15).
+ *     (answer-feedback.ts, TODO §D15). It hangs under the blank without widening it,
+ *     so the sentence does not move (inline-gap.css, useHangUnder, hang-under.ts).
  *   - shared shell: ExerciseFooter (Check/Reset/Show-answers) + ResultSlot (per-row
  *     tick/cross). canRevealAnswers gates Show-answers (spec §5.3). Reset clears all.
  *   - chrome text via resolveLabel(key, labels) (ui-strings §9).
@@ -56,7 +57,9 @@ import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { TARGET_LANG } from '@/lib/lang';
 import { InlineGapExerciseConfigSchema, type InlineGapItem } from './inline-gap-schema';
 import { fillInlineGapAnswers, gradeInlineGap } from './inline-gap-grading';
+import { useHangUnder } from './useHangUnder';
 import { useRowAudio } from './useRowAudio';
+import './inline-gap.css';
 
 interface InlineGapState extends ScoringState {
   /** blankIndex → typed text. */
@@ -90,6 +93,8 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
   const [state, dispatch] = useReducer(reducer, undefined, buildState);
   const sequenceRef = useRef<SequenceAudioControllerHandle | null>(null);
   const audio = useRowAudio(items, sequenceRef);
+  const rootRef = useRef<HTMLDivElement>(null);
+  useHangUnder(rootRef, state.feedback);
 
   const inputId = (blankIndex: number) => `${uid}-gap-${blankIndex}`;
 
@@ -180,7 +185,8 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
     const id = inputId(blankIndex);
 
     return (
-      <span className="mx-1 inline-flex flex-col align-middle" key={id}>
+      // `gap-blank` (inline-gap.css): sits on the sentence's baseline.
+      <span className="gap-blank mx-1 inline-flex flex-col" key={id}>
         <label className="sr-only" htmlFor={id}>{`Answer for blank ${blankIndex + 1}`}</label>
         <Input
           id={id}
@@ -195,12 +201,15 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
           style={{ width: `${meta?.widthCh ?? 8}ch`, maxWidth: '100%' }}
         />
         {state.hasChecked && feedback ? (
-          <AnswerFeedback
-            feedback={feedback}
-            contentLang={TARGET_LANG}
-            labels={labels}
-            showKey={blankIndex === firstMarkedReveal(state.feedback)}
-          />
+          // Hangs under the blank without widening it (inline-gap.css, useHangUnder).
+          <span className="gap-hang">
+            <AnswerFeedback
+              feedback={feedback}
+              contentLang={TARGET_LANG}
+              labels={labels}
+              showKey={blankIndex === firstMarkedReveal(state.feedback)}
+            />
+          </span>
         ) : null}
       </span>
     );
@@ -257,7 +266,7 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
           </p>
         ) : null}
         <div className="grid grid-cols-[minmax(0,1fr)_2.5rem] items-start gap-2">
-          <span className="min-w-0 leading-loose text-foreground">
+          <span className="min-w-0 leading-loose text-foreground" data-gap-row>
             {renderRowAudio(i, item)}
             {nodes}
           </span>
@@ -295,7 +304,7 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
   });
 
   return (
-    <div className="flex flex-col gap-4">
+    <div ref={rootRef} className="flex flex-col gap-4">
       {useMaster ? (
         <SequenceAudioController
           ref={sequenceRef}
