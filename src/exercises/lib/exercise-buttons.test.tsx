@@ -5,6 +5,8 @@
  * in `src/components/ui/` is read as a wrapper by the `@source not` guard
  * (`src/build/source-negation.test.ts`).
  */
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, test } from 'vitest';
 
@@ -45,5 +47,34 @@ describe('Button, destructive variant', () => {
 
   test('Reset is that variant with no override', () => {
     expect(EXERCISE_BUTTONS.reset).toEqual({ variant: 'destructive' });
+  });
+});
+
+// TODO §D14 (2026-10-09): Check's hover, `bg-success/90`, faded the green toward the
+// card: white on #358962, 4.28:1 (axe, light theme, the pointer resting on Check). The
+// hover now pulls --success toward --foreground, away from its own label in both
+// themes (dark green under white in light, light green under dark blue in dark).
+describe('EXERCISE_BUTTONS.check', () => {
+  const list = () =>
+    classes(renderToStaticMarkup(<Button {...EXERCISE_BUTTONS.check}>Check</Button>));
+
+  test('hovers to --check-hover, not a fade toward the card', () => {
+    expect(list()).toContain('exercise-check');
+    expect(list()).toContain('hover:bg-(--check-hover)');
+    expect(list().some((c) => /^hover:bg-success\/\d+$/.test(c))).toBe(false);
+  });
+
+  // The mix lives in a lazy sheet: as an arbitrary utility its escaped selector cost
+  // the main sheet 0.04 kB of its last 0.12 (docs/TOOLING.md).
+  test('--check-hover pulls --success toward --foreground, in exercise-buttons.css', () => {
+    const css = readFileSync(path.join(import.meta.dirname, 'exercise-buttons.css'), 'utf8');
+    expect(css).toMatch(/@layer components\s*\{/);
+    expect(css).toMatch(
+      /\.exercise-check\s*\{[^}]*--check-hover:\s*color-mix\(in oklch, var\(--success\), var\(--foreground\) 15%\)/,
+    );
+  });
+
+  test('keeps the variant default hover out', () => {
+    expect(list()).not.toContain('hover:bg-primary/80');
   });
 });

@@ -1,0 +1,15 @@
+/**
+ * exercise-buttons.css — Check's hover colour (TODO §D14, 2026-10-09). Lazy: imported
+ * by exercise-buttons.ts, so only the engines and the debug sandbox load it.
+ *
+ * The hover pulls --success toward --foreground: darker under white in light, lighter
+ * under dark blue in dark, away from its label in both. `bg-success/90` faded it
+ * toward the card instead (4.28:1 under white). The utility `hover:bg-(--check-hover)`
+ * is short; the mix as an arbitrary utility cost main-*.css 0.04 kB.
+ * Pinned by exercise-buttons.test.tsx.
+ */
+@layer components {
+  .exercise-check {
+    --check-hover: color-mix(in oklch, var(--success), var(--foreground) 15%);
+  }
+}

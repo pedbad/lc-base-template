@@ -49,7 +49,7 @@ describe('ButtonsSection', () => {
   ])('labels a %s button with its token', (token, classes) => {
     expect(html).toMatch(
       new RegExp(
-        `<button[^>]*class="[^"]*${classes.replace(/[/[\]]/g, '\\$&')}[^"]*"[^>]*>${token}`,
+        `<button[^>]*class="[^"]*${classes.replace(/[.*+?^${}()|/[\]\\]/g, '\\$&')}[^"]*"[^>]*>${token}`,
       ),
     );
   });
