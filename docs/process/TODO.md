@@ -43,6 +43,23 @@ is exactly what the paragraph above is about.
 `bun run test` (Vitest), **not** `bun test` — Bun's own runner throws on the
 `import.meta.glob` in `load-lo-glob.ts` and reports a false failure.
 
+**Next, in order (2026-10-09):** each detailed in §D18 / §D14 below.
+
+1. **Show answer and the progress meter** (§D18) — maintainer's call first: count only
+   the student's own correct answers, or keep the count and skip the hop.
+2. **The four own-status engines** (§D18): memory-match, word-order, word-spot,
+   phrase-reorder — a meter for each, or keep their wording.
+3. **Check button hover contrast** (§D14): `hover:bg-success/90` is 4.28:1.
+4. **A hover term in the debug pages** (§D14).
+5. **Hero placeholder label at 320–375** (§D14) — maintainer's call.
+6. **Sandbox Docs hub tables at 375** (§D14).
+
+**Browser verification:** the in-app browser pane stays hidden (no window focus, so
+focus events never fire and transitions stall). Use a headed Chromium driven by
+`playwright-core` from a scratch directory, pointed at the cached
+`~/Library/Caches/ms-playwright/chromium-1223/` build, with `@axe-core/playwright`.
+The Playwright MCP needs a browser extension that is not installed.
+
 ---
 
 ## A. Guards — 0 of 8 open — all eight guards live
@@ -317,7 +334,7 @@ file as its home), `STRUCTURE.md`'s `src/sandbox/` row, README's build section,
 CONTRIBUTING's command table, `AGENTS.md`'s two new house rules, `docs/TOOLING.md`'s two
 new decision entries.
 
-## D. Design & accessibility polish — 1 of 13 open
+## D. Design & accessibility polish — 2 of 18 open (§D14, §D18)
 
 Design and a11y come before branch protection **by decision 2026-09-09**: a footer that
 ships internal build chatter and two dead links is a defect on every page of a live
@@ -1407,6 +1424,10 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     `hover:bg-success/90`, is white on `#358962`, 4.28:1, under AA's 4.5:1 (axe, light
     theme, the pointer left resting on Check at 320 and 375). Found while verifying
     the above; not caused by it.
+  - **A hover term in the debug pages:** the showcase's rich-text section
+    (`src/showcase/rich-text-fixture.ts`, `RichTextShowcase.tsx`) and the sandbox show
+    lists, a table and speakers, but no hover term or plain link. A hover term needs a
+    `HoverProvider` around the section and a card the fixture can declare.
   - **Sandbox Docs hub at 375:** two rendered tables (Preset, Font) scroll sideways
     with no keyboard focus — axe `scrollable-region-focusable`. Debug page only.
 
