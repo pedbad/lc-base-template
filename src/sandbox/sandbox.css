@@ -130,11 +130,18 @@
     color: var(--color-muted-foreground);
   }
 
-  /* Wide tables scroll inside their own wrapper rather than the page. */
-  .doc-prose table {
-    display: block;
+  /* Wide tables scroll inside their own wrapper rather than the page. The wrapper is a
+     tab stop (table_open in docs-markdown.ts) so a keyboard can scroll it (TODO §D14). */
+  .doc-prose .doc-table-scroll {
     overflow-x: auto;
-    width: 100%;
+  }
+
+  .doc-prose .doc-table-scroll:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  .doc-prose table {
     border-collapse: collapse;
     font-size: 0.9rem;
   }

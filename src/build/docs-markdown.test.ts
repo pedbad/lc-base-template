@@ -178,6 +178,26 @@ describe('renderDocMarkdown — code blocks are keyboard-scrollable regions', ()
   });
 });
 
+// TODO §D14 (2026-10-09): wide tables scrolled sideways inside their own box at 375
+// (DESIGNER's Preset and Font tables) with no keyboard stop: axe
+// `scrollable-region-focusable`. Each table now sits in a focusable, named region that
+// does the scrolling, so the <table> keeps its table semantics.
+describe('renderDocMarkdown — tables are keyboard-scrollable regions', () => {
+  const table = '| A | B |\n| - | - |\n| 1 | 2 |\n';
+
+  it('wraps a table in a focusable region named by doc and ordinal', () => {
+    expect(render(table)).toMatch(
+      /<div class="doc-table-scroll" tabindex="0" role="region" aria-label="DESIGNER\.md table 1">\s*<table>[\s\S]*<\/table>\s*<\/div>/,
+    );
+  });
+
+  it('counts tables per doc', () => {
+    const html = render(`${table}\ntext\n\n${table}`);
+    expect(html).toContain('aria-label="DESIGNER.md table 1"');
+    expect(html).toContain('aria-label="DESIGNER.md table 2"');
+  });
+});
+
 describe('readSandboxDocs', () => {
   const pages = readSandboxDocs();
 
@@ -226,6 +246,20 @@ describe('readSandboxDocs', () => {
     const names = pres.map((pre) => /aria-label="([^"]+)"/.exec(pre)?.[1]);
     expect(names.every(Boolean)).toBe(true);
     expect(new Set(names).size).toBe(names.length);
+  });
+
+  it('puts every table in the hub inside a focusable region, names unique', () => {
+    const html = pages.map((page) => page.html).join('\n');
+    const tables = html.match(/<table>/g) ?? [];
+    const regions = Array.from(
+      html.matchAll(
+        /<div class="doc-table-scroll" tabindex="0" role="region" aria-label="([^"]+)">\s*<table>/g,
+      ),
+      (m) => m[1],
+    );
+    expect(tables.length).toBeGreaterThan(0);
+    expect(regions).toHaveLength(tables.length);
+    expect(new Set(regions).size).toBe(regions.length);
   });
 
   // The same check `src/docs/md-links.ts` makes of the repo, made of the rendered hub:

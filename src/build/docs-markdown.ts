@@ -144,6 +144,8 @@ interface RenderState {
   readonly delinked: boolean[];
   /** Code blocks so far — the ordinal that makes each block's region name unique. */
   codeBlocks: number;
+  /** Tables so far, likewise. */
+  tables: number;
 }
 
 /** `#the-files` within one doc, uniquified the way GitHub does (`-1`, `-2`, …). */
@@ -260,6 +262,21 @@ for (const rule of ['fence', 'code_block'] as const) {
   };
 }
 
+/**
+ * Tables scroll sideways too (DESIGNER's Preset and Font tables at 375, TODO §D14), so
+ * each sits in a focusable, named region like a `<pre>`. The wrapper does the scrolling,
+ * not the `<table>`: `role="region"` on the table itself would replace its table role.
+ */
+md.renderer.rules.table_open = (_tokens, _idx, _options, env) => {
+  const state = env as unknown as RenderState;
+  state.tables += 1;
+  const file = DOC_BY_ID.get(state.docId)?.file ?? state.docId;
+  const name = md.utils.escapeHtml(`${file} table ${state.tables}`);
+  return `<div class="doc-table-scroll" tabindex="0" role="region" aria-label="${name}">\n<table>\n`;
+};
+
+md.renderer.rules.table_close = () => '</table>\n</div>\n';
+
 /** Render one doc's markdown, returning its HTML and the headings it contains. */
 export function renderDoc(
   markdown: string,
@@ -274,6 +291,7 @@ export function renderDoc(
     slugCounts: new Map(),
     delinked: [],
     codeBlocks: 0,
+    tables: 0,
   };
   // markdown-it types `env` as its own Env record; the renderer rules above are the
   // only readers of it, and they read it back as RenderState.
