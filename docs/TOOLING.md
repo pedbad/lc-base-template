@@ -155,14 +155,19 @@ Layer 1 is the carrot; layers 2–3 are the stick.
 **This is the one place the budget is written down.** Every other doc and comment that
 needs the number points here rather than restating it.
 
-| Asset        | Budget (gzipped) | Measured 2026-10-08 | Headroom |
+| Asset        | Budget (gzipped) | Measured 2026-10-09 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 120 kB**     | 110.48 kB           | 9.52 kB  |
+| `main-*.js`  | **< 120 kB**     | 110.47 kB           | 9.53 kB  |
 | `main-*.css` | **< 18 kB**      | 17.61 kB            | 0.39 kB  |
 
 - **memory-match card size (2026-10-08, TODO §D14): main bundles unchanged.** The
   2 → 4 column switch moved from a 48rem viewport query to a 30rem container query and
   the deck cap from 32rem to 65rem, all in the lazy `memory-match.css`.
+
+- **Highlight colour, hero label, small-card speaker (2026-10-08, TODO §D14/§D15): main
+  bundles unchanged** (JS 110.48 → 110.47 kB is gzip noise). `bg-callout-info` already
+  shipped (the info alert); the hero label lives in `public/`, outside every bundle; the
+  speaker's scale is a container query in the lazy `memory-match.css`.
 
 - **Typed-answer feedback (2026-10-08, TODO §D15): JS 110.47 → 110.48 kB, CSS 17.66 →
   17.61 kB.** The interleaved diff's colour and dotted-underline utilities left the

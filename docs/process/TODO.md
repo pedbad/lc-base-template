@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-08 · **HEAD:** see `git log` · **Suite:** 141 files · 1507 tests green
+**Last updated:** 2026-10-09 · **HEAD:** see `git log` · **Suite:** 141 files · 1513 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -1564,3 +1564,6 @@ build, so it cannot return. Two remain:
 | 2026-10-08 | `181d0e4` | **destructive button contrast** — variant uses `--destructive-text`; Reset's override gone (§D13)                             |
 | 2026-10-08 | `2cac630` | **memory-match card size** — 2 → 4 columns at a 30rem exercise width, deck capped at 65rem; 251px cards at 1440 (§D14)        |
 | 2026-10-08 | `bc2a829` | **typed-answer feedback** — hint naming the error first, the answer on the second wrong Check (§D15)                          |
+| 2026-10-08 | `77199ba` | **feedback highlight colour** — the revealed answer's `<mark>` is Cambridge Light Blue (`bg-callout-info`) (§D15)             |
+| 2026-10-08 | `7960573` | **hero label top-right** — hero.svg fills the banner; the label hangs 12px from its top-right corner (§D14)                   |
+| 2026-10-08 | `2c61379` | **memory-match speaker on small cards** — scales to 36px under a 10rem card, clear of the word (§D14)                         |
