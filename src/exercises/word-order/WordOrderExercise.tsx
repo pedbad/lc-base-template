@@ -48,6 +48,8 @@ interface OrderState {
   hasReordered: boolean;
   hasChecked: boolean;
   failCount: number;
+  /** Pieces in place at the last Check: the meter counts on Check, not live (§D18). */
+  checkedCount: number;
   complete: boolean;
   /** null until Show answer; then the student's own count, which the meter keeps (§D18). */
   ownAtReveal: number | null;
@@ -67,6 +69,7 @@ function freshState(expected: Token[]): OrderState {
     hasReordered: false,
     hasChecked: false,
     failCount: 0,
+    checkedCount: 0,
     complete: false,
     ownAtReveal: null,
   };
@@ -131,6 +134,7 @@ export default function WordOrderExercise({ config }: ExerciseComponentProps) {
     complete,
     ownAtReveal,
     failCount,
+    checkedCount,
   } = state;
   const total = expected.length;
   const labels = parsed.data.labels;
@@ -216,6 +220,7 @@ export default function WordOrderExercise({ config }: ExerciseComponentProps) {
       kind: 'patch',
       patch: {
         hasChecked: true,
+        checkedCount: correctCount,
         complete: isComplete,
         failCount: isComplete ? failCount : failCount + 1,
         selectedId: null,
@@ -237,7 +242,7 @@ export default function WordOrderExercise({ config }: ExerciseComponentProps) {
         hasReordered: true,
         hasChecked: true,
         complete: true,
-        ownAtReveal: correctCount,
+        ownAtReveal: checkedCount,
       },
     });
   };
@@ -291,7 +296,7 @@ export default function WordOrderExercise({ config }: ExerciseComponentProps) {
         })}
       </ol>
 
-      <ProgressMeter correct={ownAtReveal ?? correctCount} total={total} labels={labels} />
+      <ProgressMeter correct={ownAtReveal ?? checkedCount} total={total} labels={labels} />
 
       {content.footnote ? (
         <p className="word-order-footnote" lang={TARGET_LANG}>
