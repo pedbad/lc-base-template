@@ -240,7 +240,7 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
               {speaker(targetOnFront)}
               <span className="flashcards-hint" aria-hidden="true">
                 <SplinePointer aria-hidden="true" />
-                Select the card to flip
+                Tap to flip
               </span>
             </span>
             <span
