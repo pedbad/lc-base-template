@@ -47,8 +47,9 @@ is exactly what the paragraph above is about.
 
 1. **Show answer and the progress meter** (§D18) — maintainer's call first: count only
    the student's own correct answers, or keep the count and skip the hop.
-2. **The four own-status engines** (§D18): memory-match, word-order, word-spot,
-   phrase-reorder — a meter for each, or keep their wording.
+2. **Live counts in word-order and phrase-reorder** (§D18) — maintainer's call: the
+   meter counts pieces in place as they move, before any Check (a warmer/colder hint;
+   a fresh shuffle can open at "1 correct out of 7"). Keep, or count only on Check?
 3. **Check button hover contrast** (§D14): `hover:bg-success/90` is 4.28:1.
 4. **A hover term in the debug pages** (§D14).
 5. **Hero placeholder label at 320–375** (§D14) — maintainer's call.
@@ -1539,8 +1540,13 @@ no-preference` only.
       revealed answer as correct (`commitCheck`), so revealing everything reads as
       "5 correct out of 5" with a celebration the student did not earn. Count only
       the student's own correct answers, or keep the count and skip the hop?
-    - **memory-match, word-order, word-spot, phrase-reorder** keep their own status
-      lines (pairs found, and so on); whether a meter suits each is not yet decided.
+    - **memory-match, word-order, word-spot, phrase-reorder DONE 2026-10-09**: the
+      meter too, as in french-lo-1 (pairs found; words / phrases in place; words
+      spotted). memory-match's unlabelled tries count and word-spot's misses count
+      went with their status lines, as in french. 22 meters on the showcase at all six
+      widths, both themes, axe clean. **Open:** word-order and phrase-reorder count
+      live, before any Check, so a shuffle can open above zero; keep it as a
+      warmer/colder hint, or count only on Check?
     - **Many answers:** slots wrap onto more lines (no segmented bar beyond ~12, as
       first suggested); fine at the showcase's 2–5.
     - **Flashcards** keeps its own positional per-card dots, on purpose.
@@ -1704,3 +1710,4 @@ build, so it cannot return. Two remain:
 | 2026-10-09 | `6f165e8` | **revealed-answer mark** — bold, `--primary` underline, opaque tint; lazy `answer-feedback.css` (§D14/§D15)                   |
 | 2026-10-09 | `9ff073e` | **inline-gap feedback hangs** — no longer widens the blank; inside the row, clear of its neighbour (§D14/§D15)                |
 | 2026-10-09 | `93f0545` | **progress meter** — french's ProgressDots as `ProgressMeter` in nine engines; dot or course icon (§D18)                      |
+| 2026-10-09 | `58c63cb` | **progress meter, the last four** — memory-match, word-order, word-spot, phrase-reorder (§D18)                                |
