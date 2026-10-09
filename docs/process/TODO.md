@@ -50,7 +50,7 @@ is exactly what the paragraph above is about.
 2. ~~**Live counts in word-order and phrase-reorder** (§D18)~~ **DONE 2026-10-09**
    (`acdcb3a`): the meter counts only on Check.
 3. ~~**Check button hover contrast** (§D14)~~ **DONE 2026-10-09** (`b29db0c`): 6.02 / 6.62:1.
-4. **A hover term in the debug pages** (§D14).
+4. ~~**A hover term in the debug pages** (§D14)~~ **DONE 2026-10-09** (`737ab59`).
 5. **Hero placeholder label at 320–375** (§D14) — maintainer's call.
 6. **Sandbox Docs hub tables at 375** (§D14).
 
@@ -1429,10 +1429,20 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     a short `hover:bg-(--check-hover)`; as an arbitrary utility it cost main 0.04 kB.
     Measured with the pointer resting on Check at 320 / 375 / 1440, both themes: axe
     clean.
-  - **A hover term in the debug pages:** the showcase's rich-text section
-    (`src/showcase/rich-text-fixture.ts`, `RichTextShowcase.tsx`) and the sandbox show
-    lists, a table and speakers, but no hover term or plain link. A hover term needs a
-    `HoverProvider` around the section and a card the fixture can declare.
+  - **A hover term in the debug pages DONE 2026-10-09** (`737ab59`): the showcase's
+    rich-text reference gains a paragraph with a plain link (to `debug-sandbox.html`)
+    and a hover term, and a card declared beside it, parsed as the loader parses
+    `hover.json`; `RichTextShowcase` wraps the section in a `HoverProvider` and shows
+    the card's `hover.json` source. The sandbox's Typography section renders the same
+    paragraph under **Links**. The fixture is renamed `rich-text.fixture.ts`, like every
+    other fixture: guard c skips `*.fixture.*` (authored paths, resolved at render),
+    and the link's `href` is one. Verified on both pages at 320 / 375 / 768 / 1440,
+    both themes: the href resolves to `/debug-sandbox.html` in a new tab; hover opens,
+    leaving closes, focus opens, Escape closes; the card stays 16px inside the
+    viewport; axe clean of it. Main bundles unchanged (debug-only code).
+  - **Sandbox at 320 scrolls sideways** (found 2026-10-09 while verifying the above):
+    the Alerts section's `<code>src/components/shell/Callout.tsx</code>` runs 10px
+    past the viewport (scroll width 339 on 320). Debug page only.
   - **Sandbox Docs hub at 375:** two rendered tables (Preset, Font) scroll sideways
     with no keyboard focus — axe `scrollable-region-focusable`. Debug page only.
 
@@ -1729,3 +1739,4 @@ build, so it cannot return. Two remain:
 | 2026-10-09 | `511c3cf` | **Show answer and the meter** — the meter counts only the student's own correct answers (§D18)                                |
 | 2026-10-09 | `acdcb3a` | **reorder meters on Check** — word-order and phrase-reorder no longer count live (§D18)                                       |
 | 2026-10-09 | `b29db0c` | **Check hover contrast** — hover pulls `--success` toward `--foreground`: 6.02 / 6.62:1 (§D14)                                |
+| 2026-10-09 | `737ab59` | **hover term in the debug pages** — a plain link and a hover term in the showcase and sandbox (§D14)                          |
