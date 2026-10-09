@@ -49,7 +49,8 @@ interface OrderState {
   hasChecked: boolean;
   failCount: number;
   complete: boolean;
-  usedShowAnswer: boolean;
+  /** null until Show answer; then the student's own count, which the meter keeps (§D18). */
+  ownAtReveal: number | null;
 }
 
 type OrderAction =
@@ -67,7 +68,7 @@ function freshState(expected: Token[]): OrderState {
     hasChecked: false,
     failCount: 0,
     complete: false,
-    usedShowAnswer: false,
+    ownAtReveal: null,
   };
 }
 
@@ -128,7 +129,7 @@ export default function WordOrderExercise({ config }: ExerciseComponentProps) {
     hasReordered,
     hasChecked,
     complete,
-    usedShowAnswer,
+    ownAtReveal,
     failCount,
   } = state;
   const total = expected.length;
@@ -236,7 +237,7 @@ export default function WordOrderExercise({ config }: ExerciseComponentProps) {
         hasReordered: true,
         hasChecked: true,
         complete: true,
-        usedShowAnswer: true,
+        ownAtReveal: correctCount,
       },
     });
   };
@@ -247,7 +248,7 @@ export default function WordOrderExercise({ config }: ExerciseComponentProps) {
     total,
     nCorrect: correctCount,
   });
-  const showReset = hasReordered || hasChecked || usedShowAnswer;
+  const showReset = hasReordered || hasChecked || ownAtReveal !== null;
 
   return (
     <div className="word-order">
@@ -290,7 +291,7 @@ export default function WordOrderExercise({ config }: ExerciseComponentProps) {
         })}
       </ol>
 
-      <ProgressMeter correct={correctCount} total={total} labels={labels} />
+      <ProgressMeter correct={ownAtReveal ?? correctCount} total={total} labels={labels} />
 
       {content.footnote ? (
         <p className="word-order-footnote" lang={TARGET_LANG}>

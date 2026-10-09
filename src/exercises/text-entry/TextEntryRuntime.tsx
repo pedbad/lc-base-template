@@ -39,7 +39,13 @@ import {
   type AnswerFeedback as Feedback,
 } from '@/exercises/lib/answer-feedback';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
-import { commitCheck, getInitialScoringState, type ScoringState } from '@/exercises/lib/scoring';
+import {
+  commitCheck,
+  commitReveal,
+  countOwnCorrect,
+  getInitialScoringState,
+  type ScoringState,
+} from '@/exercises/lib/scoring';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
 import { createExerciseReducer } from '@/exercises/lib/exerciseScaffold';
@@ -127,7 +133,7 @@ export function TextEntryRuntime({
 
   const handleShowAnswers = () => {
     const { values, checkedResults } = fillAnswers(rows);
-    dispatch({ values, ...commitCheck(checkedResults), feedback: {} });
+    dispatch({ values, ...commitReveal(state, checkedResults), feedback: {} });
   };
 
   const handleReset = () => {
@@ -236,7 +242,7 @@ export function TextEntryRuntime({
         </Table>
       </div>
 
-      <ProgressMeter correct={state.nCorrect} total={total} labels={labels} />
+      <ProgressMeter correct={countOwnCorrect(state)} total={total} labels={labels} />
 
       <ExerciseFooter
         onCheck={handleCheck}

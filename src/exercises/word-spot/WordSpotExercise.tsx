@@ -30,26 +30,32 @@ import { WordSpotExerciseConfigSchema } from './word-spot-schema';
 import { buildModel, scoreWordSpot, type ClickableToken, type Mark } from './word-spot-grading';
 import './word-spot.css';
 
-type MarksState = Record<string, Mark>;
+interface MarksState {
+  marks: Record<string, Mark>;
+  /** null until Show answer; then the student's own hits, which the meter keeps (§D18). */
+  ownAtReveal: number | null;
+}
 type MarksAction =
   | { kind: 'mark'; key: string; mark: Mark }
-  | { kind: 'reveal'; targetKeys: string[] }
+  | { kind: 'reveal'; targetKeys: string[]; ownHits: number }
   | { kind: 'reset' };
+
+const INITIAL_MARKS: MarksState = { marks: {}, ownAtReveal: null };
 
 function marksReducer(state: MarksState, action: MarksAction): MarksState {
   switch (action.kind) {
     case 'mark':
-      if (state[action.key]) return state; // already marked — clicks are one-shot
-      return { ...state, [action.key]: action.mark };
+      if (state.marks[action.key]) return state; // already marked — clicks are one-shot
+      return { ...state, marks: { ...state.marks, [action.key]: action.mark } };
     case 'reveal': {
-      const next: MarksState = { ...state };
+      const marks = { ...state.marks };
       action.targetKeys.forEach((key) => {
-        next[key] = 'hit';
+        marks[key] = 'hit';
       });
-      return next;
+      return { marks, ownAtReveal: action.ownHits };
     }
     case 'reset':
-      return {};
+      return INITIAL_MARKS;
     default:
       return state;
   }
@@ -57,7 +63,7 @@ function marksReducer(state: MarksState, action: MarksAction): MarksState {
 
 export default function WordSpotExercise({ config }: ExerciseComponentProps) {
   const parsed = WordSpotExerciseConfigSchema.safeParse(config);
-  const [marks, dispatch] = useReducer(marksReducer, {});
+  const [{ marks, ownAtReveal }, dispatch] = useReducer(marksReducer, INITIAL_MARKS);
 
   if (!parsed.success) {
     return (
@@ -115,7 +121,7 @@ export default function WordSpotExercise({ config }: ExerciseComponentProps) {
         ))}
       </ol>
 
-      <ProgressMeter correct={hits} total={total} labels={labels} />
+      <ProgressMeter correct={ownAtReveal ?? hits} total={total} labels={labels} />
 
       {footnote ? (
         <p className="word-spot-footnote" lang={TARGET_LANG}>
@@ -130,7 +136,10 @@ export default function WordSpotExercise({ config }: ExerciseComponentProps) {
           </Button>
         ) : null}
         {canReveal ? (
-          <Button variant="ghost" onClick={() => dispatch({ kind: 'reveal', targetKeys })}>
+          <Button
+            variant="ghost"
+            onClick={() => dispatch({ kind: 'reveal', targetKeys, ownHits: hits })}
+          >
             {resolveLabel('showAnswer', labels)}
           </Button>
         ) : null}

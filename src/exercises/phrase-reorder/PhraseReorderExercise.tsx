@@ -48,7 +48,8 @@ interface ReorderState {
   hasChecked: boolean;
   failCount: number;
   complete: boolean;
-  usedShowAnswer: boolean;
+  /** null until Show answer; then the student's own count, which the meter keeps (§D18). */
+  ownAtReveal: number | null;
 }
 
 type ReorderAction =
@@ -66,7 +67,7 @@ function freshState(expected: PhraseToken[]): ReorderState {
     hasChecked: false,
     failCount: 0,
     complete: false,
-    usedShowAnswer: false,
+    ownAtReveal: null,
   };
 }
 
@@ -127,7 +128,7 @@ export default function PhraseReorderExercise({ config }: ExerciseComponentProps
     hasReordered,
     hasChecked,
     complete,
-    usedShowAnswer,
+    ownAtReveal,
     failCount,
   } = state;
   const total = expected.length;
@@ -236,7 +237,7 @@ export default function PhraseReorderExercise({ config }: ExerciseComponentProps
         hasReordered: true,
         hasChecked: true,
         complete: true,
-        usedShowAnswer: true,
+        ownAtReveal: correctCount,
       },
     });
   };
@@ -247,7 +248,7 @@ export default function PhraseReorderExercise({ config }: ExerciseComponentProps
     total,
     nCorrect: correctCount,
   });
-  const showReset = hasReordered || hasChecked || usedShowAnswer;
+  const showReset = hasReordered || hasChecked || ownAtReveal !== null;
 
   return (
     <div className="phrase-reorder">
@@ -300,7 +301,7 @@ export default function PhraseReorderExercise({ config }: ExerciseComponentProps
         })}
       </ol>
 
-      <ProgressMeter correct={correctCount} total={total} labels={labels} />
+      <ProgressMeter correct={ownAtReveal ?? correctCount} total={total} labels={labels} />
 
       {content.footnote ? (
         <p className="phrase-reorder-footnote" lang={TARGET_LANG}>

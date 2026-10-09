@@ -35,7 +35,13 @@ import {
   type AnswerFeedback as Feedback,
 } from '@/exercises/lib/answer-feedback';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
-import { commitCheck, getInitialScoringState, type ScoringState } from '@/exercises/lib/scoring';
+import {
+  commitCheck,
+  commitReveal,
+  countOwnCorrect,
+  getInitialScoringState,
+  type ScoringState,
+} from '@/exercises/lib/scoring';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
 import { createExerciseReducer } from '@/exercises/lib/exerciseScaffold';
@@ -119,7 +125,7 @@ export default function ConjugationExercise({ config }: ExerciseComponentProps) 
 
   const handleShowAnswers = () => {
     const { values, checkedResults } = fillConjugationAnswers(rows);
-    dispatch({ values, ...commitCheck(checkedResults), feedback: {} });
+    dispatch({ values, ...commitReveal(state, checkedResults), feedback: {} });
   };
 
   if (!parsed.success || !content) {
@@ -222,7 +228,7 @@ export default function ConjugationExercise({ config }: ExerciseComponentProps) 
 
       <div className="space-y-3">{rows.map(renderRow)}</div>
 
-      <ProgressMeter correct={state.nCorrect} total={nToSolve} labels={labels} />
+      <ProgressMeter correct={countOwnCorrect(state)} total={nToSolve} labels={labels} />
 
       <ExerciseFooter
         onCheck={handleCheck}

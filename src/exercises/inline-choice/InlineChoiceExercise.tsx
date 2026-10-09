@@ -38,7 +38,13 @@ import { useId, type ReactNode } from 'react';
 import { ExerciseOptionsSchema, type ExerciseOptions } from '@/config/lo-schema';
 import type { UiStringsOverride } from '@/config/ui-strings';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
-import { commitCheck, getInitialScoringState, type ScoringState } from '@/exercises/lib/scoring';
+import {
+  commitCheck,
+  commitReveal,
+  countOwnCorrect,
+  getInitialScoringState,
+  type ScoringState,
+} from '@/exercises/lib/scoring';
 import { mulberry32 } from '@/exercises/lib/shuffle';
 import {
   parseChoiceBlank,
@@ -212,7 +218,7 @@ export default function InlineChoiceExercise({ config }: ExerciseComponentProps)
 
   const handleShowAnswers = () => {
     const { values, checkedResults } = fillInlineChoiceAnswers(blanksMeta, nToSolve);
-    dispatch({ values, ...commitCheck(checkedResults) });
+    dispatch({ values, ...commitReveal(state, checkedResults) });
   };
 
   const hasSelections = Object.keys(state.values).length > 0;
@@ -227,7 +233,7 @@ export default function InlineChoiceExercise({ config }: ExerciseComponentProps)
     <div className="flex flex-col gap-4">
       <div className="space-y-3">{lines}</div>
 
-      <ProgressMeter correct={state.nCorrect} total={nToSolve} labels={labels} />
+      <ProgressMeter correct={countOwnCorrect(state)} total={nToSolve} labels={labels} />
 
       <ExerciseFooter
         onCheck={handleCheck}

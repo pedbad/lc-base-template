@@ -59,7 +59,8 @@ interface DragState {
   hasChecked: boolean;
   failCount: number;
   complete: boolean;
-  usedShowAnswer: boolean;
+  /** null until Show answer; then the student's own count, which the meter keeps (§D18). */
+  ownAtReveal: number | null;
 }
 
 type DragAction =
@@ -77,7 +78,7 @@ function freshState(tiles: readonly Tile[], shuffleBank: boolean): DragState {
     hasChecked: false,
     failCount: 0,
     complete: false,
-    usedShowAnswer: false,
+    ownAtReveal: null,
   };
 }
 
@@ -125,7 +126,7 @@ export default function DragFillGapsExercise({ config }: ExerciseComponentProps)
     dropTargetSlotId,
     hasChecked,
     complete,
-    usedShowAnswer,
+    ownAtReveal,
     failCount,
   } = state;
   const labels = parsed.data.labels;
@@ -249,7 +250,7 @@ export default function DragFillGapsExercise({ config }: ExerciseComponentProps)
         locked: filledLocked,
         hasChecked: true,
         complete: true,
-        usedShowAnswer: true,
+        ownAtReveal: nCorrect,
         ...clearTransient(),
       },
     });
@@ -262,7 +263,7 @@ export default function DragFillGapsExercise({ config }: ExerciseComponentProps)
     nCorrect,
   });
   const hasPlacedAny = placedTileIds.size > 0 || nCorrect > 0;
-  const showReset = hasPlacedAny || hasChecked || usedShowAnswer;
+  const showReset = hasPlacedAny || hasChecked || ownAtReveal !== null;
 
   return (
     <div className="drag-fill-gaps">
@@ -331,7 +332,7 @@ export default function DragFillGapsExercise({ config }: ExerciseComponentProps)
         ))}
       </ol>
 
-      <ProgressMeter correct={nCorrect} total={total} labels={labels} />
+      <ProgressMeter correct={ownAtReveal ?? nCorrect} total={total} labels={labels} />
 
       {content.footnote ? (
         <p className="drag-fill-gaps-footnote" lang={TARGET_LANG}>

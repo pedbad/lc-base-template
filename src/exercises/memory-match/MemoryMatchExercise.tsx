@@ -41,6 +41,8 @@ interface GameState {
   matched: string[];
   nPairs: number;
   nTries: number;
+  /** null until Show answer; then the student's own count, which the meter keeps (§D18). */
+  ownAtReveal: number | null;
 }
 
 type GameAction =
@@ -52,7 +54,14 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     case 'patch':
       return { ...state, ...action.patch };
     case 'reset':
-      return { cards: action.cards, flipped: [], matched: [], nPairs: 0, nTries: 0 };
+      return {
+        cards: action.cards,
+        flipped: [],
+        matched: [],
+        nPairs: 0,
+        nTries: 0,
+        ownAtReveal: null,
+      };
     default:
       return state;
   }
@@ -75,6 +84,7 @@ export default function MemoryMatchExercise({ config }: ExerciseComponentProps) 
       matched: [],
       nPairs: 0,
       nTries: 0,
+      ownAtReveal: null,
     }),
   );
 
@@ -116,7 +126,7 @@ export default function MemoryMatchExercise({ config }: ExerciseComponentProps) 
     );
   }
 
-  const { cards, flipped, matched, nPairs, nTries } = state;
+  const { cards, flipped, matched, nPairs, nTries, ownAtReveal } = state;
   const total = cards.length / 2;
   const labels = parsed.data.labels;
   const complete = nPairs === total && total > 0;
@@ -174,6 +184,7 @@ export default function MemoryMatchExercise({ config }: ExerciseComponentProps) 
         flipped: [],
         matched: solved.map((card) => card.id),
         nPairs: solved.length / 2,
+        ownAtReveal: nPairs,
       },
     });
   };
@@ -205,7 +216,7 @@ export default function MemoryMatchExercise({ config }: ExerciseComponentProps) 
         ))}
       </ul>
 
-      <ProgressMeter correct={nPairs} total={total} labels={labels} />
+      <ProgressMeter correct={ownAtReveal ?? nPairs} total={total} labels={labels} />
 
       {content.footnote ? (
         <p className="memory-match-footnote" lang={TARGET_LANG}>

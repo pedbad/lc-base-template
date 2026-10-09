@@ -39,7 +39,13 @@ import { useId, type ReactNode } from 'react';
 import { ExerciseOptionsSchema, type ExerciseOptions } from '@/config/lo-schema';
 import type { UiStringsOverride } from '@/config/ui-strings';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
-import { commitCheck, getInitialScoringState, type ScoringState } from '@/exercises/lib/scoring';
+import {
+  commitCheck,
+  commitReveal,
+  countOwnCorrect,
+  getInitialScoringState,
+  type ScoringState,
+} from '@/exercises/lib/scoring';
 import { mulberry32, shuffle } from '@/exercises/lib/shuffle';
 import { ChoicePillGroup } from '@/exercises/lib/ChoicePillGroup';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
@@ -171,7 +177,7 @@ export default function RadioQuizExercise({ config }: ExerciseComponentProps) {
 
   const handleShowAnswers = () => {
     const { values, checkedResults } = fillRadioAnswers(state.preparedQuestions);
-    dispatch({ values, ...commitCheck(checkedResults) });
+    dispatch({ values, ...commitReveal(state, checkedResults) });
   };
 
   const cards: ReactNode[] = state.preparedQuestions.map((question, questionIndex) => {
@@ -230,7 +236,7 @@ export default function RadioQuizExercise({ config }: ExerciseComponentProps) {
     <div className="flex flex-col gap-4">
       <div className="space-y-3">{cards}</div>
 
-      <ProgressMeter correct={state.nCorrect} total={nToSolve} labels={labels} />
+      <ProgressMeter correct={countOwnCorrect(state)} total={nToSolve} labels={labels} />
 
       <ExerciseFooter
         onCheck={handleCheck}

@@ -31,7 +31,13 @@ import { AudioClip } from '@/components/audio/AudioClip';
 import { ExerciseOptionsSchema, type ExerciseOptions } from '@/config/lo-schema';
 import type { UiStringsOverride } from '@/config/ui-strings';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
-import { commitCheck, getInitialScoringState, type ScoringState } from '@/exercises/lib/scoring';
+import {
+  commitCheck,
+  commitReveal,
+  countOwnCorrect,
+  getInitialScoringState,
+  type ScoringState,
+} from '@/exercises/lib/scoring';
 import { mulberry32, sampleN, shuffle } from '@/exercises/lib/shuffle';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
@@ -330,7 +336,7 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
     dispatch({
       values,
       connections,
-      ...commitCheck(checkedResults),
+      ...commitReveal(state, checkedResults),
       recoiling: [],
       recoilProgress: 1,
       activeSourceId: null,
@@ -523,7 +529,7 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
         </div>
       </div>
 
-      <ProgressMeter correct={state.nCorrect} total={total} labels={labels} />
+      <ProgressMeter correct={countOwnCorrect(state)} total={total} labels={labels} />
 
       <ExerciseFooter
         onCheck={handleCheck}

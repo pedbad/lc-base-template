@@ -30,7 +30,13 @@ import { useId, useReducer, type ReactNode } from 'react';
 import { ExerciseOptionsSchema, type ExerciseOptions } from '@/config/lo-schema';
 import type { UiStringsOverride } from '@/config/ui-strings';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
-import { commitCheck, getInitialScoringState, type ScoringState } from '@/exercises/lib/scoring';
+import {
+  commitCheck,
+  commitReveal,
+  countOwnCorrect,
+  getInitialScoringState,
+  type ScoringState,
+} from '@/exercises/lib/scoring';
 import { ChoicePillGroup } from '@/exercises/lib/ChoicePillGroup';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
@@ -114,7 +120,7 @@ export default function ReadingExercise({ config }: ExerciseComponentProps) {
 
   const handleShowAnswers = () => {
     const { values, checkedResults } = fillReadingAnswers(prepared);
-    dispatch({ values, ...commitCheck(checkedResults) });
+    dispatch({ values, ...commitReveal(state, checkedResults) });
   };
 
   if (!parsed.success || !content) {
@@ -217,7 +223,7 @@ export default function ReadingExercise({ config }: ExerciseComponentProps) {
 
       <div className="space-y-3">{cards}</div>
 
-      <ProgressMeter correct={state.nCorrect} total={nToSolve} labels={labels} />
+      <ProgressMeter correct={countOwnCorrect(state)} total={nToSolve} labels={labels} />
 
       <ExerciseFooter
         onCheck={handleCheck}

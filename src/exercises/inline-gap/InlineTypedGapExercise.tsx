@@ -42,7 +42,13 @@ import {
   type AnswerFeedback as Feedback,
 } from '@/exercises/lib/answer-feedback';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
-import { commitCheck, getInitialScoringState, type ScoringState } from '@/exercises/lib/scoring';
+import {
+  commitCheck,
+  commitReveal,
+  countOwnCorrect,
+  getInitialScoringState,
+  type ScoringState,
+} from '@/exercises/lib/scoring';
 import {
   parseInputBlank,
   parseSentence,
@@ -292,7 +298,7 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
 
   const handleShowAnswers = () => {
     const { values, checkedResults } = fillInlineGapAnswers(blanksMeta, nToSolve);
-    dispatch({ values, ...commitCheck(checkedResults), feedback: {} });
+    dispatch({ values, ...commitReveal(state, checkedResults), feedback: {} });
   };
 
   const hasInput = Object.values(state.values).some((v) => v.trim() !== '');
@@ -331,7 +337,7 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
 
       <div className="space-y-3">{rows}</div>
 
-      <ProgressMeter correct={state.nCorrect} total={nToSolve} labels={labels} />
+      <ProgressMeter correct={countOwnCorrect(state)} total={nToSolve} labels={labels} />
 
       <ExerciseFooter
         onCheck={handleCheck}
