@@ -49,7 +49,7 @@ is exactly what the paragraph above is about.
    the meter counts only the student's own correct answers.
 2. ~~**Live counts in word-order and phrase-reorder** (§D18)~~ **DONE 2026-10-09**
    (`acdcb3a`): the meter counts only on Check.
-3. **Check button hover contrast** (§D14): `hover:bg-success/90` is 4.28:1.
+3. ~~**Check button hover contrast** (§D14)~~ **DONE 2026-10-09** (`b29db0c`): 6.02 / 6.62:1.
 4. **A hover term in the debug pages** (§D14).
 5. **Hero placeholder label at 320–375** (§D14) — maintainer's call.
 6. **Sandbox Docs hub tables at 375** (§D14).
@@ -1420,10 +1420,15 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
       on one line: the blank stays at its input's width, the next word does not move,
       every line inside its row, none overlapping, no sideways scroll, axe clean of
       it. Between two close blanks the first line wraps narrow (111px at 1024).
-  - **Check button hover contrast:** the solid success button's hover,
-    `hover:bg-success/90`, is white on `#358962`, 4.28:1, under AA's 4.5:1 (axe, light
-    theme, the pointer left resting on Check at 320 and 375). Found while verifying
-    the above; not caused by it.
+  - **Check button hover contrast DONE 2026-10-09** (`b29db0c`): the solid success
+    button's hover, `hover:bg-success/90`, faded the green toward the card: white on
+    `#358962`, 4.28:1 (axe, light theme, the pointer resting on Check). The hover now
+    pulls `--success` toward `--foreground`, away from its label in both themes:
+    6.02:1 light (white on `#23704b`), 6.62:1 dark (dark blue on `#78cda9`); at rest
+    5.11 / 6.05:1. The mix is `--check-hover` in a lazy `exercise-buttons.css`, behind
+    a short `hover:bg-(--check-hover)`; as an arbitrary utility it cost main 0.04 kB.
+    Measured with the pointer resting on Check at 320 / 375 / 1440, both themes: axe
+    clean.
   - **A hover term in the debug pages:** the showcase's rich-text section
     (`src/showcase/rich-text-fixture.ts`, `RichTextShowcase.tsx`) and the sandbox show
     lists, a table and speakers, but no hover term or plain link. A hover term needs a
@@ -1723,3 +1728,4 @@ build, so it cannot return. Two remain:
 | 2026-10-09 | `58c63cb` | **progress meter, the last four** — memory-match, word-order, word-spot, phrase-reorder (§D18)                                |
 | 2026-10-09 | `511c3cf` | **Show answer and the meter** — the meter counts only the student's own correct answers (§D18)                                |
 | 2026-10-09 | `acdcb3a` | **reorder meters on Check** — word-order and phrase-reorder no longer count live (§D18)                                       |
+| 2026-10-09 | `b29db0c` | **Check hover contrast** — hover pulls `--success` toward `--foreground`: 6.02 / 6.62:1 (§D14)                                |
