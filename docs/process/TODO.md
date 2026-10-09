@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-09 · **HEAD:** see `git log` · **Suite:** 141 files · 1523 tests green
+**Last updated:** 2026-10-09 · **HEAD:** see `git log` · **Suite:** 143 files · 1540 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -1430,7 +1430,7 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   - Verified on the built site: both links 200 and open in a new tab, 13px icon, axe
     zero in both themes. Budget in `docs/TOOLING.md`.
 
-- **D17 — hover cards. DONE 2026-10-09** (maintainer's calls: hover, focus and tap;
+- **D17 — hover cards. DONE 2026-10-09** (`dd14a03`; maintainer's calls: hover, focus and tap;
   content in `hovers/<id>/hover.json`; amber). A term with more to say, authored as
   `<span class="hover-term" data-hover-target="id">…</span>` in any rich text.
   - **One class, reused:** `.hover-term` (rich-text.css): bold, `--hover-term`
@@ -1612,4 +1612,4 @@ build, so it cannot return. Two remain:
 | 2026-10-08 | `7960573` | **hero label top-right** — hero.svg fills the banner; the label hangs 12px from its top-right corner (§D14)                   |
 | 2026-10-08 | `2c61379` | **memory-match speaker on small cards** — scales to 36px under a 10rem card, clear of the word (§D14)                         |
 | 2026-10-09 | `d347a79` | **rich-text links** — `<a href>` opens in a new tab with an external icon; the example intro links the debug pages            |
-| 2026-10-09 | see git   | **hover cards** — `.hover-term` + `hovers/<id>/hover.json`, path drawn as a tree; hover, focus, tap (§D17)                    |
+| 2026-10-09 | `dd14a03` | **hover cards** — `.hover-term` + `hovers/<id>/hover.json`, path drawn as a tree; hover, focus, tap (§D17)                    |

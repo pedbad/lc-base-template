@@ -49,6 +49,7 @@ lo-config/lo-00-example/
   blocks/03-outcomes/block.json    back in the Introduction — see the ordinal rule
   exercises/01-select/exercise.json
   modals/example-popup/modal.json
+  hovers/lo-json/hover.json        a hover card, declared in lo.json's hovers[]
 ```
 
 Two naming rules carry real weight:
@@ -248,6 +249,7 @@ as far as the tree is concerned.
     ├── lo/
     │   ├── blocks/
     │   └── rich-text/
+    │       ├── hover/
     │       └── modal/
     ├── sandbox/
     ├── showcase/

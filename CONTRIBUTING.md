@@ -147,7 +147,8 @@ A set of labelled tabs, one panel showing at a time. Add it like any block: a
 - Every tab needs `instructions`: plain text, shown first in the panel in the same
   info box the accordions use. A tab without it fails the build.
 - Each tab's `text` takes what a grammar block's `text` takes: paragraphs, lists,
-  tables, the audio player, inline audio and popup links.
+  tables, the audio player, inline audio, popup links, plain links (`<a href>`, opened
+  in a new tab) and hover terms (`<span class="hover-term" data-hover-target="…">`).
 - A tab may add `media`, shown after its instructions: an `image`
   (`"kind": "portrait"` beside the player, or `"figure"` full width with an optional
   `caption`), an `audio` player (`src`, optional `label`) and its `transcript` (rich
