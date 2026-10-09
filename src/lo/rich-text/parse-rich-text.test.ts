@@ -142,8 +142,34 @@ describe('modal links', () => {
     expect(() => parseRichText('<a class="modal-link">v</a>')).toThrow(/data-modal-target/);
   });
 
-  test('rejects an anchor that is not a modal link, so real navigation is never silently swallowed', () => {
-    expect(() => parseRichText('<a href="https://example.com">v</a>')).toThrow(/modal-link/);
+  // Maintainer, 2026-10-09: plain links are allowed (the example LO points at the debug
+  // pages). They always open in a new tab; the href must be http(s) or a relative path
+  // under the site, so it can go through resolveAsset and never run script.
+  test('parses a plain link to a page under the site', () => {
+    expect(parseRichText('see the <a href="debug-sandbox.html">sandbox</a>')).toEqual([
+      { kind: 'text', value: 'see the ' },
+      { kind: 'link', href: 'debug-sandbox.html', children: [{ kind: 'text', value: 'sandbox' }] },
+    ]);
+  });
+
+  test('parses a plain link to an external http(s) URL', () => {
+    expect(parseRichText('<a href="https://example.com/a">v</a>')).toEqual([
+      { kind: 'link', href: 'https://example.com/a', children: [{ kind: 'text', value: 'v' }] },
+    ]);
+  });
+
+  test.each([
+    ['javascript:alert(1)', /http\(s\) URL or a relative path/],
+    ['data:text/html,x', /http\(s\) URL or a relative path/],
+    ['/root.html', /relative/],
+    ['../up.html', /relative/],
+    ['', /empty href/],
+  ])('rejects the link href %j', (href, message) => {
+    expect(() => parseRichText(`<a href="${href}">v</a>`)).toThrow(message);
+  });
+
+  test('rejects an anchor with neither href nor data-modal-target', () => {
+    expect(() => parseRichText('<a>v</a>')).toThrow(/href/);
   });
 
   test('rejects an empty data-modal-target', () => {

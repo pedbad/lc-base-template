@@ -13,7 +13,8 @@
      alone (WCAG 1.4.1) — hence the underline. Until 2026-10-06 nothing styled it and
      it rendered as plain text. `--primary` on the page ground measured 11.9:1
      light, 10.4:1 dark. */
-  .modal-link {
+  .modal-link,
+  .rich-text-link {
     color: var(--primary);
     text-decoration-line: underline;
     text-decoration-thickness: 0.0625rem;
@@ -22,14 +23,25 @@
   }
 
   @media (hover: hover) {
-    .modal-link:hover {
+    .modal-link:hover,
+    .rich-text-link:hover {
       text-decoration-thickness: 0.125rem;
     }
   }
 
-  .modal-link:focus-visible {
+  .modal-link:focus-visible,
+  .rich-text-link:focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 2px;
+  }
+
+  /* A plain link opens in a new tab; the icon says so, sized to the text. */
+  .rich-text-link-icon {
+    display: inline-block;
+    inline-size: 0.8em;
+    block-size: 0.8em;
+    margin-inline-start: 0.2em;
+    vertical-align: -0.05em;
   }
 
   /* The reading measure (layout.css, TODO §D11). Paragraphs and lists only: a table

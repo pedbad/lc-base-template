@@ -63,8 +63,12 @@ describe('modal links', () => {
   // It must look like a link: underlined and in the link colour, with a focus outline.
   test('is styled as a link — underlined, link-coloured, with a focus outline', () => {
     const css = readFileSync(new URL('./rich-text.css', import.meta.url), 'utf-8');
-    const rule = /\.modal-link\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
-    const focus = /\.modal-link:focus-visible\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
+    // Shared with plain links since 2026-10-09: `.modal-link, .rich-text-link { … }`.
+    const rule = /\.modal-link(?:,\s*\.rich-text-link)?\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
+    const focus =
+      /\.modal-link:focus-visible(?:,\s*\.rich-text-link:focus-visible)?\s*\{([^}]*)\}/.exec(
+        css,
+      )?.[1] ?? '';
 
     expect(rule).toMatch(/text-decoration-line:\s*underline/);
     expect(rule).toMatch(/color:\s*var\(--primary\)/);
@@ -126,5 +130,30 @@ describe('audio icons', () => {
 describe('empty input', () => {
   test('renders nothing for an empty node list', () => {
     expect(render([])).not.toContain('undefined');
+  });
+});
+
+// Maintainer, 2026-10-09: a plain link always opens in a new tab and says so — an
+// external icon for the eye, "(opens in a new tab)" for a screen reader.
+describe('plain links', () => {
+  test('resolve a relative path against the site and open in a new tab', () => {
+    const html = renderAuthored('<a href="debug-sandbox.html">debug sandbox</a>');
+
+    expect(html).toMatch(
+      /<a href="\/debug-sandbox\.html" target="_blank" rel="noopener noreferrer" class="rich-text-link">debug sandbox/,
+    );
+    expect(html).toMatch(/<svg[^>]*aria-hidden="true"/);
+    expect(html).toContain('<span class="sr-only"> (opens in a new tab)</span></a>');
+  });
+
+  test('leave an external URL as it is', () => {
+    expect(renderAuthored('<a href="https://example.com/a">x</a>')).toContain(
+      'href="https://example.com/a"',
+    );
+  });
+
+  test("share the modal link's look", () => {
+    const css = readFileSync(new URL('./rich-text.css', import.meta.url), 'utf8');
+    expect(css).toMatch(/\.modal-link,\s*\.rich-text-link\s*\{/);
   });
 });

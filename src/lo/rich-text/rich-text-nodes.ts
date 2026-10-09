@@ -42,6 +42,16 @@ export interface ModalLinkNode {
   readonly children: readonly RichTextNode[];
 }
 
+/**
+ * A plain link (maintainer, 2026-10-09). Always opens in a new tab. `href` is an
+ * http(s) URL or a path relative to the site, resolved through resolveAsset.
+ */
+export interface LinkNode {
+  readonly kind: 'link';
+  readonly href: string;
+  readonly children: readonly RichTextNode[];
+}
+
 /** An inline audio icon, rendered by `AudioClip`'s speaker variant (spec §6). */
 export interface AudioNode {
   readonly kind: 'audio';
@@ -50,14 +60,26 @@ export interface AudioNode {
   readonly label?: string;
 }
 
-export type RichTextNode = TextNode | StrongNode | EmNode | BreakNode | ModalLinkNode | AudioNode;
+export type RichTextNode =
+  | TextNode
+  | StrongNode
+  | EmNode
+  | BreakNode
+  | ModalLinkNode
+  | LinkNode
+  | AudioNode;
 
 /** Nodes that wrap other nodes — the ones a walker must recurse into. */
-export type RichTextParentNode = StrongNode | EmNode | ModalLinkNode;
+export type RichTextParentNode = StrongNode | EmNode | ModalLinkNode | LinkNode;
 
 /** True when `node` has children to walk. */
 export function isParentNode(node: RichTextNode): node is RichTextParentNode {
-  return node.kind === 'strong' || node.kind === 'em' || node.kind === 'modalLink';
+  return (
+    node.kind === 'strong' ||
+    node.kind === 'em' ||
+    node.kind === 'modalLink' ||
+    node.kind === 'link'
+  );
 }
 
 /**

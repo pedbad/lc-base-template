@@ -163,8 +163,8 @@ function makeModalLink(
   const target = attributes['data-modal-target'];
   if (target === undefined) {
     fail(
-      '<a> is only supported as a modal link: it needs class="modal-link" and a ' +
-        'non-empty data-modal-target. Plain links are not part of the allowlist.',
+      '<a class="modal-link"> needs a non-empty data-modal-target. For a plain link, ' +
+        'drop the class and give it an href.',
     );
   }
   if (target.trim() === '') fail('<a> has an empty data-modal-target');
@@ -172,6 +172,43 @@ function makeModalLink(
     fail(`<a data-modal-target="${target}"> is missing class="modal-link"`);
   }
   return { kind: 'modalLink', target, children };
+}
+
+/** A URL scheme (`javascript:`, `data:`, `mailto:` …) at the start of an href. */
+const SCHEME_PATTERN = /^[a-z][a-z0-9+.-]*:/i;
+
+/**
+ * Build the node for a plain `<a href>` (maintainer, 2026-10-09). Only an http(s) URL
+ * or a path relative to the site: anything with another scheme could run script or
+ * leave the page in ways the template does not mean, and a root-absolute or `..` path
+ * would skip resolveAsset's base path (AGENTS.md hard constraint 3).
+ */
+function makeLink(
+  attributes: Readonly<Record<string, string>>,
+  children: readonly RichTextNode[],
+  fail: (message: string) => never,
+): RichTextNode {
+  const href = attributes.href;
+  if (href === undefined) {
+    fail(
+      '<a> needs an href (a link, opened in a new tab) or class="modal-link" and a ' +
+        'data-modal-target (a popup)',
+    );
+  }
+  const trimmed = href.trim();
+  if (trimmed === '') fail('<a> has an empty href');
+  if (!/^https?:\/\//i.test(trimmed)) {
+    if (SCHEME_PATTERN.test(trimmed)) {
+      fail(`<a href="${trimmed}"> must be an http(s) URL or a relative path under the site`);
+    }
+    if (trimmed.startsWith('/') || trimmed.split('/').includes('..')) {
+      fail(
+        `<a href="${trimmed}"> must be relative to the site, with no leading "/" or "..": ` +
+          'the base path is added for you',
+      );
+    }
+  }
+  return { kind: 'link', href: trimmed, children };
 }
 
 /** Build the node for an audio `<span>`, enforcing emptiness (spec §6). */
@@ -276,7 +313,12 @@ export function parseRichText(html: string, source?: string): readonly RichTextN
         stack.push({
           name: 'a',
           children: [],
-          close: (children) => makeModalLink(tag.attributes, children, fail),
+          // A popup when it asks for one; otherwise a plain link.
+          close: (children) =>
+            tag.attributes['data-modal-target'] !== undefined ||
+            hasToken(tag.attributes.class, 'modal-link')
+              ? makeModalLink(tag.attributes, children, fail)
+              : makeLink(tag.attributes, children, fail),
         });
         break;
       case 'span':

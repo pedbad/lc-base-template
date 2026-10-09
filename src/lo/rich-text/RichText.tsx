@@ -12,7 +12,10 @@
  *
  * Spec: docs/specs/lo-rich-text-modals.md §4, §6, §10.
  */
+import { ExternalLink } from 'lucide-react';
 import { AudioClip } from '@/components/audio/AudioClip';
+import { resolveLabel } from '@/config/ui-strings';
+import { resolveAsset } from '@/lib/assets';
 import type { RichTextNode } from './rich-text-nodes';
 import { ModalLink } from './modal/ModalLink';
 
@@ -44,6 +47,21 @@ function RichTextNodeView({ node }: { node: RichTextNode }) {
         <ModalLink target={node.target}>
           <RichText nodes={node.children} />
         </ModalLink>
+      );
+    case 'link':
+      // Always a new tab, and said so: the icon for the eye, the sr-only text for a
+      // screen reader (maintainer, 2026-10-09).
+      return (
+        <a
+          href={resolveAsset(node.href)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rich-text-link"
+        >
+          <RichText nodes={node.children} />
+          <ExternalLink className="rich-text-link-icon" aria-hidden="true" />
+          <span className="sr-only">{` ${resolveLabel('opensInNewTab')}`}</span>
+        </a>
       );
     case 'audio':
       // The speaker variant has no visible text, so `title` is its accessible name.
