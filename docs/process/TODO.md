@@ -43,7 +43,8 @@ is exactly what the paragraph above is about.
 `bun run test` (Vitest), **not** `bun test` — Bun's own runner throws on the
 `import.meta.glob` in `load-lo-glob.ts` and reports a false failure.
 
-**Next, in order (2026-10-09):** each detailed in §D18 / §D14 below.
+**Next, in order (2026-10-09):** the six below are DONE; what is left open is in §D14
+(the sandbox at 320, the transcript slide in Safari).
 
 1. ~~**Show answer and the progress meter** (§D18)~~ **DONE 2026-10-09** (`511c3cf`):
    the meter counts only the student's own correct answers.
@@ -52,7 +53,7 @@ is exactly what the paragraph above is about.
 3. ~~**Check button hover contrast** (§D14)~~ **DONE 2026-10-09** (`b29db0c`): 6.02 / 6.62:1.
 4. ~~**A hover term in the debug pages** (§D14)~~ **DONE 2026-10-09** (`737ab59`).
 5. ~~**Hero placeholder label at 320–375** (§D14)~~ **DONE 2026-10-09** (`abc5a3e`).
-6. **Sandbox Docs hub tables at 375** (§D14).
+6. ~~**Sandbox Docs hub tables at 375** (§D14)~~ **DONE 2026-10-09** (`135fc25`).
 
 **Browser verification:** the in-app browser pane stays hidden (no window focus, so
 focus events never fire and transitions stall). Use a headed Chromium driven by
@@ -334,7 +335,7 @@ file as its home), `STRUCTURE.md`'s `src/sandbox/` row, README's build section,
 CONTRIBUTING's command table, `AGENTS.md`'s two new house rules, `docs/TOOLING.md`'s two
 new decision entries.
 
-## D. Design & accessibility polish — 2 of 18 open (§D14, §D18)
+## D. Design & accessibility polish — 1 of 18 open (§D14)
 
 Design and a11y come before branch protection **by decision 2026-09-09**: a footer that
 ships internal build chatter and two dead links is a defect on every page of a live
@@ -1447,8 +1448,13 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   - **Sandbox at 320 scrolls sideways** (found 2026-10-09 while verifying the above):
     the Alerts section's `<code>src/components/shell/Callout.tsx</code>` runs 10px
     past the viewport (scroll width 339 on 320). Debug page only.
-  - **Sandbox Docs hub at 375:** two rendered tables (Preset, Font) scroll sideways
-    with no keyboard focus — axe `scrollable-region-focusable`. Debug page only.
+  - **Sandbox Docs hub at 375 DONE 2026-10-09** (`135fc25`): two rendered tables
+    (Preset, Font) scrolled sideways with no keyboard stop — axe
+    `scrollable-region-focusable`. Each table now sits in a focusable, named region
+    (`<file> table N`, `docs-markdown.ts`) that does the scrolling, as code blocks do;
+    the `<table>` keeps its role, and its look (content width) is unchanged. Verified
+    at 320 / 375 / 768 / 1024 / 1440 / 1920, both themes: axe clean on the whole
+    sandbox; an overflowing table takes focus and scrolls with the arrow keys.
 
 - **D15 — feedback under a wrong typed answer. DONE 2026-10-08** (maintainer's three
   calls: hint first, capitals ignored by default, accent-only misses still wrong). The
@@ -1553,7 +1559,7 @@ no-preference` only.
   - Verified on the built showcase: 17 meters at 320 / 375 / 768 / 1024 / 1440 / 1920,
     both themes, none overflowing, no sideways scroll, axe clean on the meters; the
     hop runs on an all-correct inline-gap.
-  - **Open, for the maintainer:**
+  - **Was open for the maintainer, all DONE 2026-10-09:**
     - **Show answer and the meter DONE 2026-10-09** (`511c3cf`; maintainer: count only
       the student's own correct answers). Revealing had filled the meter and played
       the hop ("5 correct out of 5" the student did not earn). The blank engines
@@ -1745,3 +1751,4 @@ build, so it cannot return. Two remain:
 | 2026-10-09 | `b29db0c` | **Check hover contrast** — hover pulls `--success` toward `--foreground`: 6.02 / 6.62:1 (§D14)                                |
 | 2026-10-09 | `737ab59` | **hover term in the debug pages** — a plain link and a hover term in the showcase and sandbox (§D14)                          |
 | 2026-10-09 | `abc5a3e` | **hero label bottom-right** — below 1024px, clear of the title (§D14)                                                         |
+| 2026-10-09 | `135fc25` | **docs hub tables** — each a focusable, named scroll region (§D14)                                                            |
