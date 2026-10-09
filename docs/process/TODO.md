@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-09 · **HEAD:** see `git log` · **Suite:** 143 files · 1540 tests green
+**Last updated:** 2026-10-09 · **HEAD:** see `git log` · **Suite:** 143 files · 1544 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -1441,10 +1441,12 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     (shown in words and drawn as a `└──` folder tree, the file highlighted) and
     `content` lines of INLINE rich text only: the card sits inside a paragraph. A
     card cannot hold another hover term; popup links in it must resolve.
-  - **Behaviour** (`hover-card.ts`, pure, tested): mouse hover opens, leaving closes
-    after 150ms so the pointer can cross into the card; focus opens, focus leaving
-    closes; a press (tap, click, Enter) toggles and pins; Escape closes from anywhere
-    (WCAG 1.4.13). A disclosure button: `aria-expanded`, `aria-controls` only while
+  - **Behaviour** (`hover-card.ts`, pure, tested): mouse hover opens and focus opens;
+    it stays open while either holds, so the pointer crossing a focused term does not
+    close it (leaving closes after 150ms so the pointer can cross into the card). A
+    pointer press (tap, click) toggles and pins; Enter and Space toggle what the
+    reader sees, so they close a card focus opened. Escape closes from anywhere and it
+    stays closed until a trigger starts again (WCAG 1.4.13). A disclosure button: `aria-expanded`, `aria-controls` only while
     open; the tree is `aria-hidden`, the path is in words.
   - **Hand-built, not Base UI Popover:** that would bring floating-ui into main
     (≈12–15 kB, over the JS headroom). The card is placed under the term and moved
@@ -1454,9 +1456,20 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     guard (`lo-rich-text.test.ts`), so their links went unchecked; now they are.
   - Verified on the built site: press opens and closes, hover opens and leaving
     closes; the card at 16–359px on a 375px screen, no sideways scroll; axe zero in
-    both themes with the card open. Focus-to-open could not be exercised: the browser
-    pane never had window focus. Budget: CSS 17.90 / 18 kB, the main sheet is
+    both themes with the card open. Budget: CSS 17.90 / 18 kB, the main sheet is
     nearly full (`docs/TOOLING.md`).
+  - **By keyboard, DONE 2026-10-09** (`a099070`). First run with real window focus: a
+    headed Chromium driven by Playwright (the browser pane is hidden, so focus never
+    fires there). Tab onto the term opens it, Tab away closes it, Escape closes it,
+    axe zero in both themes with it open. Two defects fixed: Enter on a card focus
+    had opened pinned it silently (no visible change, `aria-expanded` already true);
+    and with focus on the term, the pointer crossing it and leaving closed the card.
+    The reducer now tracks hover and focus apart; a click's `detail === 0` tells a
+    keyboard press from a pointer one. **Touch:** emulated iPhone tap opens and pins,
+    a second tap closes, a tap elsewhere closes (the button loses focus); card at
+    16–374px on a 390px screen, no sideways scroll. Not yet on a REAL phone: iOS
+    Safari does not focus a button on tap, so there a tap elsewhere leaves the card
+    pinned until the term is tapped again or Escape. Budget: JS 112.30 → 112.40 kB.
 
 ---
 
@@ -1613,3 +1626,4 @@ build, so it cannot return. Two remain:
 | 2026-10-08 | `2c61379` | **memory-match speaker on small cards** — scales to 36px under a 10rem card, clear of the word (§D14)                         |
 | 2026-10-09 | `d347a79` | **rich-text links** — `<a href>` opens in a new tab with an external icon; the example intro links the debug pages            |
 | 2026-10-09 | `dd14a03` | **hover cards** — `.hover-term` + `hovers/<id>/hover.json`, path drawn as a tree; hover, focus, tap (§D17)                    |
+| 2026-10-09 | `a099070` | **hover card by keyboard** — Enter closes a focus-opened card; open while focus or hover holds it (§D17)                      |

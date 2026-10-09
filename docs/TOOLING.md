@@ -157,12 +157,16 @@ needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-09 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 120 kB**     | 112.30 kB           | 7.70 kB  |
+| `main-*.js`  | **< 120 kB**     | 112.40 kB           | 7.60 kB  |
 | `main-*.css` | **< 18 kB**      | 17.89 kB            | 0.11 kB  |
 
 - **memory-match card size (2026-10-08, TODO §D14): main bundles unchanged.** The
   2 → 4 column switch moved from a 48rem viewport query to a 30rem container query and
   the deck cap from 32rem to 65rem, all in the lazy `memory-match.css`.
+
+- **Hover card by keyboard (2026-10-09, TODO §D17): JS 112.30 → 112.40 kB, CSS
+  unchanged.** The reducer tracks hover and focus apart and tells a keyboard press
+  from a pointer one; no new rules.
 
 - **Hover cards (2026-10-09, TODO §D17): JS 110.99 → 112.30 kB, CSS 17.66 → 17.89 kB.**
   The term, the card and its tree are rich text, so they ship in main. Built by hand
