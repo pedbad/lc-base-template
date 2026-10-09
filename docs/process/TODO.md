@@ -1567,3 +1567,4 @@ build, so it cannot return. Two remain:
 | 2026-10-08 | `77199ba` | **feedback highlight colour** — the revealed answer's `<mark>` is Cambridge Light Blue (`bg-callout-info`) (§D15)             |
 | 2026-10-08 | `7960573` | **hero label top-right** — hero.svg fills the banner; the label hangs 12px from its top-right corner (§D14)                   |
 | 2026-10-08 | `2c61379` | **memory-match speaker on small cards** — scales to 36px under a 10rem card, clear of the word (§D14)                         |
+| 2026-10-09 | see git   | **rich-text links** — `<a href>` opens in a new tab with an external icon; the example intro links the debug pages            |

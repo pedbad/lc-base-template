@@ -157,12 +157,17 @@ needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-09 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 120 kB**     | 110.47 kB           | 9.53 kB  |
-| `main-*.css` | **< 18 kB**      | 17.61 kB            | 0.39 kB  |
+| `main-*.js`  | **< 120 kB**     | 110.99 kB           | 9.01 kB  |
+| `main-*.css` | **< 18 kB**      | 17.66 kB            | 0.34 kB  |
 
 - **memory-match card size (2026-10-08, TODO §D14): main bundles unchanged.** The
   2 → 4 column switch moved from a 48rem viewport query to a 30rem container query and
   the deck cap from 32rem to 65rem, all in the lazy `memory-match.css`.
+
+- **Rich-text links (2026-10-09): JS 110.47 → 110.99 kB, CSS 17.61 → 17.66 kB.** The
+  lucide `ExternalLink` icon, the parser's link branch and the example intro's new
+  sentence (every LO's JSON is in main until per-LO chunking); the link shares the
+  modal link's rules, plus one icon rule.
 
 - **Highlight colour, hero label, small-card speaker (2026-10-08, TODO §D14/§D15): main
   bundles unchanged** (JS 110.48 → 110.47 kB is gzip noise). `bg-callout-info` already
