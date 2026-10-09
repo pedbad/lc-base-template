@@ -18,7 +18,9 @@
     nested 1600 x 500 svg with preserveAspectRatio slice, which is the same cover crop
     LoHero gives a real image; the size label hangs from the BOX's top-right corner,
     as on every other placeholder. Drawn in the artwork's own corner it fell outside
-    the banner on a phone and at wide screens. Pinned by
+    the banner on a phone and at wide screens. Below 1024px it hangs from the
+    bottom-right corner instead (maintainer, 2026-10-09): top-right, it ran under the
+    title, which ends at 446px, until the banner was about 860px wide. Pinned by
     src/build/placeholder-labels.test.ts.
 
     Hex literals are deliberate HERE, as in lo-placeholder.svg: an <img> is a separate
@@ -31,6 +33,20 @@
     .label {
       transform-box: view-box;
       transform-origin: 0 0;
+    }
+
+    .at-bottom {
+      display: none;
+    }
+
+    @media (max-width: 1023px) {
+      .at-top {
+        display: none;
+      }
+
+      .at-bottom {
+        display: inline;
+      }
     }
 
     @media (max-width: 480px) {
@@ -74,13 +90,14 @@
 
   <!-- Size label for designers (maintainer, 2026-10-08): the slot, the size to SUPPLY
        (2x), the largest size it is SHOWN at (measured on the built site) and this
-       file's path. Top-right of the banner, 12px in, in the info alert's style:
-       callout-info ground, primary border and icon, foreground text (literals: an
-       <img> cannot read CSS tokens). Drawn in px leftward from the right edge, so a
-       narrow banner scales it toward that corner. Replace the whole file with the
-       real artwork. -->
-  <svg x="100%" y="0" overflow="visible">
-    <g data-label-position="top-right" class="label" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
+       file's path, in the info alert's style: callout-info ground, primary border and
+       icon, foreground text (literals: an <img> cannot read CSS tokens). Drawn once,
+       in px leftward from the right edge, and placed twice: 12px in from the
+       top-right corner from 1024px, from the bottom-right below it, clear of the
+       title. A narrow banner scales it toward its corner. Replace the whole file with
+       the real artwork. -->
+  <defs>
+    <g id="size-label" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
       <rect x="-408" y="12" width="396" height="58" rx="5" fill="#d1f9f1" stroke="#133844" stroke-width="1" />
       <g fill="none" stroke="#133844" stroke-width="1.5" stroke-linecap="round">
         <circle cx="-393" cy="25" r="6.2" />
@@ -92,5 +109,13 @@
         <text x="-380" y="61" font-size="11" font-family="ui-monospace, 'SF Mono', Menlo, monospace">public/images/lo-00-example/hero.svg</text>
       </g>
     </g>
+  </defs>
+
+  <svg x="100%" y="0" overflow="visible" class="at-top">
+    <g data-label-position="top-right" class="label"><use href="#size-label" /></g>
+  </svg>
+
+  <svg x="100%" y="100%" overflow="visible" class="at-bottom">
+    <g data-label-position="bottom-right" class="label"><use href="#size-label" y="-82" /></g>
   </svg>
 </svg>

@@ -103,4 +103,16 @@ describe('hero.svg pins its label to the banner, not the artwork', () => {
   test('a narrow banner scales the label down to fit', () => {
     expect(svg).toMatch(/@media \(max-width: \d+px\)/);
   });
+
+  // TODO §D14 (maintainer, 2026-10-09): top-right, the label ran under the title's first
+  // line at 320–375, and at 480 and 768 too (measured: the example title ends at 446px;
+  // the label starts left of that until about 860px). Below 1024px it hangs from the
+  // bottom-right corner instead, clear of the title. One label, placed twice by <use>.
+  test('below 1024px the label hangs from the bottom-right corner', () => {
+    expect(svg).toMatch(/<svg x="100%" y="100%"[^>]*>\s*<g[^>]*data-label-position="bottom-right"/);
+    expect(svg).toMatch(
+      /@media \(max-width: 1023px\)\s*\{\s*\.at-top\s*\{\s*display: none;\s*\}\s*\.at-bottom\s*\{\s*display: inline;/,
+    );
+    expect(svg.match(/Hero banner · supply/g)).toHaveLength(1);
+  });
 });
