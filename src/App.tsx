@@ -14,6 +14,7 @@ import ThemeToggle from '@/components/shell/ThemeToggle';
 import type { AssembledLo } from '@/lo/assemble-lo';
 import { toPageSections } from '@/lo/lo-page-sections';
 import { ModalProvider } from '@/lo/rich-text/modal/ModalProvider';
+import { HoverProvider } from '@/lo/rich-text/hover/hover-context';
 
 interface AppProps {
   /** The loaded, validated LO this page renders. */
@@ -27,12 +28,14 @@ function App({ lo }: AppProps) {
   // prose, and it renders the one dialog host for all of them (rich-text spec §7).
   return (
     <ModalProvider modals={lo.modals}>
-      <PageLayout
-        title={lo.title}
-        hero={lo.hero}
-        sections={sections}
-        themeToggle={<ThemeToggle />}
-      />
+      <HoverProvider hovers={lo.hovers}>
+        <PageLayout
+          title={lo.title}
+          hero={lo.hero}
+          sections={sections}
+          themeToggle={<ThemeToggle />}
+        />
+      </HoverProvider>
     </ModalProvider>
   );
 }

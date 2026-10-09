@@ -1,5 +1,6 @@
 import { test, expect } from 'vitest';
 import {
+  HoverConfigSchema,
   LoManifestSchema,
   LoSectionSchema,
   BlockConfigSchema,
@@ -360,4 +361,21 @@ test('BlockConfigSchema: presentation rejects an unknown value', () => {
       content: {},
     }),
   ).toThrow();
+});
+
+// TODO §D17 (2026-10-09): a hover card says where something is (a path, drawn as a
+// tree) and/or a few lines of inline rich text. It must say something.
+test('lo-schema: a hover card needs a path or some content', () => {
+  expect(HoverConfigSchema.parse({ path: 'lo-config/lo-00-example/lo.json' }).path).toBe(
+    'lo-config/lo-00-example/lo.json',
+  );
+  expect(HoverConfigSchema.parse({ content: ['A line.'] }).content).toEqual(['A line.']);
+  expect(() => HoverConfigSchema.parse({ title: 'Nothing else' })).toThrow();
+});
+
+test('lo-schema: hovers defaults to none and takes kebab-case ids', () => {
+  const base = { title: 'T', sections: oneSection };
+  expect(LoManifestSchema.parse(base).hovers).toEqual([]);
+  expect(LoManifestSchema.parse({ ...base, hovers: ['lo-json'] }).hovers).toEqual(['lo-json']);
+  expect(() => LoManifestSchema.parse({ ...base, hovers: ['Bad Id'] })).toThrow();
 });

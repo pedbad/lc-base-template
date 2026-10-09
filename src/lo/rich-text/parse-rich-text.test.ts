@@ -168,6 +168,33 @@ describe('modal links', () => {
     expect(() => parseRichText(`<a href="${href}">v</a>`)).toThrow(message);
   });
 
+  // TODO §D17 (2026-10-09): a term with more to say on hover, focus or tap.
+  test('parses a hover term', () => {
+    expect(
+      parseRichText(
+        '<span class="hover-term" data-hover-target="lo-json">the <em>JSON</em></span>',
+      ),
+    ).toEqual([
+      {
+        kind: 'hoverTerm',
+        target: 'lo-json',
+        children: [
+          { kind: 'text', value: 'the ' },
+          { kind: 'em', children: [{ kind: 'text', value: 'JSON' }] },
+        ],
+      },
+    ]);
+  });
+
+  test('rejects a hover term with an empty target or without its class', () => {
+    expect(() => parseRichText('<span class="hover-term" data-hover-target=" ">x</span>')).toThrow(
+      /empty data-hover-target/,
+    );
+    expect(() => parseRichText('<span data-hover-target="lo-json">x</span>')).toThrow(
+      /class="hover-term"/,
+    );
+  });
+
   test('rejects an anchor with neither href nor data-modal-target', () => {
     expect(() => parseRichText('<a>v</a>')).toThrow(/href/);
   });

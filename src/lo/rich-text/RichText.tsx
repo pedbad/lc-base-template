@@ -18,6 +18,7 @@ import { resolveLabel } from '@/config/ui-strings';
 import { resolveAsset } from '@/lib/assets';
 import type { RichTextNode } from './rich-text-nodes';
 import { ModalLink } from './modal/ModalLink';
+import { HoverTerm } from './hover/HoverTerm';
 
 /** A speaker inside a line of text: 36px, so the line keeps its rhythm. Stand-alone
  *  speakers are 54px (maintainer, 2026-10-08). */
@@ -62,6 +63,12 @@ function RichTextNodeView({ node }: { node: RichTextNode }) {
           <ExternalLink className="rich-text-link-icon" aria-hidden="true" />
           <span className="sr-only">{` ${resolveLabel('opensInNewTab')}`}</span>
         </a>
+      );
+    case 'hoverTerm':
+      return (
+        <HoverTerm target={node.target}>
+          <RichText nodes={node.children} />
+        </HoverTerm>
       );
     case 'audio':
       // The speaker variant has no visible text, so `title` is its accessible name.

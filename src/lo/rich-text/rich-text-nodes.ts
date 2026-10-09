@@ -52,6 +52,16 @@ export interface LinkNode {
   readonly children: readonly RichTextNode[];
 }
 
+/**
+ * A term with more to say: opens hover card `target` on hover, focus or tap
+ * (TODO §D17). Rendered by HoverTerm as a disclosure button.
+ */
+export interface HoverTermNode {
+  readonly kind: 'hoverTerm';
+  readonly target: string;
+  readonly children: readonly RichTextNode[];
+}
+
 /** An inline audio icon, rendered by `AudioClip`'s speaker variant (spec §6). */
 export interface AudioNode {
   readonly kind: 'audio';
@@ -67,10 +77,11 @@ export type RichTextNode =
   | BreakNode
   | ModalLinkNode
   | LinkNode
+  | HoverTermNode
   | AudioNode;
 
 /** Nodes that wrap other nodes — the ones a walker must recurse into. */
-export type RichTextParentNode = StrongNode | EmNode | ModalLinkNode | LinkNode;
+export type RichTextParentNode = StrongNode | EmNode | ModalLinkNode | LinkNode | HoverTermNode;
 
 /** True when `node` has children to walk. */
 export function isParentNode(node: RichTextNode): node is RichTextParentNode {
@@ -78,7 +89,8 @@ export function isParentNode(node: RichTextNode): node is RichTextParentNode {
     node.kind === 'strong' ||
     node.kind === 'em' ||
     node.kind === 'modalLink' ||
-    node.kind === 'link'
+    node.kind === 'link' ||
+    node.kind === 'hoverTerm'
   );
 }
 
@@ -137,6 +149,14 @@ export interface TableEntry {
   readonly body: readonly (readonly TableCell[])[];
 }
 
+/** Every hover-card id used in `nodes`, at any depth (TODO §D17). */
+export function collectHoverTargets(nodes: readonly RichTextNode[]): readonly string[] {
+  return nodes.flatMap((node) => {
+    if (node.kind === 'hoverTerm') return [node.target, ...collectHoverTargets(node.children)];
+    return isParentNode(node) ? collectHoverTargets(node.children) : [];
+  });
+}
+
 /** `<span data-audio-player>`: the full native player, with a required visible label. */
 export interface AudioPlayerEntry {
   readonly kind: 'audioPlayer';
@@ -163,6 +183,11 @@ function inlineListsOf(entry: RichTextEntry): readonly (readonly RichTextNode[])
 /** Every modal id linked from `entries`, at any depth — the entry-level `collectModalTargets`. */
 export function collectEntryModalTargets(entries: readonly RichTextEntry[]): readonly string[] {
   return entries.flatMap(inlineListsOf).flatMap(collectModalTargets);
+}
+
+/** Every hover-card id used in `entries` — the entry-level `collectHoverTargets`. */
+export function collectEntryHoverTargets(entries: readonly RichTextEntry[]): readonly string[] {
+  return entries.flatMap(inlineListsOf).flatMap(collectHoverTargets);
 }
 
 /** Every audio path in `entries` — inline speakers AND players — for the asset guard. */

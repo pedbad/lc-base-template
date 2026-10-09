@@ -157,12 +157,18 @@ needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-09 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 120 kB**     | 110.99 kB           | 9.01 kB  |
-| `main-*.css` | **< 18 kB**      | 17.66 kB            | 0.34 kB  |
+| `main-*.js`  | **< 120 kB**     | 112.30 kB           | 7.70 kB  |
+| `main-*.css` | **< 18 kB**      | 17.89 kB            | 0.11 kB  |
 
 - **memory-match card size (2026-10-08, TODO §D14): main bundles unchanged.** The
   2 → 4 column switch moved from a 48rem viewport query to a 30rem container query and
   the deck cap from 32rem to 65rem, all in the lazy `memory-match.css`.
+
+- **Hover cards (2026-10-09, TODO §D17): JS 110.99 → 112.30 kB, CSS 17.66 → 17.89 kB.**
+  The term, the card and its tree are rich text, so they ship in main. Built by hand
+  rather than on Base UI's Popover, which would have added floating-ui (≈12–15 kB, over
+  the JS headroom). **CSS headroom is now 0.11 kB:** the next rule in `main-*.css`
+  needs a lever pulled first (per-engine lazy CSS, or raising the line).
 
 - **Rich-text links (2026-10-09): JS 110.47 → 110.99 kB, CSS 17.61 → 17.66 kB.** The
   lucide `ExternalLink` icon, the parser's link branch and the example intro's new

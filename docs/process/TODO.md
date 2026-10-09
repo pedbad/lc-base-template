@@ -1430,6 +1430,34 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   - Verified on the built site: both links 200 and open in a new tab, 13px icon, axe
     zero in both themes. Budget in `docs/TOOLING.md`.
 
+- **D17 — hover cards. DONE 2026-10-09** (maintainer's calls: hover, focus and tap;
+  content in `hovers/<id>/hover.json`; amber). A term with more to say, authored as
+  `<span class="hover-term" data-hover-target="id">…</span>` in any rich text.
+  - **One class, reused:** `.hover-term` (rich-text.css): bold, `--hover-term`
+    (`--amber-deep` light, 6.0:1; `--amber-soft` dark, 7.2:1), dotted underline (a
+    link's is solid), `cursor: help`.
+  - **Content:** `hovers/<id>/hover.json`, declared in lo.json's `hovers[]` like
+    `modals[]` (render-mirror guard b covers the folders). Optional `title`, `path`
+    (shown in words and drawn as a `└──` folder tree, the file highlighted) and
+    `content` lines of INLINE rich text only: the card sits inside a paragraph. A
+    card cannot hold another hover term; popup links in it must resolve.
+  - **Behaviour** (`hover-card.ts`, pure, tested): mouse hover opens, leaving closes
+    after 150ms so the pointer can cross into the card; focus opens, focus leaving
+    closes; a press (tap, click, Enter) toggles and pins; Escape closes from anywhere
+    (WCAG 1.4.13). A disclosure button: `aria-expanded`, `aria-controls` only while
+    open; the tree is `aria-hidden`, the path is in words.
+  - **Hand-built, not Base UI Popover:** that would bring floating-ui into main
+    (≈12–15 kB, over the JS headroom). The card is placed under the term and moved
+    left by its offset (not a transform, which still widened a phone's page) when it
+    would cross the layout viewport's edge less 16px.
+  - Found on the way: `intro` blocks were never scanned by the repo-wide rich-text
+    guard (`lo-rich-text.test.ts`), so their links went unchecked; now they are.
+  - Verified on the built site: press opens and closes, hover opens and leaving
+    closes; the card at 16–359px on a 375px screen, no sideways scroll; axe zero in
+    both themes with the card open. Focus-to-open could not be exercised: the browser
+    pane never had window focus. Budget: CSS 17.90 / 18 kB, the main sheet is
+    nearly full (`docs/TOOLING.md`).
+
 ---
 
 ## E. Before sharing with other developers
@@ -1584,3 +1612,4 @@ build, so it cannot return. Two remain:
 | 2026-10-08 | `7960573` | **hero label top-right** — hero.svg fills the banner; the label hangs 12px from its top-right corner (§D14)                   |
 | 2026-10-08 | `2c61379` | **memory-match speaker on small cards** — scales to 36px under a 10rem card, clear of the word (§D14)                         |
 | 2026-10-09 | `d347a79` | **rich-text links** — `<a href>` opens in a new tab with an external icon; the example intro links the debug pages            |
+| 2026-10-09 | see git   | **hover cards** — `.hover-term` + `hovers/<id>/hover.json`, path drawn as a tree; hover, focus, tap (§D17)                    |

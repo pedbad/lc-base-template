@@ -193,6 +193,30 @@ export const ModalConfigSchema = z.object({
 export type ModalConfig = z.infer<typeof ModalConfigSchema>;
 
 /**
+ * Validates one hover card's `hovers/<id>/hover.json` (maintainer, 2026-10-09; TODO
+ * §D17) — extra detail for a term in authored prose
+ * (`<span class="hover-term" data-hover-target="…">`), shown on hover, focus or tap.
+ *
+ * The card sits INSIDE a paragraph, so it holds inline content only: an optional
+ * title, an optional `path` (shown in words and drawn as a folder tree) and optional
+ * lines of inline rich text. It must say something: a path or at least one line.
+ */
+export const HoverConfigSchema = z
+  .object({
+    title: z.string().min(1).optional(),
+    /** A path in the repo, e.g. `lo-config/lo-00-example/lo.json`. Drawn as a tree. */
+    path: z.string().min(1).optional(),
+    /** One line of INLINE rich text each (no lists or tables: the card is in a <p>). */
+    content: z.array(z.string().min(1)).min(1).optional(),
+    /** Set when the text is target-language content (WCAG 3.1.2). */
+    lang: z.string().min(1).optional(),
+  })
+  .refine((card) => card.path !== undefined || card.content !== undefined, {
+    message: 'a hover card needs a path or some content',
+  });
+export type HoverConfig = z.infer<typeof HoverConfigSchema>;
+
+/**
  * One top-level section of the page, declared BY the LO (decision D1, 2026-08-04).
  *
  * The manifest owns page structure: there is no code-side `type → section` map and
@@ -294,6 +318,13 @@ export const LoManifestSchema = z
      */
     modals: z
       .array(z.string().regex(SECTION_ID_PATTERN, 'modal id must be url-safe kebab-case'))
+      .default([]),
+    /**
+     * Hover-card ids this LO declares, each resolving to `hovers/<id>/hover.json`.
+     * Top-level and declared for the same reasons as `modals` (TODO §D17).
+     */
+    hovers: z
+      .array(z.string().regex(SECTION_ID_PATTERN, 'hover id must be url-safe kebab-case'))
       .default([]),
   })
   .superRefine((manifest, ctx) => {

@@ -16,13 +16,19 @@ import path from 'node:path';
 import { describe, expect, test } from 'vitest';
 import { listLoSlugs, loadLo } from '../load-lo-disk';
 import { TextBlockContentSchema } from '../blocks/text-block-schema';
-import { collectEntryAudioPaths, collectEntryModalTargets } from './rich-text-nodes';
+import {
+  collectEntryAudioPaths,
+  collectEntryHoverTargets,
+  collectEntryModalTargets,
+} from './rich-text-nodes';
 import type { RichTextEntry } from './rich-text-nodes';
 
 const PUBLIC_DIR = path.resolve(import.meta.dirname, '../../../public');
 
 /** Block types whose `content` carries inline rich text in `text[]`. */
-const RICH_TEXT_BLOCK_TYPES = new Set(['prose', 'grammar']);
+// `intro` added 2026-10-09 (TODO §D17): it shares TextBlockContentSchema, and its
+// links and hover terms went unchecked before.
+const RICH_TEXT_BLOCK_TYPES = new Set(['prose', 'grammar', 'intro']);
 
 /**
  * Every rich-text paragraph in one LO — from its modals (already parsed by the
@@ -55,6 +61,17 @@ describe('every LO', () => {
     expect(SLUGS.length).toBeGreaterThan(0);
   });
 
+  // TODO §D17: a hover term pointing at an undeclared card would be a dead button.
+  test.each(SLUGS)('%s: every hover term resolves to a declared hover card', (slug) => {
+    const declared = Object.keys(loadLo(slug).hovers);
+    for (const target of collectEntryHoverTargets(richTextOf(slug))) {
+      expect(
+        declared,
+        `${slug} has a hover term for "${target}" but does not declare it`,
+      ).toContain(target);
+    }
+  });
+
   test.each(SLUGS)('%s: every modal link resolves to a declared modal', (slug) => {
     const declared = Object.keys(loadLo(slug).modals);
     const targets = collectEntryModalTargets(richTextOf(slug));
@@ -81,6 +98,12 @@ describe('every LO', () => {
 });
 
 describe('the example LO specifically', () => {
+  test('declares a hover card and uses it in the introduction', () => {
+    const lo = loadLo('lo-00-example');
+    expect(lo.hovers['lo-json']?.path).toBe('lo-config/lo-00-example/lo.json');
+    expect(collectEntryHoverTargets(richTextOf('lo-00-example'))).toContain('lo-json');
+  });
+
   test('declares a modal and links to it from block prose, so the popup is reachable', () => {
     const lo = loadLo('lo-00-example');
     expect(Object.keys(lo.modals)).toContain('example-popup');

@@ -14,6 +14,7 @@ function reader(overrides: Record<string, Partial<AssembledLo>> = {}) {
     title: `Title of ${folder}`,
     sections: [{ id: 'introduction', label: 'Introduction', blocks: [], exercises: [] }],
     modals: {},
+    hovers: {},
     ...overrides[folder],
   });
 }

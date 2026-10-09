@@ -26,13 +26,20 @@ import {
   LoManifestSchema,
   BlockConfigSchema,
   LoExerciseConfigSchema,
+  HoverConfigSchema,
   ModalConfigSchema,
   type BlockConfig,
   type LoExerciseConfig,
   type LoHero,
 } from '@/config/lo-schema';
 import { parseRichTextEntry } from './rich-text/parse-rich-text-entry';
-import { collectEntryModalTargets } from './rich-text/rich-text-nodes';
+import {
+  collectEntryModalTargets,
+  collectHoverTargets,
+  collectModalTargets,
+} from './rich-text/rich-text-nodes';
+import { parseRichText } from './rich-text/parse-rich-text';
+import type { HoverContent } from './rich-text/hover/hover-context';
 import type { ModalContent } from './rich-text/modal/modal-context';
 
 /**
@@ -48,6 +55,8 @@ export interface LoFileTree {
   readonly exercises: Readonly<Record<string, unknown>>;
   /** id → raw `modals/<id>/modal.json`. Absent is normal: most LOs declare none. */
   readonly modals?: Readonly<Record<string, unknown>>;
+  /** id → raw `hovers/<id>/hover.json` (TODO §D17). Absent is normal. */
+  readonly hovers?: Readonly<Record<string, unknown>>;
 }
 
 /** One resolved part: the ref it was named by, plus its validated config. */
@@ -82,6 +91,8 @@ export interface AssembledLo {
    * injection path (spec §5).
    */
   readonly modals: Readonly<Record<string, ModalContent>>;
+  /** Declared hover cards, keyed by id, their lines already parsed (TODO §D17). */
+  readonly hovers: Readonly<Record<string, HoverContent>>;
 }
 
 /** An author-facing path for the LO file at `relative` inside this LO's folder. */
@@ -147,6 +158,43 @@ export function assembleLo(slug: string, tree: LoFileTree): AssembledLo {
     }),
   );
 
+  const hovers = Object.fromEntries(
+    manifest.hovers.map((id) => {
+      const filePath = loPath(slug, `hovers/${id}/hover.json`);
+      const config = parseFile(
+        HoverConfigSchema,
+        requireFile(tree.hovers ?? {}, id, filePath),
+        filePath,
+      );
+      // Inline rich text only: the card sits inside a paragraph. Parsed here, at load,
+      // so a bad tag dies naming the file. A card inside a card is not allowed.
+      const content = (config.content ?? []).map((line) => {
+        const nodes = parseRichText(line);
+        if (collectHoverTargets(nodes).length > 0) {
+          throw new Error(`${filePath}: a hover card cannot hold another hover term`);
+        }
+        collectModalTargets(nodes).forEach((target) => {
+          if (!(target in modals)) {
+            throw new Error(
+              `${filePath} links to modal "${target}", which lo.json does not declare`,
+            );
+          }
+        });
+        return nodes;
+      });
+      return [
+        id,
+        {
+          id,
+          content,
+          ...(config.title === undefined ? {} : { title: config.title }),
+          ...(config.path === undefined ? {} : { path: config.path }),
+          ...(config.lang === undefined ? {} : { lang: config.lang }),
+        } satisfies HoverContent,
+      ];
+    }),
+  );
+
   const sections = manifest.sections.map<AssembledSection>((section) => ({
     id: section.id,
     label: section.label,
@@ -195,5 +243,6 @@ export function assembleLo(slug: string, tree: LoFileTree): AssembledLo {
     ...(manifest.hero === undefined ? {} : { hero: manifest.hero }),
     sections,
     modals,
+    hovers,
   };
 }

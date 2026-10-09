@@ -211,6 +211,20 @@ function makeLink(
   return { kind: 'link', href: trimmed, children };
 }
 
+/** Build the node for a hover-term `<span>` (TODO §D17). */
+function makeHoverTerm(
+  attributes: Readonly<Record<string, string>>,
+  children: readonly RichTextNode[],
+  fail: (message: string) => never,
+): RichTextNode {
+  const target = attributes['data-hover-target'] ?? '';
+  if (target.trim() === '') fail('<span class="hover-term"> has an empty data-hover-target');
+  if (!hasToken(attributes.class, 'hover-term')) {
+    fail(`<span data-hover-target="${target}"> is missing class="hover-term"`);
+  }
+  return { kind: 'hoverTerm', target: target.trim(), children };
+}
+
 /** Build the node for an audio `<span>`, enforcing emptiness (spec §6). */
 function makeAudio(
   attributes: Readonly<Record<string, string>>,
@@ -325,7 +339,11 @@ export function parseRichText(html: string, source?: string): readonly RichTextN
         stack.push({
           name: 'span',
           children: [],
-          close: (children) => makeAudio(tag.attributes, children, fail),
+          // A hover term when it names a card; otherwise an audio icon.
+          close: (children) =>
+            tag.attributes['data-hover-target'] !== undefined
+              ? makeHoverTerm(tag.attributes, children, fail)
+              : makeAudio(tag.attributes, children, fail),
         });
         break;
       default:

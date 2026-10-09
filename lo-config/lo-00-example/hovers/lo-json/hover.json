@@ -1,0 +1,8 @@
+{
+  "title": "Where this page comes from",
+  "path": "lo-config/lo-00-example/lo.json",
+  "content": [
+    "<strong>lo.json</strong> lists the sections in order; each block and exercise it names is a folder of its own beside it.",
+    "Copy the whole <em>lo-00-example</em> folder to start a new Learning Object."
+  ]
+}

@@ -85,8 +85,8 @@ import path from 'node:path';
 import { LO_CONFIG_DIR, listLoSlugs } from '@/lo/lo-folders';
 import { loSlug } from '@/lo/lo-slug';
 
-/** The three kinds of part an LO folder holds, each its own `<kind>/<ref>/` folder. */
-export const PART_KINDS = ['blocks', 'exercises', 'modals'] as const;
+/** The kinds of part an LO folder holds, each its own `<kind>/<ref>/` folder. */
+export const PART_KINDS = ['blocks', 'exercises', 'modals', 'hovers'] as const;
 export type PartKind = (typeof PART_KINDS)[number];
 
 /**
@@ -100,6 +100,7 @@ export const CONFIG_FILE_BY_KIND: Readonly<Record<PartKind, string>> = {
   blocks: 'block.json',
   exercises: 'exercise.json',
   modals: 'modal.json',
+  hovers: 'hover.json',
 };
 
 /** One part folder found on disk. */
@@ -173,6 +174,7 @@ export function referencedRefs(manifest: unknown): RefsByKind {
     blocks: sectionList.flatMap((section) => stringsAt(section, 'blocks')),
     exercises: sectionList.flatMap((section) => stringsAt(section, 'exercises')),
     modals: stringsAt(manifest, 'modals'),
+    hovers: stringsAt(manifest, 'hovers'),
   };
 }
 
@@ -202,6 +204,7 @@ export function presentParts(loDir: string): Readonly<Record<PartKind, readonly 
     blocks: readKind('blocks'),
     exercises: readKind('exercises'),
     modals: readKind('modals'),
+    hovers: readKind('hovers'),
   };
 }
 

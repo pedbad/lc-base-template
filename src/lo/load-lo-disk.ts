@@ -29,13 +29,18 @@ const readJson = (filePath: string): unknown => JSON.parse(readFileSync(filePath
  */
 function readParts(
   loDir: string,
-  kind: 'blocks' | 'exercises' | 'modals',
+  kind: 'blocks' | 'exercises' | 'modals' | 'hovers',
 ): Record<string, unknown> {
   const kindDir = path.join(loDir, kind);
   if (!existsSync(kindDir)) return {};
 
   // Each kind's folder holds one file per ref, named for the kind (singularised).
-  const FILE_NAMES = { blocks: 'block.json', exercises: 'exercise.json', modals: 'modal.json' };
+  const FILE_NAMES = {
+    blocks: 'block.json',
+    exercises: 'exercise.json',
+    modals: 'modal.json',
+    hovers: 'hover.json',
+  };
   const fileName = FILE_NAMES[kind];
   return Object.fromEntries(
     readdirSync(kindDir, { withFileTypes: true })
@@ -66,6 +71,7 @@ export function loadLo(slug: string): AssembledLo {
     blocks: readParts(loDir, 'blocks'),
     exercises: readParts(loDir, 'exercises'),
     modals: readParts(loDir, 'modals'),
+    hovers: readParts(loDir, 'hovers'),
   };
   return assembleLo(slug, tree);
 }

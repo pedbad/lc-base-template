@@ -24,23 +24,25 @@ const EXAMPLE_DIR = path.join(REPO_ROOT, 'lo-config/lo-00-example');
 /** A structure with nothing in it, to be spread over with just the case under test. */
 const emptyStructure = (folder = 'lo-00-example'): LoStructure => ({
   folder,
-  referenced: { blocks: [], exercises: [], modals: [] },
-  present: { blocks: [], exercises: [], modals: [] },
+  referenced: { blocks: [], exercises: [], modals: [], hovers: [] },
+  present: { blocks: [], exercises: [], modals: [], hovers: [] },
 });
 
 describe('referencedRefs — what the manifest names', () => {
-  it('collects block and exercise refs across sections, plus modals', () => {
+  it('collects block and exercise refs across sections, plus modals and hovers', () => {
     const manifest = {
       sections: [
         { id: 'a', blocks: ['00-intro'], exercises: [] },
         { id: 'b', blocks: ['01-grammar'], exercises: ['01-select', '02-radio-quiz'] },
       ],
       modals: ['example-popup'],
+      hovers: ['lo-json'],
     };
     expect(referencedRefs(manifest)).toEqual({
       blocks: ['00-intro', '01-grammar'],
       exercises: ['01-select', '02-radio-quiz'],
       modals: ['example-popup'],
+      hovers: ['lo-json'],
     });
   });
 
@@ -49,18 +51,20 @@ describe('referencedRefs — what the manifest names', () => {
       blocks: [],
       exercises: [],
       modals: [],
+      hovers: [],
     });
-    expect(referencedRefs({})).toEqual({ blocks: [], exercises: [], modals: [] });
+    expect(referencedRefs({})).toEqual({ blocks: [], exercises: [], modals: [], hovers: [] });
   });
 
   // A malformed manifest is guard a's failure to report, not this one's. Guard b
   // still has to say what it can see, so it reads the JSON defensively.
   it('survives a manifest of the wrong shape entirely', () => {
-    expect(referencedRefs(null)).toEqual({ blocks: [], exercises: [], modals: [] });
+    expect(referencedRefs(null)).toEqual({ blocks: [], exercises: [], modals: [], hovers: [] });
     expect(referencedRefs({ sections: 'nope', modals: [42, '', 'ok'] })).toEqual({
       blocks: [],
       exercises: [],
       modals: ['ok'],
+      hovers: [],
     });
   });
 });
@@ -88,6 +92,7 @@ describe('presentParts — what is on disk', () => {
       blocks: [],
       exercises: [],
       modals: [],
+      hovers: [],
     });
   });
 });
@@ -96,7 +101,7 @@ describe('findMirrorViolations — catches drift in either direction', () => {
   it('flags a ref the manifest names with no folder behind it', () => {
     const found = findMirrorViolations({
       ...emptyStructure(),
-      referenced: { blocks: ['01-grammar'], exercises: [], modals: [] },
+      referenced: { blocks: ['01-grammar'], exercises: [], modals: [], hovers: [] },
     });
     expect(found).toHaveLength(1);
     expect(found[0]?.problem).toBe('missing');
@@ -107,7 +112,12 @@ describe('findMirrorViolations — catches drift in either direction', () => {
   it('flags a folder the manifest never names — the silent one', () => {
     const found = findMirrorViolations({
       ...emptyStructure(),
-      present: { blocks: [], exercises: [{ ref: '03-flashcards', hasConfig: true }], modals: [] },
+      present: {
+        blocks: [],
+        exercises: [{ ref: '03-flashcards', hasConfig: true }],
+        modals: [],
+        hovers: [],
+      },
     });
     expect(found).toHaveLength(1);
     expect(found[0]?.problem).toBe('unreferenced');
@@ -121,8 +131,13 @@ describe('findMirrorViolations — catches drift in either direction', () => {
   it('flags a referenced folder that holds no config file', () => {
     const found = findMirrorViolations({
       ...emptyStructure(),
-      referenced: { blocks: [], exercises: ['01-select'], modals: [] },
-      present: { blocks: [], exercises: [{ ref: '01-select', hasConfig: false }], modals: [] },
+      referenced: { blocks: [], exercises: ['01-select'], modals: [], hovers: [] },
+      present: {
+        blocks: [],
+        exercises: [{ ref: '01-select', hasConfig: false }],
+        modals: [],
+        hovers: [],
+      },
     });
     expect(found).toHaveLength(1);
     expect(found[0]?.problem).toBe('missing');
@@ -132,8 +147,13 @@ describe('findMirrorViolations — catches drift in either direction', () => {
   it('flags a declared modal with no folder, and an undeclared modal folder', () => {
     const found = findMirrorViolations({
       ...emptyStructure(),
-      referenced: { blocks: [], exercises: [], modals: ['declared'] },
-      present: { blocks: [], exercises: [], modals: [{ ref: 'orphan', hasConfig: true }] },
+      referenced: { blocks: [], exercises: [], modals: ['declared'], hovers: [] },
+      present: {
+        blocks: [],
+        exercises: [],
+        modals: [{ ref: 'orphan', hasConfig: true }],
+        hovers: [],
+      },
     });
     expect(found.map((v) => [v.problem, v.ref])).toEqual([
       ['missing', 'declared'],
@@ -145,11 +165,12 @@ describe('findMirrorViolations — catches drift in either direction', () => {
   it('reports both directions and every kind at once, never just the first', () => {
     const found = findMirrorViolations({
       folder: 'lo-01-salutations',
-      referenced: { blocks: ['ghost-block'], exercises: ['ghost-ex'], modals: [] },
+      referenced: { blocks: ['ghost-block'], exercises: ['ghost-ex'], modals: [], hovers: [] },
       present: {
         blocks: [{ ref: 'orphan-block', hasConfig: true }],
         exercises: [{ ref: 'orphan-ex', hasConfig: true }],
         modals: [{ ref: 'orphan-modal', hasConfig: true }],
+        hovers: [],
       },
     });
     expect(found).toHaveLength(5);
@@ -160,11 +181,12 @@ describe('findMirrorViolations — catches drift in either direction', () => {
     expect(
       findMirrorViolations({
         ...emptyStructure(),
-        referenced: { blocks: ['00-intro'], exercises: [], modals: ['popup'] },
+        referenced: { blocks: ['00-intro'], exercises: [], modals: ['popup'], hovers: [] },
         present: {
           blocks: [{ ref: '00-intro', hasConfig: true }],
           exercises: [],
           modals: [{ ref: 'popup', hasConfig: true }],
+          hovers: [],
         },
       }),
     ).toEqual([]);
@@ -195,7 +217,7 @@ describe('the repo itself obeys guard b', () => {
   // collector would find nothing and this guard would pass by doing nothing at all.
   // These floors make a reshape fail loudly instead of switching the guard off.
   it('found LOs, sections’ refs and folders to compare (the readers have not gone stale)', () => {
-    expect(PART_KINDS.length).toBe(3);
+    expect(PART_KINDS.length).toBe(4); // blocks, exercises, modals, hovers (TODO §D17)
     expect(structures.length).toBeGreaterThan(0);
     for (const kind of PART_KINDS) {
       expect(

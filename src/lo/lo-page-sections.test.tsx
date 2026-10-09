@@ -158,6 +158,7 @@ test('toPageSections: a plain block renders instructions no accordion is there t
       },
     ],
     modals: {},
+    hovers: {},
   });
 
   const html = renderToStaticMarkup(<ModalProvider modals={{}}>{section?.content}</ModalProvider>);

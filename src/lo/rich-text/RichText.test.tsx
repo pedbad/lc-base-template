@@ -157,3 +157,12 @@ describe('plain links', () => {
     expect(css).toMatch(/\.modal-link,\s*\.rich-text-link\s*\{/);
   });
 });
+
+// TODO §D17: one shared class for every hover term, bold and in its own colour.
+test('.hover-term is bold, in --hover-term, with a dotted underline', () => {
+  const css = readFileSync(new URL('./rich-text.css', import.meta.url), 'utf8');
+  const rule = /\.hover-term\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
+  expect(rule).toContain('color: var(--hover-term);');
+  expect(rule).toContain('font-weight: 700;');
+  expect(rule).toContain('text-decoration-style: dotted;');
+});

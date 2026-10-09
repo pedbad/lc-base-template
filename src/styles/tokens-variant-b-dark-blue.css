@@ -60,6 +60,10 @@
     --input: var(--slate-2);
     --ring: var(--cam-dark-blue);
 
+    /* Hover terms (TODO §D17, maintainer 2026-10-09): amber, 6.0:1 on the paper ground,
+       6.3:1 on the card. */
+    --hover-term: var(--amber-deep);
+
     /* Data viz — Cambridge secondary families */
     --chart-1: var(--cam-crest);
     --chart-2: var(--cam-indigo);
@@ -169,6 +173,9 @@
     --border: color-mix(in oklab, var(--white) 12%, transparent);
     --input: color-mix(in oklab, var(--white) 16%, transparent);
     --ring: var(--cam-blue);
+
+    /* The dark theme's amber: 7.2:1 on the page, 4.9:1 on the card. */
+    --hover-term: var(--amber-soft);
     --chart-1: var(--cam-crest);
     --chart-2: var(--cam-indigo);
     --chart-3: var(--cam-green);
