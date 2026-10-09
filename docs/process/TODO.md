@@ -47,9 +47,8 @@ is exactly what the paragraph above is about.
 
 1. ~~**Show answer and the progress meter** (§D18)~~ **DONE 2026-10-09** (`511c3cf`):
    the meter counts only the student's own correct answers.
-2. **Live counts in word-order and phrase-reorder** (§D18) — maintainer's call: the
-   meter counts pieces in place as they move, before any Check (a warmer/colder hint;
-   a fresh shuffle can open at "1 correct out of 7"). Keep, or count only on Check?
+2. ~~**Live counts in word-order and phrase-reorder** (§D18)~~ **DONE 2026-10-09**
+   (`acdcb3a`): the meter counts only on Check.
 3. **Check button hover contrast** (§D14): `hover:bg-success/90` is 4.28:1.
 4. **A hover term in the debug pages** (§D14).
 5. **Hero placeholder label at 320–375** (§D14) — maintainer's call.
@@ -1552,9 +1551,12 @@ no-preference` only.
       meter too, as in french-lo-1 (pairs found; words / phrases in place; words
       spotted). memory-match's unlabelled tries count and word-spot's misses count
       went with their status lines, as in french. 22 meters on the showcase at all six
-      widths, both themes, axe clean. **Open:** word-order and phrase-reorder count
-      live, before any Check, so a shuffle can open above zero; keep it as a
-      warmer/colder hint, or count only on Check?
+      widths, both themes, axe clean. **Live counts DONE 2026-10-09** (`acdcb3a`;
+      maintainer: count only on Check): word-order and phrase-reorder counted pieces
+      in place as they moved, so a shuffle could open at "1 correct out of 7". The
+      meter now shows the count at the last Check (`checkedCount`); moves after it
+      leave it alone, and Show answer keeps it. Verified on the built showcase over
+      four loads: opens at 0, a swap leaves it, Check sets it, the reveal keeps it.
     - **Many answers:** slots wrap onto more lines (no segmented bar beyond ~12, as
       first suggested); fine at the showcase's 2–5.
     - **Flashcards** keeps its own positional per-card dots, on purpose.
@@ -1720,3 +1722,4 @@ build, so it cannot return. Two remain:
 | 2026-10-09 | `93f0545` | **progress meter** — french's ProgressDots as `ProgressMeter` in nine engines; dot or course icon (§D18)                      |
 | 2026-10-09 | `58c63cb` | **progress meter, the last four** — memory-match, word-order, word-spot, phrase-reorder (§D18)                                |
 | 2026-10-09 | `511c3cf` | **Show answer and the meter** — the meter counts only the student's own correct answers (§D18)                                |
+| 2026-10-09 | `acdcb3a` | **reorder meters on Check** — word-order and phrase-reorder no longer count live (§D18)                                       |
