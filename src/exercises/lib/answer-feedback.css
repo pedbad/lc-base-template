@@ -1,0 +1,26 @@
+/**
+ * answer-feedback.css — what differs in a revealed answer (maintainer, 2026-10-09;
+ * TODO §D15). AnswerFeedback.tsx's <mark>.
+ *
+ * Bold, a thick underline in --primary and an opaque tint over the card. The first
+ * colour, `bg-callout-info`, was a 10% wash in dark and a 3px sliver behind a single
+ * narrow letter (`l` in `llamo`), so in practice nothing showed; weight and underline
+ * carry the marking without relying on colour, and the sr-only line says it in words.
+ * Lazy: only the typed engines import AnswerFeedback, so none of this is in
+ * main-*.css. Pinned by answer-feedback-css.test.ts.
+ */
+@layer components {
+  .answer-diff {
+    border-radius: 0.125rem;
+
+    /* A hair either side: a lone narrow letter gets a tint and an underline to see. */
+    padding-inline: 0.1em;
+    background-color: color-mix(in oklab, var(--primary) 16%, var(--card));
+    color: var(--foreground);
+    font-weight: 700;
+    text-decoration-line: underline;
+    text-decoration-thickness: 0.15em;
+    text-decoration-color: var(--primary);
+    text-underline-offset: 0.2em;
+  }
+}

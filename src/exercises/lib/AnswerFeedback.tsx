@@ -4,13 +4,15 @@
  *   - hint:   an icon and one sentence naming the kind of error, in the UI language.
  *             The answer is NOT shown: the learner tries again first.
  *   - reveal: "Answer:" and the answer in the course language (`lang`), the part that
- *             differs from the attempt in a <mark>. The marking is also said in words
- *             (sr-only), and the visible key shows once per exercise (`showKey`).
+ *             differs from the attempt in a <mark> (answer-feedback.css: bold, underlined,
+ *             tinted). The marking is also said in words (sr-only), and the visible
+ *             key shows once per exercise (`showKey`).
  * Replaces the interleaved character diff (TextDiff), which read as one garbled word.
  */
 import { Eye, Lightbulb, RotateCcw } from 'lucide-react';
 import { resolveLabel, type UiStringKey, type UiStringsOverride } from '@/config/ui-strings';
 import type { AnswerFeedback as Feedback, MissReason } from './answer-feedback';
+import './answer-feedback.css';
 
 const HINT_LABEL: Record<MissReason, UiStringKey> = {
   accent: 'hintAccent',
@@ -55,7 +57,7 @@ export function AnswerFeedback({ feedback, contentLang, showKey, labels }: Answe
           <span lang={contentLang} className="font-medium">
             {feedback.segments.map((segment, index) =>
               segment.differs ? (
-                <mark key={index} className="rounded-sm bg-callout-info text-foreground">
+                <mark key={index} className="answer-diff">
                   {segment.text}
                 </mark>
               ) : (
