@@ -51,7 +51,7 @@ is exactly what the paragraph above is about.
    (`acdcb3a`): the meter counts only on Check.
 3. ~~**Check button hover contrast** (§D14)~~ **DONE 2026-10-09** (`b29db0c`): 6.02 / 6.62:1.
 4. ~~**A hover term in the debug pages** (§D14)~~ **DONE 2026-10-09** (`737ab59`).
-5. **Hero placeholder label at 320–375** (§D14) — maintainer's call.
+5. ~~**Hero placeholder label at 320–375** (§D14)~~ **DONE 2026-10-09** (`abc5a3e`).
 6. **Sandbox Docs hub tables at 375** (§D14).
 
 **Browser verification:** the in-app browser pane stays hidden (no window focus, so
@@ -1398,11 +1398,15 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     width, 4 from there (container query), capped at 65rem: 113 / 141 / 117 / 155 / 219
     / 251 / 251px at 320 / 375 / 600 / 768 / 1024 / 1440 / 1920. Lazy
     `memory-match.css`; main bundles unchanged. axe clean both themes (`2cac630`).
-  - **Hero placeholder plate under the title on a phone.** Since 2026-10-08 the plate
-    hangs from the banner's top-right corner at every width (12px in from 768, 8–9px
-    and scaled below 480; hero.svg has no intrinsic size and fills the banner), so it
-    is clear of the title from tablet up. At 320–375 the title's first line still runs
-    across it. Placeholder only; real artwork has no plate.
+  - **Hero placeholder plate under the title DONE 2026-10-09** (`abc5a3e`; maintainer:
+    bottom-right on a narrow banner). Top-right, the plate ran under the example
+    title's first line at 320–375, and at 480 and 768 too (the earlier note, "clear
+    from tablet up", was wrong): the title ends at 446px and the plate started left of
+    that until the banner was about 860px wide. Below 1024px it now hangs from the
+    bottom-right corner; from 1024 top-right as before. Drawn once in `<defs>`, placed
+    twice with `<use>`. Verified at 320 / 375 / 768 / 1023 / 1024 / 1440 / 1920, both
+    themes: clear of the title, image loads, no sideways scroll, axe clean.
+    Placeholder only; real artwork has no plate.
   - **Typed-answer feedback in a visible browser DONE 2026-10-09** (§D15; maintainer's
     calls: bold + underline, hang under). Seen in a headed Chromium, both themes:
     - **The `<mark>`** (`6f165e8`) was invisible: `bg-callout-info` is a 10% wash in
@@ -1740,3 +1744,4 @@ build, so it cannot return. Two remain:
 | 2026-10-09 | `acdcb3a` | **reorder meters on Check** — word-order and phrase-reorder no longer count live (§D18)                                       |
 | 2026-10-09 | `b29db0c` | **Check hover contrast** — hover pulls `--success` toward `--foreground`: 6.02 / 6.62:1 (§D14)                                |
 | 2026-10-09 | `737ab59` | **hover term in the debug pages** — a plain link and a hover term in the showcase and sandbox (§D14)                          |
+| 2026-10-09 | `abc5a3e` | **hero label bottom-right** — below 1024px, clear of the title (§D14)                                                         |
