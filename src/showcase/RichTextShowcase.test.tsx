@@ -9,9 +9,9 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { collectEntryAudioPaths } from '@/lo/rich-text/rich-text-nodes';
+import { collectEntryAudioPaths, collectEntryHoverTargets } from '@/lo/rich-text/rich-text-nodes';
 import RichTextShowcase from './RichTextShowcase';
-import { RICH_TEXT_SHOWCASE_ENTRIES } from './rich-text-fixture';
+import { RICH_TEXT_SHOWCASE_ENTRIES, RICH_TEXT_SHOWCASE_HOVERS } from './rich-text.fixture';
 
 const PUBLIC_DIR = path.resolve(import.meta.dirname, '../../public');
 
@@ -44,5 +44,29 @@ describe('RichTextShowcase', () => {
       expect(soundFile).toMatch(/^audio\/showcase-demo\//);
       expect(existsSync(path.join(PUBLIC_DIR, soundFile)), soundFile).toBe(true);
     });
+  });
+
+  // TODO §D14 (2026-10-09): the reference showed lists, a table and speakers, but no
+  // plain link and no hover term, so neither could be checked on a debug page.
+  test('demonstrates a plain link, opening in a new tab', () => {
+    const html = renderToStaticMarkup(<RichTextShowcase />);
+    expect(html).toMatch(
+      /<a [^>]*href="[^"]*debug-sandbox\.html"[^>]*target="_blank"[^>]*rel="noopener noreferrer"/,
+    );
+  });
+
+  test('demonstrates a hover term, with a card declared for it', () => {
+    const targets = collectEntryHoverTargets(RICH_TEXT_SHOWCASE_ENTRIES);
+    expect(targets.length).toBeGreaterThan(0);
+    targets.forEach((target) => expect(RICH_TEXT_SHOWCASE_HOVERS).toHaveProperty(target));
+
+    const html = renderToStaticMarkup(<RichTextShowcase />);
+    expect(html).toMatch(/<button type="button" class="hover-term" aria-expanded="false">/);
+  });
+
+  test('shows the hover card source an author would write in hover.json', () => {
+    const html = renderToStaticMarkup(<RichTextShowcase />);
+    expect(html).toContain('data-hover-target=');
+    expect(html).toContain('hover.json');
   });
 });

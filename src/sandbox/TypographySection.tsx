@@ -10,6 +10,9 @@
  * SIZES ARE TAILWIND STEPS, never raw lengths: `rem` scales with the reader's browser
  * font size and `px` does not, which is why guard f bans raw `px` in the token chain.
  */
+import { HoverProvider } from '@/lo/rich-text/hover/hover-context';
+import { RichTextEntries } from '@/lo/rich-text/RichTextEntries';
+import { RICH_TEXT_LINKS_ENTRY, RICH_TEXT_SHOWCASE_HOVERS } from '@/showcase/rich-text.fixture';
 import { TYPE_SCALE, TYPE_SPECIMENS } from './sandbox-catalog';
 
 const SPECIMEN_TEXT = 'Bonjour — the quick brown fox jumps over the lazy dog. 0123456789';
@@ -52,6 +55,17 @@ export default function TypographySection() {
           </li>
         ))}
       </ul>
+
+      <h3 className="mt-10 font-heading text-lg font-semibold">Links</h3>
+      <p className="mt-1 max-w-(--measure) text-sm text-muted-foreground">
+        A plain link is underlined solid; a hover term, dotted and in <code>--hover-term</code>.
+        Rendered from the exercise showcase&rsquo;s rich-text fixture.
+      </p>
+      <div className="mt-4 max-w-(--measure)">
+        <HoverProvider hovers={RICH_TEXT_SHOWCASE_HOVERS}>
+          <RichTextEntries entries={[RICH_TEXT_LINKS_ENTRY]} />
+        </HoverProvider>
+      </div>
     </section>
   );
 }
