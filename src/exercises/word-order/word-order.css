@@ -99,13 +99,6 @@
     font-weight: 700;
   }
 
-  .word-order-status {
-    margin: 0;
-    font-size: var(--text-sm, 0.875rem);
-    font-variant-numeric: tabular-nums;
-    color: var(--muted-foreground);
-  }
-
   .word-order-footnote {
     margin: 0;
     font-size: var(--text-sm, 0.875rem);

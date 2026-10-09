@@ -21,9 +21,9 @@
 import { useLayoutEffect, useReducer, useRef, type DragEvent } from 'react';
 import { AudioClip } from '@/components/audio/AudioClip';
 import { ExerciseOptionsSchema } from '@/config/lo-schema';
-import { resolveLabel } from '@/config/ui-strings';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { ExerciseFooter } from '../lib/ExerciseFooter';
+import { ProgressMeter } from '../lib/ProgressMeter';
 import { canRevealAnswers } from '../lib/reveal';
 import { captureFlipPositions, playFlipAnimation } from '../lib/reorderAnimation';
 import { TARGET_LANG } from '@/lib/lang';
@@ -290,9 +290,7 @@ export default function WordOrderExercise({ config }: ExerciseComponentProps) {
         })}
       </ol>
 
-      <p className="word-order-status" role="status" aria-live="polite">
-        {complete ? resolveLabel('correct', labels) : `${correctCount} / ${total}`}
-      </p>
+      <ProgressMeter correct={correctCount} total={total} labels={labels} />
 
       {content.footnote ? (
         <p className="word-order-footnote" lang={TARGET_LANG}>

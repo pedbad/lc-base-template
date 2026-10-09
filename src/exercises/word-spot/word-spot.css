@@ -77,13 +77,6 @@
     color: var(--destructive-foreground);
   }
 
-  .word-spot-status {
-    margin: 0;
-    font-size: var(--text-sm, 0.875rem);
-    font-variant-numeric: tabular-nums;
-    color: var(--muted-foreground);
-  }
-
   .word-spot-footnote {
     margin: 0;
     font-size: var(--text-sm, 0.875rem);

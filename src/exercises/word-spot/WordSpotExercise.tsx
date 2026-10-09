@@ -24,6 +24,7 @@ import { ExerciseOptionsSchema } from '@/config/lo-schema';
 import { resolveLabel } from '@/config/ui-strings';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { canRevealAnswers } from '../lib/reveal';
+import { ProgressMeter } from '../lib/ProgressMeter';
 import { TARGET_LANG } from '@/lib/lang';
 import { WordSpotExerciseConfigSchema } from './word-spot-schema';
 import { buildModel, scoreWordSpot, type ClickableToken, type Mark } from './word-spot-grading';
@@ -71,7 +72,7 @@ export default function WordSpotExercise({ config }: ExerciseComponentProps) {
   const { rows, targetKeys } = buildModel(parsed.data.content);
   const { footnote } = parsed.data.content;
 
-  const { hits, misses, total, complete, hasAttempted } = scoreWordSpot(marks, targetKeys);
+  const { hits, total, complete, hasAttempted } = scoreWordSpot(marks, targetKeys);
 
   const canReveal = canRevealAnswers({
     allowShowAnswers: options.allowShowAnswers,
@@ -114,11 +115,7 @@ export default function WordSpotExercise({ config }: ExerciseComponentProps) {
         ))}
       </ol>
 
-      <p className="word-spot-status" role="status" aria-live="polite">
-        {complete
-          ? resolveLabel('correct', labels)
-          : `${hits} / ${total}${misses > 0 ? ` · ${misses} ✗` : ''}`}
-      </p>
+      <ProgressMeter correct={hits} total={total} labels={labels} />
 
       {footnote ? (
         <p className="word-spot-footnote" lang={TARGET_LANG}>

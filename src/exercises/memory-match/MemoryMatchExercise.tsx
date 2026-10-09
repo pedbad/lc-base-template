@@ -21,6 +21,7 @@ import { ExerciseOptionsSchema } from '@/config/lo-schema';
 import { resolveLabel } from '@/config/ui-strings';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { canRevealAnswers } from '../lib/reveal';
+import { ProgressMeter } from '../lib/ProgressMeter';
 import { captureFlipPositions, playFlipAnimation } from '../lib/reorderAnimation';
 import { MemoryCard, type DeckCard } from './MemoryCard';
 import { TARGET_LANG } from '@/lib/lang';
@@ -204,9 +205,7 @@ export default function MemoryMatchExercise({ config }: ExerciseComponentProps) 
         ))}
       </ul>
 
-      <p className="memory-match-status" role="status" aria-live="polite">
-        {complete ? resolveLabel('correct', labels) : `${nPairs} / ${total} · ${nTries}`}
-      </p>
+      <ProgressMeter correct={nPairs} total={total} labels={labels} />
 
       {content.footnote ? (
         <p className="memory-match-footnote" lang={TARGET_LANG}>

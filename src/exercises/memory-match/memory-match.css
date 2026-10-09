@@ -188,13 +188,6 @@
     }
   }
 
-  .memory-match-status {
-    margin: 0;
-    font-size: var(--text-sm, 0.875rem);
-    font-variant-numeric: tabular-nums;
-    color: var(--muted-foreground);
-  }
-
   .memory-match-footnote {
     margin: 0;
     font-size: var(--text-sm, 0.875rem);
