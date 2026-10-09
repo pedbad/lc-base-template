@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-09 · **HEAD:** see `git log` · **Suite:** 146 files · 1559 tests green
+**Last updated:** 2026-10-09 · **HEAD:** see `git log` · **Suite:** 148 files · 1575 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -1493,6 +1493,37 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     Safari does not focus a button on tap, so there a tap elsewhere leaves the card
     pinned until the term is tapped again or Escape. Budget: JS 112.30 → 112.40 kB.
 
+- **D18 — progress meter. DONE 2026-10-09** (`93f0545`; maintainer's calls: port
+  french-lo-1's ProgressDots, a per-course icon with a dot by default). The `n / M`
+  line after Check became `ProgressMeter` (`src/exercises/lib/`) in the nine engines
+  that had it: select, radio-quiz, inline-choice, inline-gap, conjugation, text-entry
+  (typed-transform, dictation), line-match, reading, drag-fill-gaps.
+  - **A meter, not a map:** one slot per answer, the first `correct` filled, so it
+    fills as the count rises; no wrong state (each row keeps its own tick or cross).
+    Shown from the start, so the goal shows before the first Check. When every answer
+    is right the slots hop once, staggered, under `prefers-reduced-motion:
+no-preference` only.
+  - **Slots:** a dot — empty a ring in `--muted-foreground` (french's empty tortoise
+    was a 35% ghost), filled solid `--success` — or the course's icon when
+    `course.config` sets the new optional `progressIcon`, drawn as a CSS mask in the
+    same two colours (a mask cannot draw french's true outline).
+  - **Words:** the slots are `aria-hidden`; the `progressCorrect` UI string ("{correct}
+    correct out of {total}", both placeholders required by the schema) is a
+    `role="status"` line. It replaces the old "Correct!" swap.
+  - Verified on the built showcase: 17 meters at 320 / 375 / 768 / 1024 / 1440 / 1920,
+    both themes, none overflowing, no sideways scroll, axe clean on the meters; the
+    hop runs on an all-correct inline-gap.
+  - **Open, for the maintainer:**
+    - **Show answer completes the meter and plays the hop.** The engines record a
+      revealed answer as correct (`commitCheck`), so revealing everything reads as
+      "5 correct out of 5" with a celebration the student did not earn. Count only
+      the student's own correct answers, or keep the count and skip the hop?
+    - **memory-match, word-order, word-spot, phrase-reorder** keep their own status
+      lines (pairs found, and so on); whether a meter suits each is not yet decided.
+    - **Many answers:** slots wrap onto more lines (no segmented bar beyond ~12, as
+      first suggested); fine at the showcase's 2–5.
+    - **Flashcards** keeps its own positional per-card dots, on purpose.
+
 ---
 
 ## E. Before sharing with other developers
@@ -1651,3 +1682,4 @@ build, so it cannot return. Two remain:
 | 2026-10-09 | `a099070` | **hover card by keyboard** — Enter closes a focus-opened card; open while focus or hover holds it (§D17)                      |
 | 2026-10-09 | `6f165e8` | **revealed-answer mark** — bold, `--primary` underline, opaque tint; lazy `answer-feedback.css` (§D14/§D15)                   |
 | 2026-10-09 | `9ff073e` | **inline-gap feedback hangs** — no longer widens the blank; inside the row, clear of its neighbour (§D14/§D15)                |
+| 2026-10-09 | `93f0545` | **progress meter** — french's ProgressDots as `ProgressMeter` in nine engines; dot or course icon (§D18)                      |

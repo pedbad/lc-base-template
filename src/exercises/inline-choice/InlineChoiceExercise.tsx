@@ -25,8 +25,8 @@
  * Render shape mirrors select: items are walked ONCE during render to build
  * per-blank metadata (`blanksMeta`) + the rendered nodes; grading handlers close
  * over that render-local value (no ref-during-render). No layoutMode — blanks
- * always flow inline; the status line (n/total · "Correct!") stays local, matching
- * select (french-lo-1's ProgressDots is skipped, YAGNI).
+ * always flow inline. Progress is the shared ProgressMeter, as in every scored
+ * engine (french-lo-1's ProgressDots, ported 2026-10-09).
  *
  * Deliberately NOT ported yet (YAGNI; see inline-choice-schema.ts): the audio
  * subsystem, rich-HTML content (no DOMPurify), per-row click-to-play.

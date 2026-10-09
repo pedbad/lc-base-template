@@ -157,12 +157,18 @@ needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-09 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 120 kB**     | 112.41 kB           | 7.59 kB  |
+| `main-*.js`  | **< 120 kB**     | 112.27 kB           | 7.73 kB  |
 | `main-*.css` | **< 18 kB**      | 17.88 kB            | 0.12 kB  |
 
 - **memory-match card size (2026-10-08, TODO §D14): main bundles unchanged.** The
   2 → 4 column switch moved from a 48rem viewport query to a 30rem container query and
   the deck cap from 32rem to 65rem, all in the lazy `memory-match.css`.
+
+- **Progress meter (2026-10-09, TODO §D18): JS 112.41 → 112.27 kB, CSS unchanged.**
+  `ProgressMeter` and `progress-meter.css` ship in their own lazy chunk (0.47 kB JS,
+  0.50 kB CSS gzipped) with the engines; main lost nine copies of the `n / total`
+  template and the `Correct!` swap. The new UI string and config field are the only
+  main-side additions.
 
 - **Typed-answer feedback (2026-10-09, TODO §D14/§D15): JS 112.40 → 112.41 kB, CSS
   17.89 → 17.88 kB.** Both fixes went into lazy sheets rather than main utilities, the
@@ -782,7 +788,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   selected → `--primary`, correct → `--success`, incorrect → `--destructive`,
   hover/idle → `--muted`/`--border`, focus → `--ring`. No new `--ex-*` tokens.
 - **Trimmed vs french (YAGNI):** no `layoutMode` (blanks always flow inline), no
-  `ProgressDots` (the shared status line carries the count), no audio/rich-HTML/
+  `ProgressDots` (then; it arrived 2026-10-09 as the shared `ProgressMeter`), no audio/rich-HTML/
   DOMPurify. Per-item `audio` is accepted by the schema but not rendered (mirrors
   select), so fixtures can carry refs without a later schema break.
 - **TDD:** `inline-choice-schema.test.ts` was written failing first, then the
@@ -827,8 +833,8 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 - **Tokens, not new ones:** pill + result states map onto existing tokens
   (`--primary`/`--success`/`--destructive`/`--border`/`--ring`) via the shared
   `ChoicePillGroup`. No new `--ex-*` tokens.
-- **Trimmed vs french (YAGNI):** no `ProgressDots` (the shared status line carries
-  the count), no audio/rich-HTML/DOMPurify. Per-question `audio` is accepted by the
+- **Trimmed vs french (YAGNI):** no `ProgressDots` (then; it arrived 2026-10-09 as
+  the shared `ProgressMeter`), no audio/rich-HTML/DOMPurify. Per-question `audio` is accepted by the
   schema but not rendered (mirrors select/inline), so fixtures can carry refs without
   a later schema break.
 - **TDD:** `radio-quiz-schema.test.ts` was written failing first (valid single-`*`

@@ -29,8 +29,8 @@
  *     shifts the card — the same no-jiggle row as select/inline.
  *
  * Deliberately NOT ported yet (YAGNI; see radio-quiz-schema.ts): the audio subsystem
- * (per-question `audio` accepted but unrendered), rich-HTML content (no DOMPurify),
- * french's ProgressDots (the local n/total status line covers it).
+ * (per-question `audio` accepted but unrendered), rich-HTML content (no DOMPurify).
+ * French's ProgressDots arrived later as the shared ProgressMeter (2026-10-09).
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5, §7, §8.
  */

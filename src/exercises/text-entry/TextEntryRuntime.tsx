@@ -14,7 +14,7 @@
  *   - per-row audio via <AudioClip> (independent click-to-play); no master player.
  *   - shared ExerciseFooter + ResultSlot; canRevealAnswers gates Show-answers.
  *   - dropped (YAGNI): htmlContent, Mars/Venus gender-icon header heuristics,
- *     prompt-click delegation, ProgressDots.
+ *     prompt-click delegation. (ProgressDots came back as ProgressMeter, 2026-10-09.)
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §7, §8, §9.
  */
