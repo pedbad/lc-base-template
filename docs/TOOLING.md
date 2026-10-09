@@ -157,8 +157,11 @@ needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-09 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 120 kB**     | 112.27 kB           | 7.73 kB  |
+| `main-*.js`  | **< 120 kB**     | 112.26 kB           | 7.74 kB  |
 | `main-*.css` | **< 18 kB**      | 17.88 kB            | 0.12 kB  |
+
+- **Show answer and the meter (2026-10-09, TODO §D18): JS 112.27 → 112.26 kB, CSS
+  unchanged.** `commitReveal` / `countOwnCorrect` in `scoring.ts`; no new rules.
 
 - **memory-match card size (2026-10-08, TODO §D14): main bundles unchanged.** The
   2 → 4 column switch moved from a 48rem viewport query to a 30rem container query and

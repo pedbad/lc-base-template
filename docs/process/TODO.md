@@ -45,8 +45,8 @@ is exactly what the paragraph above is about.
 
 **Next, in order (2026-10-09):** each detailed in §D18 / §D14 below.
 
-1. **Show answer and the progress meter** (§D18) — maintainer's call first: count only
-   the student's own correct answers, or keep the count and skip the hop.
+1. ~~**Show answer and the progress meter** (§D18)~~ **DONE 2026-10-09** (`511c3cf`):
+   the meter counts only the student's own correct answers.
 2. **Live counts in word-order and phrase-reorder** (§D18) — maintainer's call: the
    meter counts pieces in place as they move, before any Check (a warmer/colder hint;
    a fresh shuffle can open at "1 correct out of 7"). Keep, or count only on Check?
@@ -1536,10 +1536,18 @@ no-preference` only.
     both themes, none overflowing, no sideways scroll, axe clean on the meters; the
     hop runs on an all-correct inline-gap.
   - **Open, for the maintainer:**
-    - **Show answer completes the meter and plays the hop.** The engines record a
-      revealed answer as correct (`commitCheck`), so revealing everything reads as
-      "5 correct out of 5" with a celebration the student did not earn. Count only
-      the student's own correct answers, or keep the count and skip the hop?
+    - **Show answer and the meter DONE 2026-10-09** (`511c3cf`; maintainer: count only
+      the student's own correct answers). Revealing had filled the meter and played
+      the hop ("5 correct out of 5" the student did not earn). The blank engines
+      commit a reveal through `commitReveal` (`scoring.ts`), which keeps the keys it
+      filled in `ScoringState.revealed`; the meter shows `countOwnCorrect`. A revealed
+      key never counts until Reset, even if edited and checked again. The engines
+      that lock once revealed (word-order, phrase-reorder, drag-fill-gaps,
+      memory-match, word-spot) freeze the student's count at the reveal
+      (`ownAtReveal`). Verified on the built showcase, all 22 meters: after Show
+      answer each reads the student's own count with no `data-complete` (no hop);
+      conjugation with one right reads "1 correct out of 6" with all six rows filled.
+      Main bundles: JS 112.27 → 112.26 kB, CSS unchanged.
     - **memory-match, word-order, word-spot, phrase-reorder DONE 2026-10-09**: the
       meter too, as in french-lo-1 (pairs found; words / phrases in place; words
       spotted). memory-match's unlabelled tries count and word-spot's misses count
@@ -1711,3 +1719,4 @@ build, so it cannot return. Two remain:
 | 2026-10-09 | `9ff073e` | **inline-gap feedback hangs** — no longer widens the blank; inside the row, clear of its neighbour (§D14/§D15)                |
 | 2026-10-09 | `93f0545` | **progress meter** — french's ProgressDots as `ProgressMeter` in nine engines; dot or course icon (§D18)                      |
 | 2026-10-09 | `58c63cb` | **progress meter, the last four** — memory-match, word-order, word-spot, phrase-reorder (§D18)                                |
+| 2026-10-09 | `511c3cf` | **Show answer and the meter** — the meter counts only the student's own correct answers (§D18)                                |
