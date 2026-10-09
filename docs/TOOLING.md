@@ -157,12 +157,18 @@ needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-09 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 120 kB**     | 112.40 kB           | 7.60 kB  |
-| `main-*.css` | **< 18 kB**      | 17.89 kB            | 0.11 kB  |
+| `main-*.js`  | **< 120 kB**     | 112.41 kB           | 7.59 kB  |
+| `main-*.css` | **< 18 kB**      | 17.88 kB            | 0.12 kB  |
 
 - **memory-match card size (2026-10-08, TODO §D14): main bundles unchanged.** The
   2 → 4 column switch moved from a 48rem viewport query to a 30rem container query and
   the deck cap from 32rem to 65rem, all in the lazy `memory-match.css`.
+
+- **Typed-answer feedback (2026-10-09, TODO §D14/§D15): JS 112.40 → 112.41 kB, CSS
+  17.89 → 17.88 kB.** Both fixes went into lazy sheets rather than main utilities, the
+  lever the 0.11 kB headroom called for: `answer-feedback.css` (the mark; ships in its
+  own chunk with the typed engines) and `inline-gap.css` (the hang and the baseline).
+  The mark's `rounded-sm bg-callout-info` left the main sheet's usage, hence the drop.
 
 - **Hover card by keyboard (2026-10-09, TODO §D17): JS 112.30 → 112.40 kB, CSS
   unchanged.** The reducer tracks hover and focus apart and tells a keyboard press

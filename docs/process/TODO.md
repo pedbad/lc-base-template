@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-09 · **HEAD:** see `git log` · **Suite:** 143 files · 1544 tests green
+**Last updated:** 2026-10-09 · **HEAD:** see `git log` · **Suite:** 146 files · 1559 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -1386,9 +1386,27 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     and scaled below 480; hero.svg has no intrinsic size and fills the banner), so it
     is clear of the title from tablet up. At 320–375 the title's first line still runs
     across it. Placeholder only; real artwork has no plate.
-  - **Typed-answer feedback in a visible browser** (§D15): the `<mark>` highlight's colour
-    in both themes, and the hint line under an inline-gap blank (it runs wider than the
-    blank: 149px under a 62px input). Verified by measurement only; the pane was hidden.
+  - **Typed-answer feedback in a visible browser DONE 2026-10-09** (§D15; maintainer's
+    calls: bold + underline, hang under). Seen in a headed Chromium, both themes:
+    - **The `<mark>`** (`6f165e8`) was invisible: `bg-callout-info` is a 10% wash in
+      dark, and behind one narrow letter (`l` in `llamo`) a 3px sliver even in light.
+      Now `.answer-diff` (lazy `answer-feedback.css`): bold, a 0.15em `--primary`
+      underline, an opaque `--primary` 16% tint over the card, 0.1em inline padding.
+    - **The line under an inline-gap blank** (`9ff073e`) widened the blank's box
+      (62px input → 149–212px), so the sentence jumped right; middle-aligned, a taller
+      box (answer + key) also rode up past its neighbour and two lines overlapped.
+      Now it hangs without widening the blank (`.gap-hang`, `contain: inline-size`,
+      capped at 14rem) and the blank sits on the baseline; `placeHangs`
+      (`hang-under.ts`, pure, tested) keeps it inside the row and wraps it short of
+      the next wrong blank's line. No max width beyond the 14rem cap was needed.
+    - Measured at 320 / 375 / 768 / 1024 / 1440 / 1920, both themes, two wrong blanks
+      on one line: the blank stays at its input's width, the next word does not move,
+      every line inside its row, none overlapping, no sideways scroll, axe clean of
+      it. Between two close blanks the first line wraps narrow (111px at 1024).
+  - **Check button hover contrast:** the solid success button's hover,
+    `hover:bg-success/90`, is white on `#358962`, 4.28:1, under AA's 4.5:1 (axe, light
+    theme, the pointer left resting on Check at 320 and 375). Found while verifying
+    the above; not caused by it.
   - **Sandbox Docs hub at 375:** two rendered tables (Preset, Font) scroll sideways
     with no keyboard focus — axe `scrollable-region-focusable`. Debug page only.
 
@@ -1631,3 +1649,5 @@ build, so it cannot return. Two remain:
 | 2026-10-09 | `d347a79` | **rich-text links** — `<a href>` opens in a new tab with an external icon; the example intro links the debug pages            |
 | 2026-10-09 | `dd14a03` | **hover cards** — `.hover-term` + `hovers/<id>/hover.json`, path drawn as a tree; hover, focus, tap (§D17)                    |
 | 2026-10-09 | `a099070` | **hover card by keyboard** — Enter closes a focus-opened card; open while focus or hover holds it (§D17)                      |
+| 2026-10-09 | `6f165e8` | **revealed-answer mark** — bold, `--primary` underline, opaque tint; lazy `answer-feedback.css` (§D14/§D15)                   |
+| 2026-10-09 | `9ff073e` | **inline-gap feedback hangs** — no longer widens the blank; inside the row, clear of its neighbour (§D14/§D15)                |
