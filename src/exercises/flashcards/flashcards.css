@@ -228,12 +228,28 @@
     text-transform: uppercase;
   }
 
+  /* The flip cue (maintainer, 2026-10-09): a --primary tab in the front's bottom-right
+     corner, a pointer icon before the words. Its outer corner follows the face's,
+     less the face's 1px border it sits inside. */
   .flashcards-hint {
     position: absolute;
-    right: 1.25rem;
-    bottom: 0.875rem;
-    color: var(--muted-foreground);
+    right: 0;
+    bottom: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem 1rem 0.5rem 0.875rem;
+    border-radius: var(--radius) 0 calc(var(--radius) + 3px) 0;
+    background-color: var(--primary);
+    color: var(--primary-foreground);
     font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .flashcards-hint svg {
+    flex: none;
+    width: 1rem;
+    height: 1rem;
   }
 
   /* On the back: the prompt, small, above the answer. */

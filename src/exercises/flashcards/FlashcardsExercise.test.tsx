@@ -88,4 +88,13 @@ describe('FlashcardsExercise study stage', () => {
   test('stacks spare cards behind the current one while two or more remain', () => {
     expect(render()).toContain('data-stack="2"');
   });
+
+  // Maintainer, 2026-10-09: the front's "Select the card to flip" read as stray text.
+  // It now sits in a coloured bottom-right corner with a pointer icon.
+  test('puts the flip hint in a coloured corner with a pointer icon', () => {
+    const html = render();
+    expect(html).toMatch(
+      /<span class="flashcards-hint" aria-hidden="true"><svg[^>]*lucide-spline-pointer[^>]*>[\s\S]*?<\/svg>Select the card to flip<\/span>/,
+    );
+  });
 });

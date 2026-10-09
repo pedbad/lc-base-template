@@ -34,7 +34,7 @@
  * Spec: docs/specs/2026-07-03-new-exercise-engines-design.md §4.
  */
 import { useReducer, useState } from 'react';
-import { Check, Frown, RotateCcw, Smile } from 'lucide-react';
+import { Frown, RotateCcw, Smile, SplinePointer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AudioClip } from '@/components/audio/AudioClip';
 import { resolveAsset } from '@/lib/assets';
@@ -54,7 +54,7 @@ import {
 } from './flashcards-deck';
 import { initSrsState, gradeCard, dueOrder, type SrsGrade, type SrsState } from './srs-scheduler';
 import { storageKey, loadSrsState, saveSrsState, clearSrsState } from './flashcards-storage';
-import { EXERCISE_BUTTONS } from '@/exercises/lib/exercise-buttons';
+import { RateButtons } from './RateButtons';
 import './flashcards.css';
 
 /** The learner's own language; the deck's `native` side. */
@@ -239,6 +239,7 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
               </span>
               {speaker(targetOnFront)}
               <span className="flashcards-hint" aria-hidden="true">
+                <SplinePointer aria-hidden="true" />
                 Select the card to flip
               </span>
             </span>
@@ -276,20 +277,7 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
       {/* One row, one height in both states, so nothing below it jumps on a flip. */}
       <div className="flashcards-actions" data-flipped={flipped}>
         {flipped ? (
-          <>
-            <Button variant="outline" size="lg" onClick={() => handleRate('again')}>
-              <RotateCcw aria-hidden="true" />
-              Again
-            </Button>
-            <Button
-              size="lg"
-              className={EXERCISE_BUTTONS.check.className}
-              onClick={() => handleRate('good')}
-            >
-              <Check aria-hidden="true" />
-              Got it
-            </Button>
-          </>
+          <RateButtons onRate={handleRate} />
         ) : (
           <Button size="lg" onClick={() => dispatch({ kind: 'flip' })}>
             Show answer
