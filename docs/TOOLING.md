@@ -157,8 +157,12 @@ needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-09 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 120 kB**     | 112.27 kB           | 7.73 kB  |
-| `main-*.css` | **< 18 kB**      | 17.89 kB            | 0.11 kB  |
+| `main-*.js`  | **< 120 kB**     | 112.25 kB           | 7.75 kB  |
+| `main-*.css` | **< 18 kB**      | 17.91 kB            | 0.09 kB  |
+
+- **Flashcards flip corner (2026-10-09): JS 112.27 → 112.25 kB, CSS 17.89 → 17.91 kB.**
+  The triangle's styles are in the lazy `flashcards.css`; main gains only the
+  `--flip-cue` / `--flip-cue-foreground` token pair.
 
 - **Check hover contrast (2026-10-09, TODO §D14): JS 112.25 → 112.27 kB, CSS
   17.88 → 17.89 kB.** The mix went into a lazy `exercise-buttons.css` (0.11 kB, with
