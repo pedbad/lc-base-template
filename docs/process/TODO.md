@@ -1752,3 +1752,4 @@ build, so it cannot return. Two remain:
 | 2026-10-09 | `737ab59` | **hover term in the debug pages** — a plain link and a hover term in the showcase and sandbox (§D14)                          |
 | 2026-10-09 | `abc5a3e` | **hero label bottom-right** — below 1024px, clear of the title (§D14)                                                         |
 | 2026-10-09 | `135fc25` | **docs hub tables** — each a focusable, named scroll region (§D14)                                                            |
+| 2026-10-09 | `239d335` | **flashcards flip cue** — `--primary` corner tab with a pointer icon; faces on Again / Got it                                 |
