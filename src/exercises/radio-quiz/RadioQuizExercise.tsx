@@ -37,7 +37,7 @@
 import { useId, type ReactNode } from 'react';
 
 import { ExerciseOptionsSchema, type ExerciseOptions } from '@/config/lo-schema';
-import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
+import type { UiStringsOverride } from '@/config/ui-strings';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
 import { commitCheck, getInitialScoringState, type ScoringState } from '@/exercises/lib/scoring';
 import { mulberry32, shuffle } from '@/exercises/lib/shuffle';
@@ -45,6 +45,7 @@ import { ChoicePillGroup } from '@/exercises/lib/ChoicePillGroup';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
 import { useExerciseScaffold } from '@/exercises/lib/exerciseScaffold';
+import { ProgressMeter } from '@/exercises/lib/ProgressMeter';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { TARGET_LANG } from '@/lib/lang';
 import {
@@ -218,7 +219,6 @@ export default function RadioQuizExercise({ config }: ExerciseComponentProps) {
   });
 
   const hasSelections = Object.keys(state.values).length > 0;
-  const allCorrect = state.hasChecked && nToSolve > 0 && state.nCorrect === nToSolve;
   const canReveal = canRevealAnswers({
     allowShowAnswers: options.allowShowAnswers,
     hasAttempted: state.hasChecked,
@@ -230,14 +230,7 @@ export default function RadioQuizExercise({ config }: ExerciseComponentProps) {
     <div className="flex flex-col gap-4">
       <div className="space-y-3">{cards}</div>
 
-      {state.hasChecked ? (
-        <p
-          className={`text-sm font-medium ${allCorrect ? 'text-success' : 'text-muted-foreground'}`}
-          role="status"
-        >
-          {allCorrect ? resolveLabel('correct', labels) : `${state.nCorrect} / ${nToSolve}`}
-        </p>
-      ) : null}
+      <ProgressMeter correct={state.nCorrect} total={nToSolve} labels={labels} />
 
       <ExerciseFooter
         onCheck={handleCheck}

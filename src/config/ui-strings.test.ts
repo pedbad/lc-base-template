@@ -35,3 +35,19 @@ test('ui-strings: transcript toggle labels exist', () => {
   expect(resolveLabel('showTranscript')).toBe('Show transcript');
   expect(resolveLabel('hideTranscript')).toBe('Hide transcript');
 });
+
+// The progress line (ProgressMeter, 2026-10-09) is a template: a rewording that drops
+// a placeholder would show a count with no number, so both are required.
+test('progressCorrect: the default names both counts', () => {
+  expect(uiStrings.progressCorrect).toContain('{correct}');
+  expect(uiStrings.progressCorrect).toContain('{total}');
+});
+
+test('progressCorrect: an override missing a placeholder is rejected', () => {
+  expect(UiStringsOverrideSchema.safeParse({ progressCorrect: '{correct} right' }).success).toBe(
+    false,
+  );
+  expect(
+    UiStringsOverrideSchema.safeParse({ progressCorrect: '{correct} de {total}' }).success,
+  ).toBe(true);
+});

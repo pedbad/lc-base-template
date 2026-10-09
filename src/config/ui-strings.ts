@@ -39,6 +39,14 @@ export const UiStringsSchema = z.strictObject({
   correct: z.string().min(1),
   incorrect: z.string().min(1),
   showHints: z.string().min(1),
+  // The progress line under an exercise (ProgressMeter): a template that must name both
+  // counts, or a rewording could show a count with no number.
+  progressCorrect: z
+    .string()
+    .min(1)
+    .refine((value) => value.includes('{correct}') && value.includes('{total}'), {
+      message: 'must contain both {correct} and {total}',
+    }),
   // Feedback under a wrong typed answer (AnswerFeedback, TODO §D15): a hint naming the
   // kind of error on the first wrong Check, the answer on the second.
   hintAccent: z.string().min(1),
@@ -87,6 +95,7 @@ const raw: UiStrings = {
   correct: 'Correct!',
   incorrect: 'Incorrect',
   showHints: 'Show hints',
+  progressCorrect: '{correct} correct out of {total}',
   hintAccent: 'Almost. Check the accents.',
   hintEnding: 'Close. Look at the ending.',
   hintMissing: 'Close. Something is missing.',

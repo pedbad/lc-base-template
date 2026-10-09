@@ -36,7 +36,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ExerciseOptionsSchema, type ExerciseOptions } from '@/config/lo-schema';
-import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
+import type { UiStringsOverride } from '@/config/ui-strings';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
 import { commitCheck, getInitialScoringState, type ScoringState } from '@/exercises/lib/scoring';
 import { mulberry32 } from '@/exercises/lib/shuffle';
@@ -51,6 +51,7 @@ import { prepareChoiceItems, type PrepareChoiceOptions } from '@/exercises/lib/p
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
 import { useExerciseScaffold } from '@/exercises/lib/exerciseScaffold';
+import { ProgressMeter } from '@/exercises/lib/ProgressMeter';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { TARGET_LANG } from '@/lib/lang';
 import { SelectExerciseConfigSchema, type SelectItem as SelectItemContent } from './select-schema';
@@ -231,7 +232,6 @@ export default function SelectExercise({ config }: ExerciseComponentProps) {
   };
 
   const hasSelections = Object.keys(state.values).length > 0;
-  const allCorrect = state.hasChecked && nToSolve > 0 && state.nCorrect === nToSolve;
   const canReveal = canRevealAnswers({
     allowShowAnswers: options.allowShowAnswers,
     hasAttempted: state.hasChecked,
@@ -250,14 +250,7 @@ export default function SelectExercise({ config }: ExerciseComponentProps) {
         <div className="space-y-3">{lines}</div>
       )}
 
-      {state.hasChecked ? (
-        <p
-          className={`text-sm font-medium ${allCorrect ? 'text-success' : 'text-muted-foreground'}`}
-          role="status"
-        >
-          {allCorrect ? resolveLabel('correct', labels) : `${state.nCorrect} / ${nToSolve}`}
-        </p>
-      ) : null}
+      <ProgressMeter correct={state.nCorrect} total={nToSolve} labels={labels} />
 
       <ExerciseFooter
         onCheck={handleCheck}

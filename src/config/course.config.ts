@@ -35,6 +35,14 @@ const CourseConfigSchema = z.object({
   /** %BASE_URL%-relative asset paths. */
   logo: z.string().min(1),
   favicon: z.string().min(1),
+  /** The progress meter's icon under every exercise (ProgressMeter), %BASE_URL%-relative
+      like the logo: an SVG drawn as a mask, so it takes the meter's own colours. Omit
+      it for a plain dot. */
+  progressIcon: z
+    .string()
+    .min(1)
+    .refine((value) => !value.startsWith('/'), { message: 'relative to %BASE_URL%' })
+    .optional(),
   // NO loOrder field: course order is the `lo-NN-` ordinal in each LO's folder name,
   // and nothing else (decision B, 2026-08-06 — see the Phase D handover §5). A list
   // here would be a SECOND source for a fact the folder already states, free to drift

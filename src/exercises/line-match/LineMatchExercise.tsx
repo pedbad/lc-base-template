@@ -29,13 +29,14 @@ import {
 } from '@/components/ui/select';
 import { AudioClip } from '@/components/audio/AudioClip';
 import { ExerciseOptionsSchema, type ExerciseOptions } from '@/config/lo-schema';
-import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
+import type { UiStringsOverride } from '@/config/ui-strings';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
 import { commitCheck, getInitialScoringState, type ScoringState } from '@/exercises/lib/scoring';
 import { mulberry32, sampleN, shuffle } from '@/exercises/lib/shuffle';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
 import { useExerciseScaffold } from '@/exercises/lib/exerciseScaffold';
+import { ProgressMeter } from '@/exercises/lib/ProgressMeter';
 import { resolveAsset } from '@/lib/assets';
 import { TARGET_LANG } from '@/lib/lang';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
@@ -483,7 +484,6 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
   const answeredCount = state.isDesktopViewport
     ? Object.keys(state.connections).length
     : Object.keys(state.values).length;
-  const allCorrect = state.hasChecked && total > 0 && state.nCorrect === total;
   const canReveal = canRevealAnswers({
     allowShowAnswers: options.allowShowAnswers,
     hasAttempted: state.hasChecked,
@@ -523,14 +523,7 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
         </div>
       </div>
 
-      {state.hasChecked ? (
-        <p
-          className={`text-sm font-medium ${allCorrect ? 'text-success' : 'text-muted-foreground'}`}
-          role="status"
-        >
-          {allCorrect ? resolveLabel('correct', labels) : `${state.nCorrect} / ${total}`}
-        </p>
-      ) : null}
+      <ProgressMeter correct={state.nCorrect} total={total} labels={labels} />
 
       <ExerciseFooter
         onCheck={handleCheck}

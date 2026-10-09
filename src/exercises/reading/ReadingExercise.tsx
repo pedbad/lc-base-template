@@ -28,13 +28,14 @@
 import { useId, useReducer, type ReactNode } from 'react';
 
 import { ExerciseOptionsSchema, type ExerciseOptions } from '@/config/lo-schema';
-import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
+import type { UiStringsOverride } from '@/config/ui-strings';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
 import { commitCheck, getInitialScoringState, type ScoringState } from '@/exercises/lib/scoring';
 import { ChoicePillGroup } from '@/exercises/lib/ChoicePillGroup';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
 import { createExerciseReducer } from '@/exercises/lib/exerciseScaffold';
+import { ProgressMeter } from '@/exercises/lib/ProgressMeter';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { resolveAsset } from '@/lib/assets';
 import { TARGET_LANG } from '@/lib/lang';
@@ -127,7 +128,6 @@ export default function ReadingExercise({ config }: ExerciseComponentProps) {
 
   const nToSolve = prepared.length;
   const hasSelections = Object.keys(state.values).length > 0;
-  const allCorrect = state.hasChecked && nToSolve > 0 && state.nCorrect === nToSolve;
   const canReveal = canRevealAnswers({
     allowShowAnswers: options.allowShowAnswers,
     hasAttempted: state.hasChecked,
@@ -217,14 +217,7 @@ export default function ReadingExercise({ config }: ExerciseComponentProps) {
 
       <div className="space-y-3">{cards}</div>
 
-      {state.hasChecked ? (
-        <p
-          className={`text-sm font-medium ${allCorrect ? 'text-success' : 'text-muted-foreground'}`}
-          role="status"
-        >
-          {allCorrect ? resolveLabel('correct', labels) : `${state.nCorrect} / ${nToSolve}`}
-        </p>
-      ) : null}
+      <ProgressMeter correct={state.nCorrect} total={nToSolve} labels={labels} />
 
       <ExerciseFooter
         onCheck={handleCheck}

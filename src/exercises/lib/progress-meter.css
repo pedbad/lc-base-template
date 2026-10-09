@@ -1,0 +1,84 @@
+/**
+ * progress-meter.css — the progress line under an exercise (maintainer, 2026-10-09;
+ * ProgressMeter.tsx). Lazy: only the engines import it, never main-*.css.
+ *
+ * An empty slot is a ring in --muted-foreground (a clear outline, unlike the 35%
+ * ghost in french-lo-1); a filled one is solid --success. A course icon is the same
+ * two colours through a mask. When every answer is right the slots hop once, one
+ * after another; readers who ask for less motion get the filled meter and no hop.
+ * Pinned by progress-meter-css.test.ts.
+ */
+@layer components {
+  .progress-meter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing) calc(var(--spacing) * 3);
+    align-items: center;
+  }
+
+  .progress-meter-slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(var(--spacing) * 1.5);
+    align-items: center;
+  }
+
+  .progress-meter-slot {
+    box-sizing: border-box;
+    inline-size: 1rem;
+    block-size: 1rem;
+    border: 2px solid var(--muted-foreground);
+    border-radius: 50%;
+    transition:
+      background-color 300ms ease-out,
+      border-color 300ms ease-out;
+  }
+
+  .progress-meter-slot.is-filled {
+    border-color: var(--success);
+    background-color: var(--success);
+  }
+
+  .progress-meter-slot.is-icon {
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    border: 0;
+    border-radius: 0;
+    background-color: var(--muted-foreground);
+    mask: var(--progress-icon) center / contain no-repeat;
+  }
+
+  .progress-meter-slot.is-icon.is-filled {
+    background-color: var(--success);
+  }
+
+  .progress-meter-text {
+    margin: 0;
+    color: var(--muted-foreground);
+    font-size: var(--text-sm);
+    font-weight: 500;
+  }
+
+  .progress-meter[data-complete] .progress-meter-text {
+    color: var(--success);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .progress-meter[data-complete] .progress-meter-slot {
+      animation: progress-meter-hop 500ms ease-out both;
+      animation-delay: calc(var(--slot-index) * 60ms);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .progress-meter-slot {
+      transition: none;
+    }
+  }
+
+  @keyframes progress-meter-hop {
+    40% {
+      transform: translateY(-6px) scale(1.15);
+    }
+  }
+}

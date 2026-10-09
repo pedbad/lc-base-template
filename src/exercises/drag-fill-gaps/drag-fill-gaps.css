@@ -143,13 +143,6 @@
     background-color: color-mix(in oklab, var(--success) 12%, var(--card));
   }
 
-  .drag-fill-gaps-status {
-    margin: 0;
-    font-size: var(--text-sm, 0.875rem);
-    font-variant-numeric: tabular-nums;
-    color: var(--muted-foreground);
-  }
-
   .drag-fill-gaps-footnote {
     margin: 0;
     font-size: var(--text-sm, 0.875rem);

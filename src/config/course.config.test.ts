@@ -22,3 +22,13 @@ test('course.config: optional subheading is a real string when present', () => {
     expect(subheading.length).toBeGreaterThan(0);
   }
 });
+
+// The progress meter's icon (ProgressMeter, 2026-10-09): optional — a plain dot
+// without it — and a real %BASE_URL%-relative path when present.
+test('course.config: optional progressIcon is a relative asset path when present', () => {
+  const { progressIcon } = courseConfig;
+  if (progressIcon !== undefined) {
+    expect(progressIcon.length).toBeGreaterThan(0);
+    expect(progressIcon.startsWith('/')).toBe(false);
+  }
+});

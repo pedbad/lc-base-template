@@ -35,7 +35,7 @@ import {
   type SequenceAudioControllerHandle,
 } from '@/components/audio/SequenceAudioController';
 import { ExerciseOptionsSchema, type ExerciseOptions } from '@/config/lo-schema';
-import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
+import type { UiStringsOverride } from '@/config/ui-strings';
 import { AnswerFeedback } from '@/exercises/lib/AnswerFeedback';
 import {
   firstMarkedReveal,
@@ -53,6 +53,7 @@ import {
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
 import { createExerciseReducer } from '@/exercises/lib/exerciseScaffold';
+import { ProgressMeter } from '@/exercises/lib/ProgressMeter';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { TARGET_LANG } from '@/lib/lang';
 import { InlineGapExerciseConfigSchema, type InlineGapItem } from './inline-gap-schema';
@@ -295,7 +296,6 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
   };
 
   const hasInput = Object.values(state.values).some((v) => v.trim() !== '');
-  const allCorrect = state.hasChecked && nToSolve > 0 && state.nCorrect === nToSolve;
   const canReveal = canRevealAnswers({
     allowShowAnswers: options.allowShowAnswers,
     hasAttempted: state.hasChecked,
@@ -331,14 +331,7 @@ export default function InlineTypedGapExercise({ config }: ExerciseComponentProp
 
       <div className="space-y-3">{rows}</div>
 
-      {state.hasChecked ? (
-        <p
-          className={`text-sm font-medium ${allCorrect ? 'text-success' : 'text-muted-foreground'}`}
-          role="status"
-        >
-          {allCorrect ? resolveLabel('correct', labels) : `${state.nCorrect} / ${nToSolve}`}
-        </p>
-      ) : null}
+      <ProgressMeter correct={state.nCorrect} total={nToSolve} labels={labels} />
 
       <ExerciseFooter
         onCheck={handleCheck}

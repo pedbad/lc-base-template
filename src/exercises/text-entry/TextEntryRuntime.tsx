@@ -32,7 +32,7 @@ import {
 import AudioManager from '@/audio/AudioManager';
 import { AudioClip } from '@/components/audio/AudioClip';
 import type { ExerciseOptions } from '@/config/lo-schema';
-import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
+import type { UiStringsOverride } from '@/config/ui-strings';
 import { AnswerFeedback } from '@/exercises/lib/AnswerFeedback';
 import {
   firstMarkedReveal,
@@ -43,6 +43,7 @@ import { commitCheck, getInitialScoringState, type ScoringState } from '@/exerci
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
 import { createExerciseReducer } from '@/exercises/lib/exerciseScaffold';
+import { ProgressMeter } from '@/exercises/lib/ProgressMeter';
 import { TARGET_LANG } from '@/lib/lang';
 import type { TextEntryContent } from './text-entry-schema';
 import { fillAnswers, gradeTextEntry, type ComparisonMode } from './text-entry-grading';
@@ -198,7 +199,6 @@ export function TextEntryRuntime({
   };
 
   const hasInput = Object.values(state.values).some((v) => v.trim() !== '');
-  const allCorrect = state.hasChecked && total > 0 && state.nCorrect === total;
   const canReveal = canRevealAnswers({
     allowShowAnswers: options.allowShowAnswers,
     hasAttempted: state.hasChecked,
@@ -236,14 +236,7 @@ export function TextEntryRuntime({
         </Table>
       </div>
 
-      {state.hasChecked ? (
-        <p
-          className={`text-sm font-medium ${allCorrect ? 'text-success' : 'text-muted-foreground'}`}
-          role="status"
-        >
-          {allCorrect ? resolveLabel('correct', labels) : `${state.nCorrect} / ${total}`}
-        </p>
-      ) : null}
+      <ProgressMeter correct={state.nCorrect} total={total} labels={labels} />
 
       <ExerciseFooter
         onCheck={handleCheck}

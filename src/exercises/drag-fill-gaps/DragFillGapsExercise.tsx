@@ -30,6 +30,7 @@ import { ExerciseOptionsSchema } from '@/config/lo-schema';
 import { resolveLabel } from '@/config/ui-strings';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { ExerciseFooter } from '../lib/ExerciseFooter';
+import { ProgressMeter } from '../lib/ProgressMeter';
 import { canRevealAnswers } from '../lib/reveal';
 import { TARGET_LANG } from '@/lib/lang';
 import {
@@ -330,9 +331,7 @@ export default function DragFillGapsExercise({ config }: ExerciseComponentProps)
         ))}
       </ol>
 
-      <p className="drag-fill-gaps-status" role="status" aria-live="polite">
-        {complete ? resolveLabel('correct', labels) : `${nCorrect} / ${total}`}
-      </p>
+      <ProgressMeter correct={nCorrect} total={total} labels={labels} />
 
       {content.footnote ? (
         <p className="drag-fill-gaps-footnote" lang={TARGET_LANG}>
