@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-09 · **HEAD:** see `git log` · **Suite:** 141 files · 1513 tests green
+**Last updated:** 2026-10-09 · **HEAD:** see `git log` · **Suite:** 141 files · 1523 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -1414,6 +1414,22 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     axe zero in both themes with seven lines showing; no overflow at 320. Budget: CSS
     17.66 → 17.61 kB (the diff's utilities left), JS 110.47 → 110.48 kB.
 
+- **D16 — plain links in rich text. DONE 2026-10-09** (`d347a79`, `98e5f69`). The
+  maintainer wanted the example LO's introduction to point at the debug sandbox and
+  the exercise showcase; rich text only allowed `<a>` as a popup link.
+  - `<a href>` without `data-modal-target` is now a `link` node. The href must be an
+    http(s) URL or a path relative to the site (resolved through `resolveAsset`, so it
+    carries `BASE_URL`: `/course/debug-sandbox.html` under a sub-path). `javascript:`,
+    `data:`, root-absolute and `..` paths fail at load. A popup link is unchanged.
+  - Always a new tab (`rel="noopener noreferrer"`), a lucide `ExternalLink` icon
+    (aria-hidden) and an sr-only "(opens in a new tab)" (UI string `opensInNewTab`).
+    Shares `.modal-link`'s rules in `rich-text.css`, plus one icon rule.
+  - The example intro's new sentence links both debug pages. They exist only under
+    `DEBUG=1`, so in a plain build the links 404; accepted (maintainer): the example LO
+    is copied, never deployed.
+  - Verified on the built site: both links 200 and open in a new tab, 13px icon, axe
+    zero in both themes. Budget in `docs/TOOLING.md`.
+
 ---
 
 ## E. Before sharing with other developers
@@ -1567,4 +1583,4 @@ build, so it cannot return. Two remain:
 | 2026-10-08 | `77199ba` | **feedback highlight colour** — the revealed answer's `<mark>` is Cambridge Light Blue (`bg-callout-info`) (§D15)             |
 | 2026-10-08 | `7960573` | **hero label top-right** — hero.svg fills the banner; the label hangs 12px from its top-right corner (§D14)                   |
 | 2026-10-08 | `2c61379` | **memory-match speaker on small cards** — scales to 36px under a 10rem card, clear of the word (§D14)                         |
-| 2026-10-09 | see git   | **rich-text links** — `<a href>` opens in a new tab with an external icon; the example intro links the debug pages            |
+| 2026-10-09 | `d347a79` | **rich-text links** — `<a href>` opens in a new tab with an external icon; the example intro links the debug pages            |
