@@ -1362,9 +1362,13 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     `document.getAnimations()` instead, then run axe.
 
 - **D14 — found while closing §D13. OPEN.**
-  - **Watch the transcript slide** in a visible browser (Chrome ≥ 131 / Safari) at both
-    themes and with reduced motion on. Still not seen running: the pane was hidden
-    again.
+  - **Watch the transcript slide DONE 2026-10-09:** seen running in a headed Chromium
+    with window focus (Playwright; the browser pane is hidden). Sampled every frame
+    on the example LO's grammar tab B: open 44 → 140px and close 140 → 44px, each
+    300ms ease-out, in both themes; the text stays painted through the close and is
+    hidden only once it ends (`content-visibility … allow-discrete`). With reduced
+    motion on, open and close are instant in both themes. No change needed. Not yet
+    seen in Safari.
   - **memory-match speaker over the word DONE 2026-10-08:** each card is a container;
     under 10rem the 48px speaker scales to 0.75 (36px, above the 24px minimum target)
     from its bottom-right corner. Clear of the word at every measured size: 36px on
