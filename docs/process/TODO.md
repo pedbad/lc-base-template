@@ -45,7 +45,7 @@ is exactly what the paragraph above is about.
 
 **Next (2026-10-12, afternoon):** `main` is at `d039cef` plus this note. The 2026-10-09
 six, the flashcards polish (§D19), its browser check and the sandbox 320 overflow
-(§D14, `0c2f2b6`) are DONE, and so is the flip cue on memory cards (§D20); section D
+(§D14, `0c2f2b6`) are DONE, and so is the flip cue and footer on memory cards (§D20); section D
 is closed. Nothing else is ordered.
 
 - **Ask the maintainer what is next.** Candidates: §F2 (the remaining tabs-panel
@@ -1619,21 +1619,28 @@ no-preference` only.
     scroll at 320 / 375 / 768 / 1024 / 1440 / 1920 in either theme; axe clean in both
     themes, with the confirm closed and open; no console errors. No change needed.
 
-- **D20 — the flip cue on memory cards. DONE 2026-10-12** (`7d9f72e`, `e53e954`;
-  maintainer's calls: scale it, name "Tap to flip").
+- **D20 — the flip cue on memory cards, and memory-match's footer. DONE 2026-10-12**
+  (`7d9f72e`, `e53e954`, `77399b8`, `f0019e7`, `d4e9449`, `f8b471b`; maintainer's
+  calls throughout).
   - **Shared corner:** `FlipCue` (`src/exercises/lib/`, lazy `flip-cue.css`) is the
-    flashcards' triangle, now used by both engines. On a memory card's face-down side
-    it is half the card wide with the icon alone, sized to the card (`50cqi`, icon
-    `18cqi`): a 7rem triangle would cover a 113px phone card. From a 13.5rem card it
-    is the flashcards' corner, words and all. Measured: 57 / 70 / 78px icon-only on
-    113 / 141 / 155px cards (320 / 375 / 768), 112px with words on 219 / 251px cards
-    (1024 / 1440+).
-  - **Instructions:** both flip engines bold **Tap to flip** and add "(or click …)";
-    memory-match's "Matches are kept automatically" became "Matched pairs stay face
-    up". The bolded name gets the pointer as a small chip in the corner's colours
-    (`--flip-cue-foreground` on `--flip-cue`), set inline from the tokens.
-  - Seen in a headed Chromium at 320–1920, both themes: no sideways scroll, axe
-    clean, no console errors. Budget: CSS unchanged; JS 112.26 → 112.53 kB.
+    flashcards' "Tap to flip" triangle, used by both engines. `--flip-cue` is now
+    Cambridge Light Blue (Warm Blue was too harsh), its icon Dark Blue (11.1:1). On a
+    memory card's face-down side it is a quarter of the card wide, never under 2.5rem,
+    with the icon alone at half the triangle (40 / 20px on a 113px phone card, about
+    63 / 31px on a 251px one); the words do not fit that small, so they are hidden.
+  - **Instructions:** both flip engines bold **Tap to flip**, with the plain pointer in
+    `--primary` (a tinted box read as a stray green square), and add "(or click …)".
+    Memory-match now also names **Show answers**: "Matched pairs stay face up. After two
+    misses you can select Show answers to see every pair; select Reset …".
+  - **Memory footer:** the game renders the shared `ExerciseFooter` (Check is now
+    optional there): Show answer (Eye, primary tint) then Reset (RotateCcw,
+    destructive), right-aligned, as in every engine. Show answer appears after two
+    misses (french-lo-1's rule, `canShowMemoryAnswers`), not after the first turned
+    pair; it still animates the cards into their pairs. Note: the button says "Show
+    answer" (ui-strings) while every engine's instructions say "Show answers".
+  - Seen in a headed Chromium: phone and desktop, both themes; two misses then Show
+    answer, all 4 pairs matched; axe clean (after the theme transition settles), no
+    console errors. Budget: CSS unchanged; JS 112.26 → 112.50 kB.
 
 ---
 
@@ -1811,3 +1818,7 @@ build, so it cannot return. Two remain:
 | 2026-10-12 | `0c2f2b6` | **sandbox at 320** — the Alerts intro's source path wraps; no sideways scroll (§D14)                                                    |
 | 2026-10-12 | `7d9f72e` | **flip cue on memory cards** — the shared FlipCue, scaled to the card (§D20)                                                            |
 | 2026-10-12 | `e53e954` | **Tap to flip in instructions** — flashcards and memory-match name the corner, with its pointer (§D20)                                  |
+| 2026-10-12 | `77399b8` | **flip cue, smaller and Light Blue** — quarter-card corner, icon only; plain pointer in the instructions (§D20)                         |
+| 2026-10-12 | `f0019e7` | **memory-match footer** — the shared row: Show answer and Reset with their glyphs (§D20)                                                |
+| 2026-10-12 | `d4e9449` | **memory-match Show answer after two misses** — french-lo-1's rule (§D20)                                                               |
+| 2026-10-12 | `f8b471b` | **memory-match instructions** — name Show answers and when it appears (§D20)                                                            |
