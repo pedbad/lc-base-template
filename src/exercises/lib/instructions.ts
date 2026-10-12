@@ -16,7 +16,9 @@
  *
  * Button-reference caveat (spec §4): copy names only the buttons an engine actually
  * shows. Standard engines list Check / Reset / Show answers; `memory-match`
- * self-checks as cards are flipped, so its copy references only Reset.
+ * self-checks as cards are flipped, so its copy references only Reset. The two flip
+ * engines (memory-match, flashcards) also name the card's own "Tap to flip" corner,
+ * which renders with its pointer glyph (maintainer, 2026-10-12).
  *
  * The button names are wrapped in `**…**` markers so the presentational component
  * (ExerciseInstructions) can bold them; the resolver returns the raw string and
@@ -53,11 +55,11 @@ export const EXERCISE_INSTRUCTIONS: Record<ExerciseType, string> = {
   'line-match':
     'Match each item on the left with its pair on the right. Select **Check** to mark your matches, **Reset** to clear them, or **Show answers** to reveal the correct pairs.',
   'memory-match':
-    'Flip the cards two at a time to find the matching pairs. Matches are kept automatically; select **Reset** to shuffle and start again.',
+    '**Tap to flip** two cards at a time (or click them) to find the matching pairs. Matched pairs stay face up; select **Reset** to shuffle and start again.',
   'word-spot':
     'Click every part of the text that matches the target. Select **Check** to mark your selection, **Reset** to clear it, or **Show answers** to reveal the correct parts.',
   flashcards:
-    'Read the card, then tap or click the card to turn it over. Rate yourself: **Again** if you missed it (the card comes back later) or **Got it** if you knew it. Each circle shows how you rated a card. Switch the direction above the card to change which language shows first, and select **Reset** to start the round again.',
+    'Read the card, then **Tap to flip** it over (or click it). Rate yourself: **Again** if you missed it (the card comes back later) or **Got it** if you knew it. Each circle shows how you rated a card. Switch the direction above the card to change which language shows first, and select **Reset** to start the round again.',
   conjugation:
     'Type the correct verb form for each person; press Enter to jump to the next one. Select **Check** to mark your answers, **Reset** to clear them, or **Show answers** to reveal the correct forms.',
   reading:

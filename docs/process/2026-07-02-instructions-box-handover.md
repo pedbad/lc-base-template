@@ -119,7 +119,7 @@ Copy must name only the buttons an engine actually shows:
 - **phrase-reorder:** "Put the phrases in the correct order. Select **Check** to mark your answer, **Reset** to start over, or **Show answers** to reveal the correct order."
 - **drag-fill-gaps:** "Drag each word into the gap where it belongs. Select **Check** to mark your answers, **Reset** to return the words, or **Show answers** to reveal the correct placement."
 - **line-match:** "Match each item on the left with its pair on the right. Select **Check** to mark your matches, **Reset** to clear them, or **Show answers** to reveal the correct pairs."
-- **memory-match:** "Flip the cards two at a time to find the matching pairs. Matches are kept automatically; select **Reset** to shuffle and start again."
+- **memory-match:** "**Tap to flip** two cards at a time (or click them) to find the matching pairs. Matched pairs stay face up; select **Reset** to shuffle and start again." (copy revised 2026-10-12; `instructions.ts` is the source.)
 - **word-spot:** "Click every part of the text that matches the target. Select **Check** to mark your selection, **Reset** to clear it, or **Show answers** to reveal the correct parts."
 
 ## 7. Acceptance criteria

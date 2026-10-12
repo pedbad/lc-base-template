@@ -11,7 +11,10 @@
  * when the name matches a real footer control (Check / Reset / Show answers) it is
  * prefixed with that button's own lucide glyph in the button's identity colour
  * (success / destructive / primary — mirroring ExerciseFooter) so the reference reads
- * as the actual control. Unknown bold names (custom overrides) render bold, no icon.
+ * as the actual control. **Tap to flip** names the corner on a flip card (FlipCue), so
+ * its pointer wears that corner's colours: --flip-cue-foreground on --flip-cue, set
+ * inline from the tokens (no new rule in main-*.css). Unknown bold names (custom
+ * overrides) render bold, no icon.
  *
  * a11y: `role="note"` (this is course-author guidance, not a live alert). The text
  * is English course chrome — deliberately NOT tagged `lang={TARGET_LANG}` (same rule
@@ -20,8 +23,8 @@
  *
  * Spec: docs/process/2026-07-02-instructions-box-handover.md §3.
  */
-import { Fragment, type ComponentType } from 'react';
-import { CircleCheck, Eye, RotateCcw } from 'lucide-react';
+import { Fragment, type ComponentType, type CSSProperties } from 'react';
+import { CircleCheck, Eye, RotateCcw, SplinePointer } from 'lucide-react';
 
 import Callout from '@/components/shell/Callout';
 
@@ -30,14 +33,23 @@ interface ExerciseInstructionsProps {
   text: string | null;
 }
 
-/** A footer control's inline glyph + its identity colour, keyed by button name. */
+/** A control's inline glyph + its identity colour, keyed by the name the copy bolds. */
 const BUTTON_GLYPHS: Record<
   string,
-  { Icon: ComponentType<{ className?: string }>; color: string }
+  {
+    Icon: ComponentType<{ className?: string; style?: CSSProperties }>;
+    color: string;
+    style?: CSSProperties;
+  }
 > = {
   check: { Icon: CircleCheck, color: 'text-success' },
   reset: { Icon: RotateCcw, color: 'text-destructive' },
   'show answers': { Icon: Eye, color: 'text-primary' },
+  'tap to flip': {
+    Icon: SplinePointer,
+    color: 'rounded',
+    style: { background: 'var(--flip-cue)', color: 'var(--flip-cue-foreground)' },
+  },
 };
 
 /** Split copy on `**bold**` markers into alternating plain / strong segments. */
@@ -53,7 +65,10 @@ function renderWithBold(text: string) {
       // baseline as the surrounding prose; only the icon is nudged to align with it.
       <strong key={index} className="font-semibold text-foreground">
         {glyph ? (
-          <glyph.Icon className={`mr-1 inline size-4 align-[-0.2em] ${glyph.color}`} />
+          <glyph.Icon
+            className={`mr-1 inline size-4 align-[-0.2em] ${glyph.color}`}
+            style={glyph.style}
+          />
         ) : null}
         {segment}
       </strong>

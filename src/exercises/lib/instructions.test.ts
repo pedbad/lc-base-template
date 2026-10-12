@@ -28,6 +28,17 @@ describe('EXERCISE_INSTRUCTIONS', () => {
     expect(copy).toContain('**Reset**');
     expect(copy).not.toContain('Check');
   });
+
+  // Maintainer, 2026-10-12: both flip engines name the card's corner, "Tap to flip", so
+  // the instruction carries its pointer glyph; a mouse user is told a click works too.
+  test.each(['memory-match', 'flashcards'] as const)(
+    '%s copy names the Tap to flip cue and says a click works',
+    (type) => {
+      const copy = EXERCISE_INSTRUCTIONS[type];
+      expect(copy).toContain('**Tap to flip**');
+      expect(copy).toMatch(/or click/);
+    },
+  );
 });
 
 describe('resolveInstructions', () => {
@@ -59,7 +70,6 @@ describe('resolveInstructions', () => {
 describe('flashcards instructions', () => {
   test('say to tap the card, name Reset, and drop the old buttons', () => {
     const copy = EXERCISE_INSTRUCTIONS.flashcards;
-    expect(copy).toMatch(/tap or click the card/i);
     expect(copy).toContain('**Reset**');
     expect(copy).not.toMatch(/Show answer|Restart/);
   });
