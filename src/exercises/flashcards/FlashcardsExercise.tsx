@@ -33,7 +33,7 @@
  *
  * Spec: docs/specs/2026-07-03-new-exercise-engines-design.md §4.
  */
-import { useReducer, useState } from 'react';
+import { useReducer, useState, type CSSProperties } from 'react';
 import { Frown, RotateCcw, Smile, SplinePointer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AudioClip } from '@/components/audio/AudioClip';
@@ -310,12 +310,19 @@ interface ProgressDotsProps {
 /**
  * One circle per card, in the order the session started: empty until rated, then a
  * happy face (Got it) or a sad face (Again), the latest rating winning. Decorative —
- * the sr-only status line above says the same in words.
+ * the sr-only status line above says the same in words. When every card is Got it,
+ * the row hops once.
  */
-function ProgressDots({ order, results, currentId }: ProgressDotsProps) {
+export function ProgressDots({ order, results, currentId }: ProgressDotsProps) {
+  // Every card Got it: the row hops, as the progress meter does (flashcards.css).
+  const isComplete = order.length > 0 && order.every((id) => results[id] === 'good');
   return (
-    <ol className="flashcards-dots" aria-hidden="true">
-      {order.map((id) => {
+    <ol
+      className="flashcards-dots"
+      aria-hidden="true"
+      data-complete={isComplete ? 'true' : undefined}
+    >
+      {order.map((id, index) => {
         const result = results[id] ?? 'pending';
         return (
           <li
@@ -323,6 +330,7 @@ function ProgressDots({ order, results, currentId }: ProgressDotsProps) {
             className="flashcards-dot"
             data-result={result}
             data-current={id === currentId ? 'true' : undefined}
+            style={{ '--slot-index': index } as CSSProperties}
           >
             {result === 'good' ? <Smile /> : result === 'again' ? <Frown /> : null}
           </li>

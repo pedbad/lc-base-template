@@ -45,19 +45,15 @@
     list-style: none;
   }
 
+  /* A slot is the progress meter's icon size with its 2px muted ring (maintainer,
+     2026-10-12), so the flashcards row matches the other exercises'. */
   .flashcards-dot {
-    display: grid;
-    place-items: center;
-    width: 1.75rem;
-    height: 1.75rem;
-    border: 1.5px solid var(--border);
+    position: relative;
+    box-sizing: border-box;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid var(--muted-foreground);
     border-radius: 50%;
-    color: var(--muted-foreground);
-  }
-
-  .flashcards-dot svg {
-    width: 1.25rem;
-    height: 1.25rem;
   }
 
   .flashcards-dot[data-current='true'] {
@@ -66,9 +62,10 @@
   }
 
   /* A rated card shows its face alone (maintainer, 2026-10-12): Smile and Frown are
-     circles already, so a ring and tint drew a second one. The face takes the ring's
-     diameter (lucide's circle, r10 plus its stroke, spans 21.25 of 24 units) and a
-     stroke near the ring's 1.5px. */
+     circles already, so a ring and tint drew a second one. The face is centred on its
+     slot, not laid out in it (drawn larger than the box, it pushed off the row's
+     line), and spans the ring's diameter: lucide's circle, r10 plus its 2-unit
+     stroke, covers 22 of 24 units, so its stroke lands near the ring's 2px. */
   .flashcards-dot[data-result='good'] {
     border-color: transparent;
     color: var(--success);
@@ -80,9 +77,27 @@
   }
 
   .flashcards-dot:where([data-result]) svg {
-    width: calc(1.75rem * 24 / 21.25);
-    height: calc(1.75rem * 24 / 21.25);
-    stroke-width: 1.25;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc(1.5rem * 24 / 22);
+    height: calc(1.5rem * 24 / 22);
+    translate: -50% -50%;
+  }
+
+  /* Every card Got it: the circles hop once, one after another, as the progress
+     meter does (progress-meter.css); not for readers who ask for less motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    .flashcards-dots[data-complete] .flashcards-dot {
+      animation: flashcards-hop 500ms ease-out both;
+      animation-delay: calc(var(--slot-index) * 60ms);
+    }
+  }
+
+  @keyframes flashcards-hop {
+    40% {
+      transform: translateY(-6px) scale(1.15);
+    }
   }
 
   /* Two-option direction switch (Spanish to English | English to Spanish): real

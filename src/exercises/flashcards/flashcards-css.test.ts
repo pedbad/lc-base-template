@@ -22,9 +22,28 @@ describe('flashcards.css progress circles', () => {
     }
   });
 
-  test('the face fills the ring’s diameter, with a stroke near the ring’s', () => {
+  // Maintainer, 2026-10-12: the faces sat off the rings' line (drawn bigger than their
+  // box), and the circles were larger than the other exercises'. Each face is now
+  // centred on its slot, and a slot is the meter's 1.5rem icon size with its 2px ring.
+  test('a slot is 1.5rem with a 2px muted ring, like the progress meter', () => {
+    const body = rule('.flashcards-dot');
+    expect(body).toMatch(/width:\s*1\.5rem/);
+    expect(body).toMatch(/height:\s*1\.5rem/);
+    expect(body).toMatch(/border:\s*2px solid var\(--muted-foreground\)/);
+    expect(body).toMatch(/position:\s*relative/);
+  });
+
+  test('the face is centred on its slot and spans the ring’s diameter', () => {
     const body = rule('.flashcards-dot:where([data-result]) svg');
-    expect(body).toMatch(/stroke-width:\s*1\.25/);
-    expect(body).toMatch(/width:\s*calc\(/);
+    expect(body).toMatch(/position:\s*absolute/);
+    expect(body).toMatch(/translate:\s*-50% -50%/);
+    expect(body).toMatch(/width:\s*calc\(1\.5rem \* 24 \/ 22\)/);
+  });
+
+  test('a complete deck hops, one circle after another, only without reduced motion', () => {
+    expect(css).toMatch(
+      /@media \(prefers-reduced-motion: no-preference\)\s*\{\s*\.flashcards-dots\[data-complete\] \.flashcards-dot\s*\{[^}]*animation:[^}]*--slot-index/,
+    );
+    expect(css).toMatch(/@keyframes flashcards-hop/);
   });
 });

@@ -7,7 +7,7 @@
  */
 import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import FlashcardsExercise from './FlashcardsExercise';
+import FlashcardsExercise, { ProgressDots } from './FlashcardsExercise';
 
 const config = {
   type: 'flashcards',
@@ -109,5 +109,23 @@ describe('FlashcardsExercise study stage', () => {
     expect(html).toMatch(
       /<span class="flashcards-hint" aria-hidden="true"><span class="flashcards-hint-label"><svg[^>]*lucide-spline-pointer[^>]*>[\s\S]*?<\/svg>Tap to flip<\/span><\/span>/,
     );
+  });
+});
+
+// Maintainer, 2026-10-12: when every card is rated Got it, the circles hop like the
+// other exercises' progress meter (the hop itself is flashcards.css).
+describe('ProgressDots', () => {
+  const order = ['a', 'b', 'c'];
+  const dots = (results: Record<string, 'good' | 'again'>) =>
+    renderToStaticMarkup(<ProgressDots order={order} results={results} currentId={null} />);
+
+  test('marks the row complete only when every card is Got it', () => {
+    expect(dots({ a: 'good', b: 'good', c: 'good' })).toContain('data-complete="true"');
+    expect(dots({ a: 'good', b: 'again', c: 'good' })).not.toContain('data-complete');
+    expect(dots({ a: 'good', b: 'good' })).not.toContain('data-complete');
+  });
+
+  test('numbers each circle for the staggered hop', () => {
+    expect(dots({})).toContain('--slot-index:2');
   });
 });
