@@ -64,7 +64,7 @@ export default function ButtonsSection() {
           note={
             <>
               Every coloured button in a lesson, labelled with the token its colour comes from:
-              solid primary (the default variant), and the exercise footer's Show answer, Reset and
+              solid primary (the default variant), and the exercise footer's Show answers, Reset and
               Check (<code>EXERCISE_BUTTONS</code>).
             </>
           }
@@ -121,7 +121,7 @@ export default function ButtonsSection() {
           title="Exercise footer"
           note={
             <>
-              <code>ExerciseFooter</code> (<code>src/exercises/lib/</code>), the Show answer, Reset
+              <code>ExerciseFooter</code> (<code>src/exercises/lib/</code>), the Show answers, Reset
               and Check every exercise ends with: ghost, destructive and a success-coloured default.
             </>
           }

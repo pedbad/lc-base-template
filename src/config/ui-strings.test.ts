@@ -26,7 +26,7 @@ test('ui-strings: override accepts a valid partial subset', () => {
 // Resolution: override wins; otherwise global default.
 test('ui-strings: resolveLabel — override wins, else global fallback', () => {
   expect(resolveLabel('showAnswer', { showAnswer: 'See answer' })).toBe('See answer');
-  expect(resolveLabel('showAnswer')).toBe('Show answer');
+  expect(resolveLabel('showAnswer')).toBe('Show answers');
   expect(resolveLabel('check', {})).toBe('Check');
 });
 

@@ -10,7 +10,7 @@
  *     half-translated chrome can ship.
  *   Layer 2 — per-exercise `labels` override, lives in the LO JSON (validated later
  *     with `UiStringsOverrideSchema`). Optional + partial: one exercise can say
- *     "See answer" while the rest fall back to the global "Show answer". Keys must be
+ *     "See answer" while the rest fall back to the global "Show answers". Keys must be
  *     real and values strings — a typo like `chekc` fails the build.
  *
  * RESOLUTION: `resolveLabel(key, overrides)` → override wins, global always exists.
@@ -90,7 +90,7 @@ const raw: UiStrings = {
   previous: 'Previous',
   reset: 'Reset',
   continue: 'Continue',
-  showAnswer: 'Show answer',
+  showAnswer: 'Show answers',
   hideAnswer: 'Hide answer',
   correct: 'Correct!',
   incorrect: 'Incorrect',
