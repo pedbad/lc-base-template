@@ -49,8 +49,13 @@ six, the flashcards polish (§D19) and its browser check, the sandbox 320 overfl
 rule (§D21, `options.showAnswersAfter`) are DONE; section D is closed. Nothing else is
 ordered.
 
-- **Ask the maintainer what is next.** Candidates: §F2 (the remaining tabs-panel
-  entries), §F3 (tabs on phones), §F4 (`ui-showcase.html`), or a Deferred item.
+- **Build the `sources` block (§F5).** Decided 2026-10-12; plan, decisions and the
+  drafted failing test are in `2026-10-12-sources-block-plan.md`. Blocked that evening
+  only because the tdd-guard hook fails closed on `Credit balance is too low`: top up,
+  or mute it locally, before starting. Do not bypass it via the shell.
+- **Then ask the maintainer what is next.** Candidates: §F2 (the remaining tabs-panel
+  entries), §F3 (tabs on phones), §F4 (`ui-showcase.html`, the block showcase the
+  maintainer asked about on 2026-10-12), or a Deferred item.
   **Budget first:** CSS headroom is 0.09 kB (`docs/TOOLING.md`, "Bundle budget"), so
   any new rule in `main-*.css` needs a lever before it lands (a lazy per-feature sheet
   imported by the component that needs it).
@@ -1693,6 +1698,10 @@ the slice-1 scope and the open list live in
 - **F3 — phones:** the dropdown chosen in the brainstorm (slice 1 stacks instead).
 - **F4 — `ui-showcase.html`** behind `DEBUG_ENTRY_FILES`, rendering through the same
   renderers. Verify: absent from `bun run build`, present under `DEBUG=1`.
+- **F5 — `sources` block** (references list: grouped, print/web icon, rich-text
+  citation, optional note). For the legacy LOs' "Sources" pages. Plan
+  `2026-10-12-sources-block-plan.md`. Verify: the example LO's Sources section, gate
+  green, budget held.
 - **Budget:** headroom is in `docs/TOOLING.md`; the next F2 entry likely needs per-LO
   chunking or build-time rich-text parsing first.
 
