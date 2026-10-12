@@ -192,6 +192,7 @@ export default function MemoryMatchExercise({ config }: ExerciseComponentProps) 
     nPairs,
     total,
     allowShowAnswers: options.allowShowAnswers,
+    showAnswersAfter: options.showAnswersAfter,
   });
 
   return (

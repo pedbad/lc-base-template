@@ -297,6 +297,17 @@ test('lo-schema: options carries per-instance shuffle + sampleSize', () => {
   });
 });
 
+// Maintainer, 2026-10-12: an author tunes how many failed tries come before Show
+// answers; omitted, the engine's default applies (1, or 2 for the sequence engines).
+test('lo-schema: showAnswersAfter is an optional whole number from 1', () => {
+  const parse = (options: object) =>
+    ExerciseConfigSchema.safeParse({ type: 'select', content: {}, options });
+  expect(parse({}).data?.options?.showAnswersAfter).toBeUndefined();
+  expect(parse({ showAnswersAfter: 3 }).data?.options?.showAnswersAfter).toBe(3);
+  expect(parse({ showAnswersAfter: 0 }).success).toBe(false);
+  expect(parse({ showAnswersAfter: 1.5 }).success).toBe(false);
+});
+
 // TODO §D15: capitals in typed answers count only when the author opts in.
 test('lo-schema: options.caseSensitive defaults to false and can be turned on', () => {
   expect(ExerciseOptionsSchema.parse({}).caseSensitive).toBe(false);

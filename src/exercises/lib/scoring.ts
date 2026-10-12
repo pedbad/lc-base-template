@@ -22,10 +22,12 @@ export interface ScoringState {
   nCorrect: number;
   /** Keys Show answer filled in. Never counted on the meter until Reset. */
   revealed: readonly string[];
+  /** Check presses with anything wrong: what the Show answers gate counts (reveal.ts). */
+  failedChecks: number;
 }
 
-/** What a Check writes: everything but `revealed`, which a merge then keeps. */
-export type CheckPatch = Omit<ScoringState, 'revealed'>;
+/** What a grade writes: everything but `revealed` and `failedChecks`, which a merge keeps. */
+export type CheckPatch = Omit<ScoringState, 'revealed' | 'failedChecks'>;
 
 /**
  * Fresh baseline for the scoring fields. A FACTORY (not a shared constant) so each
@@ -37,6 +39,7 @@ export const getInitialScoringState = (): ScoringState => ({
   hasChecked: false,
   nCorrect: 0,
   revealed: [],
+  failedChecks: 0,
 });
 
 /** Number of correct blanks/rows in a checkedResults map. */
@@ -55,13 +58,25 @@ export const commitCheck = (checkedResults: Record<string | number, boolean>): C
 });
 
 /**
+ * A Check PRESS: commitCheck, plus one failed Check when anything is wrong (maintainer,
+ * 2026-10-12). Re-grading on an edit uses commitCheck, so it never counts.
+ */
+export const commitCheckPress = (
+  failedChecks: number,
+  checkedResults: Record<string | number, boolean>,
+): CheckPatch & Pick<ScoringState, 'failedChecks'> => ({
+  ...commitCheck(checkedResults),
+  failedChecks: failedChecks + (Object.values(checkedResults).includes(false) ? 1 : 0),
+});
+
+/**
  * The "Show answer" patch: commit the filled-in results, and add every key that was
  * not already right to `revealed` (on top of any earlier reveal's keys).
  */
 export const commitReveal = (
   before: Pick<ScoringState, 'checkedResults' | 'revealed'>,
   checkedResults: Record<string | number, boolean>,
-): ScoringState => {
+): Omit<ScoringState, 'failedChecks'> => {
   const filled = Object.keys(checkedResults).filter(
     (key) => before.checkedResults[key] !== true && !before.revealed.includes(key),
   );

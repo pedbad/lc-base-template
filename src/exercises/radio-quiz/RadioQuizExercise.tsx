@@ -41,6 +41,7 @@ import type { UiStringsOverride } from '@/config/ui-strings';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
 import {
   commitCheck,
+  commitCheckPress,
   commitReveal,
   countOwnCorrect,
   getInitialScoringState,
@@ -172,7 +173,9 @@ export default function RadioQuizExercise({ config }: ExerciseComponentProps) {
   const nToSolve = state.preparedQuestions.length;
 
   const handleCheck = () => {
-    dispatch(commitCheck(gradeRadioQuiz(state.preparedQuestions, state.values)));
+    dispatch(
+      commitCheckPress(state.failedChecks, gradeRadioQuiz(state.preparedQuestions, state.values)),
+    );
   };
 
   const handleShowAnswers = () => {
@@ -227,7 +230,8 @@ export default function RadioQuizExercise({ config }: ExerciseComponentProps) {
   const hasSelections = Object.keys(state.values).length > 0;
   const canReveal = canRevealAnswers({
     allowShowAnswers: options.allowShowAnswers,
-    hasAttempted: state.hasChecked,
+    failedTries: state.failedChecks,
+    showAnswersAfter: options.showAnswersAfter,
     total: nToSolve,
     nCorrect: state.nCorrect,
   });

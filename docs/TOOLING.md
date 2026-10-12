@@ -728,7 +728,9 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   consumes immediately — so nothing here is speculative.
 - **Behavior locked here (spec §5):** Reset is implicit (always on); `shuffle`
   default off and re-applied on reset; Show-answers reveals only after a Check with
-  ≥1 wrong (`allowShowAnswers:false` suppresses it).
+  ≥1 wrong (`allowShowAnswers:false` suppresses it). **Since 2026-10-12** it waits
+  for `options.showAnswersAfter` failed tries, by default 1 (2 for the sequence
+  engines and memory-match, as french-lo-1); see `src/exercises/lib/reveal.ts`.
 - **Proven via `bun test`** — each util and the schema changes have a colocated
   `.test.ts`.
 

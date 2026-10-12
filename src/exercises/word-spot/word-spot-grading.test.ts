@@ -57,3 +57,8 @@ test('scoreWordSpot: hasAttempted reflects any hit or miss', () => {
   expect(scoreWordSpot({}, ['t-0']).hasAttempted).toBe(false);
   expect(scoreWordSpot({ 'r0-x-0': 'miss' }, ['t-0']).hasAttempted).toBe(true);
 });
+
+// Maintainer, 2026-10-12: word-spot joins the shared rule; a failed try is a wrong click.
+test('scoreWordSpot: misses are the failed tries Show answers counts', () => {
+  expect(scoreWordSpot({ 'r0-x-0': 'miss', 'r0-x-1': 'miss' }, ['t-0']).misses).toBe(2);
+});

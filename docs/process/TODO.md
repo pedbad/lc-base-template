@@ -1647,13 +1647,17 @@ no-preference` only.
   - **Label:** the default reads **Show answers** (french-lo-1's footer default, and
     what every engine's instructions already said); a `labels.showAnswer` override
     still wins.
-  - **When it appears (audited against french-lo-1):** after a Check with anything
-    wrong in select, inline-choice, radio-quiz, inline-gap, line-match, dictation,
-    typed-transform, conjugation and reading (French: the same, `hasAnyIncorrect`).
-    Word-order, phrase-reorder and drag-fill-gaps now wait for **two failed Checks**
-    (`canRevealAfterFails`, `reveal.ts`), as French does; memory-match waits for two
-    misses (§D20). Word-spot offers it after any click with something unfound (French
-    has none there); flashcards have none (the flip is the reveal).
+  - **When it appears (audited against french-lo-1), now one rule:** Show answers
+    waits for `options.showAnswersAfter` failed tries (a whole number from 1; the
+    schema refuses anything else), then shows while anything is wrong;
+    `allowShowAnswers: false` still removes it. A failed try is a Check with anything
+    wrong (`commitCheckPress` counts `failedChecks`; re-grading on an edit does not),
+    a missed pair (memory-match) or a wrong click (word-spot). Omitted, each engine
+    keeps French's number: **1** for select, inline-choice, radio-quiz, inline-gap,
+    line-match, dictation, typed-transform, conjugation, reading and word-spot
+    (word-spot used to offer it after any click); **2** for word-order,
+    phrase-reorder, drag-fill-gaps and memory-match. Flashcards have none (the flip is
+    the reveal). One function, `canRevealAnswers` (`reveal.ts`), for every engine.
   - Not seen in a browser (tests and gate only).
 
 ---
@@ -1837,4 +1841,5 @@ build, so it cannot return. Two remain:
 | 2026-10-12 | `d4e9449` | **memory-match Show answer after two misses** — french-lo-1's rule (§D20)                                                               |
 | 2026-10-12 | `f8b471b` | **memory-match instructions** — name Show answers and when it appears (§D20)                                                            |
 | 2026-10-12 | `3462076` | **Show answers** — the reveal button's default label, as in french-lo-1 (§D21)                                                          |
-| 2026-10-12 | (next)    | **reveal after two failed Checks** — word-order, phrase-reorder, drag-fill-gaps (§D21)                                                  |
+| 2026-10-12 | `9a3b226` | **reveal after two failed Checks** — word-order, phrase-reorder, drag-fill-gaps (§D21)                                                  |
+| 2026-10-12 | (next)    | **showAnswersAfter** — one tunable Show answers rule for every engine (§D21)                                                            |

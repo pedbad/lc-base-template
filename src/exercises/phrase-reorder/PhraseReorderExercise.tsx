@@ -11,7 +11,8 @@
  *
  * `options.shuffle` is N/A (§5.2): the deck always scrambles, on mount AND on Reset.
  * `allowShowAnswers` applies (§5.3); Show answers waits for two failed Checks
- * (`canRevealAfterFails`, as french-lo-1; maintainer 2026-10-12).
+ * by default (`SHOW_ANSWERS_AFTER_SEQUENCE`, as french-lo-1; maintainer
+ * 2026-10-12); `options.showAnswersAfter` tunes it.
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5.2, §5.3, §7, §8.
  */
@@ -21,7 +22,7 @@ import { ExerciseOptionsSchema } from '@/config/lo-schema';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { ExerciseFooter } from '../lib/ExerciseFooter';
 import { ProgressMeter } from '../lib/ProgressMeter';
-import { canRevealAfterFails } from '../lib/reveal';
+import { canRevealAnswers, SHOW_ANSWERS_AFTER_SEQUENCE } from '../lib/reveal';
 import { captureFlipPositions, playFlipAnimation } from '../lib/reorderAnimation';
 import { TARGET_LANG } from '@/lib/lang';
 import {
@@ -248,12 +249,16 @@ export default function PhraseReorderExercise({ config }: ExerciseComponentProps
     });
   };
 
-  const canReveal = canRevealAfterFails({
-    allowShowAnswers: options.allowShowAnswers,
-    failCount,
-    total,
-    nCorrect: correctCount,
-  });
+  const canReveal = canRevealAnswers(
+    {
+      allowShowAnswers: options.allowShowAnswers,
+      showAnswersAfter: options.showAnswersAfter,
+      failedTries: failCount,
+      total,
+      nCorrect: correctCount,
+    },
+    SHOW_ANSWERS_AFTER_SEQUENCE,
+  );
   const showReset = hasReordered || hasChecked || ownAtReveal !== null;
 
   return (

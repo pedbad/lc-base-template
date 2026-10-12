@@ -10,10 +10,11 @@
  * fully state-driven (no querySelectorAll/classList), and every clickable part-word
  * is a real <button> so keyboard and screen-reader users get the same affordance.
  *
- * Reveal (Show-answers) follows the §5.3 rule in spirit via canRevealAnswers: offered
- * once the learner has attempted and not yet found every target; it marks all targets
- * hit. `options.shuffle`/`sampleSize` are N/A (the phrase order is the content); only
- * `allowShowAnswers` applies.
+ * Reveal (Show-answers) follows the shared §5.3 rule via canRevealAnswers: a failed try
+ * is a wrong click (maintainer, 2026-10-12), so it is offered after one by default
+ * (`options.showAnswersAfter` tunes it) while a target is unfound; it marks all
+ * targets hit. `options.shuffle`/`sampleSize` are N/A (the phrase order is the
+ * content); `allowShowAnswers` and `showAnswersAfter` apply.
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5.3, §7, §8.
  */
@@ -78,11 +79,12 @@ export default function WordSpotExercise({ config }: ExerciseComponentProps) {
   const { rows, targetKeys } = buildModel(parsed.data.content);
   const { footnote } = parsed.data.content;
 
-  const { hits, total, complete, hasAttempted } = scoreWordSpot(marks, targetKeys);
+  const { hits, misses, total, complete, hasAttempted } = scoreWordSpot(marks, targetKeys);
 
   const canReveal = canRevealAnswers({
     allowShowAnswers: options.allowShowAnswers,
-    hasAttempted,
+    showAnswersAfter: options.showAnswersAfter,
+    failedTries: misses,
     total,
     nCorrect: hits,
   });

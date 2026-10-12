@@ -40,6 +40,7 @@ import type { UiStringsOverride } from '@/config/ui-strings';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
 import {
   commitCheck,
+  commitCheckPress,
   commitReveal,
   countOwnCorrect,
   getInitialScoringState,
@@ -213,7 +214,9 @@ export default function InlineChoiceExercise({ config }: ExerciseComponentProps)
   const nToSolve = blankCursor;
 
   const handleCheck = () => {
-    dispatch(commitCheck(gradeInlineChoice(blanksMeta, state.values, nToSolve)));
+    dispatch(
+      commitCheckPress(state.failedChecks, gradeInlineChoice(blanksMeta, state.values, nToSolve)),
+    );
   };
 
   const handleShowAnswers = () => {
@@ -224,7 +227,8 @@ export default function InlineChoiceExercise({ config }: ExerciseComponentProps)
   const hasSelections = Object.keys(state.values).length > 0;
   const canReveal = canRevealAnswers({
     allowShowAnswers: options.allowShowAnswers,
-    hasAttempted: state.hasChecked,
+    failedTries: state.failedChecks,
+    showAnswersAfter: options.showAnswersAfter,
     total: nToSolve,
     nCorrect: state.nCorrect,
   });

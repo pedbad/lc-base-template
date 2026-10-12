@@ -32,6 +32,7 @@ import type { UiStringsOverride } from '@/config/ui-strings';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
 import {
   commitCheck,
+  commitCheckPress,
   commitReveal,
   countOwnCorrect,
   getInitialScoringState,
@@ -115,7 +116,7 @@ export default function ReadingExercise({ config }: ExerciseComponentProps) {
   const handleReset = () => dispatch(buildState());
 
   const handleCheck = () => {
-    dispatch(commitCheck(gradeReading(prepared, state.values)));
+    dispatch(commitCheckPress(state.failedChecks, gradeReading(prepared, state.values)));
   };
 
   const handleShowAnswers = () => {
@@ -136,7 +137,8 @@ export default function ReadingExercise({ config }: ExerciseComponentProps) {
   const hasSelections = Object.keys(state.values).length > 0;
   const canReveal = canRevealAnswers({
     allowShowAnswers: options.allowShowAnswers,
-    hasAttempted: state.hasChecked,
+    failedTries: state.failedChecks,
+    showAnswersAfter: options.showAnswersAfter,
     total: nToSolve,
     nCorrect: state.nCorrect,
   });

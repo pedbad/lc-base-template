@@ -55,6 +55,13 @@ export const ExerciseOptionsSchema = z.object({
   /** false removes the Show-answers control entirely (e.g. a pure game). */
   allowShowAnswers: z.boolean().default(true),
   /**
+   * Failed tries before Show answers appears (maintainer, 2026-10-12): Checks with
+   * anything wrong, missed pairs (memory-match) or wrong clicks (word-spot). Omit for
+   * the engine's default, as french-lo-1: 1, or 2 for word-order, phrase-reorder,
+   * drag-fill-gaps and memory-match (`src/exercises/lib/reveal.ts`).
+   */
+  showAnswersAfter: z.number().int().min(1).optional(),
+  /**
    * Typed answers only: true makes capitals count ("Los gatos" ≠ "los gatos"). Off by
    * default (maintainer, 2026-10-08, TODO §D15): in a gap-fill a capital is rarely the
    * point. Accents always count either way.

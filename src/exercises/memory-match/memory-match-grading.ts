@@ -11,7 +11,7 @@
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §7, §8.
  */
 import { shuffle } from '@/exercises/lib/shuffle';
-import { canRevealAnswers } from '@/exercises/lib/reveal';
+import { canRevealAnswers, SHOW_ANSWERS_AFTER_SEQUENCE } from '@/exercises/lib/reveal';
 import type { DeckCard } from './MemoryCard';
 import type { MemoryMatchContent } from './memory-match-schema';
 
@@ -59,24 +59,27 @@ export function solveOrder(cards: readonly DeckCard[]): DeckCard[] {
     .filter((card): card is DeckCard => Boolean(card));
 }
 
-/** Misses (turned pairs that did not match) before Show answers appears. */
-export const MISSES_BEFORE_REVEAL = 2;
-
 /**
  * The §5.3 reveal gate for the memory game (maintainer, 2026-10-12, after
- * french-lo-1): Show answers waits for two misses, not one try, and goes once every
- * pair is found or when the author sets `allowShowAnswers: false`.
+ * french-lo-1): a failed try is a missed pair, and Show answers waits for two by
+ * default (`options.showAnswersAfter` tunes it). It goes once every pair is found or
+ * when the author sets `allowShowAnswers: false`.
  */
 export function canShowMemoryAnswers(input: {
   nTries: number;
   nPairs: number;
   total: number;
   allowShowAnswers?: boolean;
+  showAnswersAfter?: number;
 }): boolean {
-  return canRevealAnswers({
-    allowShowAnswers: input.allowShowAnswers,
-    hasAttempted: input.nTries - input.nPairs >= MISSES_BEFORE_REVEAL,
-    total: input.total,
-    nCorrect: input.nPairs,
-  });
+  return canRevealAnswers(
+    {
+      allowShowAnswers: input.allowShowAnswers,
+      showAnswersAfter: input.showAnswersAfter,
+      failedTries: input.nTries - input.nPairs,
+      total: input.total,
+      nCorrect: input.nPairs,
+    },
+    SHOW_ANSWERS_AFTER_SEQUENCE,
+  );
 }

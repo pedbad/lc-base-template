@@ -33,6 +33,7 @@ import type { UiStringsOverride } from '@/config/ui-strings';
 import { canRevealAnswers } from '@/exercises/lib/reveal';
 import {
   commitCheck,
+  commitCheckPress,
   commitReveal,
   countOwnCorrect,
   getInitialScoringState,
@@ -317,7 +318,7 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
 
     if (desktop) {
       dispatch({
-        ...commitCheck(checkedResults),
+        ...commitCheckPress(state.failedChecks, checkedResults),
         connections: keptConnections,
         recoiling,
         recoilProgress: recoiling.length > 0 ? 0 : 1,
@@ -326,7 +327,7 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
       });
       if (recoiling.length > 0) startRecoil();
     } else {
-      dispatch(commitCheck(checkedResults));
+      dispatch(commitCheckPress(state.failedChecks, checkedResults));
     }
   };
 
@@ -492,7 +493,8 @@ export default function LineMatchExercise({ config }: ExerciseComponentProps) {
     : Object.keys(state.values).length;
   const canReveal = canRevealAnswers({
     allowShowAnswers: options.allowShowAnswers,
-    hasAttempted: state.hasChecked,
+    failedTries: state.failedChecks,
+    showAnswersAfter: options.showAnswersAfter,
     total,
     nCorrect: state.nCorrect,
   });

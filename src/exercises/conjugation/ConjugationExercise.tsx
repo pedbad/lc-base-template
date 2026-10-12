@@ -37,6 +37,7 @@ import {
 import { canRevealAnswers } from '@/exercises/lib/reveal';
 import {
   commitCheck,
+  commitCheckPress,
   commitReveal,
   countOwnCorrect,
   getInitialScoringState,
@@ -120,7 +121,7 @@ export default function ConjugationExercise({ config }: ExerciseComponentProps) 
       state.misses,
       options.caseSensitive,
     );
-    dispatch({ ...commitCheck(checkedResults), feedback, misses });
+    dispatch({ ...commitCheckPress(state.failedChecks, checkedResults), feedback, misses });
   };
 
   const handleShowAnswers = () => {
@@ -151,7 +152,8 @@ export default function ConjugationExercise({ config }: ExerciseComponentProps) 
   const hasInput = Object.values(state.values).some((v) => v.trim() !== '');
   const canReveal = canRevealAnswers({
     allowShowAnswers: options.allowShowAnswers,
-    hasAttempted: state.hasChecked,
+    failedTries: state.failedChecks,
+    showAnswersAfter: options.showAnswersAfter,
     total: nToSolve,
     nCorrect: state.nCorrect,
   });

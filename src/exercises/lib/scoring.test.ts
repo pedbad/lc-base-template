@@ -1,8 +1,9 @@
-import { test, expect } from 'vitest';
+import { describe, test, expect } from 'vitest';
 import {
   getInitialScoringState,
   countCorrect,
   commitCheck,
+  commitCheckPress,
   commitReveal,
   countOwnCorrect,
 } from './scoring';
@@ -13,6 +14,7 @@ test('scoring: initial state is empty, unchecked, zero correct', () => {
     hasChecked: false,
     nCorrect: 0,
     revealed: [],
+    failedChecks: 0,
   });
 });
 
@@ -68,4 +70,26 @@ test('scoring: countOwnCorrect counts right answers the reveal did not fill', ()
   expect(
     countOwnCorrect({ checkedResults: { 0: true, 1: true, 2: true }, revealed: ['1', '2'] }),
   ).toBe(1);
+});
+
+// Maintainer, 2026-10-12: Show answers waits for a number of failed Checks, so a Check
+// press counts one when anything is wrong. Re-grading on an edit (commitCheck) does not.
+describe('commitCheckPress', () => {
+  test('counts a Check with anything wrong as a failed one', () => {
+    expect(commitCheckPress(0, { a: true, b: false }).failedChecks).toBe(1);
+    expect(commitCheckPress(2, { a: false }).failedChecks).toBe(3);
+  });
+
+  test('does not count an all-correct Check', () => {
+    expect(commitCheckPress(1, { a: true, b: true }).failedChecks).toBe(1);
+  });
+
+  test('records the check as commitCheck does', () => {
+    const results = { a: true, b: false };
+    expect(commitCheckPress(0, results)).toEqual({ ...commitCheck(results), failedChecks: 1 });
+  });
+
+  test('a fresh state has no failed Checks', () => {
+    expect(getInitialScoringState().failedChecks).toBe(0);
+  });
 });
