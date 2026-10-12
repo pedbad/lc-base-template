@@ -3,11 +3,13 @@
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:test-driven-development, then
 > superpowers:executing-plans. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Status (2026-10-12):** planned, nothing built. Work stopped because the repo's tdd-guard
-hook (`bunx tdd-guard`, `.claude/settings.json`) fails closed with `Error during
-validation: Credit balance is too low` on every Write/Edit to code. Top up the credit,
-or mute it locally (`{"guardEnabled": false}` in the gitignored
-`.claude/tdd-guard/data/config.json`). Do not bypass it by writing files through the shell.
+**Status (2026-10-12, late): BUILT** (Tasks 1–4, and Task 5's gate and budget). Built
+with the tdd-guard hook muted locally because its API credit ran out; re-enable it when
+topped up. `BASE_URL=/course/` build checked (Sources markup prerendered). Browser: seen at 1024,
+no overflow at 320; still open: 768/1440 and an axe pass.
+Deviations from the plan below: every schema object is `strictObject` (as in tabs), with
+a test for it; the print icon is imported as `BookOpenIcon`, the name `LoCard` already
+uses, so the sandbox inventory gains only `Globe`.
 
 **Goal:** Ship a `sources` block type, a references list for the LOs being ported. It is
 grouped under optional subheadings, and each entry has a print or web icon, a rich-text

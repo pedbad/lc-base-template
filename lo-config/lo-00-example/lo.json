@@ -25,6 +25,11 @@
       "label": "Exercises",
       "blocks": ["07-intro"],
       "exercises": ["01-select", "02-radio-quiz"]
+    },
+    {
+      "id": "sources",
+      "label": "Sources",
+      "blocks": ["08-sources"]
     }
   ],
   "modals": ["example-popup", "conjugation"],

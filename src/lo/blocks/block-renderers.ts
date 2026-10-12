@@ -16,14 +16,22 @@
  * stays loose while every shipped type is still strictly checked.
  */
 import type { ComponentType } from 'react';
+import type { BlockConfig } from '@/config/lo-schema';
 import { OutcomesBlock } from './OutcomesBlock';
+import { SourcesBlock } from './SourcesBlock';
 import { TabsBlock } from './TabsBlock';
 import { ProseBlock, GrammarBlock, IntroBlock } from './TextBlock';
 import { VocabularyBlock } from './VocabularyBlock';
 
-/** Props every block renderer receives: the block's raw, type-specific `content`. */
+/**
+ * Props every block renderer receives: the block's raw, type-specific `content`, and
+ * its `presentation`. Most renderers ignore the latter; a renderer with its own
+ * headings needs it, because a plain block sits under the section's <h2> and a card
+ * under the accordion's <h3>.
+ */
 export interface BlockRendererProps {
   content: unknown;
+  presentation?: BlockConfig['presentation'];
 }
 
 export type BlockRenderer = ComponentType<BlockRendererProps>;
@@ -36,6 +44,7 @@ export const BLOCK_RENDERERS: Readonly<Record<string, BlockRenderer>> = {
   vocabulary: VocabularyBlock,
   outcomes: OutcomesBlock,
   tabs: TabsBlock,
+  sources: SourcesBlock,
 };
 
 /** Resolve a block renderer by type, or `undefined` if no such type ships. */

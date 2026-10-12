@@ -159,8 +159,12 @@ needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-12 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 120 kB**     | 112.50 kB           | 7.50 kB  |
+| `main-*.js`  | **< 120 kB**     | 113.41 kB           | 6.59 kB  |
 | `main-*.css` | **< 18 kB**      | 17.91 kB            | 0.09 kB  |
+
+- **Sources block (2026-10-12, TODO §F5): JS 112.50 → 113.41 kB, CSS unchanged.**
+  Utilities only, all already in the bundle. The JS is the renderer, its schema and
+  the `Globe` icon (`BookOpenIcon` was already in main via `LoCard`).
 
 - **Flip cue and memory footer (2026-10-12, TODO §D20): JS 112.26 → 112.50 kB, CSS
   unchanged.** The corner moved to a shared lazy `flip-cue.css`; the instructions'

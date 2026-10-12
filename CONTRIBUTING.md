@@ -164,6 +164,50 @@ Design and what is coming next (callouts and exercises in a tab):
 Media in a tab:
 [`docs/specs/2026-10-07-tabs-media-design.md`](docs/specs/2026-10-07-tabs-media-design.md).
 
+### Sources block
+
+A references list: citations grouped under optional headings, each marked as a print or
+web source, with an optional note on which extract was used. Add it like any block, a
+`blocks/NN-sources/block.json` folder listed in a section's `blocks`. `lo-00-example`
+has one in its last section, Sources (`blocks/08-sources/`).
+
+```json
+{
+  "type": "sources",
+  "presentation": "plain",
+  "content": {
+    "groups": [
+      {
+        "heading": "Strategies",
+        "items": [
+          {
+            "kind": "print",
+            "citation": "Foley, R. (2003) On Stony Ground, <em>Evolutionary Anthropology</em> 12:109–122.",
+            "note": "This extract from p120, column 3, penultimate paragraph."
+          },
+          {
+            "kind": "web",
+            "citation": "Daily Telegraph, 30/05/2011, <a href=\"https://…\">‘Coral reefs on edge of extinction’</a>"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+- `kind` is `print` (book icon) or `web` (globe icon). Anything else fails the build.
+- `citation` and `note` are inline rich text: `<em>` for titles, `<a href>` for links
+  (opened in a new tab). A `web` source must have a link in its `citation`.
+- `heading` is optional; a single list needs none. At least one group, and at least
+  one item in each.
+- `"presentation": "plain"` is the usual choice: the list reads as page copy under a
+  section heading. Group headings are `<h3>` there, `<h4>` inside a `"card"`.
+- A misspelt key fails the build rather than being ignored.
+
+Plan and decisions:
+[`docs/process/2026-10-12-sources-block-plan.md`](docs/process/2026-10-12-sources-block-plan.md).
+
 ### The authoring loop
 
 ```bash

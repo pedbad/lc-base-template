@@ -66,6 +66,9 @@ export const UiStringsSchema = z.strictObject({
   audioProgress: z.string().min(1),
   // Screen-reader note after a link that opens in a new tab (rich-text links)
   opensInNewTab: z.string().min(1),
+  // Screen-reader label before each citation in a sources block (the icon says it visually)
+  sourcePrint: z.string().min(1),
+  sourceWeb: z.string().min(1),
   // Media transcript toggle (tab media, spec 2026-10-07-tabs-media-design §4)
   showTranscript: z.string().min(1),
   hideTranscript: z.string().min(1),
@@ -110,6 +113,8 @@ const raw: UiStrings = {
   audioVolume: 'Audio volume',
   audioProgress: 'Audio progress',
   opensInNewTab: '(opens in a new tab)',
+  sourcePrint: 'Print source:',
+  sourceWeb: 'Web source:',
   showTranscript: 'Show transcript',
   hideTranscript: 'Hide transcript',
 };

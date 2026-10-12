@@ -47,7 +47,7 @@ function blockBody(config: AssembledSection['blocks'][number]['config']): ReactN
       </p>
     );
   }
-  return <Renderer content={config.content} />;
+  return <Renderer content={config.content} presentation={config.presentation} />;
 }
 
 /** One section's blocks, then its exercises, each in declared order.

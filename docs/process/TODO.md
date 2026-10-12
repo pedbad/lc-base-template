@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-12 · **HEAD:** see `git log` · **Suite:** 157 files · 1634 tests green
+**Last updated:** 2026-10-12 · **HEAD:** see `git log` · **Suite:** 158 files · 1646 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -49,10 +49,12 @@ six, the flashcards polish (§D19) and its browser check, the sandbox 320 overfl
 rule (§D21, `options.showAnswersAfter`) are DONE; section D is closed. Nothing else is
 ordered.
 
-- **Build the `sources` block (§F5).** Decided 2026-10-12; plan, decisions and the
-  drafted failing test are in `2026-10-12-sources-block-plan.md`. Blocked that evening
-  only because the tdd-guard hook fails closed on `Credit balance is too low`: top up,
-  or mute it locally, before starting. Do not bypass it via the shell.
+- **`sources` block (§F5) is DONE** (2026-10-12, late): renderer, schema, example in
+  `lo-00-example`'s new Sources section, CONTRIBUTING and llms.txt. Built with the
+  tdd-guard **muted locally** (its API credit ran out; `Credit balance is too low`).
+  **Re-enable it** (`{"guardEnabled":true}` in `.claude/tdd-guard/data/config.json`)
+  once the credit is topped up. Browser: seen at 1024 (nav highlights Sources), no
+  overflow at 320; still open: 768/1440 and an axe pass.
 - **Then ask the maintainer what is next.** Candidates: §F2 (the remaining tabs-panel
   entries), §F3 (tabs on phones), §F4 (`ui-showcase.html`, the block showcase the
   maintainer asked about on 2026-10-12), or a Deferred item.
@@ -1704,10 +1706,10 @@ the slice-1 scope and the open list live in
 - **F3 — phones:** the dropdown chosen in the brainstorm (slice 1 stacks instead).
 - **F4 — `ui-showcase.html`** behind `DEBUG_ENTRY_FILES`, rendering through the same
   renderers. Verify: absent from `bun run build`, present under `DEBUG=1`.
-- **F5 — `sources` block** (references list: grouped, print/web icon, rich-text
-  citation, optional note). For the legacy LOs' "Sources" pages. Plan
-  `2026-10-12-sources-block-plan.md`. Verify: the example LO's Sources section, gate
-  green, budget held.
+- **F5 — `sources` block. DONE 2026-10-12** (references list: grouped, print/web
+  icon, rich-text citation, optional note), for the legacy LOs' "Sources" pages. Plan
+  `2026-10-12-sources-block-plan.md`. Gate green, CSS unchanged, JS +0.91 kB. Seen in a
+  browser at 1024 and 320; open: 768/1440 and axe.
 - **Budget:** headroom is in `docs/TOOLING.md`; the next F2 entry likely needs per-LO
   chunking or build-time rich-text parsing first.
 

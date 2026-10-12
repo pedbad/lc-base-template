@@ -21,6 +21,7 @@ test('loadLo (glob): loads the example LO with its sections in order', () => {
     'vocabulary',
     'grammar',
     'exercises',
+    'sources',
   ]);
   // The exercises section holds both exercises, in manifest order.
   expect(lo.sections[3].exercises.map((exercise) => exercise.ref)).toEqual([

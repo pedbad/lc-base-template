@@ -1,0 +1,37 @@
+{
+  "type": "sources",
+  "presentation": "plain",
+  "content": {
+    "groups": [
+      {
+        "heading": "Placeholder group A",
+        "items": [
+          {
+            "kind": "print",
+            "citation": "Placeholder, A.B., et al. (2011) A placeholder journal article title, <em>Placeholder Journal</em> Vol 1, 165–169.",
+            "note": "This extract from p165, first 3 paragraphs."
+          },
+          {
+            "kind": "print",
+            "citation": "Placeholder, C. (2012) <em>A Placeholder Book Title</em>, Placeholder Press.",
+            "note": "This from the introduction to Chapter 2."
+          },
+          {
+            "kind": "web",
+            "citation": "Placeholder newspaper, 30/05/2011, article entitled <a href=\"https://example.org/\">‘A placeholder headline’</a>"
+          }
+        ]
+      },
+      {
+        "heading": "Placeholder group B",
+        "items": [
+          {
+            "kind": "print",
+            "citation": "Placeholder, D. and Example, E. (2003) A second placeholder article, <em>Placeholder Review</em> 12:109–122.",
+            "note": "Each group heading names where its extracts were used; a print source gets a book icon, a web source a globe and a link."
+          }
+        ]
+      }
+    ]
+  }
+}
