@@ -55,6 +55,8 @@ import {
 import { initSrsState, gradeCard, dueOrder, type SrsGrade, type SrsState } from './srs-scheduler';
 import { storageKey, loadSrsState, saveSrsState, clearSrsState } from './flashcards-storage';
 import { RateButtons } from './RateButtons';
+import { EXERCISE_BUTTONS } from '@/exercises/lib/exercise-buttons';
+import { resolveLabel } from '@/config/ui-strings';
 import './flashcards.css';
 
 /** The learner's own language; the deck's `native` side. */
@@ -155,9 +157,10 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
 
   const housekeeping = (
     <div className="flashcards-footer">
-      <Button variant="ghost" size="sm" onClick={handleRestart}>
+      {/* The same Reset as every other exercise (maintainer, 2026-10-12). */}
+      <Button {...EXERCISE_BUTTONS.reset} onClick={handleRestart}>
         <RotateCcw aria-hidden="true" />
-        Restart
+        {resolveLabel('reset')}
       </Button>
       {srsEnabled ? (
         <Button variant="ghost" size="sm" onClick={handleResetProgress}>

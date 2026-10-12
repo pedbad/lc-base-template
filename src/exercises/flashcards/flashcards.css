@@ -65,16 +65,24 @@
     box-shadow: 0 0 0 2px color-mix(in oklab, var(--primary) 25%, transparent);
   }
 
+  /* A rated card shows its face alone (maintainer, 2026-10-12): Smile and Frown are
+     circles already, so a ring and tint drew a second one. The face takes the ring's
+     diameter (lucide's circle, r10 plus its stroke, spans 21.25 of 24 units) and a
+     stroke near the ring's 1.5px. */
   .flashcards-dot[data-result='good'] {
-    border-color: var(--success);
-    background-color: color-mix(in oklab, var(--success) 12%, transparent);
+    border-color: transparent;
     color: var(--success);
   }
 
   .flashcards-dot[data-result='again'] {
-    border-color: var(--destructive-text);
-    background-color: color-mix(in oklab, var(--destructive-text) 10%, transparent);
+    border-color: transparent;
     color: var(--destructive-text);
+  }
+
+  .flashcards-dot:where([data-result]) svg {
+    width: calc(1.75rem * 24 / 21.25);
+    height: calc(1.75rem * 24 / 21.25);
+    stroke-width: 1.25;
   }
 
   /* Two-option direction switch (Spanish to English | English to Spanish): real

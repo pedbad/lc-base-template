@@ -77,12 +77,24 @@ describe('FlashcardsExercise study stage', () => {
     expect(html).not.toContain('>Flip</button>');
   });
 
-  test('keeps Restart in the housekeeping row, after the footnote', () => {
+  test('keeps Reset in the housekeeping row, after the footnote', () => {
     const html = render();
     const footer = html.indexOf('class="flashcards-footer"');
 
     expect(html.indexOf('Escucha y repite.')).toBeLessThan(footer);
-    expect(html.indexOf('Restart', footer)).toBeGreaterThan(footer);
+    expect(html.indexOf('Reset', footer)).toBeGreaterThan(footer);
+  });
+
+  // Maintainer, 2026-10-12: Restart was a small ghost button, unlike every other
+  // exercise's Reset. It is now the same button: the shared destructive look, the
+  // RotateCcw icon, the `reset` UI string.
+  test('its Reset is the button every other exercise uses', () => {
+    const html = render();
+    const footer = html.slice(html.indexOf('class="flashcards-footer"'));
+    expect(footer).toMatch(
+      /<button[^>]*class="[^"]*bg-destructive\/10 text-destructive-text[^"]*"[^>]*><svg[^>]*lucide-rotate-ccw[^>]*>[\s\S]*?<\/svg>Reset<\/button>/,
+    );
+    expect(footer).not.toContain('Restart');
   });
 
   test('stacks spare cards behind the current one while two or more remain', () => {
