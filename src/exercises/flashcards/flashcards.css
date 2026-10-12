@@ -339,18 +339,19 @@
     text-align: center;
   }
 
-  /* One row, one height in both states: Show answer spans it; after the flip it
-     splits into Again | Got it. min-height, because the Button's own height is a
-     utility (a later layer than this one). */
+  /* Again | Got it, laid out from the start so nothing below moves on a flip.
+     min-height, because the Button's own height is a utility (a later layer than
+     this one). */
   .flashcards-actions {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.75rem;
     margin-top: 0.625rem;
   }
 
-  .flashcards-actions[data-flipped='true'] {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* Laid out but hidden (and out of the tab order) until the card is flipped. */
+  .flashcards-actions[data-flipped='false'] {
+    visibility: hidden;
   }
 
   .flashcards-actions > * {

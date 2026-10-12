@@ -117,7 +117,7 @@ export function saveSrsState(key: string, state: SrsState): void {
   }
 }
 
-/** Clear persisted progress for `key` (the "Reset progress" action). No-op / logs. */
+/** Clear persisted progress for `key` (part of Reset when progress is saved). No-op / logs. */
 export function clearSrsState(key: string): void {
   const store = getStorage();
   if (!store) return;

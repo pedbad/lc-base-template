@@ -2,7 +2,7 @@
  * Tests for FlashcardsExercise's study stage (maintainer, 2026-10-08, option A).
  * Rendered to static markup (no DOM in this suite), so they pin the first view: the
  * progress circles that replaced "Card 1 of N", the direction switch, the card's
- * language label and back face, the single "Show answer" action and the quiet
+ * language label and back face, the hidden rating row and the quiet
  * housekeeping row. The flip/rate transitions are the reducer's (flashcards-deck).
  */
 import { describe, expect, test } from 'vitest';
@@ -71,10 +71,15 @@ describe('FlashcardsExercise study stage', () => {
     expect(back.indexOf('la casa')).toBeLessThan(back.indexOf('the house'));
   });
 
-  test('starts with one Show answer action, not Flip', () => {
+  // Maintainer, 2026-10-12: the card is the flip control (a button, and the "Tap to
+  // flip" corner says so), so the separate Show answer button went. Again / Got it sit
+  // in their row from the start, hidden until the flip, so nothing below jumps.
+  test('has no Show answer button; the rating row waits, hidden, for the flip', () => {
     const html = render();
-    expect(html).toContain('>Show answer</button>');
-    expect(html).not.toContain('>Flip</button>');
+    expect(html).not.toContain('Show answer');
+    expect(html).toMatch(
+      /<div class="flashcards-actions" data-flipped="false">[\s\S]*Again[\s\S]*Got it/,
+    );
   });
 
   test('keeps Reset in the housekeeping row, after the footnote', () => {
@@ -128,4 +133,13 @@ describe('ProgressDots', () => {
   test('numbers each circle for the staggered hop', () => {
     expect(dots({})).toContain('--slot-index:2');
   });
+});
+
+// Maintainer, 2026-10-12: one Reset, as in every other exercise. With saved progress
+// on it also forgets the stored schedule; there is no separate "Reset progress".
+test('has a single Reset, even when progress is saved', () => {
+  const html = render({ srs: true });
+  const footer = html.slice(html.indexOf('class="flashcards-footer"'));
+  expect(footer).not.toContain('Reset progress');
+  expect(footer.match(/<button/g)).toHaveLength(1);
 });

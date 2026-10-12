@@ -46,4 +46,8 @@ describe('flashcards.css progress circles', () => {
     );
     expect(css).toMatch(/@keyframes flashcards-hop/);
   });
+
+  test('the rating row keeps its place but is hidden until the flip', () => {
+    expect(rule(".flashcards-actions[data-flipped='false']")).toMatch(/visibility:\s*hidden/);
+  });
 });

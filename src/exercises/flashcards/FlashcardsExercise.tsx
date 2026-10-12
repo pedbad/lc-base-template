@@ -15,7 +15,7 @@
  * localStorage (guarded — untrusted reads, no-window safe, fresh-deck fallback). On
  * load the deck is ordered by due (struggled cards first — this supersedes `shuffle`
  * for the starting order); rating a card persists its box move ("Again" → box 1 so it
- * leads next time, "Good" → promote so it fades). "Reset progress" clears the store.
+ * leads next time, "Good" → promote so it fades). Reset also clears the store.
  *
  * Direction: the learner flips the whole deck between Spanish→English (default,
  * recognition-first) and English→Spanish, unless `options.lockDirection` hides the
@@ -130,7 +130,6 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
     const base = buildDeck(content, options.shuffle);
     return srsEnabled ? orderByDue(base, nextSrs) : base;
   };
-  const handleRestart = () => dispatch({ kind: 'restart', queue: freshQueue(srs) });
 
   // Rating a card runs the in-memory pass (requeue-on-again / retire-on-good) and, when
   // SRS is on, persists the card's Leitner box move for the next session.
@@ -143,8 +142,13 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
     dispatch({ kind: 'rate', grade });
   };
 
-  // "Reset progress": wipe persisted boxes and start a fresh deck from box 1.
-  const handleResetProgress = () => {
+  // One Reset, as in every other exercise (maintainer, 2026-10-12): a fresh pass, and,
+  // when progress is saved, the stored schedule forgotten too (every card back in box 1).
+  const handleReset = () => {
+    if (!srsEnabled) {
+      dispatch({ kind: 'restart', queue: freshQueue(srs) });
+      return;
+    }
     clearSrsState(storeKey);
     const fresh = initSrsState(cardIds);
     setSrs(fresh);
@@ -158,15 +162,10 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
   const housekeeping = (
     <div className="flashcards-footer">
       {/* The same Reset as every other exercise (maintainer, 2026-10-12). */}
-      <Button {...EXERCISE_BUTTONS.reset} onClick={handleRestart}>
+      <Button {...EXERCISE_BUTTONS.reset} onClick={handleReset}>
         <RotateCcw aria-hidden="true" />
         {resolveLabel('reset')}
       </Button>
-      {srsEnabled ? (
-        <Button variant="ghost" size="sm" onClick={handleResetProgress}>
-          Reset progress
-        </Button>
-      ) : null}
     </div>
   );
 
@@ -279,15 +278,11 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
         </div>
       </div>
 
-      {/* One row, one height in both states, so nothing below it jumps on a flip. */}
+      {/* The card is the flip control, so there is no Show answer button (maintainer,
+          2026-10-12). The rating row is always laid out and hidden until the flip
+          (flashcards.css), so nothing below it jumps. */}
       <div className="flashcards-actions" data-flipped={flipped}>
-        {flipped ? (
-          <RateButtons onRate={handleRate} />
-        ) : (
-          <Button size="lg" onClick={() => dispatch({ kind: 'flip' })}>
-            Show answer
-          </Button>
-        )}
+        <RateButtons onRate={handleRate} />
       </div>
 
       {content.footnote ? (
