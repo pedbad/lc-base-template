@@ -155,10 +155,15 @@ Layer 1 is the carrot; layers 2–3 are the stick.
 **This is the one place the budget is written down.** Every other doc and comment that
 needs the number points here rather than restating it.
 
-| Asset        | Budget (gzipped) | Measured 2026-10-09 | Headroom |
+| Asset        | Budget (gzipped) | Measured 2026-10-12 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 120 kB**     | 112.25 kB           | 7.75 kB  |
+| `main-*.js`  | **< 120 kB**     | 112.53 kB           | 7.47 kB  |
 | `main-*.css` | **< 18 kB**      | 17.91 kB            | 0.09 kB  |
+
+- **Flip cue on memory cards (2026-10-12, TODO §D20): JS 112.26 → 112.53 kB, CSS
+  unchanged.** The corner moved to a shared lazy `flip-cue.css`; the instructions'
+  **Tap to flip** chip takes its colours inline from the `--flip-cue` tokens rather
+  than from new utilities. The JS is the `SplinePointer` icon joining main.
 
 - **Flashcards flip corner (2026-10-09): JS 112.27 → 112.25 kB, CSS 17.89 → 17.91 kB.**
   The triangle's styles are in the lazy `flashcards.css`; main gains only the

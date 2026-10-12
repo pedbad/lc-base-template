@@ -45,7 +45,8 @@ is exactly what the paragraph above is about.
 
 **Next (2026-10-12, afternoon):** `main` is at `d039cef` plus this note. The 2026-10-09
 six, the flashcards polish (§D19), its browser check and the sandbox 320 overflow
-(§D14, `0c2f2b6`) are DONE; section D is closed. Nothing else is ordered.
+(§D14, `0c2f2b6`) are DONE, and so is the flip cue on memory cards (§D20); section D
+is closed. Nothing else is ordered.
 
 - **Ask the maintainer what is next.** Candidates: §F2 (the remaining tabs-panel
   entries), §F3 (tabs on phones), §F4 (`ui-showcase.html`), or a Deferred item.
@@ -333,7 +334,7 @@ file as its home), `STRUCTURE.md`'s `src/sandbox/` row, README's build section,
 CONTRIBUTING's command table, `AGENTS.md`'s two new house rules, `docs/TOOLING.md`'s two
 new decision entries.
 
-## D. Design & accessibility polish — 0 of 19 open — closed 2026-10-12
+## D. Design & accessibility polish — 0 of 20 open — closed 2026-10-12
 
 Design and a11y come before branch protection **by decision 2026-09-09**: a footer that
 ships internal build chatter and two dead links is a defect on every page of a live
@@ -1618,6 +1619,22 @@ no-preference` only.
     scroll at 320 / 375 / 768 / 1024 / 1440 / 1920 in either theme; axe clean in both
     themes, with the confirm closed and open; no console errors. No change needed.
 
+- **D20 — the flip cue on memory cards. DONE 2026-10-12** (`7d9f72e`, `e53e954`;
+  maintainer's calls: scale it, name "Tap to flip").
+  - **Shared corner:** `FlipCue` (`src/exercises/lib/`, lazy `flip-cue.css`) is the
+    flashcards' triangle, now used by both engines. On a memory card's face-down side
+    it is half the card wide with the icon alone, sized to the card (`50cqi`, icon
+    `18cqi`): a 7rem triangle would cover a 113px phone card. From a 13.5rem card it
+    is the flashcards' corner, words and all. Measured: 57 / 70 / 78px icon-only on
+    113 / 141 / 155px cards (320 / 375 / 768), 112px with words on 219 / 251px cards
+    (1024 / 1440+).
+  - **Instructions:** both flip engines bold **Tap to flip** and add "(or click …)";
+    memory-match's "Matches are kept automatically" became "Matched pairs stay face
+    up". The bolded name gets the pointer as a small chip in the corner's colours
+    (`--flip-cue-foreground` on `--flip-cue`), set inline from the tokens.
+  - Seen in a headed Chromium at 320–1920, both themes: no sideways scroll, axe
+    clean, no console errors. Budget: CSS unchanged; JS 112.26 → 112.53 kB.
+
 ---
 
 ## E. Before sharing with other developers
@@ -1792,3 +1809,5 @@ build, so it cannot return. Two remain:
 | 2026-10-12 | `022611c` | **Clear saved progress** — Reset keeps memory; a confirm-first button forgets it (§D19)                                                 |
 | 2026-10-12 | `5e930f4` | **flashcards instructions** — tap the card, Reset; saved-progress decks explain it (§D19)                                               |
 | 2026-10-12 | `0c2f2b6` | **sandbox at 320** — the Alerts intro's source path wraps; no sideways scroll (§D14)                                                    |
+| 2026-10-12 | `7d9f72e` | **flip cue on memory cards** — the shared FlipCue, scaled to the card (§D20)                                                            |
+| 2026-10-12 | `e53e954` | **Tap to flip in instructions** — flashcards and memory-match name the corner, with its pointer (§D20)                                  |
