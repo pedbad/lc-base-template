@@ -18,14 +18,13 @@ import AudioManager from '@/audio/AudioManager';
 import { resolveAsset } from '@/lib/assets';
 import { ExerciseOptionsSchema } from '@/config/lo-schema';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
-import { canRevealAnswers } from '../lib/reveal';
 import { ExerciseFooter } from '../lib/ExerciseFooter';
 import { ProgressMeter } from '../lib/ProgressMeter';
 import { captureFlipPositions, playFlipAnimation } from '../lib/reorderAnimation';
 import { MemoryCard, type DeckCard } from './MemoryCard';
 import { TARGET_LANG } from '@/lib/lang';
 import { MemoryMatchExerciseConfigSchema } from './memory-match-schema';
-import { buildDeck, solveOrder } from './memory-match-grading';
+import { buildDeck, canShowMemoryAnswers, solveOrder } from './memory-match-grading';
 import './memory-match.css';
 
 const FLIP_DURATION_MS = 800;
@@ -188,11 +187,11 @@ export default function MemoryMatchExercise({ config }: ExerciseComponentProps) 
     });
   };
 
-  const canReveal = canRevealAnswers({
-    allowShowAnswers: options.allowShowAnswers,
-    hasAttempted: nTries > 0,
+  const canReveal = canShowMemoryAnswers({
+    nTries,
+    nPairs,
     total,
-    nCorrect: nPairs,
+    allowShowAnswers: options.allowShowAnswers,
   });
 
   return (

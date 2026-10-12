@@ -1,8 +1,8 @@
-import { test, expect } from 'vitest';
+import { describe, test, expect } from 'vitest';
 
 import type { DeckCard } from './MemoryCard';
 import type { MemoryMatchContent } from './memory-match-schema';
-import { buildDeck, solveOrder } from './memory-match-grading';
+import { buildDeck, solveOrder, canShowMemoryAnswers } from './memory-match-grading';
 
 const content = (...pairs: Array<{ text: string; image: string }>): MemoryMatchContent =>
   ({ items: pairs }) as MemoryMatchContent;
@@ -58,4 +58,32 @@ test('solveOrder: drops a pair missing a half (defensive filter)', () => {
     { id: '1-img', pairId: '1', kind: 'image', image: 'b.png', alt: '' },
   ];
   expect(solveOrder(deck).map((c) => c.id)).toEqual(['0-img', '0-txt', '1-img']);
+});
+
+// Maintainer, 2026-10-12, after french-lo-1: Show answers waits for two misses (two
+// turned pairs that did not match), not one try, so a lucky first pair or one slip
+// does not offer the answers straight away.
+describe('canShowMemoryAnswers', () => {
+  const gate = (nTries: number, nPairs: number, allowShowAnswers?: boolean) =>
+    canShowMemoryAnswers({ nTries, nPairs, total: 4, allowShowAnswers });
+
+  test('not before any try, nor after one miss', () => {
+    expect(gate(0, 0)).toBe(false);
+    expect(gate(1, 0)).toBe(false);
+  });
+
+  test('not after matches alone', () => {
+    expect(gate(2, 2)).toBe(false);
+    expect(gate(3, 2)).toBe(false);
+  });
+
+  test('from two misses, while a pair is left', () => {
+    expect(gate(2, 0)).toBe(true);
+    expect(gate(4, 2)).toBe(true);
+    expect(gate(6, 4)).toBe(false);
+  });
+
+  test('never when the author turns it off', () => {
+    expect(gate(5, 0, false)).toBe(false);
+  });
 });
