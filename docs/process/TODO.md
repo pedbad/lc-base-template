@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-12 · **HEAD:** see `git log` · **Suite:** 154 files · 1612 tests green
+**Last updated:** 2026-10-12 · **HEAD:** see `git log` · **Suite:** 157 files · 1634 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -43,10 +43,11 @@ is exactly what the paragraph above is about.
 `bun run test` (Vitest), **not** `bun test` — Bun's own runner throws on the
 `import.meta.glob` in `load-lo-glob.ts` and reports a false failure.
 
-**Next (2026-10-12, afternoon):** `main` is at `d039cef` plus this note. The 2026-10-09
-six, the flashcards polish (§D19), its browser check and the sandbox 320 overflow
-(§D14, `0c2f2b6`) are DONE, and so is the flip cue and footer on memory cards (§D20); section D
-is closed. Nothing else is ordered.
+**Next (2026-10-12, evening):** `main` is at `149cdd5` plus this note. The 2026-10-09
+six, the flashcards polish (§D19) and its browser check, the sandbox 320 overflow
+(§D14), the flip cue and footer on memory cards (§D20) and the tunable Show answers
+rule (§D21, `options.showAnswersAfter`) are DONE; section D is closed. Nothing else is
+ordered.
 
 - **Ask the maintainer what is next.** Candidates: §F2 (the remaining tabs-panel
   entries), §F3 (tabs on phones), §F4 (`ui-showcase.html`), or a Deferred item.

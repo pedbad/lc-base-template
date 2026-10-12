@@ -152,6 +152,14 @@ shuffle, so the authored order stays. No separate "reshuffle on reset" flag.
 
 ### 5.3 Show-answers — reveal after a wrong check
 
+> **Amended 2026-10-12 (maintainer; the code is the truth, `src/exercises/lib/reveal.ts`).**
+> The rule below is now tunable. Show-answers appears after `options.showAnswersAfter`
+> failed tries (a whole number from 1), and only while something is wrong. A failed try
+> is a Check with anything wrong, a missed pair (memory-match) or a wrong click
+> (word-spot). Omitted, each engine keeps french-lo-1's number: 1, or 2 for word-order,
+> phrase-reorder, drag-fill-gaps and memory-match. `allowShowAnswers: false` still
+> removes it. The button reads "Show answers". The original text follows.
+
 One universal rule, **not configurable**:
 
 > **Show-answers appears after a Check, and only when at least one answer is wrong.**
