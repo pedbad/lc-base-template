@@ -45,14 +45,9 @@ is exactly what the paragraph above is about.
 
 **Next (2026-10-12, afternoon):** `main` is at `d039cef` plus this note. The 2026-10-09
 six, the flashcards polish (§D19), its browser check and the sandbox 320 overflow
-(§D14, `0c2f2b6`) are DONE. Nothing else is ordered.
+(§D14, `0c2f2b6`) are DONE; section D is closed. Nothing else is ordered.
 
-- **Parked by the maintainer until their devices are to hand** (do not start
-  without asking):
-  1. **The transcript slide in Safari** (§D14): seen only in Chromium.
-  2. **Hover card on a real iPhone** (§D17): iOS Safari does not focus a button on
-     tap, so a tap elsewhere may leave the card pinned.
-- **Then ask the maintainer what is next.** Candidates: §F2 (the remaining tabs-panel
+- **Ask the maintainer what is next.** Candidates: §F2 (the remaining tabs-panel
   entries), §F3 (tabs on phones), §F4 (`ui-showcase.html`), or a Deferred item.
   **Budget first:** CSS headroom is 0.09 kB (`docs/TOOLING.md`, "Bundle budget"), so
   any new rule in `main-*.css` needs a lever before it lands (a lazy per-feature sheet
@@ -338,7 +333,7 @@ file as its home), `STRUCTURE.md`'s `src/sandbox/` row, README's build section,
 CONTRIBUTING's command table, `AGENTS.md`'s two new house rules, `docs/TOOLING.md`'s two
 new decision entries.
 
-## D. Design & accessibility polish — 1 of 19 open (§D14)
+## D. Design & accessibility polish — 0 of 19 open — closed 2026-10-12
 
 Design and a11y come before branch protection **by decision 2026-09-09**: a footer that
 ships internal build chatter and two dead links is a defect on every page of a live
@@ -1382,14 +1377,13 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     `await animation.finished` never resolves: call `finish()` on
     `document.getAnimations()` instead, then run axe.
 
-- **D14 — found while closing §D13. OPEN.**
+- **D14 — found while closing §D13. DONE 2026-10-12.**
   - **Watch the transcript slide DONE 2026-10-09:** seen running in a headed Chromium
     with window focus (Playwright; the browser pane is hidden). Sampled every frame
     on the example LO's grammar tab B: open 44 → 140px and close 140 → 44px, each
     300ms ease-out, in both themes; the text stays painted through the close and is
     hidden only once it ends (`content-visibility … allow-discrete`). With reduced
-    motion on, open and close are instant in both themes. No change needed. Not yet
-    seen in Safari.
+    motion on, open and close are instant in both themes. No change needed.
   - **memory-match speaker over the word DONE 2026-10-08:** each card is a container;
     under 10rem the 48px speaker scales to 0.75 (36px, above the 24px minimum target)
     from its bottom-right corner. Clear of the word at every measured size: 36px on
@@ -1541,9 +1535,7 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     The reducer now tracks hover and focus apart; a click's `detail === 0` tells a
     keyboard press from a pointer one. **Touch:** emulated iPhone tap opens and pins,
     a second tap closes, a tap elsewhere closes (the button loses focus); card at
-    16–374px on a 390px screen, no sideways scroll. Not yet on a REAL phone: iOS
-    Safari does not focus a button on tap, so there a tap elsewhere leaves the card
-    pinned until the term is tapped again or Escape. Budget: JS 112.30 → 112.40 kB.
+    16–374px on a 390px screen, no sideways scroll. Budget: JS 112.30 → 112.40 kB.
 
 - **D18 — progress meter. DONE 2026-10-09** (`93f0545`; maintainer's calls: port
   french-lo-1's ProgressDots, a per-course icon with a dot by default). The `n / M`
