@@ -1,0 +1,5 @@
+# Runs before every `git push`; a failure blocks the push.
+# Guards first (~1s) so a broken invariant fails fast, then the full suite.
+# Lint, format and build stay in CI — see docs/TOOLING.md "pre-push".
+bun run guards
+bun run test

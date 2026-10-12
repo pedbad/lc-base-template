@@ -32,12 +32,12 @@ How to work in this repo: setup, everyday commands, the commit gate, and convent
 ```bash
 git clone https://github.com/pedbad/lc-base-template.git
 cd lc-base-template
-bun install     # installs deps AND self-installs the git pre-commit hook (zero-touch)
+bun install     # installs deps AND self-installs the git hooks (zero-touch)
 bun run dev     # start the Vite dev server
 ```
 
-`bun install` runs the `prepare` script, which installs husky — so the commit gate
-below is active immediately, no manual `git config` step.
+`bun install` runs the `prepare` script, which installs husky — so the commit and push
+gates below are active immediately, no manual `git config` step.
 
 ## Everyday commands
 
@@ -189,7 +189,7 @@ half-rendered page. Two folders that derive the same slug fail too, naming both.
 
 ## Code quality & the commit gate
 
-Formatting and linting are **enforced, not suggested**. Three layers, weakest to
+Formatting, linting and tests are **enforced, not suggested**. Four layers, weakest to
 strongest (full rationale in [`docs/TOOLING.md`](docs/TOOLING.md#enforcement-layers)):
 
 1. **Editor** — format-on-save via `.vscode/settings.json` (convenience).
@@ -197,12 +197,15 @@ strongest (full rationale in [`docs/TOOLING.md`](docs/TOOLING.md#enforcement-lay
    and ESLint on JS/TS, Prettier and Stylelint on CSS, Prettier on JSON/MD/config.
    Auto-fixable issues are fixed and re-staged silently; an unfixable problem
    (e.g. an unused variable) **blocks the commit**.
-3. **CI** — GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml))
+3. **Pre-push hook** — husky runs `bun run guards` (fast fail) then `bun run test`
+   (~6s). A red test **blocks the push**, so broken code never leaves your machine —
+   even in a fork where GitHub Actions has not been switched on yet.
+4. **CI** — GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml))
    re-runs `lint` · `lint:css` · `format:check` · `test` · `build` on every PR. The
    unbypassable wall.
 
-You can bypass the local hook with `git commit --no-verify`, but CI will still catch
-it before merge. Don't rely on bypass.
+You can bypass the local hooks with `--no-verify` (`git commit` or `git push`), but CI
+will still catch it before merge. Don't rely on bypass.
 
 ## Commit conventions
 

@@ -60,12 +60,14 @@ to strongest:
    in VS Code with the Prettier extension installed. Not a guarantee.
 2. **Pre-commit hook** — husky + lint-staged (Step 7). Blocks unformatted /
    lint-failing commits locally. Bypassable with `--no-verify`.
-3. **CI** — GitHub Actions (`.github/workflows/ci.yml`) re-runs `lint` + `lint:css` +
+3. **Pre-push hook** — husky runs `bun run guards` then `bun run test`. Blocks a push
+   whose tests fail. Bypassable with `--no-verify`.
+4. **CI** — GitHub Actions (`.github/workflows/ci.yml`) re-runs `lint` + `lint:css` +
    `format:check` + `test` + `build` on every PR. The unbypassable wall: a
    `--no-verify` commit still fails here before merge. (All eight guards run inside
    `test`: b–h as the `src/guards/` sweeps, a through its colocated schema tests.)
 
-Layer 1 is the carrot; layers 2–3 are the stick.
+Layer 1 is the carrot; layers 2–4 are the stick.
 
 ---
 
@@ -459,6 +461,21 @@ needs the number points here rather than restating it.
   hook is a fast local helper, **CI is the unbypassable wall** (enforcement layer 3).
 - **Rejected:** running the whole test suite or `eslint .` (whole repo) on pre-commit —
   too slow; defeats the point of a fast local gate.
+
+### pre-push — tests before code leaves the machine
+
+- **What:** `.husky/pre-push` runs `bun run guards` (~1s) then `bun run test` (~6s,
+  measured 2026-10-12). Either failing blocks the `git push`.
+- **Why:** colleagues work in **forks**, and GitHub ships every new fork with Actions
+  switched **off** until the fork's owner enables it. Until they do, CI never runs on
+  their pushes. The pre-push hook is the check they cannot forget to switch on: it
+  self-installs on `bun install` like the pre-commit hook.
+- **Why guards first:** guards are a subset of `test`, so they run twice. That costs
+  ~1s and buys a fast, specific failure when a repo-wide invariant breaks, before the
+  full suite starts.
+- **Not on push:** `lint`, `format:check`, `lint:css` (pre-commit already covers staged
+  files) and `build` (slowest step). CI still runs all of them.
+- **Bypass reality:** `git push --no-verify` skips it. The hook is a local convenience check; CI is the enforced one.
 
 ---
 

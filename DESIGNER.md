@@ -278,8 +278,9 @@ they are the reason the one-file promise holds. If you hit one, it is telling yo
 a specific thing, and each has a one-line fix.
 
 Both are Vitest tests: they run in `bun run test` (and on their own in
-`bun run guards`), and in CI. The pre-commit hook runs Prettier, ESLint and
-Stylelint only, so a commit can succeed and CI still fail on one of these.
+`bun run guards`), in the pre-push hook, and in CI. The pre-commit hook runs Prettier,
+ESLint and Stylelint only, so a commit can succeed and the push still be blocked by one
+of these.
 
 ### "raw-hex" — a colour outside `palette.css`
 
