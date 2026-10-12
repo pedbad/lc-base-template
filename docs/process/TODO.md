@@ -1658,7 +1658,10 @@ no-preference` only.
     (word-spot used to offer it after any click); **2** for word-order,
     phrase-reorder, drag-fill-gaps and memory-match. Flashcards have none (the flip is
     the reveal). One function, `canRevealAnswers` (`reveal.ts`), for every engine.
-  - Not seen in a browser (tests and gate only).
+  - Seen in a headed Chromium: inline-gap offers Show answers after the 1st wrong
+    Check, word-order after the 2nd (not the 1st), word-spot after the 1st wrong
+    click; each goes once used; no console errors. An author's `showAnswersAfter`
+    was not set on a showcase fixture, so the override is covered by tests only.
 
 ---
 
@@ -1842,4 +1845,4 @@ build, so it cannot return. Two remain:
 | 2026-10-12 | `f8b471b` | **memory-match instructions** — name Show answers and when it appears (§D20)                                                            |
 | 2026-10-12 | `3462076` | **Show answers** — the reveal button's default label, as in french-lo-1 (§D21)                                                          |
 | 2026-10-12 | `9a3b226` | **reveal after two failed Checks** — word-order, phrase-reorder, drag-fill-gaps (§D21)                                                  |
-| 2026-10-12 | (next)    | **showAnswersAfter** — one tunable Show answers rule for every engine (§D21)                                                            |
+| 2026-10-12 | `9e7dac4` | **showAnswersAfter** — one tunable Show answers rule for every engine (§D21)                                                            |
