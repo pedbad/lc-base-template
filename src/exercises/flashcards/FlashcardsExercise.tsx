@@ -239,8 +239,10 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
               </span>
               {speaker(targetOnFront)}
               <span className="flashcards-hint" aria-hidden="true">
-                <SplinePointer aria-hidden="true" />
-                Tap to flip
+                <span className="flashcards-hint-label">
+                  <SplinePointer aria-hidden="true" />
+                  Tap to flip
+                </span>
               </span>
             </span>
             <span
