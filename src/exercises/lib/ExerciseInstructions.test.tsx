@@ -35,13 +35,14 @@ describe('ExerciseInstructions', () => {
     expect(html).toContain('text-primary');
   });
 
-  // Maintainer, 2026-10-12: the flip reference wears the card's own corner, the pointer
-  // in --flip-cue-foreground on --flip-cue, so the words match what is on the card.
-  test("prefixes Tap to flip with the flip cue's pointer, in the cue's colours", () => {
+  // Maintainer, 2026-10-12: the flip reference carries the corner's pointer, plain (a
+  // tinted box around it read as a stray green square), in --primary like Show answers.
+  test("prefixes Tap to flip with the flip cue's pointer, no box", () => {
     const html = renderToStaticMarkup(<ExerciseInstructions text="**Tap to flip** it." />);
     expect(html).toMatch(
-      /<strong[^>]*><svg[^>]*lucide-spline-pointer[^>]*style="background:var\(--flip-cue\);color:var\(--flip-cue-foreground\)"[^>]*>[\s\S]*?<\/svg>Tap to flip<\/strong>/,
+      /<strong[^>]*><svg[^>]*lucide-spline-pointer[^>]*text-primary[^>]*>[\s\S]*?<\/svg>Tap to flip<\/strong>/,
     );
+    expect(html).not.toContain('style=');
   });
 
   test('bolds an unknown button name without a glyph', () => {

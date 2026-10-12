@@ -73,24 +73,22 @@ describe('the speaker on a small card', () => {
 });
 
 // Maintainer, 2026-10-12: the face-down side carries the flashcards' flip cue, scaled to
-// the card. A 7rem triangle would cover a phone-sized card (113px at 320), so it is half
-// the card's width and icon-only; from a 13.5rem card (where half is about 7rem) it is
-// the flashcards' corner, words and all.
+// the card. Half the card's width was too big, so it is a quarter (never under 2.5rem,
+// on a 113px phone card), with the icon alone at half the triangle: "Tap to flip" does
+// not fit a triangle that small.
 describe('the flip cue on the face-down side', () => {
-  const rule = (selector: string, source = css) =>
-    new RegExp(`${selector.replaceAll('.', '\\.')}\\s*\\{([^}]*)\\}`).exec(source)?.[1] ?? '';
-  const wide =
-    /@container memory-card \(width >= 13\.5rem\)\s*\{([\s\S]*?)\n {2}\}/.exec(css)?.[1] ?? '';
+  const rule = (selector: string) =>
+    new RegExp(`${selector.replaceAll('.', '\\.')}\\s*\\{([^}]*)\\}`).exec(css)?.[1] ?? '';
 
-  test('on a small card: half the card wide, a scaled icon, no words', () => {
-    expect(rule('.memory-card-back .flip-cue')).toContain('--flip-cue-size: 50cqi;');
-    expect(rule('.memory-card-back .flip-cue svg')).toContain('width: 18cqi;');
-    expect(rule('.memory-card-back .flip-cue-words')).toContain('display: none;');
+  test('a quarter of the card wide, at least 2.5rem', () => {
+    expect(rule('.memory-card-back .flip-cue')).toContain('--flip-cue-size: max(2.5rem, 25cqi);');
   });
 
-  test('from 13.5rem: the flashcards corner, words shown', () => {
-    expect(rule('.memory-card-back .flip-cue', wide)).toContain('--flip-cue-size: 7rem;');
-    expect(rule('.memory-card-back .flip-cue svg', wide)).toContain('width: 1.75rem;');
-    expect(rule('.memory-card-back .flip-cue-words', wide)).toContain('display: inline;');
+  test('the icon alone, half the triangle', () => {
+    expect(rule('.memory-card-back .flip-cue svg')).toContain(
+      'width: calc(var(--flip-cue-size) / 2);',
+    );
+    expect(rule('.memory-card-back .flip-cue-words')).toContain('display: none;');
+    expect(css).not.toContain('@container memory-card (width >= 13.5rem)');
   });
 });

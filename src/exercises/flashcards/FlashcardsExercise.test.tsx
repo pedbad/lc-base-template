@@ -107,7 +107,7 @@ describe('FlashcardsExercise study stage', () => {
   });
 
   // Maintainer, 2026-10-09: the front's "Select the card to flip" read as stray text.
-  // A Warm Blue triangle in the corner now holds a pointer icon and "Tap to flip",
+  // A triangle in the corner (Light Blue since 2026-10-12) holds a pointer icon and "Tap to flip",
   // wrapped together so the icon centres over the words (over "to"). The corner is the
   // shared FlipCue (memory-match shows it too, 2026-10-12).
   test('puts the shared flip cue on the front face', () => {

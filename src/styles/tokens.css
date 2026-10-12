@@ -68,9 +68,10 @@
        6.3:1 on the card. */
     --hover-term: var(--amber-deep);
 
-    /* Flashcards' flip corner (maintainer, 2026-10-09): a Warm Blue triangle, its icon
-       Dark Blue (6.4:1). One pair for both themes. */
-    --flip-cue: var(--cam-warm-blue);
+    /* Flashcards' flip corner (maintainer, 2026-10-09): a Light Blue triangle
+       (Warm Blue until 2026-10-12, too harsh), its icon Dark Blue (11.1:1). One pair for
+       both themes. */
+    --flip-cue: var(--cam-light-blue);
     --flip-cue-foreground: var(--cam-dark-blue);
 
     /* Data viz — Cambridge secondary families */
