@@ -50,8 +50,8 @@ export const flashcardsFixtures: ShowcaseFixture[] = [
       },
       // shuffle on: the deck order randomizes and Restart re-shuffles.
       // shuffle on + SRS on (Step 2): progress persists to localStorage, the deck
-      // loads in due-order (struggled cards first), and Reset also forgets the
-      // saved progress. Due-order supersedes shuffle once boxes diverge across sessions.
+      // loads in due-order (struggled cards first), and a Clear saved progress
+      // button (with a confirm) forgets it; Reset keeps it. Due-order supersedes shuffle once boxes diverge across sessions.
       options: { shuffle: true, srs: true },
     } satisfies FlashcardsConfigInput,
   },

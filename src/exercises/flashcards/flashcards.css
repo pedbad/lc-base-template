@@ -377,6 +377,21 @@
     border-top: 1px solid var(--border);
   }
 
+  /* Clear saved progress, asking (ClearProgress.tsx): the warning, then Clear / Cancel. */
+  .flashcards-clear-confirm {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  .flashcards-clear-confirm p {
+    margin: 0;
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+  }
+
   /* Reduced motion: no 3D spin — the visible face is chosen by data-flipped. */
   @media (prefers-reduced-motion: reduce) {
     .flashcards-card-inner,

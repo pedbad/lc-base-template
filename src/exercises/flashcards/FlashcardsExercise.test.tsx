@@ -135,11 +135,11 @@ describe('ProgressDots', () => {
   });
 });
 
-// Maintainer, 2026-10-12: one Reset, as in every other exercise. With saved progress
-// on it also forgets the stored schedule; there is no separate "Reset progress".
-test('has a single Reset, even when progress is saved', () => {
-  const html = render({ srs: true });
-  const footer = html.slice(html.indexOf('class="flashcards-footer"'));
-  expect(footer).not.toContain('Reset progress');
-  expect(footer.match(/<button/g)).toHaveLength(1);
+// Maintainer, 2026-10-12: Reset starts the round again and keeps the saved memory;
+// forgetting it is a separate, quieter button, shown only when progress is saved.
+test('with saved progress, Reset sits beside a Clear saved progress button', () => {
+  const footer = (html: string) => html.slice(html.indexOf('class="flashcards-footer"'));
+  expect(footer(render({ srs: true }))).toContain('>Clear saved progress</button>');
+  expect(footer(render())).not.toContain('Clear saved progress');
+  expect(footer(render()).match(/<button/g)).toHaveLength(1);
 });

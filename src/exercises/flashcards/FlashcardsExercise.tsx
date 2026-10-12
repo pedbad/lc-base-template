@@ -15,7 +15,7 @@
  * localStorage (guarded — untrusted reads, no-window safe, fresh-deck fallback). On
  * load the deck is ordered by due (struggled cards first — this supersedes `shuffle`
  * for the starting order); rating a card persists its box move ("Again" → box 1 so it
- * leads next time, "Good" → promote so it fades). Reset also clears the store.
+ * leads next time, "Good" → promote so it fades). Reset keeps the store; Clear saved progress empties it.
  *
  * Direction: the learner flips the whole deck between Spanish→English (default,
  * recognition-first) and English→Spanish, unless `options.lockDirection` hides the
@@ -55,6 +55,7 @@ import {
 import { initSrsState, gradeCard, dueOrder, type SrsGrade, type SrsState } from './srs-scheduler';
 import { storageKey, loadSrsState, saveSrsState, clearSrsState } from './flashcards-storage';
 import { RateButtons } from './RateButtons';
+import { ClearProgress } from './ClearProgress';
 import { EXERCISE_BUTTONS } from '@/exercises/lib/exercise-buttons';
 import { resolveLabel } from '@/config/ui-strings';
 import './flashcards.css';
@@ -142,13 +143,12 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
     dispatch({ kind: 'rate', grade });
   };
 
-  // One Reset, as in every other exercise (maintainer, 2026-10-12): a fresh pass, and,
-  // when progress is saved, the stored schedule forgotten too (every card back in box 1).
-  const handleReset = () => {
-    if (!srsEnabled) {
-      dispatch({ kind: 'restart', queue: freshQueue(srs) });
-      return;
-    }
+  // Reset starts the round again and keeps the saved memory, so struggled cards still
+  // lead (maintainer, 2026-10-12). Forgetting it is ClearProgress, a separate button.
+  const handleReset = () => dispatch({ kind: 'restart', queue: freshQueue(srs) });
+
+  // Clear saved progress: forget the stored schedule and start a fresh deck from box 1.
+  const handleClearProgress = () => {
     clearSrsState(storeKey);
     const fresh = initSrsState(cardIds);
     setSrs(fresh);
@@ -166,6 +166,7 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
         <RotateCcw aria-hidden="true" />
         {resolveLabel('reset')}
       </Button>
+      {srsEnabled ? <ClearProgress onClear={handleClearProgress} /> : null}
     </div>
   );
 
