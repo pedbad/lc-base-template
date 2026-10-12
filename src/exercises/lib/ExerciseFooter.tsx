@@ -1,6 +1,7 @@
 /**
  * ExerciseFooter.tsx — the shared action-button row for the exercise engines
- * (spec §5, §8). Three buttons: Check (validate, always shown), Reset (shown once
+ * (spec §5, §8). Three buttons: Check (validate, shown whenever `onCheck` is given;
+ * memory-match self-checks and passes none, maintainer 2026-10-12), Reset (shown once
  * there's something to reset), Show-answers (shown only after a wrong Check — the
  * caller decides via `showAnswers`, per the §5.3 reveal gate).
  *
@@ -29,8 +30,9 @@ import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
 import { EXERCISE_BUTTONS } from './exercise-buttons';
 
 interface ExerciseFooterProps {
-  /** Check handler (grade the current answers). */
-  onCheck: () => void;
+  /** Check handler (grade the current answers). Omit it for an engine that grades
+   *  itself as it goes (memory-match): the row then has no Check. */
+  onCheck?: () => void;
   /** Disable Check while there's nothing gradeable yet. */
   checkDisabled?: boolean;
   /** Reset handler (clear input + scoring back to baseline). */
@@ -68,10 +70,12 @@ export function ExerciseFooter({
           {resolveLabel('reset', labels)}
         </Button>
       ) : null}
-      <Button {...EXERCISE_BUTTONS.check} onClick={onCheck} disabled={checkDisabled}>
-        <CircleCheck />
-        {resolveLabel('check', labels)}
-      </Button>
+      {onCheck ? (
+        <Button {...EXERCISE_BUTTONS.check} onClick={onCheck} disabled={checkDisabled}>
+          <CircleCheck />
+          {resolveLabel('check', labels)}
+        </Button>
+      ) : null}
     </div>
   );
 }

@@ -212,15 +212,6 @@
     color: var(--muted-foreground);
   }
 
-  .memory-match-footer {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
-  }
-
   /* Reduced motion: no 3D spin — the front face simply shows when revealed. */
   @media (prefers-reduced-motion: reduce) {
     .memory-card-inner {

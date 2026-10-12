@@ -14,13 +14,12 @@
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5.2, §5.3, §7, §8.
  */
 import { useEffect, useLayoutEffect, useReducer, useRef } from 'react';
-import { Button } from '@/components/ui/button';
 import AudioManager from '@/audio/AudioManager';
 import { resolveAsset } from '@/lib/assets';
 import { ExerciseOptionsSchema } from '@/config/lo-schema';
-import { resolveLabel } from '@/config/ui-strings';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { canRevealAnswers } from '../lib/reveal';
+import { ExerciseFooter } from '../lib/ExerciseFooter';
 import { ProgressMeter } from '../lib/ProgressMeter';
 import { captureFlipPositions, playFlipAnimation } from '../lib/reorderAnimation';
 import { MemoryCard, type DeckCard } from './MemoryCard';
@@ -224,18 +223,15 @@ export default function MemoryMatchExercise({ config }: ExerciseComponentProps) 
         </p>
       ) : null}
 
-      <div className="memory-match-footer">
-        {nTries > 0 ? (
-          <Button variant="outline" onClick={handleReset}>
-            {resolveLabel('reset', labels)}
-          </Button>
-        ) : null}
-        {canReveal ? (
-          <Button variant="ghost" onClick={handleShowAnswers}>
-            {resolveLabel('showAnswer', labels)}
-          </Button>
-        ) : null}
-      </div>
+      {/* The shared row (maintainer, 2026-10-12): Show answers · Reset in every
+          engine's looks and glyphs. No Check: the game grades each pair as it is turned. */}
+      <ExerciseFooter
+        onReset={handleReset}
+        showReset={nTries > 0}
+        onShowAnswers={handleShowAnswers}
+        showAnswers={canReveal}
+        labels={labels}
+      />
     </div>
   );
 }
