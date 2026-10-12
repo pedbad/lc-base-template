@@ -43,17 +43,20 @@ is exactly what the paragraph above is about.
 `bun run test` (Vitest), **not** `bun test` — Bun's own runner throws on the
 `import.meta.glob` in `load-lo-glob.ts` and reports a false failure.
 
-**Next, in order (2026-10-09):** the six below are DONE; what is left open is in §D14
-(the sandbox at 320, the transcript slide in Safari).
+**Next, in order (2026-10-12):** `main` is at `5e930f4`; the 2026-10-09 six and the
+flashcards polish (§D19) are DONE.
 
-1. ~~**Show answer and the progress meter** (§D18)~~ **DONE 2026-10-09** (`511c3cf`):
-   the meter counts only the student's own correct answers.
-2. ~~**Live counts in word-order and phrase-reorder** (§D18)~~ **DONE 2026-10-09**
-   (`acdcb3a`): the meter counts only on Check.
-3. ~~**Check button hover contrast** (§D14)~~ **DONE 2026-10-09** (`b29db0c`): 6.02 / 6.62:1.
-4. ~~**A hover term in the debug pages** (§D14)~~ **DONE 2026-10-09** (`737ab59`).
-5. ~~**Hero placeholder label at 320–375** (§D14)~~ **DONE 2026-10-09** (`abc5a3e`).
-6. ~~**Sandbox Docs hub tables at 375** (§D14)~~ **DONE 2026-10-09** (`135fc25`).
+1. **See the last flashcards commits in a browser** (§D19): `0064c70`, `022611c` and
+   `5e930f4` were gated but not opened (the maintainer stopped browser checks). Check
+   on the showcase: nothing below the card moves on a flip (Again / Got it hidden, not
+   absent, before it); Clear saved progress asks, focus goes to Cancel and back; the
+   saved-progress deck's instructions carry the extra sentence. 320–1920, both themes,
+   axe.
+2. **Sandbox at 320 scrolls sideways** (§D14): the Alerts section's
+   `<code>src/components/shell/Callout.tsx</code>` runs 10px past the viewport.
+3. **The transcript slide in Safari** (§D14): seen only in Chromium.
+4. **Hover card on a real iPhone** (§D17): iOS Safari does not focus a button on tap,
+   so a tap elsewhere may leave the card pinned.
 
 **Browser verification:** the in-app browser pane stays hidden (no window focus, so
 focus events never fire and transitions stall). Use a headed Chromium driven by
@@ -335,7 +338,7 @@ file as its home), `STRUCTURE.md`'s `src/sandbox/` row, README's build section,
 CONTRIBUTING's command table, `AGENTS.md`'s two new house rules, `docs/TOOLING.md`'s two
 new decision entries.
 
-## D. Design & accessibility polish — 1 of 18 open (§D14)
+## D. Design & accessibility polish — 1 of 19 open (§D14)
 
 Design and a11y come before branch protection **by decision 2026-09-09**: a footer that
 ships internal build chatter and two dead links is a defect on every page of a live
@@ -1586,6 +1589,32 @@ no-preference` only.
       first suggested); fine at the showcase's 2–5.
     - **Flashcards** keeps its own positional per-card dots, on purpose.
 
+- **D19 — flashcards polish. DONE 2026-10-12** (maintainer's calls throughout).
+  - **Flip cue** (`239d335` … `43f1562`): a 7rem `--flip-cue` (Warm Blue) triangle in
+    the front's bottom-right corner, the lucide `SplinePointer` (1.75rem) centred over
+    "Tap to flip" in `--flip-cue-foreground` (Dark Blue, 6.4:1). The triangle is the
+    hint's own background, a diagonal gradient. Picked from four mock-ups (corner
+    with words beside it, in D's colour; then bigger, words inside).
+  - **Rating buttons** (`RateButtons.tsx`): Again carries `Frown`, Got it `Smile`, the
+    faces their progress circles show.
+  - **Progress circles** (`ba685e9`, `9907be8`): a rated card shows its face alone (a
+    ring around lucide's already-circular face drew two circles); slots are the
+    progress meter's 1.5rem icon size with its 2px muted ring; each face is centred
+    on its slot, spanning the ring's diameter. When every card is Got it the row hops
+    as the meter does (`flashcards-hop`, no-preference motion only).
+  - **No Show answer** (`0064c70`): the card is the flip control (a button). Again /
+    Got it are laid out from the start, `visibility: hidden` until the flip.
+  - **Reset and saved progress** (`ba685e9`, `022611c`): Restart became the shared
+    Reset (`EXERCISE_BUTTONS.reset`); it starts the round again and KEEPS the saved
+    schedule (`srs`). A separate ghost **Clear saved progress** button (`ClearProgress.tsx`),
+    only on `srs` decks, asks in place ("This forgets which cards you found hard."
+    Clear / Cancel) before wiping it; focus moves to Cancel and back.
+  - **Instructions** (`5e930f4`): say to tap or click the card and name Reset; an
+    `srs` deck adds `SAVED_PROGRESS_INSTRUCTIONS` (`instructions.ts`, via
+    `savesProgress(config)` in `ExerciseHost`). An author override still wins.
+  - Budget: CSS 17.89 → 17.91 kB (the `--flip-cue` pair); everything else is in the
+    lazy `flashcards.css`.
+
 ---
 
 ## E. Before sharing with other developers
@@ -1753,3 +1782,9 @@ build, so it cannot return. Two remain:
 | 2026-10-09 | `abc5a3e` | **hero label bottom-right** — below 1024px, clear of the title (§D14)                                                                   |
 | 2026-10-09 | `135fc25` | **docs hub tables** — each a focusable, named scroll region (§D14)                                                                      |
 | 2026-10-09 | `239d335` | **flashcards flip cue** — 7rem Warm Blue corner triangle (`--flip-cue`), pointer icon and "Tap to flip" inside; faces on Again / Got it |
+| 2026-10-12 | `43f1562` | **flip icon** — 1.75rem, centred over "Tap to flip" (§D19)                                                                              |
+| 2026-10-12 | `ba685e9` | **flashcards Reset and faces** — the shared Reset; faces without rings (§D19)                                                           |
+| 2026-10-12 | `9907be8` | **flashcards circles** — meter-sized, faces centred; the row hops when all Got it (§D19)                                                |
+| 2026-10-12 | `0064c70` | **no Show answer** — the card flips; the rating row is reserved, hidden until the flip (§D19)                                           |
+| 2026-10-12 | `022611c` | **Clear saved progress** — Reset keeps memory; a confirm-first button forgets it (§D19)                                                 |
+| 2026-10-12 | `5e930f4` | **flashcards instructions** — tap the card, Reset; saved-progress decks explain it (§D19)                                               |
