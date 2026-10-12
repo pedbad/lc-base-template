@@ -19,7 +19,7 @@ import { type ExerciseType } from '@/config/exercise-types';
 import { getExercise } from '@/exercises/lazyRegistry';
 import { useIsHydrated } from '@/hooks/useIsHydrated';
 import { ExerciseInstructions } from './ExerciseInstructions';
-import { resolveInstructions } from './instructions';
+import { resolveInstructions, savesProgress } from './instructions';
 
 interface ExerciseHostProps {
   /** The engine type; selects the engine and the default instruction copy. */
@@ -42,7 +42,9 @@ export function ExerciseHost({ type, config }: ExerciseHostProps) {
   // getExercise returns a stable, module-level lazy component from the registry —
   // it is not created per render, so the static-components rule is a false positive.
   const Engine = getExercise(type);
-  const instructions = resolveInstructions(type, readInstructionsOverride(config));
+  const instructions = resolveInstructions(type, readInstructionsOverride(config), {
+    savesProgress: savesProgress(config),
+  });
   // Engines are lazy imports, which cannot resolve during a static render: the
   // boundary would fail server-side and the client would throw its HTML away (React
   // error #419). So the static page carries the honest statement instead — which is

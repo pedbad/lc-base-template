@@ -3,7 +3,12 @@
  */
 import { describe, expect, test } from 'vitest';
 import { EXERCISE_TYPE_KEYS } from '@/config/exercise-types';
-import { EXERCISE_INSTRUCTIONS, resolveInstructions } from './instructions';
+import {
+  EXERCISE_INSTRUCTIONS,
+  SAVED_PROGRESS_INSTRUCTIONS,
+  resolveInstructions,
+  savesProgress,
+} from './instructions';
 
 describe('EXERCISE_INSTRUCTIONS', () => {
   test('has non-empty copy for every exercise type key (exhaustive)', () => {
@@ -45,5 +50,35 @@ describe('resolveInstructions', () => {
 
   test('falls back to the default for a whitespace-only override', () => {
     expect(resolveInstructions('radio-quiz', '   ')).toBe(EXERCISE_INSTRUCTIONS['radio-quiz']);
+  });
+});
+
+// Maintainer, 2026-10-12: flashcards lost Show answer (the card itself flips) and
+// Restart (now the shared Reset, which keeps saved memory). A deck that saves progress
+// also says so, and how to clear it.
+describe('flashcards instructions', () => {
+  test('say to tap the card, name Reset, and drop the old buttons', () => {
+    const copy = EXERCISE_INSTRUCTIONS.flashcards;
+    expect(copy).toMatch(/tap or click the card/i);
+    expect(copy).toContain('**Reset**');
+    expect(copy).not.toMatch(/Show answer|Restart/);
+  });
+
+  test('a deck that saves progress adds what that means and how to clear it', () => {
+    const copy = resolveInstructions('flashcards', undefined, { savesProgress: true });
+    expect(copy).toBe(`${EXERCISE_INSTRUCTIONS.flashcards} ${SAVED_PROGRESS_INSTRUCTIONS}`);
+    expect(SAVED_PROGRESS_INSTRUCTIONS).toContain('**Clear saved progress**');
+    expect(SAVED_PROGRESS_INSTRUCTIONS).toMatch(/even after \*\*Reset\*\*/);
+  });
+
+  test('an author override still wins, saved progress or not', () => {
+    expect(resolveInstructions('flashcards', 'Mine.', { savesProgress: true })).toBe('Mine.');
+  });
+
+  test('savesProgress reads options.srs off an unknown config', () => {
+    expect(savesProgress({ options: { srs: true } })).toBe(true);
+    expect(savesProgress({ options: { srs: false } })).toBe(false);
+    expect(savesProgress({ options: {} })).toBe(false);
+    expect(savesProgress(null)).toBe(false);
   });
 });

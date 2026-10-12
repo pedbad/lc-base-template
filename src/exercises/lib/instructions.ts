@@ -57,7 +57,7 @@ export const EXERCISE_INSTRUCTIONS: Record<ExerciseType, string> = {
   'word-spot':
     'Click every part of the text that matches the target. Select **Check** to mark your selection, **Reset** to clear it, or **Show answers** to reveal the correct parts.',
   flashcards:
-    'Read the card, then select **Show answer** to turn it over. Rate yourself: **Again** if you missed it (the card comes back later) or **Got it** if you knew it. Each circle shows how you rated a card. Switch the direction above the card to change which language shows first, and **Restart** to start over.',
+    'Read the card, then tap or click the card to turn it over. Rate yourself: **Again** if you missed it (the card comes back later) or **Got it** if you knew it. Each circle shows how you rated a card. Switch the direction above the card to change which language shows first, and select **Reset** to start the round again.',
   conjugation:
     'Type the correct verb form for each person; press Enter to jump to the next one. Select **Check** to mark your answers, **Reset** to clear them, or **Show answers** to reveal the correct forms.',
   reading:
@@ -65,16 +65,38 @@ export const EXERCISE_INSTRUCTIONS: Record<ExerciseType, string> = {
 };
 
 /**
+ * Added to the default copy of an exercise that saves progress (`options.srs`, only
+ * flashcards today; maintainer, 2026-10-12): what is remembered, that Reset keeps it,
+ * and how to forget it.
+ */
+export const SAVED_PROGRESS_INSTRUCTIONS =
+  'This deck saves your progress in this browser: the cards you found hard come first next time, even after **Reset**. Select **Clear saved progress** to forget it and start fresh.';
+
+/** Whether an unknown exercise config saves progress (`options.srs === true`). */
+export function savesProgress(config: unknown): boolean {
+  if (typeof config !== 'object' || config === null) return false;
+  const options = (config as { options?: unknown }).options;
+  if (typeof options !== 'object' || options === null) return false;
+  return (options as { srs?: unknown }).srs === true;
+}
+
+/**
  * Resolve the instruction text for an exercise.
  *
  * @param type     the engine type (selects the default copy).
  * @param override the author's `content.instructions`, if any.
+ * @param context  `savesProgress` adds SAVED_PROGRESS_INSTRUCTIONS to the default.
  * @returns the text to show, or `null` to suppress the box entirely.
  */
-export function resolveInstructions(type: ExerciseType, override?: string | null): string | null {
+export function resolveInstructions(
+  type: ExerciseType,
+  override?: string | null,
+  context: { savesProgress?: boolean } = {},
+): string | null {
   if (override === '' || override === null) return null;
   if (typeof override === 'string' && override.trim() !== '') return override;
-  return EXERCISE_INSTRUCTIONS[type];
+  const copy = EXERCISE_INSTRUCTIONS[type];
+  return context.savesProgress ? `${copy} ${SAVED_PROGRESS_INSTRUCTIONS}` : copy;
 }
 
 /**
