@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-09 · **HEAD:** see `git log` · **Suite:** 148 files · 1575 tests green
+**Last updated:** 2026-10-12 · **HEAD:** see `git log` · **Suite:** 154 files · 1612 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -43,16 +43,20 @@ is exactly what the paragraph above is about.
 `bun run test` (Vitest), **not** `bun test` — Bun's own runner throws on the
 `import.meta.glob` in `load-lo-glob.ts` and reports a false failure.
 
-**Next, in order (2026-10-12):** `main` is at `5e930f4`; the 2026-10-09 six and the
-flashcards polish (§D19) are DONE, and so are the first two below.
+**Next (2026-10-12, afternoon):** `main` is at `d039cef` plus this note. The 2026-10-09
+six, the flashcards polish (§D19), its browser check and the sandbox 320 overflow
+(§D14, `0c2f2b6`) are DONE. Nothing else is ordered.
 
-1. ~~**See the last flashcards commits in a browser** (§D19)~~ **DONE 2026-10-12:**
-   nothing wrong, no change (§D19).
-2. ~~**Sandbox at 320 scrolls sideways** (§D14)~~ **DONE 2026-10-12** (`0c2f2b6`).
-3. **The transcript slide in Safari** (§D14): seen only in Chromium. Needs the
-   maintainer's Mac Safari.
-4. **Hover card on a real iPhone** (§D17): iOS Safari does not focus a button on tap,
-   so a tap elsewhere may leave the card pinned. Needs the maintainer's iPhone.
+- **Parked by the maintainer until their devices are to hand** (do not start
+  without asking):
+  1. **The transcript slide in Safari** (§D14): seen only in Chromium.
+  2. **Hover card on a real iPhone** (§D17): iOS Safari does not focus a button on
+     tap, so a tap elsewhere may leave the card pinned.
+- **Then ask the maintainer what is next.** Candidates: §F2 (the remaining tabs-panel
+  entries), §F3 (tabs on phones), §F4 (`ui-showcase.html`), or a Deferred item.
+  **Budget first:** CSS headroom is 0.09 kB (`docs/TOOLING.md`, "Bundle budget"), so
+  any new rule in `main-*.css` needs a lever before it lands (a lazy per-feature sheet
+  imported by the component that needs it).
 
 **Browser verification:** the in-app browser pane stays hidden (no window focus, so
 focus events never fire and transitions stall). Use a headed Chromium driven by
