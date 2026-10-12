@@ -34,7 +34,7 @@
  * Spec: docs/specs/2026-07-03-new-exercise-engines-design.md §4.
  */
 import { useReducer, useState, type CSSProperties } from 'react';
-import { Frown, RotateCcw, Smile, SplinePointer } from 'lucide-react';
+import { Frown, RotateCcw, Smile } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AudioClip } from '@/components/audio/AudioClip';
 import { resolveAsset } from '@/lib/assets';
@@ -57,6 +57,7 @@ import { storageKey, loadSrsState, saveSrsState, clearSrsState } from './flashca
 import { RateButtons } from './RateButtons';
 import { ClearProgress } from './ClearProgress';
 import { EXERCISE_BUTTONS } from '@/exercises/lib/exercise-buttons';
+import { FlipCue } from '@/exercises/lib/FlipCue';
 import { resolveLabel } from '@/config/ui-strings';
 import './flashcards.css';
 
@@ -241,12 +242,7 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
                 {frontText}
               </span>
               {speaker(targetOnFront)}
-              <span className="flashcards-hint" aria-hidden="true">
-                <span className="flashcards-hint-label">
-                  <SplinePointer aria-hidden="true" />
-                  Tap to flip
-                </span>
-              </span>
+              <FlipCue />
             </span>
             <span
               className="flashcards-face flashcards-face-back"

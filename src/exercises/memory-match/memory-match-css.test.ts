@@ -71,3 +71,26 @@ describe('the speaker on a small card', () => {
     expect(small).toContain('transform-origin: 100% 100%;');
   });
 });
+
+// Maintainer, 2026-10-12: the face-down side carries the flashcards' flip cue, scaled to
+// the card. A 7rem triangle would cover a phone-sized card (113px at 320), so it is half
+// the card's width and icon-only; from a 13.5rem card (where half is about 7rem) it is
+// the flashcards' corner, words and all.
+describe('the flip cue on the face-down side', () => {
+  const rule = (selector: string, source = css) =>
+    new RegExp(`${selector.replaceAll('.', '\\.')}\\s*\\{([^}]*)\\}`).exec(source)?.[1] ?? '';
+  const wide =
+    /@container memory-card \(width >= 13\.5rem\)\s*\{([\s\S]*?)\n {2}\}/.exec(css)?.[1] ?? '';
+
+  test('on a small card: half the card wide, a scaled icon, no words', () => {
+    expect(rule('.memory-card-back .flip-cue')).toContain('--flip-cue-size: 50cqi;');
+    expect(rule('.memory-card-back .flip-cue svg')).toContain('width: 18cqi;');
+    expect(rule('.memory-card-back .flip-cue-words')).toContain('display: none;');
+  });
+
+  test('from 13.5rem: the flashcards corner, words shown', () => {
+    expect(rule('.memory-card-back .flip-cue', wide)).toContain('--flip-cue-size: 7rem;');
+    expect(rule('.memory-card-back .flip-cue svg', wide)).toContain('width: 1.75rem;');
+    expect(rule('.memory-card-back .flip-cue-words', wide)).toContain('display: inline;');
+  });
+});

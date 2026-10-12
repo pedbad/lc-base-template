@@ -1,6 +1,7 @@
 /**
  * MemoryCard.tsx — one card in the memory-match deck (#9). A single <button> that
- * flips between a face-down "?" back and a content front (image or word). State is
+ * flips between a face-down "?" back (with the flashcards' "Tap to flip" corner,
+ * FlipCue) and a content front (image or word). State is
  * driven by `data-*` attributes the stylesheet reads — no inline transform soup,
  * no DOM mutation. Keyboard-operable for free (it's a real button).
  *
@@ -12,6 +13,7 @@
  */
 import { memo } from 'react';
 import { AudioClip } from '@/components/audio/AudioClip';
+import { FlipCue } from '@/exercises/lib/FlipCue';
 import { resolveAsset } from '@/lib/assets';
 import { TARGET_LANG } from '@/lib/lang';
 
@@ -74,6 +76,7 @@ function MemoryCardComponent({
         <span className="memory-card-inner">
           <span className="memory-card-face memory-card-back" aria-hidden="true">
             ?
+            <FlipCue />
           </span>
           <span className="memory-card-face memory-card-front" aria-hidden="true">
             {card.kind === 'text' ? (

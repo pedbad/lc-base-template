@@ -140,6 +140,42 @@
     }
   }
 
+  /* The flip cue (FlipCue, maintainer 2026-10-12), scaled to the card: a 7rem triangle
+     would cover a phone-sized card (113px at 320), so it is half the card's width with
+     the icon alone, sized to the card too. From a 13.5rem card, where half is about
+     7rem, it is the flashcards' corner, words and all. */
+  .memory-card-back .flip-cue {
+    --flip-cue-size: 50cqi;
+
+    padding: 0.375rem;
+  }
+
+  .memory-card-back .flip-cue svg {
+    width: 18cqi;
+    height: 18cqi;
+  }
+
+  .memory-card-back .flip-cue-words {
+    display: none;
+  }
+
+  @container memory-card (width >= 13.5rem) {
+    .memory-card-back .flip-cue {
+      --flip-cue-size: 7rem;
+
+      padding: 0.5rem 0.75rem;
+    }
+
+    .memory-card-back .flip-cue svg {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+
+    .memory-card-back .flip-cue-words {
+      display: inline;
+    }
+  }
+
   /* Content side, pre-rotated so it faces out when the card flips. */
   .memory-card-front {
     background-color: var(--card);

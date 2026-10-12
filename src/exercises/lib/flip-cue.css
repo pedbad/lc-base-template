@@ -1,0 +1,40 @@
+/*
+ * flip-cue.css — the shared "Tap to flip" corner (FlipCue.tsx). Lazy: it loads with the
+ * engines that import FlipCue, so main-*.css carries only the --flip-cue token pair.
+ */
+@layer components {
+  /* A --flip-cue triangle in the bottom-right corner, the pointer icon and "Tap to
+     flip" inside it in --flip-cue-foreground. The triangle is the cue's own
+     background, a diagonal gradient, rounded with the face (less its 1px border). */
+  .flip-cue {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-end;
+    width: var(--flip-cue-size, 7rem);
+    height: var(--flip-cue-size, 7rem);
+    padding: 0.5rem 0.75rem;
+    border-bottom-right-radius: calc(var(--radius) + 3px);
+    background: linear-gradient(to bottom right, transparent 50%, var(--flip-cue) 50%);
+    color: var(--flip-cue-foreground);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  /* The icon sits centred over the words, so over "to" (maintainer, 2026-10-12). */
+  .flip-cue-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.125rem;
+  }
+
+  .flip-cue svg {
+    flex: none;
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+}

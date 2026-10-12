@@ -251,42 +251,6 @@
     text-transform: uppercase;
   }
 
-  /* The flip cue (maintainer, 2026-10-09): a --flip-cue triangle in the front's
-     bottom-right corner, the pointer icon and "Tap to flip" inside it in
-     --flip-cue-foreground. The triangle is the hint's own background, a diagonal
-     gradient, rounded with the face (less the face's 1px border). */
-  .flashcards-hint {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: flex-end;
-    width: 7rem;
-    height: 7rem;
-    padding: 0.5rem 0.75rem;
-    border-bottom-right-radius: calc(var(--radius) + 3px);
-    background: linear-gradient(to bottom right, transparent 50%, var(--flip-cue) 50%);
-    color: var(--flip-cue-foreground);
-    font-size: 0.75rem;
-    font-weight: 600;
-  }
-
-  /* The icon sits centred over the words, so over "to" (maintainer, 2026-10-12). */
-  .flashcards-hint-label {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.125rem;
-  }
-
-  .flashcards-hint svg {
-    flex: none;
-    width: 1.75rem;
-    height: 1.75rem;
-  }
-
   /* On the back: the prompt, small, above the answer. */
   .flashcards-prompt {
     color: var(--muted-foreground);
