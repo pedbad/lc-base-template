@@ -20,7 +20,8 @@
  * only ever grows, and repeated Check presses let the learner narrow in on the rest.
  *
  * `options.shuffle` applies to the bank's tile order (§5.2, choice-order family);
- * `allowShowAnswers` applies (§5.3) via the shared `canRevealAnswers` gate.
+ * `allowShowAnswers` applies (§5.3); Show answers waits for two failed Checks
+ * (`canRevealAfterFails`, as french-lo-1; maintainer 2026-10-12).
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5.2, §5.3, §7, §8.
  */
@@ -31,7 +32,7 @@ import { resolveLabel } from '@/config/ui-strings';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { ExerciseFooter } from '../lib/ExerciseFooter';
 import { ProgressMeter } from '../lib/ProgressMeter';
-import { canRevealAnswers } from '../lib/reveal';
+import { canRevealAfterFails } from '../lib/reveal';
 import { TARGET_LANG } from '@/lib/lang';
 import {
   DragFillGapsExerciseConfigSchema,
@@ -256,9 +257,9 @@ export default function DragFillGapsExercise({ config }: ExerciseComponentProps)
     });
   };
 
-  const canReveal = canRevealAnswers({
+  const canReveal = canRevealAfterFails({
     allowShowAnswers: options.allowShowAnswers,
-    hasAttempted: hasChecked,
+    failCount,
     total,
     nCorrect,
   });

@@ -29,3 +29,22 @@ export function canRevealAnswers(input: RevealInput): boolean {
   if (!input.hasAttempted) return false;
   return input.nCorrect < input.total; // at least one wrong
 }
+
+/** Failed Checks before the ordering and drag engines offer Show answers. */
+export const FAILED_CHECKS_BEFORE_REVEAL = 2;
+
+/**
+ * The reveal gate for word-order, phrase-reorder and drag-fill-gaps (maintainer,
+ * 2026-10-12, after french-lo-1): Show answers waits for two failed Checks, so one
+ * slip in a long sequence does not offer the answer straight away.
+ */
+export function canRevealAfterFails(
+  input: Omit<RevealInput, 'hasAttempted'> & { failCount: number },
+): boolean {
+  return canRevealAnswers({
+    allowShowAnswers: input.allowShowAnswers,
+    hasAttempted: input.failCount >= FAILED_CHECKS_BEFORE_REVEAL,
+    total: input.total,
+    nCorrect: input.nCorrect,
+  });
+}

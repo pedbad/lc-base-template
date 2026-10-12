@@ -14,7 +14,8 @@
  * once" per spec §8).
  *
  * `options.shuffle` is N/A (§5.2): the deck always scrambles, on mount AND on Reset.
- * `allowShowAnswers` applies (§5.3) via the shared `canRevealAnswers` gate.
+ * `allowShowAnswers` applies (§5.3); Show answers waits for two failed Checks
+ * (`canRevealAfterFails`, as french-lo-1; maintainer 2026-10-12).
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5.2, §5.3, §7, §8.
  */
@@ -24,7 +25,7 @@ import { ExerciseOptionsSchema } from '@/config/lo-schema';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { ExerciseFooter } from '../lib/ExerciseFooter';
 import { ProgressMeter } from '../lib/ProgressMeter';
-import { canRevealAnswers } from '../lib/reveal';
+import { canRevealAfterFails } from '../lib/reveal';
 import { captureFlipPositions, playFlipAnimation } from '../lib/reorderAnimation';
 import { TARGET_LANG } from '@/lib/lang';
 import { WordOrderExerciseConfigSchema, type WordOrderContent } from './word-order-schema';
@@ -247,9 +248,9 @@ export default function WordOrderExercise({ config }: ExerciseComponentProps) {
     });
   };
 
-  const canReveal = canRevealAnswers({
+  const canReveal = canRevealAfterFails({
     allowShowAnswers: options.allowShowAnswers,
-    hasAttempted: hasChecked,
+    failCount,
     total,
     nCorrect: correctCount,
   });

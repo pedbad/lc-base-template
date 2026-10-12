@@ -334,7 +334,7 @@ file as its home), `STRUCTURE.md`'s `src/sandbox/` row, README's build section,
 CONTRIBUTING's command table, `AGENTS.md`'s two new house rules, `docs/TOOLING.md`'s two
 new decision entries.
 
-## D. Design & accessibility polish — 0 of 20 open — closed 2026-10-12
+## D. Design & accessibility polish — 0 of 21 open — closed 2026-10-12
 
 Design and a11y come before branch protection **by decision 2026-09-09**: a footer that
 ships internal build chatter and two dead links is a defect on every page of a live
@@ -1642,6 +1642,20 @@ no-preference` only.
     answer, all 4 pairs matched; axe clean (after the theme transition settles), no
     console errors. Budget: CSS unchanged; JS 112.26 → 112.50 kB.
 
+- **D21 — Show answers, as in french-lo-1. DONE 2026-10-12** (`3462076` and the
+  commit after it; maintainer's calls).
+  - **Label:** the default reads **Show answers** (french-lo-1's footer default, and
+    what every engine's instructions already said); a `labels.showAnswer` override
+    still wins.
+  - **When it appears (audited against french-lo-1):** after a Check with anything
+    wrong in select, inline-choice, radio-quiz, inline-gap, line-match, dictation,
+    typed-transform, conjugation and reading (French: the same, `hasAnyIncorrect`).
+    Word-order, phrase-reorder and drag-fill-gaps now wait for **two failed Checks**
+    (`canRevealAfterFails`, `reveal.ts`), as French does; memory-match waits for two
+    misses (§D20). Word-spot offers it after any click with something unfound (French
+    has none there); flashcards have none (the flip is the reveal).
+  - Not seen in a browser (tests and gate only).
+
 ---
 
 ## E. Before sharing with other developers
@@ -1822,3 +1836,5 @@ build, so it cannot return. Two remain:
 | 2026-10-12 | `f0019e7` | **memory-match footer** — the shared row: Show answer and Reset with their glyphs (§D20)                                                |
 | 2026-10-12 | `d4e9449` | **memory-match Show answer after two misses** — french-lo-1's rule (§D20)                                                               |
 | 2026-10-12 | `f8b471b` | **memory-match instructions** — name Show answers and when it appears (§D20)                                                            |
+| 2026-10-12 | `3462076` | **Show answers** — the reveal button's default label, as in french-lo-1 (§D21)                                                          |
+| 2026-10-12 | (next)    | **reveal after two failed Checks** — word-order, phrase-reorder, drag-fill-gaps (§D21)                                                  |
