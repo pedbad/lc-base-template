@@ -17,10 +17,10 @@ export default function AlertsSection() {
         Alerts
       </h2>
       <p className="mt-2 max-w-(--measure) text-muted-foreground">
-        <code>Callout</code> (<code>src/components/shell/Callout.tsx</code>), the one alert box
-        every page uses: lesson, tab and exercise instructions are its <code>info</code> variant.
-        Each variant takes its border, tint and icon from one semantic token —{' '}
-        <code>--primary</code>, <code>--success</code>, <code>--warning</code>,{' '}
+        <code>Callout</code> (<code className="break-all">src/components/shell/Callout.tsx</code>),
+        the one alert box every page uses: lesson, tab and exercise instructions are its{' '}
+        <code>info</code> variant. Each variant takes its border, tint and icon from one semantic
+        token — <code>--primary</code>, <code>--success</code>, <code>--warning</code>,{' '}
         <code>--destructive</code> — and keeps its text in <code>--foreground</code>.
       </p>
       <ul className="mt-6 grid gap-4">

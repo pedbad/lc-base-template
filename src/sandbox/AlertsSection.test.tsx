@@ -17,6 +17,11 @@ describe('AlertsSection', () => {
     expect(html).toContain('id="alerts-heading"');
   });
 
+  it('lets the source path in its intro wrap, so 320px does not scroll sideways', () => {
+    // An unbroken path ran 10px past a 320px viewport (TODO §D14).
+    expect(html).toContain('<code class="break-all">src/components/shell/Callout.tsx</code>');
+  });
+
   it('shows info, success, warning and danger, in that order', () => {
     expect(ALERT_EXAMPLES.map((example) => example.variant)).toEqual([
       'info',
