@@ -41,7 +41,11 @@ branch rules on every course repo, and nobody else can switch them off.
   pull request. The rule for what counts as engine is in
   [`CONTRIBUTING.md` → "Adding content vs. changing the system"](../CONTRIBUTING.md).
 - **Colleagues do not deploy.** They merge into their course repo's `main` through a
-  reviewed pull request; the maintainer builds and deploys.
+  pull request; the maintainer builds and deploys.
+- **Review covers code, not content** (decided 2026-10-12). A pull request that only
+  changes content (`lo-config/`, `public/images/`, `public/audio/`) merges on green CI. A
+  pull request that touches anything else waits for the maintainer's approval. Enforced
+  by `CODEOWNERS` (step 5) plus the course repo's branch rules (step 6).
 - **Colleagues get write access to their own course repo only.**
 - **Everything is public** (decided 2026-10-12): the template and every course repo.
   Learning content is Creative Commons — the existing [`LICENSE`](../LICENSE) already
@@ -51,9 +55,9 @@ branch rules on every course repo, and nobody else can switch them off.
 
 ## Still to decide before starting
 
-- [ ] **Does the maintainer review course content, or only engine changes?** Decides whether
-      course repos require an approval or only green CI.
 - [ ] **Deploy targets** for each course (CONTRIBUTING mentions two).
+- [ ] **Content licence variant.** `LICENSE` says CC BY-NC 4.0 (no commercial reuse).
+      Confirm that is the intended Creative Commons licence before courses go public.
 
 ---
 
@@ -129,6 +133,21 @@ Follow [`docs/BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md). Its UI path changes 
 single-maintainer lockout still apply: moving into an organisation does not add a second
 reviewer.
 
+**Before the first course repo exists**, make the content folders ownerless in the
+template's `.github/CODEOWNERS`, so a content-only pull request needs no approval. Course
+repos inherit the file, so it is changed once here and never per course (a per-course edit
+would conflict on every sync). Add after the `*` default line:
+
+```text
+# Content: no owner, so content-only PRs merge on green CI
+/lo-config/
+/public/images/
+/public/audio/
+```
+
+A pattern with no owner after it removes ownership for that path. Every other path keeps
+`@pedbad` (or `@lc-elearn/maintainers`) as owner.
+
 ---
 
 ## Step 6 — Create a course repo (once per course)
@@ -147,10 +166,13 @@ Right after creating it, in the new course repo:
    CI never runs on the course.
 2. **Settings → General:** untick "Template repository" if it was carried over — a course
    is not a template.
-3. **Settings → Branches:** protect `main` — require a pull request and the
-   **`Lint, test, build`** status check. Add "Require approvals: 1" if the maintainer
-   reviews content (see "Still to decide"). With a colleague as the author and the
-   maintainer as the reviewer, the approval row no longer locks anyone out.
+3. **Settings → Rules → New branch ruleset** on `main`: require a pull request,
+   **required approvals 0**, **require review from Code Owners**, and the
+   **`Lint, test, build`** status check. Content-only PRs then merge on green CI; any PR
+   touching code waits for the maintainer (the code owner). With a colleague as the author
+   and the maintainer as the reviewer, nobody is locked out. **Verify on the first course**
+   with two test PRs (one content-only, one touching `src/`) that GitHub accepts
+   "0 approvals + code owner review" and behaves as described.
 
 **Fallback — a linked copy instead of a fork** (only if a second fork into `lc-elearn`
 is refused). Create an **empty** repo `lc-elearn/lc-french`

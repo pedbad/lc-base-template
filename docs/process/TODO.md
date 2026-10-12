@@ -1678,6 +1678,12 @@ no-preference` only.
   gets push access. Setup and the solo-lockout to avoid: `docs/BRANCH_PROTECTION.md`.
   Do **not** enable `Require approvals: 1` + `Do not allow bypassing` with one
   collaborator — GitHub forbids self-approval and the merge button locks permanently.
+- **E2 — team workflow and the `lc-elearn` organisation.** Decided 2026-10-12: one public
+  repo per course inside the organisation, colleagues write to their own course only,
+  code needs the maintainer's approval and content does not, the maintainer deploys. The
+  move is **deferred by decision**. Plan: `docs/ORGANIZATION.md`. Context, the ordered
+  next steps (coverage rule in CI first) and open questions:
+  `2026-10-12-team-workflow-handover.md`.
 
 ---
 
@@ -1856,3 +1862,5 @@ build, so it cannot return. Two remain:
 | 2026-10-12 | `3462076` | **Show answers** — the reveal button's default label, as in french-lo-1 (§D21)                                                          |
 | 2026-10-12 | `9a3b226` | **reveal after two failed Checks** — word-order, phrase-reorder, drag-fill-gaps (§D21)                                                  |
 | 2026-10-12 | `9e7dac4` | **showAnswersAfter** — one tunable Show answers rule for every engine (§D21)                                                            |
+| 2026-10-12 | `8381a85` | **pre-push hook** — guards then tests before every push; forks start with Actions off (§E2)                                             |
+| 2026-10-12 | `ce9ccf9` | **`docs/ORGANIZATION.md`** — plan for the `lc-elearn` organisation, one repo per course (§E2)                                           |
