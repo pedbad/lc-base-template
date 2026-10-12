@@ -29,6 +29,13 @@ describe('EXERCISE_INSTRUCTIONS', () => {
     expect(copy).not.toContain('Check');
   });
 
+  // Maintainer, 2026-10-12: the game has Show answers (after two misses), so say so.
+  test('memory-match copy names Show answers and when it appears', () => {
+    const copy = EXERCISE_INSTRUCTIONS['memory-match'];
+    expect(copy).toContain('**Show answers**');
+    expect(copy).toMatch(/two misses/);
+  });
+
   // Maintainer, 2026-10-12: both flip engines name the card's corner, "Tap to flip", so
   // the instruction carries its pointer glyph; a mouse user is told a click works too.
   test.each(['memory-match', 'flashcards'] as const)(

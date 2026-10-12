@@ -16,7 +16,8 @@
  *
  * Button-reference caveat (spec §4): copy names only the buttons an engine actually
  * shows. Standard engines list Check / Reset / Show answers; `memory-match`
- * self-checks as cards are flipped, so its copy references only Reset. The two flip
+ * self-checks as cards are flipped, so its copy names Show answers (after two misses)
+ * and Reset, never Check. The two flip
  * engines (memory-match, flashcards) also name the card's own "Tap to flip" corner,
  * which renders with its pointer glyph (maintainer, 2026-10-12).
  *
@@ -55,7 +56,7 @@ export const EXERCISE_INSTRUCTIONS: Record<ExerciseType, string> = {
   'line-match':
     'Match each item on the left with its pair on the right. Select **Check** to mark your matches, **Reset** to clear them, or **Show answers** to reveal the correct pairs.',
   'memory-match':
-    '**Tap to flip** two cards at a time (or click them) to find the matching pairs. Matched pairs stay face up; select **Reset** to shuffle and start again.',
+    '**Tap to flip** two cards at a time (or click them) to find the matching pairs. Matched pairs stay face up. After two misses you can select **Show answers** to see every pair; select **Reset** to shuffle and start again.',
   'word-spot':
     'Click every part of the text that matches the target. Select **Check** to mark your selection, **Reset** to clear it, or **Show answers** to reveal the correct parts.',
   flashcards:
