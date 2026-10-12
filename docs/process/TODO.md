@@ -44,19 +44,15 @@ is exactly what the paragraph above is about.
 `import.meta.glob` in `load-lo-glob.ts` and reports a false failure.
 
 **Next, in order (2026-10-12):** `main` is at `5e930f4`; the 2026-10-09 six and the
-flashcards polish (§D19) are DONE.
+flashcards polish (§D19) are DONE, and so are the first two below.
 
-1. **See the last flashcards commits in a browser** (§D19): `0064c70`, `022611c` and
-   `5e930f4` were gated but not opened (the maintainer stopped browser checks). Check
-   on the showcase: nothing below the card moves on a flip (Again / Got it hidden, not
-   absent, before it); Clear saved progress asks, focus goes to Cancel and back; the
-   saved-progress deck's instructions carry the extra sentence. 320–1920, both themes,
-   axe.
-2. **Sandbox at 320 scrolls sideways** (§D14): the Alerts section's
-   `<code>src/components/shell/Callout.tsx</code>` runs 10px past the viewport.
-3. **The transcript slide in Safari** (§D14): seen only in Chromium.
+1. ~~**See the last flashcards commits in a browser** (§D19)~~ **DONE 2026-10-12:**
+   nothing wrong, no change (§D19).
+2. ~~**Sandbox at 320 scrolls sideways** (§D14)~~ **DONE 2026-10-12** (`0c2f2b6`).
+3. **The transcript slide in Safari** (§D14): seen only in Chromium. Needs the
+   maintainer's Mac Safari.
 4. **Hover card on a real iPhone** (§D17): iOS Safari does not focus a button on tap,
-   so a tap elsewhere may leave the card pinned.
+   so a tap elsewhere may leave the card pinned. Needs the maintainer's iPhone.
 
 **Browser verification:** the in-app browser pane stays hidden (no window focus, so
 focus events never fire and transitions stall). Use a headed Chromium driven by
@@ -1448,9 +1444,12 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
     both themes: the href resolves to `/debug-sandbox.html` in a new tab; hover opens,
     leaving closes, focus opens, Escape closes; the card stays 16px inside the
     viewport; axe clean of it. Main bundles unchanged (debug-only code).
-  - **Sandbox at 320 scrolls sideways** (found 2026-10-09 while verifying the above):
-    the Alerts section's `<code>src/components/shell/Callout.tsx</code>` runs 10px
-    past the viewport (scroll width 339 on 320). Debug page only.
+  - **Sandbox at 320 scrolls sideways DONE 2026-10-12** (`0c2f2b6`; found 2026-10-09
+    while verifying the above): the Alerts section's
+    `<code>src/components/shell/Callout.tsx</code>` ran 10px past the viewport (scroll
+    width 339 on 320) and was the page's only unclipped overflow. It takes `break-all`,
+    as the sandbox's other path `<code>`s do; no CSS cost. Scroll width now equals the
+    viewport at 320 / 375 / 1440. Debug page only.
   - **Sandbox Docs hub at 375 DONE 2026-10-09** (`135fc25`): two rendered tables
     (Preset, Font) scrolled sideways with no keyboard stop — axe
     `scrollable-region-focusable`. Each table now sits in a focusable, named region
@@ -1614,6 +1613,14 @@ no-preference` only.
     `savesProgress(config)` in `ExerciseHost`). An author override still wins.
   - Budget: CSS 17.89 → 17.91 kB (the `--flip-cue` pair); everything else is in the
     lazy `flashcards.css`.
+  - **Seen in a browser 2026-10-12** (headed Chromium, showcase's srs deck, storage
+    cleared): Again / Got it are `visibility: hidden` before the flip and visible
+    after; the rating row, footnote and footer keep their positions through the flip.
+    Clear saved progress asks in place (keyboard and mouse), focus goes to Cancel,
+    then back to the button on Cancel or Clear; Cancel keeps the saved key, Clear
+    removes it. The instructions carry the saved-progress sentence. No sideways
+    scroll at 320 / 375 / 768 / 1024 / 1440 / 1920 in either theme; axe clean in both
+    themes, with the confirm closed and open; no console errors. No change needed.
 
 ---
 
@@ -1788,3 +1795,4 @@ build, so it cannot return. Two remain:
 | 2026-10-12 | `0064c70` | **no Show answer** — the card flips; the rating row is reserved, hidden until the flip (§D19)                                           |
 | 2026-10-12 | `022611c` | **Clear saved progress** — Reset keeps memory; a confirm-first button forgets it (§D19)                                                 |
 | 2026-10-12 | `5e930f4` | **flashcards instructions** — tap the card, Reset; saved-progress decks explain it (§D19)                                               |
+| 2026-10-12 | `0c2f2b6` | **sandbox at 320** — the Alerts intro's source path wraps; no sideways scroll (§D14)                                                    |
