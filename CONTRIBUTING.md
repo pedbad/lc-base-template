@@ -289,7 +289,9 @@ will still catch it before merge. Don't rely on bypass.
 - **[Conventional Commits](https://www.conventionalcommits.org/):** `<type>: <description>`.
   Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `ci`.
 - **One concern per commit** — keep changes small and reviewable.
-- **No `Co-Authored-By` trailers** — attribution is disabled for this repo.
+- **AI-assisted commits may carry a `Co-Authored-By` trailer** (Claude Code adds one by
+  default). It is an honest record of how the change was made; keep it, don't hand-add
+  one to a commit no assistant touched.
 
 Examples:
 
