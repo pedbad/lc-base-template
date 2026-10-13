@@ -40,10 +40,11 @@ function Rows({ rows }: { rows: readonly (readonly TableCell[])[] }) {
 function TableView({ entry }: { entry: TableEntry }) {
   const captionId = useId();
   return (
-    // A focusable, named scroll region is the documented pattern for overflow content;
-    // the region role is what makes the tab stop meaningful to assistive tech.
-    // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- keyboard-scrollable region (axe scrollable-region-focusable)
-    <div className="rich-text-table-scroll" role="region" aria-labelledby={captionId} tabIndex={0}>
+    // A focusable, named scroll container, so the tab stop is meaningful to assistive
+    // tech. `group`, not `region`: a region is a landmark, landmarks need unique names,
+    // and two tables sharing a caption on one page then fail axe `landmark-unique`.
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- keyboard-scrollable table (axe scrollable-region-focusable)
+    <div className="rich-text-table-scroll" role="group" aria-labelledby={captionId} tabIndex={0}>
       <table className="rich-text-table">
         <caption id={captionId}>
           <RichText nodes={entry.caption} />

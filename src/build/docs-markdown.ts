@@ -267,8 +267,9 @@ md.renderer.rules.link_close = (_tokens, _idx, _options, env) => {
  * keyboard cannot reach fails axe `scrollable-region-focusable` (TODO §D10). Wrapping
  * would avoid the tab stop but is wrong for these docs: STRUCTURE's trees and DESIGNER's
  * token-flow diagram are column-aligned, and a wrapped tree misreports nesting. So each
- * `<pre>` is a focusable, named region, as RichTextEntries does for a wide table. The
- * ordinal keeps names unique — a page of identical `region`s fails `landmark-unique`.
+ * `<pre>` is a focusable, named region. The ordinal keeps names unique — a page of
+ * identical `region`s fails `landmark-unique`. (RichTextEntries' tables use `group`
+ * instead: lesson captions can repeat, and no build step numbers them.)
  */
 function codeRegionOpen(state: RenderState, info: string): string {
   state.codeBlocks += 1;

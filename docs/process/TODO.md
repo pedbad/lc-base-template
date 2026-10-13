@@ -1719,9 +1719,9 @@ the slice-1 scope and the open list live in
   extracted from `lo-page-sections.tsx` so the course page and the showcase share one
   path. `src/ui-showcase/` is kept out of `main-*.css` like the other debug folders (CSS
   unchanged at 18.09 kB). Browser: 375 and 1440, light and dark, no sideways scroll, no
-  console errors. **Axe: one moderate `landmark-unique`** — the grammar block's table
-  region appears twice (card, then its plain copy) under the same caption, so two
-  regions share a name. A cost of showing the same content twice; open for a decision.
+  console errors, axe clean. (It first reported `landmark-unique`: the grammar table's
+  scroll `region` appeared twice under one caption. Fixed at the source, 2026-10-13: a
+  rich-text table's scroll container is now `role="group"`, which is not a landmark.)
 - **F5 — `sources` block. DONE 2026-10-12** (references list: grouped, print/web
   icon, rich-text citation, optional note), for the legacy LOs' "Sources" pages. Plan
   `2026-10-12-sources-block-plan.md`. Gate green, CSS unchanged, JS +0.91 kB. Seen in a

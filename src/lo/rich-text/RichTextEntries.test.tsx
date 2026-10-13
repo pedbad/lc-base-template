@@ -1,7 +1,7 @@
 /**
  * RichTextEntries.test.tsx — entries → DOM (spec §14). The assertions that matter
  * encode a11y decisions, not markup trivia: header cells carry a DERIVED `scope`, the
- * table's scroll region is focusable and named by the caption, and the player is the
+ * table's scroll group is focusable and named by the caption, and the player is the
  * labelled native control rather than the icon.
  *
  * `renderToStaticMarkup` in the node env, like the rest of the suite.
@@ -65,11 +65,15 @@ describe('RichTextEntries', () => {
     expect(html).toMatch(/<caption[^>]*>Être<\/caption>/);
   });
 
-  test('the table sits in a focusable scroll region named by its caption', () => {
+  // A group, not a region: a region is a landmark, and landmarks must have unique names,
+  // so two tables sharing a caption on one page failed axe `landmark-unique` (found on
+  // ui-showcase.html, 2026-10-13). A group keeps the tab stop and the name.
+  test('the table sits in a focusable scroll group named by its caption, not a landmark', () => {
     const html = renderAuthored('<table><caption>Être</caption><tr><td>a</td></tr></table>');
-    const region = /<div[^>]*role="region"[^>]*>/.exec(html)?.[0] ?? '';
+    const region = /<div[^>]*role="group"[^>]*>/.exec(html)?.[0] ?? '';
     const labelId = /aria-labelledby="([^"]+)"/.exec(region)?.[1];
 
+    expect(html).not.toContain('role="region"');
     expect(region).toContain('tabindex="0"');
     expect(labelId).toBeDefined();
     expect(html).toContain(`<caption id="${labelId ?? ''}"`);

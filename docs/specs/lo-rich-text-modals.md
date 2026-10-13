@@ -444,6 +444,9 @@ block element, spanning the whole entry:
 - **Why caption is required.** A wide table scrolls sideways inside a narrow popup, and a
   scroll region must be focusable and named (axe `scrollable-region-focusable`); the caption
   is that name, and also what a screen reader announces on entering the table.
+  _(Amended 2026-10-13: the scroll container is `role="group"`, not `region`. A region is a
+  landmark and landmarks need unique names, so two tables with the same caption on one page
+  failed axe `landmark-unique`. The group keeps the tab stop and the caption as its name.)_
 - **Why `<span data-audio-player>` and not `<audio>`.** It is the same family as
   `<span data-audio>` (same attributes, same guard), and like `a.modal-link` → `<button>`
   (§7) the authored spelling is a hook, not the rendered element. An authored `<audio>`
