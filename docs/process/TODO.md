@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-13 · **HEAD:** see `git log` · **Suite:** 158 files · 1656 tests green
+**Last updated:** 2026-10-13 · **HEAD:** see `git log` · **Suite:** 158 files · 1661 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -329,7 +329,9 @@ stays as written, with a dated note beside it. Do not quote the old numbers as c
   so dev and build render the same way. Full write-up: `docs/TOOLING.md`.
 - **`html: false`, so raw HTML in a doc is escaped.** The docs are repo-authored, so the
   risk today is nil — the default is sanitised anyway, because provenance is an argument
-  about today's content and a renderer outlives it.
+  about today's content and a renderer outlives it. **Amended 2026-10-13:** that escaped
+  STRUCTURE's `<!-- docs:tree -->` markers into visible text, so a paragraph made only of
+  HTML comments is now dropped, as GitHub does (`drop_comment_paragraphs`).
 - **`src/sandbox/`, not `src/showcase/`.** The showcase is one thing: fixtures through
   `ExerciseHost`. Folding a token reference, a type specimen, an icon sprite and a docs
   hub into it would leave a folder whose name described a quarter of its contents. The

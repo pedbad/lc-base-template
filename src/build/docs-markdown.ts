@@ -20,7 +20,8 @@
  * `html: false`, so raw HTML in a doc is ESCAPED rather than passed through. These docs
  * are repo-authored, so the risk today is nil — but provenance is an argument about
  * today's content and a renderer outlives it, and markdown permits raw HTML by spec. It
- * costs nothing here: the three rendered docs contain no raw HTML at all. (README does,
+ * costs nothing here: the rendered docs contain no raw HTML beyond STRUCTURE's comment
+ * markers, which `drop_comment_paragraphs` below hides as GitHub does. (README does,
  * a `<div align="center">` banner, and README is not in the hub — see SANDBOX_DOCS.)
  * Escaping in the parser also means no second dependency: no DOM-based sanitiser, no
  * post-pass over the output.
@@ -173,6 +174,30 @@ const md = new MarkdownIt({
   // second way for a link to appear that nothing here reviewed.
   linkify: false,
   typographer: false,
+});
+
+/** A paragraph's whole text, when that text is nothing but HTML comments. */
+const COMMENT_ONLY = /^(?:\s*<!--[\s\S]*?-->)+\s*$/;
+
+/**
+ * HTML comments are invisible on GitHub, and STRUCTURE.md's `<!-- docs:tree:start -->`
+ * markers rely on that. `html: false` cannot tell a comment from markup, so it escapes
+ * each one into a visible paragraph. A paragraph made ONLY of comments is dropped here,
+ * which is exactly what GitHub shows. Nothing else is: a comment inside a code sample is
+ * content, and one sharing a paragraph with prose stays escaped, as all raw HTML does.
+ */
+md.core.ruler.push('drop_comment_paragraphs', (state) => {
+  state.tokens = state.tokens.filter((token, idx, tokens) => {
+    const inline =
+      token.type === 'paragraph_open'
+        ? tokens[idx + 1]
+        : token.type === 'paragraph_close'
+          ? tokens[idx - 1]
+          : token.type === 'inline'
+            ? token
+            : undefined;
+    return !(inline?.type === 'inline' && COMMENT_ONLY.test(inline.content));
+  });
 });
 
 /**

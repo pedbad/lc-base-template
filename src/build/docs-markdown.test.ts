@@ -71,6 +71,34 @@ describe('renderDocMarkdown — sanitising', () => {
   });
 });
 
+describe('renderDocMarkdown — HTML comments', () => {
+  // GitHub never shows a comment, so the hub must not either. Under `html: false` a
+  // comment line would otherwise be escaped into a visible paragraph of `&lt;!--`.
+  it('drops a paragraph that is only an HTML comment', () => {
+    const html = render('before\n\n<!-- docs:tree:start -->\n\nafter');
+    expect(html).not.toContain('docs:tree');
+    expect(html).not.toContain('&lt;!--');
+    expect(html).toContain('<p>before</p>');
+    expect(html).toContain('<p>after</p>');
+  });
+
+  it('drops a comment line that sits directly against a code fence', () => {
+    const html = render('<!-- docs:tree:start -->\n```text\ntree\n```\n<!-- docs:tree:end -->');
+    expect(html).not.toContain('docs:tree');
+    expect(html).toContain('tree');
+  });
+
+  it('keeps a comment shown inside a fenced code sample', () => {
+    expect(render('```md\n<!-- docs:tree:start -->\n```')).toContain(
+      '&lt;!-- docs:tree:start --&gt;',
+    );
+  });
+
+  it('still escapes a paragraph that holds more than a comment', () => {
+    expect(render('text <!-- note --> more')).toContain('&lt;!-- note --&gt;');
+  });
+});
+
 describe('renderDocMarkdown — headings', () => {
   it('gives every heading a doc-namespaced id', () => {
     expect(render('## The files')).toContain('id="designer--the-files"');
@@ -219,6 +247,12 @@ describe('readSandboxDocs', () => {
       expect(page.html.length, page.file).toBeGreaterThan(500);
       expect(page.html, page.file).not.toContain('<script');
     }
+  });
+
+  it("hides STRUCTURE's docs:tree markers, which GitHub never shows", () => {
+    const structure = pages.find((page) => page.id === 'structure');
+    expect(structure?.html).not.toContain('docs:tree:start');
+    expect(structure?.html).not.toContain('docs:tree:end');
   });
 
   it('lists the headings a table of contents needs', () => {
