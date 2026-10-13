@@ -27,13 +27,15 @@ Verified toolchain (macOS, 2026-06-16):
 | Tool                                      | Minimum       | Tested  |
 | ----------------------------------------- | ------------- | ------- |
 | [Bun](https://bun.sh)                     | ≥ 1.3         | 1.3.14  |
-| [Node.js](https://nodejs.org)             | ≥ 22.12 (LTS) | 22.19.0 |
+| [Node.js](https://nodejs.org) (optional)  | ≥ 22.12 (LTS) | 22.19.0 |
 | [Git](https://git-scm.com)                | ≥ 2.40        | 2.50.1  |
 | [GitHub CLI](https://cli.github.com) `gh` | ≥ 2.0         | 2.94.0  |
 
 **Bun** is the package manager and runtime; **Vitest** is the test runner (`bun run test`).
-**Node** is only a tooling fallback. (Bun installs/runs · Vitest tests · Vite bundles ·
-Bun prerenders the static pages.)
+**Node** is optional: without it, `bun run` stands Bun in for `node`. If Node is
+installed, `bun run` uses it for the Vite, Vitest, ESLint and Prettier CLIs, so it must
+meet the minimum above (Vite will not run on older Node). (Bun installs/runs · Vitest tests · Vite bundles · Bun
+prerenders the static pages.)
 
 ## Setup
 
@@ -59,8 +61,6 @@ Cambridge/Klim licence, copy your font files into **`public/fonts/feijoa/`**:
 These are git-ignored — they will **not** be committed or pushed. Until added,
 headings fall back to Open Sans. Full details (incl. optional `.woff2`
 optimisation): [`public/fonts/feijoa/README.md`](public/fonts/feijoa/README.md).
-
-_(More steps added as the template grows.)_
 
 ## Build
 

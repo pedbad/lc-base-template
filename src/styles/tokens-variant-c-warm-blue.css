@@ -4,7 +4,7 @@
    ALTERNATIVE to the active src/styles/tokens.css (which is VARIANT B).
    To make this the base-template theme: replace the contents of tokens.css
    with this file (or rename this file to tokens.css). Only ONE tokens file is
-   imported by index.css at a time. palette.css is SHARED — never edit it here.
+   imported (by app.css) at a time. palette.css is SHARED — never edit it here.
 
    Primary = Cambridge Warm Blue (#00BDB6) + Slate-4 text.
      Light: primary-text contrast 6.3:1 ✓   Dark: 6.3:1 ✓

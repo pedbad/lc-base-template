@@ -9,7 +9,9 @@ topped up. `BASE_URL=/course/` build checked (Sources markup prerendered). Brows
 no overflow at 320; still open: 768/1440 and an axe pass.
 Deviations from the plan below: every schema object is `strictObject` (as in tabs), with
 a test for it; the print icon is imported as `BookOpenIcon`, the name `LoCard` already
-uses, so the sandbox inventory gains only `Globe`.
+uses, so the sandbox inventory gains only `Globe`; `presentation` on `BlockRendererProps`
+is optional (`presentation?: BlockConfig['presentation']`), not required, so no existing
+renderer call needed the prop, and `SourcesBlock` defaults it to `'card'`.
 
 **Goal:** Ship a `sources` block type, a references list for the LOs being ported. It is
 grouped under optional subheadings, and each entry has a print or web icon, a rich-text
@@ -55,7 +57,7 @@ external-link icon for web, and a small note line under each citation.
 CSS headroom is **0.09 kB** (`docs/TOOLING.md`, "Bundle budget"). Style the block with
 Tailwind utilities **already used elsewhere** (`OutcomesBlock.tsx` is the model:
 `grid gap-2`, `flex items-start gap-2`, `mt-0.5 size-5 shrink-0`, `min-w-0`,
-`text-muted-foreground`), and author no new CSS rule. JS headroom is under 5 kB; two
+`text-muted-foreground`), and author no new CSS rule. JS headroom is in the same table; two
 lucide icons are small, but measure after `bun run build`.
 
 ---
@@ -82,8 +84,8 @@ Run every command from the repo root. Never `bun test`; always `bun run test`.
 
 ## Task 1 — failing tests
 
-- [ ] Create `src/lo/blocks/sources-block.test.tsx` with the draft below.
-- [ ] `bunx vitest run src/lo/blocks/sources-block.test.tsx` fails (module not found). That
+- [x] Create `src/lo/blocks/sources-block.test.tsx` with the draft below.
+- [x] `bunx vitest run src/lo/blocks/sources-block.test.tsx` fails (module not found). That
       is the RED run.
 
 ```tsx
@@ -204,44 +206,44 @@ test('a group with no heading renders no heading element', () => {
 
 ## Task 2 — schema
 
-- [ ] `sources-block-schema.ts`, header comment in the style of `outcomes-block-schema.ts`.
-- [ ] `citation` and `note`: `z.string().min(1).transform(parseRichText)`.
-- [ ] Web-link rule: a `.superRefine` on the item (after the transform) that walks the
+- [x] `sources-block-schema.ts`, header comment in the style of `outcomes-block-schema.ts`.
+- [x] `citation` and `note`: `z.string().min(1).transform(parseRichText)`.
+- [x] Web-link rule: a `.superRefine` on the item (after the transform) that walks the
       `RichTextNode[]` tree for `kind === 'link'` and adds an issue at `path: ['citation']`.
       Check that Zod 4 reports it as `['groups', i, 'items', j, 'citation']`.
-- [ ] The schema tests pass.
+- [x] The schema tests pass.
 
 ## Task 3 — renderer and wiring
 
-- [ ] `block-renderers.ts`: add `presentation: 'card' | 'plain'` to `BlockRendererProps`,
+- [x] `block-renderers.ts`: add `presentation: 'card' | 'plain'` to `BlockRendererProps`,
       register `sources: SourcesBlock`.
-- [ ] `lo-page-sections.tsx`: `blockBody()` passes `presentation={config.presentation}`.
+- [x] `lo-page-sections.tsx`: `blockBody()` passes `presentation={config.presentation}`.
       Update the existing `<Renderer content={…} />` calls in `block-renderers.test.tsx`
       and others if the type now requires the prop.
-- [ ] `ui-strings.ts`: add `sourcePrint` and `sourceWeb` to the schema and defaults, next to
+- [x] `ui-strings.ts`: add `sourcePrint` and `sourceWeb` to the schema and defaults, next to
       `opensInNewTab`.
-- [ ] `SourcesBlock.tsx`: `parseBlockContent('sources', …)`. One `<section>`-less wrapper per
+- [x] `SourcesBlock.tsx`: `parseBlockContent('sources', …)`. One `<section>`-less wrapper per
       group: a heading (`h3`/`h4` from `presentation`) if present, then a `<ul>`. Each
       `<li>` is `flex items-start gap-2`: the icon, then a `min-w-0` span holding the sr-only
       kind label, `<RichText nodes={citation} />` and, if present, a note `<p>` in
       `text-sm text-muted-foreground`.
-- [ ] All tests in the file pass.
+- [x] All tests in the file pass.
 
 ## Task 4 — example LO and docs
 
-- [ ] `blocks/08-sources/block.json`: `"type": "sources"`, `"presentation": "plain"`, two
+- [x] `blocks/08-sources/block.json`: `"type": "sources"`, `"presentation": "plain"`, two
       groups modelled on the screenshot (placeholder citations; use `https://example.org/…`
       for web links).
-- [ ] `lo.json`: append the `sources` section last.
-- [ ] `CONTRIBUTING.md` "Sources block", `public/llms.txt` block list, `TODO.md` §F5.
-- [ ] Check `src/config/example-lo.test.ts` and guard b (folder ↔ config naming) still pass.
+- [x] `lo.json`: append the `sources` section last.
+- [x] `CONTRIBUTING.md` "Sources block", `public/llms.txt` block list, `TODO.md` §F5.
+- [x] Check `src/config/example-lo.test.ts` and guard b (folder ↔ config naming) still pass.
 
 ## Task 5 — verify
 
-- [ ] Gate: `bun run format && bun run lint && bun run lint:css && bun run test && bun run build`.
-- [ ] Bundle budget: compare `main-*.css` and `main-*.js` with `docs/TOOLING.md`.
-- [ ] `BASE_URL=/course/ bun run build` (AGENTS.md hard constraint 3).
+- [x] Gate: `bun run format && bun run lint && bun run lint:css && bun run test && bun run build`.
+- [x] Bundle budget: compare `main-*.css` and `main-*.js` with `docs/TOOLING.md`.
+- [x] `BASE_URL=/course/ bun run build` (AGENTS.md hard constraint 3).
 - [ ] Browser: the example LO's Sources section at 320, 768 and 1440, axe clean, nav shows
       "Sources", the web link opens in a new tab. See TODO.md "Browser verification" for the
       headed-Chromium recipe.
-- [ ] Commit `feat(blocks): sources block for references lists`.
+- [x] Commit `feat(blocks): sources block for references lists`.

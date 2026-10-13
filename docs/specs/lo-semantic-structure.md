@@ -27,7 +27,10 @@ against a semantic-structure audit of the french-lo-1 reference implementation
 
     <header>
       <nav aria-label="Main navigation">
-        <a href="#content">{Course/site title}</a>
+        <a href="{resolveHomeHref()}">{Course/site title}</a>
+        <!-- (Amended 2026-10-13: the brand links HOME to the course landing page via
+             resolveHomeHref(), not to #content — that was a second skip link.
+             See src/components/shell/Header.tsx.) -->
 
         <!-- One entry per top-level <section>, in page order. Generated FROM
              the section list — not hand-authored separately. -->
@@ -70,15 +73,21 @@ against a semantic-structure audit of the french-lo-1 reference implementation
       <section id="introduction" aria-labelledby="introduction-heading">
         <h2 id="introduction-heading">Introduction</h2>
         <!-- intro content -->
-        <button aria-label="Back to top" tabindex="-1">…</button>
+        <button type="button" aria-label="Back to top" aria-describedby="introduction-heading">
+          …
+        </button>
+        <!-- (Amended 2026-10-13: the back-to-top button is focusable — no
+             tabindex="-1" — and aria-describedby names its section heading so a
+             page of them is not a list of identical names. See
+             src/components/shell/BackToTopButton.tsx.) -->
       </section>
 
       <section id="grammar" aria-labelledby="grammar-heading">
         <h2 id="grammar-heading">Grammar</h2>
 
-        <!-- SECTION-level instructions: optional, at most one, before any
-             accordions. -->
-        <div class="instructions">{Section-wide instructions}</div>
+        <!-- (Amended 2026-10-13: there is NO section-level instructions field —
+             LoSectionSchema has none. Section-wide copy is a `plain` block, e.g.
+             an `intro` block, rendered straight under the <h2>. See §3.) -->
 
         <article aria-labelledby="grammar-1-heading">
           <details>
@@ -87,8 +96,8 @@ against a semantic-structure audit of the french-lo-1 reference implementation
             </summary>
             <div class="details-content">
               <!-- ACCORDION-level instructions: optional, at most one, before
-                   the block/exercise body. Same field as section-level — one
-                   name, not two similarly-named fields (see §3). -->
+                   the block/exercise body. One name, not two similarly-named
+                   fields (see §3). -->
               <div class="instructions">{Accordion-specific instructions}</div>
               <!-- grammar block content -->
             </div>
@@ -97,18 +106,20 @@ against a semantic-structure audit of the french-lo-1 reference implementation
         <!-- one <article><details>…</details></article> per accordion, sibling
              to the one above -->
 
-        <button aria-label="Back to top" tabindex="-1">…</button>
+        <button type="button" aria-label="Back to top" aria-describedby="grammar-heading">…</button>
       </section>
 
       <section id="vocabulary" aria-labelledby="vocabulary-heading">
         <h2 id="vocabulary-heading">Vocabulary</h2>
         <!-- content — accordion(s) if it needs one, plain content if not -->
-        <button aria-label="Back to top" tabindex="-1">…</button>
+        <button type="button" aria-label="Back to top" aria-describedby="vocabulary-heading">
+          …
+        </button>
       </section>
 
       <section id="exercises" aria-labelledby="exercises-heading">
         <h2 id="exercises-heading">Exercises</h2>
-        <div class="instructions">{Section-wide instructions}</div>
+        <!-- section-wide copy, if any: a `plain` block (no section-level field) -->
 
         <article aria-labelledby="ex-1-heading">
           <details>
@@ -123,7 +134,9 @@ against a semantic-structure audit of the french-lo-1 reference implementation
         </article>
         <!-- one per exercise -->
 
-        <button aria-label="Back to top" tabindex="-1">…</button>
+        <button type="button" aria-label="Back to top" aria-describedby="exercises-heading">
+          …
+        </button>
       </section>
       <!-- </div> closes .lo-content -->
     </main>
@@ -150,7 +163,7 @@ A folder-per-LO (spec §6/§9) drives the skeleton in §1 like this:
 ```
 lo-config/lo-01-salutations/
   lo.json                           → <h1>, <head>, the SECTIONS and their order
-  blocks/00-intro/block.json        → the "Introduction" <section>'s one <article>
+  blocks/00-intro/block.json        → the "Introduction" <section>'s body (plain, no <article>)
   blocks/01-grammar/block.json      → the "Grammar" <section>'s one <article>
   blocks/02-vocabulary/block.json   → the "Vocabulary" <section>
   exercises/01-select/exercise.json → the "Exercises" <section>'s one <article>
@@ -199,7 +212,9 @@ lo-config/lo-01-salutations/
   `exercises/<ref>/exercise.json`; the two lists stay separate because that split
   mirrors the two on-disk folders. Ordinal prefixes (`01-`, `02-`) are LO-wide per kind;
   the array orders items within a section. Inside a section, blocks render before
-  exercises. Reorder an array without renaming the folder → guard b fails.
+  exercises. Reordering an array without renaming folders is fine: guard b
+  (`src/guards/render-mirror.ts`) is a set difference only — it fails on a ref with
+  no folder or a folder no ref names, never on order. (Amended 2026-10-13.)
 
 `blocks/01-grammar/block.json` (`BlockConfigSchema` + `TextBlockContentSchema`):
 
@@ -217,9 +232,10 @@ lo-config/lo-01-salutations/
 - `type` → which body renderer fills the accordion, resolved through
   `getBlockRenderer()` (`src/lo/blocks/block-renderers.ts`) — the block-side
   counterpart of the exercise `lazyRegistry`, not the same map: blocks are content,
-  not engines. Shipped types: `prose` (UI-language commentary), `grammar`
-  (target-language prose), `vocabulary` (term/gloss `<dl>`). An unregistered `type`
-  renders a visible error, never silence.
+  not engines. Shipped types (amended 2026-10-13 — seven, not three): `prose`
+  (UI-language commentary), `intro` (UI-language page copy), `grammar`
+  (target-language prose), `vocabulary` (term/gloss `<dl>`), `outcomes`, `tabs` and
+  `sources`. An unregistered `type` renders a visible error, never silence.
 - `title` → the accordion's `<h3>` inside `<summary>`. Required, same reasoning as
   `label` above.
 - `defaultOpen` (optional, `prose`/blocks only) → the accordion starts open. For an
@@ -246,7 +262,12 @@ the UI language — `lang` is per-part, not per-block.
 {
   "type": "select",
   "title": "Ser or estar?",
+  "content": {
     "layoutMode": "rows",
+    "items": [
+      { "text": "Yo [*soy|eres|es] de Madrid." },
+      { "text": "Tú [soy|*eres|es] muy amable." }
+    ],
     "footnote": "El verbo «ser» cambia según la persona."
   },
   "options": { "shuffle": true, "allowShowAnswers": true }
@@ -270,17 +291,20 @@ the UI language — `lang` is per-part, not per-block.
   `lang={TARGET_LANG}` — confirmed via this course's fixtures that footnotes
   are author-written IN the target language, not English instructions.
 - `options.shuffle` / `options.allowShowAnswers` → wired straight into the
-  engine's Reset/Show-answers behavior (spec §5.2/§5.3); not DOM structure,
+  engine's Reset/Show-answers behavior (exercise-engines spec
+  `docs/specs/2026-06-19-exercise-engines-design.md` §5.2/§5.3); not DOM structure,
   but they gate which `<ExerciseFooter>` buttons render.
 - `labels` (optional, omitted above) → same two-layer override as blocks;
   `config.labels?.check ?? uiStrings.check` (spec §9) decides the Check
   button's text.
 
-Still open: block types beyond the three shipped ones (`prose`, `grammar`,
-`vocabulary`) — pronunciation, dialogue and monologue blocks each need a `type`
-string, a `content` schema and a registry entry when they arrive. The envelope
-(`type`, `title`, `defaultOpen`, `labels?`, `content`) is locked; only per-type
-`content` stays deferred, the same pattern the 12 exercise engines went through.
+Still open: block types beyond the seven shipped ones (`prose`, `intro`, `grammar`,
+`vocabulary`, `outcomes`, `tabs`, `sources` — amended 2026-10-13) — pronunciation,
+dialogue and monologue blocks each need a `type` string, a `content` schema and a
+registry entry when they arrive. The envelope (`type`, `title`, `defaultOpen`,
+`labels?`, `content`) is locked — since extended with `presentation` (`card` |
+`plain`) — and only per-type `content` stays deferred, the same pattern the 15
+exercise engines went through.
 
 ## 2. Heading depth — fixed, never skipped, never repeated
 
@@ -298,8 +322,9 @@ content genuinely needs internal sub-structure).**
 
 ## 3. Content rules
 
-- **One `instructions` field**, usable at both section-level and
-  accordion-level, optional at each. Rendered as a plain instructional callout
+- **One `instructions` field**, optional, on a block's or exercise's `content`
+  (accordion-level). (Amended 2026-10-13: there is no section-level field —
+  `LoSectionSchema` has none; section-wide copy is a `plain` block.) Rendered as a plain instructional callout
   (a `<div>`, not `role="alert"` — that ARIA role is for assertive live
   announcements, wrong semantics for static instructions). NOT two
   similarly-named fields (french-lo-1 has `instructionsText` AND
@@ -310,10 +335,11 @@ content genuinely needs internal sub-structure).**
   content) needs its own `lang="{languageCode}"` wrapper (from
   `course.config.ts`, exposed as `TARGET_LANG` via `src/lib/lang.ts`) so
   assistive tech pronounces it correctly (WCAG 3.1.2). **Fixed 2026-07-01
-  across all 12 shipped exercise engines** — wrapped only target-language
-  content subtrees, never chrome/`aria-label`/sr-only text. Grammar/vocab
-  blocks outside the exercise engines (Phase C content) still need the same
-  treatment when authored.
+  across all 12 exercise engines then shipped** (the 3 added since follow the same
+  rule — 15 in all) — wrapped only target-language content subtrees, never
+  chrome/`aria-label`/sr-only text. Grammar and vocabulary blocks now do the same
+  (amended 2026-10-13): `GrammarBlock` wraps its body in `lang={TARGET_LANG}` and
+  `VocabularyBlock` sets it on each `<dt>` (`src/lo/blocks/`).
 
 ## 4. Accordion mechanics
 

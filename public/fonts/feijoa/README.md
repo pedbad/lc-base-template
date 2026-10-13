@@ -19,7 +19,7 @@ invisible-text flash and no missing-glyph boxes — a fresh clone looks correct.
 ## To enable real Feijoa (you must hold a valid Cambridge/Klim licence)
 
 Drop your licensed font files into **this folder** with these exact names — they
-match the `@font-face` rules in `src/index.css`:
+match the `@font-face` rules in `src/styles/app.css`:
 
 | File                                | weight | style  |
 | ----------------------------------- | ------ | ------ |
@@ -37,7 +37,7 @@ No code change needed — the `@font-face` `src` URLs already point here. Restar
 
 `.otf` files are large. For production, convert each to `.woff2` (~40–50% smaller,
 faster load) and update the three `src: url(... .otf) format('opentype')` lines in
-`src/index.css` to `url(... .woff2) format('woff2')`. Use any tool you trust, e.g.
+`src/styles/app.css` to `url(... .woff2) format('woff2')`. Use any tool you trust, e.g.
 `woff2_compress Feijoa-Medium-Cambridge.otf` (from Google's `woff2` utils) or `fonttools`.
 
 ## Rules

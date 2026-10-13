@@ -9,14 +9,15 @@ the drift the guards exist to prevent, so there is only ever one.
 
 ## The files in this folder
 
-| File                                  | Layer                 | Edit when…                                        |
-| ------------------------------------- | --------------------- | ------------------------------------------------- |
-| `palette.css`                         | 1 · primitives        | re-skinning — the **only** place raw hex may live |
-| `tokens.css`                          | 2/3 · semantic ACTIVE | never by hand — a copy of one preset below        |
-| `tokens-variant-a-cambridge-blue.css` | preset                | switching `--primary` / `--ring`                  |
-| `tokens-variant-b-dark-blue.css`      | preset (default)      | switching `--primary` / `--ring`                  |
-| `tokens-variant-c-warm-blue.css`      | preset                | switching `--primary` / `--ring`                  |
-| `layout.css`                          | layout, not colour    | changing the page frame, gutter or measure        |
+| File                                  | Layer                 | Edit when…                                         |
+| ------------------------------------- | --------------------- | -------------------------------------------------- |
+| `palette.css`                         | 1 · primitives        | re-skinning — the **only** place raw hex may live  |
+| `tokens.css`                          | 2/3 · semantic ACTIVE | never by hand — a copy of one preset below         |
+| `tokens-variant-a-cambridge-blue.css` | preset                | switching `--primary` / `--ring`                   |
+| `tokens-variant-b-dark-blue.css`      | preset (default)      | switching `--primary` / `--ring`                   |
+| `tokens-variant-c-warm-blue.css`      | preset                | switching `--primary` / `--ring`                   |
+| `layout.css`                          | layout, not colour    | changing the page frame, gutter or measure         |
+| `app.css`                             | global, shared sheet  | fonts (`@font-face`) or the `@theme inline` bridge |
 
 Enforced here: raw hex only in `palette.css` (**guard f**,
 `src/guards/token-integrity.ts`); every rule inside `@layer`, zero `!important`

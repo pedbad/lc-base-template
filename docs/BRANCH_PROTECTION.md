@@ -10,7 +10,8 @@ this for you — branch protection is a GitHub repo setting, not a file.
 > **Decided 2026-09-03:** while this is a single-maintainer build, `main` accepts direct
 > pushes and the verify gate (`format · lint · lint:css · test · build`) is run by hand
 > before each commit. This is a considered choice, not a missed step — CONTRIBUTING says
-> the same. **The trigger to switch it on is a second person getting push access.**
+> the same. Since then a pre-push hook also runs `guards` and `test` locally, which
+> catches a red suite before it reaches `main` but is bypassable with `--no-verify`. **The trigger to switch it on is a second person getting push access.**
 >
 > Tick to ✅ once configured.
 

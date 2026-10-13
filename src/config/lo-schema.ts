@@ -29,7 +29,7 @@
  * `lazyRegistry`. Ordinal+type ref naming (`01-grammar`) is validated structurally
  * here (non-empty string); the folder↔config render-mirror match is guard b's job
  * (steps 19–26), not pulled forward into the schema. `type` is now a Zod enum of the
- * 12 canonical keys (`exercise-types.ts`).
+ * 15 canonical keys (`exercise-types.ts`).
  *
  * SLUG: not a field. The folder name (`lo-01-salutations`) is the single source of
  * truth; the URL slug strips the `lo-NN-` ordinal prefix (`/salutations.html`) in
@@ -42,7 +42,7 @@ import { UiStringsOverrideSchema } from './ui-strings';
 import { EXERCISE_TYPE_KEYS } from './exercise-types';
 
 /**
- * Shared behavior switches for ANY exercise (spec §5/§6). One shape for all 12
+ * Shared behavior switches for ANY exercise (spec §5/§6). One shape for all 15
  * engines; every field optional; VALUES are set per instance, so two exercises of
  * the same `type` can behave differently (one shuffled, one not). Reset and the
  * show-after-wrong-check reveal are implicit (always on), so they are not fields.
@@ -73,7 +73,7 @@ export type ExerciseOptions = z.infer<typeof ExerciseOptionsSchema>;
 /**
  * Validates one content block's `block.json` (grammar, vocabulary, …). Block `type`
  * is a free string — block kinds are not in the exercise registry; it selects a
- * body renderer (`src/lo/blocks/block-renderers.tsx`).
+ * body renderer (`src/lo/blocks/block-renderers.ts`).
  *
  * `title` is the accordion's `<h3>`. Required FOR A CARD BLOCK: it is human text with
  * no derivable source (the same argument as a section's `label` — a ref like
@@ -133,7 +133,7 @@ export const BlockConfigSchema = z
 export type BlockConfig = z.infer<typeof BlockConfigSchema>;
 
 /**
- * Validates one exercise's `exercise.json`. `type` MUST be one of the 12 canonical
+ * Validates one exercise's `exercise.json`. `type` MUST be one of the 15 canonical
  * keys (an unknown key fails the build); `options` is the shared behavior block;
  * `content` stays loose here (per-type shape lands when that engine is ported).
  */
@@ -157,7 +157,7 @@ export type ExerciseConfig = z.infer<typeof ExerciseConfigSchema>;
  * that accordion needs its `<h3>`. This is what the loader validates; the per-type
  * `content` tightening (SelectContentSchema et al.) belongs to each ENGINE, which
  * applies its own schema at render. Guard e proves every engine HAS one (the third
- * step of the authoring contract, design spec §223) — it deliberately does not parse
+ * step of the authoring contract, design spec §13 "Rare path") — it deliberately does not parse
  * content itself, which would make a registry guard fail for content reasons.
  */
 export const LoExerciseConfigSchema = ExerciseConfigSchema.extend({

@@ -50,6 +50,19 @@ Any `string` in a rich-text field may contain these tags and nothing else:
 | `<a class="modal-link" data-modal-target="id">…</a>` | a `<button>` that opens modal `id` | see §7                             |
 | `<span data-audio="path"></span>`                    | an `<AudioClip>` speaker icon      | see §6                             |
 
+(Amended 2026-10-13: two more inline tags shipped after this spec — see
+`src/lo/rich-text/rich-text-nodes.ts` and `parse-rich-text.ts`.)
+
+- `<a href="url">…</a>` → a plain link (`link` node), always opened in a new tab
+  (maintainer, 2026-10-09). `href` must be an http(s) URL or a site-relative path (no
+  leading `/` or `..`), resolved through `resolveAsset()`; any other scheme is rejected.
+- `<span class="hover-term" data-hover-target="id">…</span>` → a hover term
+  (`hoverTerm` node), rendered by `HoverTerm` as a disclosure button that opens hover
+  card `id` on hover, focus or tap (TODO §D17). Hover cards live in
+  `hovers/<id>/hover.json` (`HoverConfigSchema`: optional `title`, `path`, inline
+  `content[]`, `lang`; a path or some content is required) and are declared in a
+  top-level `hovers[]` in `lo.json`, for the same reasons as `modals[]`.
+
 `<b>` and `<i>` are **rejected with an error**, not silently accepted — enforcing
 carry-forward anti-pattern #16 (`docs/process/FUTURE_PROJECTS.md`: use semantic
 `<strong>`/`<em>`, never presentational tags). Any other tag is also rejected. The
@@ -63,6 +76,13 @@ mismatched tags are errors.
 
 - `blocks/<ref>/block.json` → `content.text[]` for `type: "prose"` and `type: "grammar"`
 - `modals/<id>/modal.json` → `content[]`
+
+(Amended 2026-10-13: the list has grown with the block types. Rich text is also parsed
+by `intro` `content.text[]` (it shares `TextBlockContentSchema`); `outcomes` `lead` and
+`items[]` (inline); `vocabulary` `summary.lead` and `summary.items[]` (inline);
+`tabs` `intro[]` and each tab's `text[]`; a media panel's `transcript[]`
+(`media-schema.ts`); `sources` `citation` and `note` (inline); and hover cards'
+`content[]`. Each per-type schema in `src/lo/blocks/*-schema.ts` is the source of truth.)
 
 Plain strings remain valid — a string with no markup parses to a single text node, so
 every LO authored before this spec keeps working unchanged.
@@ -141,6 +161,13 @@ type RichTextNode =
   | { readonly kind: 'break' }
   | {
       readonly kind: 'modalLink';
+      readonly target: string;
+      readonly children: readonly RichTextNode[];
+    }
+  // Added 2026-10-09 (amended into this spec 2026-10-13) — see §2:
+  | { readonly kind: 'link'; readonly href: string; readonly children: readonly RichTextNode[] }
+  | {
+      readonly kind: 'hoverTerm';
       readonly target: string;
       readonly children: readonly RichTextNode[];
     }
@@ -357,7 +384,7 @@ Extension points, listed so they are added as decisions rather than drift:
   in one place, so a URL sync is a later addition to one module. Note carry-forward
   anti-pattern #26 first: content addressing belongs in path slugs, so a modal id is a
   query/hash concern at most, never a route.
-- **Rich text in exercise content.** The 12 engines have their own per-engine schemas and
+- **Rich text in exercise content.** The 15 engines (12 when this was written) have their own per-engine schemas and
   their own text handling; extending them is a separate, larger migration.
 - **Nested modals** (a modal link inside a modal). The context holds a single open id, so
   this currently replaces rather than stacks. Left unspecified until something needs it.
@@ -445,7 +472,8 @@ type TableCell = { header: boolean; scope?: 'col' | 'row'; children: RichTextNod
 ### Amends R7 — still hand-rolled
 
 §9 named `htmlparser2` as the swap point once block content arrived. Not taken: JS has
-~2.3 kB of headroom against the < 100 kB budget (`docs/TOOLING.md`), and the block grammar is
+~2.3 kB of headroom against the < 100 kB budget (`docs/TOOLING.md`; amended 2026-10-13: the
+budget has since been raised to < 120 kB), and the block grammar is
 still closed and tiny (seven structural tags, no attributes). The entry parser reuses the
 inline tokenizer; the node types stay the stable interface, so the swap remains available.
 

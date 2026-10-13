@@ -3,7 +3,7 @@
    ==========================================================================
    Maps shadcn's role tokens (--background, --primary, --border, …) onto the
    Cambridge primitives from palette.css, with full light + dark sets.
-   The `@theme inline` block in index.css bridges these to Tailwind colour
+   The `@theme inline` block in app.css bridges these to Tailwind colour
    utilities (bg-primary, text-foreground, …), so all 19 shadcn components
    re-skin from here automatically (spec §7.1, reconcile not bulldoze).
 

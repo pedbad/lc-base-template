@@ -3,10 +3,10 @@
 How to work in this repo: setup, everyday commands, the commit gate, and conventions.
 
 > **Living document.** It grows one section per build step as features land
-> (guards, per-LO authoring loop, exercise contract, theming). Sections marked
-> _“Coming”_ below are placeholders for locked spec decisions not yet built — see
-> `docs/specs/2026-06-15-lc-base-template-design.md` for the full planned scope.
-> §14's docs hub is no longer among them: all five docs now exist (below).
+> (guards, per-LO authoring loop, exercise contract, theming). The locked spec
+> decisions it once listed as coming have all landed — see
+> [Locked spec decisions](#locked-spec-decisions) — and
+> `docs/specs/2026-06-15-lc-base-template-design.md` remains the full planned scope.
 >
 > For **why** each tool was chosen (not how to use it), see [`docs/TOOLING.md`](docs/TOOLING.md).
 >
@@ -25,7 +25,9 @@ How to work in this repo: setup, everyday commands, the commit gate, and convent
 
 - **[Bun](https://bun.com)** ≥ 1.3 — package manager and script runner. Tests run on
   **Vitest** (via `bun run test`), not Bun's built-in `bun test` — see [docs/TOOLING.md](docs/TOOLING.md).
-  Install: `curl -fsSL https://bun.com/install | bash`. No separate Node/npm needed.
+  Install: `curl -fsSL https://bun.com/install | bash`. No separate Node/npm needed —
+  if Node is installed, though, `bun run` uses it for the Vite, Vitest, ESLint and
+  Prettier CLIs, so it must meet the minimum in the README's toolchain table.
 
 ## Getting started
 
@@ -41,20 +43,20 @@ gates below are active immediately, no manual `git config` step.
 
 ## Everyday commands
 
-| Command                 | What it does                                                         |
-| ----------------------- | -------------------------------------------------------------------- |
-| `bun run dev`           | Vite dev server, hot reload — landing page and every LO page         |
-| `bun run build`         | Type-check + bundle + prerender the landing page and one HTML per LO |
-| `bun run preview`       | Serve the production build locally                                   |
-| `bun run test`          | Run the test suite (Vitest, one-shot)                                |
-| `bun run guards`        | Just the repo-wide guard sweeps — fast pre-commit check              |
-| `bun run test:watch`    | Vitest in watch mode                                                 |
-| `bun run lint`          | ESLint over the repo                                                 |
-| `bun run lint:css`      | Stylelint over `src/**/*.css`                                        |
-| `bun run format`        | Prettier — rewrite all files to the house style                      |
-| `bun run format:check`  | Prettier — verify formatting without writing                         |
-| `bun run docs:tree`     | Regenerate the folder tree in `STRUCTURE.md`                         |
-| `DEBUG=1 bun run build` | Build, plus the two debug pages — showcase and sandbox               |
+| Command                 | What it does                                                            |
+| ----------------------- | ----------------------------------------------------------------------- |
+| `bun run dev`           | Vite dev server, hot reload — landing page and every LO page            |
+| `bun run build`         | Type-check + bundle + prerender the landing page and one HTML per LO    |
+| `bun run preview`       | Serve the production build locally                                      |
+| `bun run test`          | Run the test suite (Vitest, one-shot)                                   |
+| `bun run guards`        | Just the repo-wide guard sweeps — fast; the pre-push hook runs it first |
+| `bun run test:watch`    | Vitest in watch mode                                                    |
+| `bun run lint`          | ESLint over the repo                                                    |
+| `bun run lint:css`      | Stylelint over `src/**/*.css`                                           |
+| `bun run format`        | Prettier — rewrite all files to the house style                         |
+| `bun run format:check`  | Prettier — verify formatting without writing                            |
+| `bun run docs:tree`     | Regenerate the folder tree in `STRUCTURE.md`                            |
+| `DEBUG=1 bun run build` | Build, plus the two debug pages — showcase and sandbox                  |
 
 `bun run dev` serves `/debug-sandbox.html` and `/exercise-showcase.html` whether or not
 that flag is set — **bookmark the two URLs**. Nothing in the course links to them and
@@ -143,6 +145,8 @@ A set of labelled tabs, one panel showing at a time. Add it like any block: a
 ```
 
 - `label` names the tab set for screen readers, and is required.
+- An optional block-level `instructions` (plain text, beside `label`) shows once, in the
+  info box above the whole tab set.
 - At least two tabs, and every tab `label` is unique within the block.
 - Every tab needs `instructions`: plain text, shown first in the panel in the same
   info box the accordions use. A tab without it fails the build.
@@ -201,12 +205,41 @@ has one in its last section, Sources (`blocks/08-sources/`).
   (opened in a new tab). A `web` source must have a link in its `citation`.
 - `heading` is optional; a single list needs none. At least one group, and at least
   one item in each.
+- An optional block-level `instructions` (plain text, beside `groups`) shows in the
+  info box above the list.
 - `"presentation": "plain"` is the usual choice: the list reads as page copy under a
   section heading. Group headings are `<h3>` there, `<h4>` inside a `"card"`.
 - A misspelt key fails the build rather than being ignored.
 
 Plan and decisions:
 [`docs/process/2026-10-12-sources-block-plan.md`](docs/process/2026-10-12-sources-block-plan.md).
+
+### Exercise options
+
+Any `exercise.json` may add an `options` object beside `content`. It has one shape for
+every exercise type, every field is optional, and it is set per exercise, so two
+exercises of the same type can behave differently. An engine ignores a field it has no
+use for (`caseSensitive` on a choice exercise, say).
+
+```json
+"options": { "shuffle": true, "showAnswersAfter": 2 }
+```
+
+| Field              | Type             | Default   | Effect                                                      |
+| ------------------ | ---------------- | --------- | ----------------------------------------------------------- |
+| `shuffle`          | boolean          | `false`   | Randomise the order of the choices; Reset re-shuffles.      |
+| `sampleSize`       | positive integer | show all  | Show a random N of the items.                               |
+| `allowShowAnswers` | boolean          | `true`    | `false` removes the Show answers control entirely (a game). |
+| `showAnswersAfter` | integer ≥ 1      | see below | Failed tries before Show answers appears.                   |
+| `caseSensitive`    | boolean          | `false`   | Typed answers only: capitals count. Accents always count.   |
+
+A failed try is a Check with anything wrong, a missed pair in memory-match, or a wrong
+click in word-spot. `showAnswersAfter` defaults to 1, or 2 for word-order,
+phrase-reorder, drag-fill-gaps and memory-match. Show answers only ever appears while
+something is still wrong. Each type's `content` shape is its
+`src/exercises/<type>/<type>-schema.ts`, with a working example in `<type>.fixture.ts`.
+Design: [`docs/specs/2026-06-19-exercise-engines-design.md`](docs/specs/2026-06-19-exercise-engines-design.md)
+§5–6; the schema is `ExerciseOptionsSchema` in `src/config/lo-schema.ts`.
 
 ### The authoring loop
 
@@ -242,11 +275,11 @@ strongest (full rationale in [`docs/TOOLING.md`](docs/TOOLING.md#enforcement-lay
    Auto-fixable issues are fixed and re-staged silently; an unfixable problem
    (e.g. an unused variable) **blocks the commit**.
 3. **Pre-push hook** — husky runs `bun run guards` (fast fail) then `bun run test`
-   (~6s). A red test **blocks the push**, so broken code never leaves your machine —
+   (~10s). A red test **blocks the push**, so broken code never leaves your machine —
    even in a fork where GitHub Actions has not been switched on yet.
 4. **CI** — GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml))
-   re-runs `lint` · `lint:css` · `format:check` · `test` · `build` on every PR. The
-   unbypassable wall.
+   re-runs `lint` · `lint:css` · `format:check` · `test` · `build` on every PR to
+   `main` and every push to `main`. The unbypassable wall.
 
 You can bypass the local hooks with `--no-verify` (`git commit` or `git push`), but CI
 will still catch it before merge. Don't rely on bypass.
@@ -309,14 +342,17 @@ single-maintainer lockout to avoid: [`docs/BRANCH_PROTECTION.md`](docs/BRANCH_PR
 
 ---
 
-## Coming as the template grows
+## Locked spec decisions
 
-These are locked spec decisions, documented here when each lands:
+All four of the spec's locked decisions have landed. Each is documented here or in the
+doc it links:
 
-- **Naming & render-mirror** _(spec §15)_ — `lo-01` not `lo1`, `images/` not `img/`,
-  section-scoped ordinal+type folders (`01-fill-gaps/`). File structure mirrors the
-  rendered page; a guard enforces folder↔config match.
-- **Exercise authoring contract** — the config shape each exercise type expects.
+- **Naming & render-mirror** _(spec §15)_ — **landed**: `lo-01` not `lo1`, `images/`
+  not `img/`, and `<ordinal>-<type>` folders (`01-select/`) numbered LO-wide per kind,
+  not per section. File structure mirrors the rendered page; guard b enforces the
+  folder↔config match. The rules: [`STRUCTURE.md`](STRUCTURE.md).
+- **Exercise authoring contract** — **landed**: the shared `options` are in
+  [Exercise options](#exercise-options); each type's `content` shape is its own schema.
 - **The 8 guards** (a–h) — what each checks, what fails, and how to fix it. **All eight
   are live:** **a** config-schema (Zod at load), plus **b** naming + render-mirror, **c**
   asset-path, **d** asset-existence, **e** registry completeness, **f** token integrity
@@ -325,7 +361,7 @@ These are locked spec decisions, documented here when each lands:
   output). **b–h** are the seven sweeps in `src/guards/`; **a** is not a sweep — the Zod
   schemas run on every load, and their contract tests sit beside them in `src/config/`.
   All are Vitest tests, so `bun run test` already enforces them, and `bun run guards`
-  runs the seven sweeps on their own in under a second. Guard h has a second half that is not in `src/guards/` at all:
+  runs the seven sweeps on their own in about a second. Guard h has a second half that is not in `src/guards/` at all:
   `eslint-plugin-jsx-a11y` in `eslint.config.js`, which lints the JSX as you write it —
   so an a11y mistake can fail either `bun run lint` or `bun run test`, depending on
   whether it is visible in one file or only in the assembled page. See

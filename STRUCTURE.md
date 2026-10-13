@@ -80,6 +80,8 @@ names the config uses, so an asset's path is derivable from the page.
 | `public/audio/`        | Audio clips, per LO and per showcase fixture                 |
 | `public/images/`       | Illustrations, LO card art                                   |
 | `public/fonts/feijoa/` | Commercial display font — **git-ignored, never committed**   |
+| `public/favicon.svg`   | The browser-tab icon (`course.config.ts` → `favicon`)        |
+| `public/logo.svg`      | The header logo (`course.config.ts` → `logo`)                |
 | `public/icons.svg`     | The sprite sheet                                             |
 | `public/llms.txt`      | Machine-readable summary of the built site (see `AGENTS.md`) |
 | `public/robots.txt`    | Crawler policy                                               |
@@ -91,21 +93,21 @@ work. **Guard c** checks the form; **guard d** checks the file is actually there
 
 ## `src/` — the application
 
-| Folder            | Owns                                                                                                                                   |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/exercises/`  | **The engines.** One folder per exercise type, plus `lib/` (shared shell) and the registry.                                            |
-| `src/lo/`         | **The loader.** Reads an LO folder, validates it, assembles it into a page.                                                            |
-| `src/components/` | **The page shell** — header, LO hero, footer, landing page + lesson rail, audio players, `ui/` primitives.                             |
-| `src/config/`     | **The content contract** — Zod schemas, course config, UI strings.                                                                     |
-| `src/styles/`     | **The theme** — the token chain. See [`DESIGNER.md`](DESIGNER.md).                                                                     |
-| `src/guards/`     | **The seven repo-wide invariant sweeps** (guards b–h; guard a is the Zod schemas in `src/config/`). `bun run guards`.                  |
-| `src/build/`      | Build-time helpers importable by Vite — prerender HTML, dev-server LO pages, docs→HTML, debug entries, `@source` check.                |
-| `src/lib/`        | Small shared utilities — asset paths, heading ids, language tagging, reduced motion, scroll-to-top, scroll-spy rules, the icon sprite. |
-| `src/hooks/`      | React hooks — theme, hydration state, viewport, scroll-spy, reveal-while-in-view.                                                      |
-| `src/audio/`      | Audio playback manager and its hook.                                                                                                   |
-| `src/showcase/`   | The opt-in debug gallery of every engine with sample content.                                                                          |
-| `src/sandbox/`    | The opt-in debug sandbox — tokens, type, the icon sprite and the docs hub.                                                             |
-| `src/docs/`       | Documentation checks — the `STRUCTURE.md` tree generator, its freshness test, and the markdown link check.                             |
+| Folder            | Owns                                                                                                                                                         |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `src/exercises/`  | **The engines.** One folder per exercise type, plus `lib/` (shared shell), `text-entry/` (the runtime dictation and typed-transform share) and the registry. |
+| `src/lo/`         | **The loader.** Reads an LO folder, validates it, assembles it into a page.                                                                                  |
+| `src/components/` | **The page shell** — header, LO hero, footer, landing page + lesson rail, audio players, `ui/` primitives.                                                   |
+| `src/config/`     | **The content contract** — Zod schemas, course config, UI strings.                                                                                           |
+| `src/styles/`     | **The theme** — the token chain. See [`DESIGNER.md`](DESIGNER.md).                                                                                           |
+| `src/guards/`     | **The seven repo-wide invariant sweeps** (guards b–h; guard a is the Zod schemas in `src/config/`). `bun run guards`.                                        |
+| `src/build/`      | Build-time helpers importable by Vite — prerender HTML, dev-server LO pages, docs→HTML, debug entries, `@source` check.                                      |
+| `src/lib/`        | Small shared utilities — asset paths, heading ids, language tagging, reduced motion, scroll-to-top, scroll-spy rules, the icon sprite.                       |
+| `src/hooks/`      | React hooks — theme, hydration state, viewport, scroll-spy, reveal-while-in-view.                                                                            |
+| `src/audio/`      | Audio playback manager and its hook.                                                                                                                         |
+| `src/showcase/`   | The opt-in debug gallery of every engine with sample content.                                                                                                |
+| `src/sandbox/`    | The opt-in debug sandbox — tokens, type, the icon sprite and the docs hub.                                                                                   |
+| `src/docs/`       | Documentation checks — the `STRUCTURE.md` tree generator, its freshness test, and the markdown link check.                                                   |
 
 ### Inside `src/exercises/`
 
@@ -114,18 +116,22 @@ adding one:
 
 ```
 src/exercises/select/
-  select-schema.ts        the config this engine accepts (Zod)
-  select-grading.ts       PURE grading — no React, no DOM
-  select-grading.test.ts  colocated tests for the grader
-  SelectExercise.tsx      thin view: renders state, calls the grader
-  select.css              engine styles inside @layer — only if it needs its own
+  select-schema.ts         the config this engine accepts (Zod)
+  select-schema.test.ts    colocated tests for the schema
+  select-grading.ts        PURE grading — no React, no DOM
+  select-grading.test.ts   colocated tests for the grader
+  SelectExercise.tsx       thin view: renders state, calls the grader
+  SelectExercise.test.tsx  colocated tests for the view
+  select.fixture.ts        sample content for the showcase card
 ```
 
 Pure grading is split from the view on purpose: the interesting logic is testable
-without rendering anything. `lib/` holds what all engines share (the host, the
+without rendering anything. An engine that needs its own styles adds `<type>.css`,
+inside `@layer` (`flashcards/flashcards.css`). `lib/` holds what all engines share (the host, the
 footer, the instructions callout, the blank-grading scaffold). `lazyRegistry.ts`
-maps an exercise `type` string to its component — **guard e** fails if a declared
-type has no engine, or an engine is unregistered.
+maps an exercise `type` string to its component — **guard e** fails if a canonical
+type lacks a registry entry, a showcase fixture or a `<type>-schema.ts`, or if an
+authored `type` resolves to no engine.
 
 ### Tests live next to the code
 
@@ -135,7 +141,8 @@ runs if it is under `src/`**. A test file anywhere else is silently never run.
 
 ## `scripts/` — Node-side build steps
 
-Run by `bun`, outside the Vite bundle. Two rules apply here and nowhere else:
+Run by `bun`, outside the Vite bundle. Two rules apply here, and equally to
+`src/build/`, which `vite.config.ts` imports:
 
 - **Never import `src/lo/load-lo-glob.ts`.** `import.meta.glob` is Vite syntax
   and throws under a plain Node runner. `load-lo-disk.ts` is the Node reader.

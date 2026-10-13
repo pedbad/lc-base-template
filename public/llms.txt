@@ -8,16 +8,17 @@
 
 A build emits a static course: a landing page plus one page per Learning Object.
 
-- [Home](/index.html): the course landing page — hero copy plus one card per
+- [Home](index.html): the course landing page — hero copy plus one card per
   Learning Object, linking to that LO's page.
-- `/<slug>.html`: one page per LO folder in `lo-config/`, named after the folder
-  with its `lo-NN-` ordinal dropped (`lo-00-example` → `/example.html`). Each
+- `<slug>.html`: one page per LO folder in `lo-config/`, named after the folder
+  with its `lo-NN-` ordinal dropped (`lo-00-example` → `example.html`), beside
+  this file. Each
   page's body is prerendered, so it reads and navigates without JavaScript, and
   hydrates into the interactive app when JavaScript runs.
 
 Two debug pages exist and are **not part of a deployed course**. The exercise
-showcase (`/exercise-showcase.html`) is a gallery of every engine driven by
-fixtures; the debug sandbox (`/debug-sandbox.html`) is a theme-token, typography
+showcase (`exercise-showcase.html`) is a gallery of every engine driven by
+fixtures; the debug sandbox (`debug-sandbox.html`) is a theme-token, typography
 and icon reference for the designer that also renders `DESIGNER.md`,
 `CONTRIBUTING.md`, `STRUCTURE.md` and `AGENTS.md` as HTML. Both are
 **opt-in per build** behind one fail-closed flag (`DEBUG=1 bun run build`,
@@ -37,9 +38,11 @@ meaning is also given as screen-reader text.
 
 ## Engines
 
-Fifteen engines ship. Each lives under `src/exercises/<engine>/` with a pure
-grader plus a thin React view, and is registered in
-`src/exercises/lazyRegistry.ts`.
+Fifteen engines ship. Each lives under `src/exercises/<engine>/` as pure logic
+plus a thin React view, and is registered in `src/exercises/lazyRegistry.ts`.
+Most have their own pure grader; dictation and typed-transform share one in
+`src/exercises/text-entry/`, and flashcards has a spaced-repetition scheduler
+instead.
 
 - Choice: select, inline-choice, radio-quiz
 - Typing: inline-gap, typed-transform, dictation

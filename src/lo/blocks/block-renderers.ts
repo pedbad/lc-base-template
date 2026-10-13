@@ -12,7 +12,7 @@
  * every LO through `renderToStaticMarkup`, where `React.lazy` cannot resolve.)
  *
  * Each renderer validates its own `content` against its per-type schema — the same
- * deliberate deferral the 12 exercise engines use, so `BlockConfigSchema.content`
+ * deliberate deferral the 15 exercise engines use, so `BlockConfigSchema.content`
  * stays loose while every shipped type is still strictly checked.
  */
 import type { ComponentType } from 'react';

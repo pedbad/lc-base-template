@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-12 · **HEAD:** see `git log` · **Suite:** 158 files · 1646 tests green
+**Last updated:** 2026-10-13 · **HEAD:** see `git log` · **Suite:** 158 files · 1646 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -43,21 +43,22 @@ is exactly what the paragraph above is about.
 `bun run test` (Vitest), **not** `bun test` — Bun's own runner throws on the
 `import.meta.glob` in `load-lo-glob.ts` and reports a false failure.
 
-**Next (2026-10-12, evening):** `main` is at `149cdd5` plus this note. The 2026-10-09
-six, the flashcards polish (§D19) and its browser check, the sandbox 320 overflow
-(§D14), the flip cue and footer on memory cards (§D20) and the tunable Show answers
-rule (§D21, `options.showAnswersAfter`) are DONE; section D is closed. Nothing else is
-ordered.
+**Next (2026-10-13):** for the current commit see `git log main`. Section D is closed
+(the 2026-10-09 six, §D19–§D21 and their browser checks). The `sources` block (§F5,
+`d1e301f`) is the last feature in. Nothing else is ordered.
 
 - **`sources` block (§F5) is DONE** (2026-10-12, late): renderer, schema, example in
   `lo-00-example`'s new Sources section, CONTRIBUTING and llms.txt. Built with the
-  tdd-guard **muted locally** (its API credit ran out; `Credit balance is too low`).
-  **Re-enable it** (`{"guardEnabled":true}` in `.claude/tdd-guard/data/config.json`)
-  once the credit is topped up. Browser: seen at 1024 (nav highlights Sources), no
-  overflow at 320; still open: 768/1440 and an axe pass.
+  tdd-guard **muted locally** (its API credit ran out; `Credit balance is too low`),
+  and it is **still paused**. **Re-enable it** (`{"guardEnabled":true}` in
+  `.claude/tdd-guard/data/config.json`) once the credit is topped up. Browser: seen at
+  1024 (nav highlights Sources), no overflow at 320; still open: 768/1440 and an axe
+  pass.
 - **Then ask the maintainer what is next.** Candidates: §F2 (the remaining tabs-panel
   entries), §F3 (tabs on phones), §F4 (`ui-showcase.html`, the block showcase the
-  maintainer asked about on 2026-10-12), or a Deferred item.
+  maintainer asked about on 2026-10-12), §F6 (further components), the §E2 queue (the
+  ordered list in `2026-10-12-team-workflow-handover.md` §3, "Next, in order"; coverage
+  rule in CI first), or a Deferred item.
   **Budget first:** CSS headroom is 0.09 kB (`docs/TOOLING.md`, "Bundle budget"), so
   any new rule in `main-*.css` needs a lever before it lands (a lazy per-feature sheet
   imported by the component that needs it).
@@ -1646,6 +1647,7 @@ no-preference` only.
     misses (french-lo-1's rule, `canShowMemoryAnswers`), not after the first turned
     pair; it still animates the cards into their pairs. Note: the button says "Show
     answer" (ui-strings) while every engine's instructions say "Show answers".
+    **Resolved in §D21** (`3462076`): the default label now reads "Show answers".
   - Seen in a headed Chromium: phone and desktop, both themes; two misses then Show
     answer, all 4 pairs matched; axe clean (after the theme transition settles), no
     console errors. Budget: CSS unchanged; JS 112.26 → 112.50 kB.
@@ -1689,7 +1691,7 @@ no-preference` only.
 
 ---
 
-## F. Composite UI blocks — slice 1 of N done
+## F. Composite UI blocks — F1, F2a and F5 done
 
 Reusable components authors drop into LO pages through config. Brainstorm decisions,
 the slice-1 scope and the open list live in
@@ -1704,12 +1706,18 @@ the slice-1 scope and the open list live in
   popup (`{ "modal": id }`); media as a standalone block. Verify: each entry in the
   example LO, guards b–h green.
 - **F3 — phones:** the dropdown chosen in the brainstorm (slice 1 stacks instead).
+  Verify: below the phone breakpoint the tabs render as a dropdown, operable by keyboard
+  alone; no sideways scroll at 320; axe clean in both themes.
 - **F4 — `ui-showcase.html`** behind `DEBUG_ENTRY_FILES`, rendering through the same
   renderers. Verify: absent from `bun run build`, present under `DEBUG=1`.
 - **F5 — `sources` block. DONE 2026-10-12** (references list: grouped, print/web
   icon, rich-text citation, optional note), for the legacy LOs' "Sources" pages. Plan
   `2026-10-12-sources-block-plan.md`. Gate green, CSS unchanged, JS +0.91 kB. Seen in a
   browser at 1024 and 320; open: 768/1440 and axe.
+- **F6 — further components** (tabs spec §2, "Further components"): word gloss and
+  reveal box; slider and resizable wait for a lesson that needs them. **Decision
+  needed** before any build: the word gloss may already be covered by the §D17 hover
+  cards. Verify: each one built in the example LO, guards b–h green.
 - **Budget:** headroom is in `docs/TOOLING.md`; the next F2 entry likely needs per-LO
   chunking or build-time rich-text parsing first.
 
@@ -1719,11 +1727,15 @@ the slice-1 scope and the open list live in
 
 Not forgotten. Decided.
 
-| Item                       | Trigger to pick it up                                                                                                                                                                                                                                                                                                                                    |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Per-LO chunking (§5.4)     | **~a dozen LOs.** Eager `import.meta.glob` means every page bundles every LO's JSON. Harmless at one. Measure each new LO against the JS budget (`docs/TOOLING.md`, "Bundle budget") — headroom is under 5 kB at one LO (current figure in that section), so this may wake before a dozen. Parsing rich text at build time is the other lever (TOOLING). |
-| Rich text: §12 leftovers   | Someone actually needs it. Inline rich text + popups shipped 2026-08-04; block entries (lists, tables, the audio player) in prose AND popups shipped 2026-10-06 (spec §14). Still unbuilt from §12: rich text in exercise content, deep-linking a popup, nested popups.                                                                                  |
-| Conjugation v2 choice mode | Someone wants tap-to-answer verb tables. Schema ready, view path unbuilt.                                                                                                                                                                                                                                                                                |
+| Item                           | Trigger to pick it up                                                                                                                                                                                                                                                                                                                               |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Per-LO chunking (§5.4)         | **~a dozen LOs.** Eager `import.meta.glob` means every page bundles every LO's JSON. Harmless at one. Measure each new LO against the JS budget (`docs/TOOLING.md`, "Bundle budget") — headroom at one LO is small (current figure in that section), so this may wake before a dozen. Parsing rich text at build time is the other lever (TOOLING). |
+| Rich text: §12 leftovers       | Someone actually needs it. Inline rich text + popups shipped 2026-08-04; block entries (lists, tables, the audio player) in prose AND popups shipped 2026-10-06 (spec §14). Still unbuilt from §12: rich text in exercise content, deep-linking a popup, nested popups.                                                                             |
+| Conjugation v2 choice mode     | Someone wants tap-to-answer verb tables. Schema ready, view path unbuilt.                                                                                                                                                                                                                                                                           |
+| Reading short-answer questions | Someone wants typed answers in a reading passage. v1 shipped MCQ + true/false only; short-answer parked (`2026-07-03-exercise-engines-buildlist.md` §3).                                                                                                                                                                                            |
+
+Exercise types not yet in any queue are parked, tiered by the infrastructure each
+needs, in [`FUTURE_EXERCISE_IDEAS.md`](FUTURE_EXERCISE_IDEAS.md).
 
 ### Two small known edges (§5.7)
 
@@ -1866,3 +1878,6 @@ build, so it cannot return. Two remain:
 | 2026-10-12 | `9e7dac4` | **showAnswersAfter** — one tunable Show answers rule for every engine (§D21)                                                            |
 | 2026-10-12 | `8381a85` | **pre-push hook** — guards then tests before every push; forks start with Actions off (§E2)                                             |
 | 2026-10-12 | `ce9ccf9` | **`docs/ORGANIZATION.md`** — plan for the `lc-elearn` organisation, one repo per course (§E2)                                           |
+| 2026-10-12 | `b09d542` | **team workflow handover** — decisions and the ordered next steps; code-only review in ORGANIZATION (§E2)                               |
+| 2026-10-12 | `d1e301f` | **`sources` block** — grouped references, print/web icon, rich-text citation and note (§F5)                                             |
+| 2026-10-13 | see git   | **docs drift sweep** — stale hashes, figures and links corrected (branch `docs/drift-2026-10-13`)                                       |

@@ -67,6 +67,14 @@ That's **one engine, one schema**, shown multiple times — two `layoutMode` val
 "13": it counts showcase cards, not engines (the tally grows as fixtures are added).
 Components stay shared (main spec §6); only the fixture content differs.
 
+> **Amended 2026-10-13 (the code is the truth, `src/showcase/fixtures.ts`).** The tally
+> grew as predicted: **24 fixtures across 15 engines** (the three Phase C engines —
+> `flashcards`, `conjugation`, `reading` — come from
+> `docs/specs/2026-07-03-new-exercise-engines-design.md`). `select` now has four cards
+> (the three above plus `select-instructions-override`); `inline-gap` has three;
+> `typed-transform`, `memory-match`, `flashcards` and `conjugation` two each; every
+> other engine one.
+
 ---
 
 ## 4. Anatomy of one exercise config file
@@ -195,6 +203,14 @@ const ExerciseOptionsSchema = z.object({
 That's the **whole** options surface. Three switches, all optional. Reset and the
 show-after-wrong-check reveal are implicit (always on), so they are **not** fields.
 
+> **Amended 2026-10-13 (the code is the truth, `ExerciseOptionsSchema` in
+> `src/config/lo-schema.ts`).** The surface is now **five** optional fields. Added:
+> `showAnswersAfter` (`z.number().int().min(1).optional()` — failed tries before
+> Show answers appears; omitted = the engine's default, see §5.3; maintainer
+> 2026-10-12) and `caseSensitive` (`z.boolean().default(false)` — typed answers only:
+> capitals count when true; accents always count; maintainer 2026-10-08). Reset is still
+> implicit; the reveal is still always on unless `allowShowAnswers: false`.
+
 **`sampleSize` example** — a 20-word vocab bank, quiz a random 5 each visit:
 
 ```jsonc
@@ -219,6 +235,13 @@ reveal rule read different fields in each.
 | **Blank-grading**        | select, inline-choice, radio-quiz, inline-gap, typed-transform, dictation, line-match | `hasChecked`, `checkedResults`, `nCorrect` | back to `getInitialScoringState()` | `hasChecked && nCorrect < total`           |
 | **Sequence / placement** | word-order, phrase-reorder, drag-fill-gaps                                            | `failCount`, `complete`                    | placement state + counters         | attempted, `failCount > 0`                 |
 | **Own model**            | memory-match (card flips), word-spot (click-mark)                                     | per-engine                                 | per-engine                         | per-engine (apply the §5.3 rule in spirit) |
+
+> **Amended 2026-10-13 — "Reveal when" (see the §5.3 amendment; `src/exercises/lib/reveal.ts`).**
+> One gate for every family now: `failedTries >= (showAnswersAfter ?? engine default)`
+> **and** `nCorrect < total`, unless `allowShowAnswers: false`. Each family maps its own
+> state onto `failedTries`: blank-grading → failed Checks; sequence/placement →
+> `failCount`; memory-match → missed pairs; word-spot → wrong clicks. The default is 1,
+> or 2 for word-order, phrase-reorder, drag-fill-gaps and memory-match.
 
 The shared scoring helpers (`getInitialScoringState`, `countCorrect`, `commitCheck`)
 port once and serve the blank-grading family. Scoring fields stay inside each
@@ -316,6 +339,8 @@ starts. Step 13a (schemas) is already done; `options` is the one addition pendin
 - **`after-attempts` reveal gate** — needs a per-family attempt counter and a
   definition of "attempt" for drag exercises. Add only when an exercise needs it;
   the Zod enum won't accept it until then (can't author a gate that does nothing).
+  _(Amended 2026-10-13: no longer deferred — shipped 2026-10-12 as
+  `options.showAnswersAfter`, with a per-family "failed try"; see §5.3, §6.)_
 - **`reshuffleOnReset`** — separate from `shuffle`. Not needed; reset re-applies the
   `shuffle` flag.
 - **`phrase-table` block type** — when content blocks are built (§10).
@@ -327,13 +352,16 @@ starts. Step 13a (schemas) is already done; `options` is the one addition pendin
 ## Decisions log (quick scan)
 
 - 12 engines, **kebab keys**; `ClozeTyping` dropped (= `inline-gap`).
-- Showcase = **14 fixtures** (`select` ×3: rows + inline + multi-blank).
+- Showcase = **14 fixtures** (`select` ×3: rows + inline + multi-blank). _(Amended
+  2026-10-13: now 24 fixtures across 15 engines, `select` ×4 — see §3.)_
 - Config envelope = `type` + `content` (per-type) + `options` (shared) + `labels`.
 - `options` = `{ shuffle?, sampleSize?, allowShowAnswers? }`, all optional, per-instance.
+  _(Amended 2026-10-13: plus `showAnswersAfter?` and `caseSensitive?` — see §6.)_
 - **Reset** always on; re-shuffles when `shuffle: true`.
 - **Shuffle** default **off**; N/A for order-is-answer engines (always scramble).
 - **Show-answers** = after a Check **only if ≥1 wrong**; not configurable;
-  `allowShowAnswers: false` suppresses entirely.
+  `allowShowAnswers: false` suppresses entirely. _(Amended 2026-10-13: now
+  configurable — after `showAnswersAfter` failed tries, engine default 1 or 2; see §5.3.)_
 - Two scoring families (blank-grading / sequence) + two own-model engines.
 - TextEntry cluster: port **as-is**, split only if normalization diverges.
 - `PhraseTable` → out of scope; future content block, not an exercise.

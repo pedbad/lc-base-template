@@ -27,13 +27,14 @@ and `eslint.config.js`. The `README` links here rather than restating it.
 | **Stylelint**               | CSS linting                                    | 6    |
 | **husky** + **lint-staged** | Pre-commit guard (format/lint staged)          | 7    |
 | **Tailwind CSS** (v4)       | Utility-first styling · theme engine           | 8    |
-| **shadcn/ui** + **Lucide**  | Components (18) · icons                        | 9    |
+| **shadcn/ui** + **Lucide**  | Components (19) · icons                        | 9    |
 | **Cambridge Slate tokens**  | Theme: primitive→semantic→component CSS vars   | 10   |
 | **Cambridge typography**    | Open Sans (body) + Feijoa (display) + baseline | 10b  |
 | **Zod**                     | Runtime config validation (fail-fast at load)  | 11   |
 | **Static prerender**        | One `.html` per LO (post-build Bun script)     | 15   |
 | **Course landing page**     | `dist/index.html` — hero + one card per LO     | 15b  |
 | **`loDevPages()` plugin**   | Dev server serves `/<slug>.html` per LO        | 15b  |
+| **markdown-it**             | Renders the docs hub at build time (dev dep)   | 18   |
 
 ---
 
@@ -53,7 +54,7 @@ They are deliberately kept apart so they never undo each other's work
 
 ## Enforcement layers
 
-Formatting and linting are **checked**, not merely suggested. Three layers, weakest
+Formatting and linting are **checked**, not merely suggested. Four layers, weakest
 to strongest:
 
 1. **Editor (format-on-save)** — `.vscode/settings.json`. Convenience only; works
@@ -63,7 +64,8 @@ to strongest:
 3. **Pre-push hook** — husky runs `bun run guards` then `bun run test`. Blocks a push
    whose tests fail. Bypassable with `--no-verify`.
 4. **CI** — GitHub Actions (`.github/workflows/ci.yml`) re-runs `lint` + `lint:css` +
-   `format:check` + `test` + `build` on every PR. The unbypassable wall: a
+   `format:check` + `test` + `build` on every PR to `main` and every push to `main`.
+   The unbypassable wall: a
    `--no-verify` commit still fails here before merge. (All eight guards run inside
    `test`: b–h as the `src/guards/` sweeps, a through its colocated schema tests.)
 
@@ -104,8 +106,8 @@ Layer 1 is the carrot; layers 2–4 are the stick.
   themselves, so no jsdom). Current suite size: the header of `docs/process/TODO.md`.
 - **`bun run guards` — the fast subset** (`vitest run src/guards`). The guards are
   ordinary Vitest tests, so `bun run test` already enforces every one of them; this is
-  the pre-commit check you run when you only want to know whether you broke a repo-wide
-  invariant. 214 tests in ~1s against the full suite's ~4s.
+  the quick check you run before committing when you only want to know whether you broke a repo-wide
+  invariant. 214 tests in about a second against the full suite's ~10s.
   - **Why a path glob and not a list:** every guard's scanner module lives in
     `src/guards/`, so a new guard joins the script the moment its file exists. A
     hand-maintained list is the thing that silently goes stale — the same argument
@@ -388,7 +390,7 @@ needs the number points here rather than restating it.
   other half is now live as well: `src/guards/semantic-dom.ts` renders both pages
   and all 15 engines and checks the spec §17 contract over the **assembled** DOM,
   which is where the composition questions a per-file lint rule cannot ask have
-  answers. It is **not** axe or pa11y, as spec §309 predicted — both need a DOM,
+  answers. It is **not** axe or pa11y, as spec §17 originally predicted — both need a DOM,
   which would reverse the node-env decision above, and neither can express "one
   `<article>` per accordion". See that file's header, and `TODO.md` §A-h.
 - **How it helps:** `bun run lint` must pass before commit (Step 7) and in CI.
@@ -425,7 +427,8 @@ needs the number points here rather than restating it.
   `bun run guards` globs `src/guards/`, so a Stylelint-owned half would silently not
   be in it. Planting a real `!important` and an unlayered rule confirmed it:
   `bun run lint:css` passed clean on both.
-- **How it helps:** `bun run lint:css` (joins the pre-commit hook + CI later).
+- **How it helps:** `bun run lint:css`; also runs on staged `.css` in the pre-commit
+  hook (`stylelint --fix`) and as its own CI step.
 - **No Prettier truce needed:** Stylelint 16+ dropped stylistic rules, so it
   never fights Prettier over CSS layout (the old `stylelint-config-prettier` is
   deprecated — one less dependency).
@@ -459,17 +462,16 @@ needs the number points here rather than restating it.
   Verified Step 7: a staged file with an unused var was blocked
   (`husky - pre-commit script failed (code 1)`) and never entered history.
 - **pre-commit = lint-staged only (no tests):** kept fast and focused on format/lint.
-  The full test suite runs in **CI** (`bun run test`), not on every commit — the standard
-  split: pre-commit = cheap fast checks, CI = full validation.
+  The full test suite runs on **pre-push** and in **CI** (`bun run test`), not on every
+  commit — the standard split: pre-commit = cheap fast checks, push and CI = full validation.
 - **Bypass reality:** `git commit --no-verify` skips the hook. That's expected — the
-  hook is a fast local helper, **CI is the unbypassable wall** (enforcement layer 3).
+  hook is a fast local helper, **CI is the unbypassable wall** (enforcement layer 4).
 - **Rejected:** running the whole test suite or `eslint .` (whole repo) on pre-commit —
   too slow; defeats the point of a fast local gate.
 
 ### pre-push — tests before code leaves the machine
 
-- **What:** `.husky/pre-push` runs `bun run guards` (~1s) then `bun run test` (~6s,
-  measured 2026-10-12). Either failing blocks the `git push`.
+- **What:** `.husky/pre-push` runs `bun run guards` (~1s) then `bun run test` (~10s). Either failing blocks the `git push`.
 - **Why:** colleagues work in **forks**, and GitHub ships every new fork with Actions
   switched **off** until the fork's owner enables it. Until they do, CI never runs on
   their pushes. The pre-push hook is the check they cannot forget to switch on: it
@@ -496,7 +498,8 @@ needs the number points here rather than restating it.
   2. **One import** — `@import 'tailwindcss';` (in `src/index.css`) replaces v3's three
      `@tailwind base/components/utilities` directives.
   3. **First-party Vite plugin** — `@tailwindcss/vite` (faster than the v3 PostCSS path);
-     wired in `vite.config.ts` as `plugins: [react(), tailwindcss()]`.
+     wired in `vite.config.ts` as `plugins: [react(), tailwindcss(), …]` (the repo's own
+     `loDevPages()` and `sandboxDocs()` follow it — see below).
 - **How it helps:** utilities are generated **on demand** by scanning source files, so the
   output CSS only contains classes actually used. Verified Step 8: a probe element
   (`bg-purple-600 rounded-lg text-2xl …`) produced exactly those rules in the built CSS.
@@ -563,8 +566,8 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
      `stylelint --fix` normalised them to `98.5%`/`0deg` (config-standard's `lightness-notation`
      / `hue-degree-notation`). The pre-commit hook auto-fixes this going forward.
 - **Verified (Step 9, headless — preview MCP mis-targets from a french-lo-1-rooted session):**
-  all 19 components added (18 today — `accordion.tsx` was removed in `c631c93` for the
-  native-`details` LoAccordion); `bun run build` ships the Button (`data-slot`, `.inline-flex`) and
+  all 19 components added (`accordion.tsx` was later removed in `c631c93` for the
+  native-`details` LoAccordion, and `dropdown-menu.tsx` added, so still 19 today); `bun run build` ships the Button (`data-slot`, `.inline-flex`) and
   the Lucide Rocket (exact icon path in JS); `lint`/`lint:css`/`test`/`build` all exit 0.
 
 ---
@@ -573,8 +576,8 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 
 - **What:** the colour theme as a 3-layer CSS-variable chain (spec §7.1):
   `palette.css` (primitives, raw brand hex) → `tokens.css` (semantic roles) →
-  Tailwind colour utilities (via the `@theme inline` bridge in `index.css`).
-  Full guide for devs: **`src/styles/README.md`**.
+  Tailwind colour utilities (via the `@theme inline` bridge in `src/styles/app.css`).
+  Full guide: **`DESIGNER.md`**.
 - **Why:** one edit point. Change a value in `palette.css` and every shadcn
   component reskins — no find-replace, no per-component colour. **Guard f**
   (`src/guards/token-integrity.ts`) now enforces it: a colour literal outside
@@ -593,7 +596,8 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   `prefers-color-scheme` block).
 - **Switchable primary presets:** three `tokens-variant-*.css` files ship
   (A Cambridge Blue, B Dark Blue [default], C Warm Blue) — identical except
-  `--primary`/`--ring`. Switch by copying one over `tokens.css` (see README).
+  `--primary`/`--ring`. Switch by copying one over `tokens.css` (see `DESIGNER.md` →
+  Job 2).
   Default = **B**: the only candidate both AAA-accessible **and** a strong CTA on
   white (button-vs-page 12.5:1; A=1.43, C=2.35). Dark mode flips B's primary to
   Cambridge Blue (dark-blue would vanish on the Slate-4 base).
@@ -608,8 +612,8 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 ### Cambridge typography — Open Sans + Feijoa _(Step 10b)_
 
 - **What:** the two official Cambridge typefaces wired through the same token chain
-  as the colours, plus the global type baseline (size + leading). Full dev guide:
-  **`src/styles/README.md` → Fonts**.
+  as the colours, plus the global type baseline (size + leading). Full guide:
+  **`DESIGNER.md` → Job 3**.
 - **Why:** shadcn's `init` (Step 9) pulled **Geist** — generic, not the brand.
   Cambridge's guidelines specify **Feijoa** for display (headings/titles) and
   **Open Sans** for body. Step 10b swaps Geist out.
@@ -628,14 +632,14 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
     presets never touches fonts): `--font-display: 'Feijoa','Open Sans','Arial',sans-serif`
     and `--font-body: 'Open Sans','Arial',sans-serif`. Arial = Cambridge's specified
     system fallback.
-  - `index.css` `@theme inline`: `--font-sans: var(--font-body)` and
+  - `src/styles/app.css` `@theme inline`: `--font-sans: var(--font-body)` and
     `--font-heading: var(--font-display)`. **These two lines re-skin the type of
     every shadcn component** — the structure is kept intact, only the values swap.
 - **Type baseline — researched decisions (the _why_, for future devs):**
   - **Set on `<html>`, not `<body>`** — `rem` units anchor to `<html>`, and
     `line-height` set here inherits globally (including React portals / shadow DOM,
     which can skip a value set on `<body>`).
-  - **`font-size: 100%`, not `16px`** — resolves to 16px (Cambridge min, spec §7.2)
+  - **`font-size: 100%`, not `16px`** — resolves to 16px (the Cambridge minimum)
     but **scales with the user's browser font preference**. A hardcoded `16px` would
     override a vision-impaired user who raised their default — an accessibility fail.
   - **`line-height: 1.4` UNITLESS, not `140%` / `1.4em`** — the "140% trap": a
@@ -739,20 +743,22 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 
 ### Exercise foundation — shared utils + options _(Phase A, spec 2026-06-19)_
 
-- **What:** the React-free foundation under the 12 exercise engines:
-  `src/config/exercise-types.ts` (the 12 canonical kebab `type` keys), the
+- **What:** the React-free foundation under the exercise engines:
+  `src/config/exercise-types.ts` (the canonical kebab `type` keys — 12 ported, 15 since
+  the Phase C engines), the
   `options` block + `type` enum added to `lo-schema.ts`, and three pure utilities
   in `src/exercises/lib/` — `scoring.ts` (blank-grading helpers), `shuffle.ts`
   (immutable seeded shuffle + sampleN), `reveal.ts` (`canRevealAnswers` gate).
 - **Why first:** the example LO referenced engines that did not exist; we build the
   engines first, and these pure pieces are what the first engine (`select`)
   consumes immediately — so nothing here is speculative.
-- **Behavior locked here (spec §5):** Reset is implicit (always on); `shuffle`
+- **Behavior locked here (`docs/specs/2026-06-19-exercise-engines-design.md` §5):** Reset is implicit (always on); `shuffle`
   default off and re-applied on reset; Show-answers reveals only after a Check with
   ≥1 wrong (`allowShowAnswers:false` suppresses it). **Since 2026-10-12** it waits
   for `options.showAnswersAfter` failed tries, by default 1 (2 for the sequence
   engines and memory-match, as french-lo-1); see `src/exercises/lib/reveal.ts`.
-- **Proven via `bun test`** — each util and the schema changes have a colocated
+- **Proven by the test suite** (run as `bun test` at the time; Vitest via `bun run test`
+  since 2026-07-12) — each util and the schema changes have a colocated
   `.test.ts`.
 
 ---
@@ -786,8 +792,9 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 - **Design token added:** `--success` (→ Cambridge green `--cam-green`) +
   `--success-foreground`, bridged to `text-success`/`bg-success`. Every
   blank-grading engine needs a "correct" colour; added once at the token layer
-  (tokens.css + index.css), not hardcoded per engine.
-- **Verified:** `format · lint · lint:css · bun test · build` all green, plus the
+  (tokens.css + the `@theme inline` bridge, now in `src/styles/app.css`), not hardcoded
+  per engine.
+- **Verified:** `format · lint · lint:css · test · build` all green, plus the
   engine seen + tested live in the showcase before commit.
 
 ---
@@ -837,7 +844,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   select), so fixtures can carry refs without a later schema break.
 - **TDD:** `inline-choice-schema.test.ts` was written failing first, then the
   schema made it green.
-- **Verified:** `format · lint · lint:css · bun test · build` all green, plus the
+- **Verified:** `format · lint · lint:css · test · build` all green, plus the
   engine seen + tested live in the showcase before commit.
 
 ---
@@ -885,7 +892,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   question; reject 0/2+ stars; reject empty questions/options + single-option;
   optional explanation+audio; full envelope + wrong-type), then the schema made it
   green.
-- **Verified:** `format · lint · lint:css · bun test · build` all green, plus the
+- **Verified:** `format · lint · lint:css · test · build` all green, plus the
   engine seen + tested live in the showcase before commit.
 - **Deferred / future:** `winners[]` for multi-correct radio-quiz questions (case a)
   and a separate multi-select / checkbox engine (case b, WordSpot-style) are **not**
@@ -906,7 +913,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   render. This is the counterpart to M1 below: H1 isolates what is **unique** per
   engine, M1 isolates what is **shared**.
 - **Boundary:** grading only — no phase/scoring/footer wiring moved here (that is M1).
-- **Verified:** `bun test · lint · build` green. Merged via PRs #1 + #3.
+- **Verified:** `test · lint · build` green. Merged via PRs #1 + #3.
 
 ---
 
@@ -932,7 +939,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   commit each). `seedFromId` local defs: **0 left** (was 4). `inline-gap` and
   `text-entry` keep a local merge reducer only (no `seed`, so out of scope for the hook).
 - **Verified:** pure logic covered by `exerciseScaffold.test.ts` (10 tests); after each
-  engine `bun test · lint · build` green (313 tests). Scaffold merged via PR #2
+  engine `test · lint · build` green (313 tests). Scaffold merged via PR #2
   (`7ff7e55`); adoption via the `feat/scaffold-adoption` branch.
 
 ---
@@ -1007,9 +1014,9 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   mounted. There is no second renderer, so there is nothing to drift. Reversed
   2026-08-06, same day, after the silent-bounce behaviour was seen in practice.
 - **No entry list:** the LO folders are read from `lo-config/` per request, so a new
-  folder is live on the next reload. `build.rollupOptions.input` stays `index.html` +
-  the showcase — registering per-LO entries there would be a list to keep in sync, and
-  it is exactly what was rejected.
+  folder is live on the next reload. `build.rollupOptions.input` stays `main`
+  (`index.html`) plus the opt-in `debugEntries()` — registering per-LO entries there
+  would be a list to keep in sync, and it is exactly what was rejected.
 - **Registered directly in `configureServer`, not in a returned function:** that runs
   the middleware BEFORE Vite's internal ones, so the SPA fallback cannot take the
   request first. `apply: 'serve'` keeps it out of the build entirely.
@@ -1044,7 +1051,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   markup is static, so prerender and first client render are byte-identical — verified,
   not assumed.
 
-### Debug artifacts — one `DEBUG` flag, not two _(buildlist 16, spec §14)_
+### Debug artifacts — one `DEBUG` flag, not two _(buildlist 16, spec §4)_
 
 **Decision:** the repo has two debug pages — `exercise-showcase.html` and
 `debug-sandbox.html` — and ONE env flag emits both: `DEBUG=1 bun run build`. The rule
@@ -1088,7 +1095,8 @@ dependency the debug sandbox introduces, and it never reaches a bundle — verif
   which is sanitising in the parser rather than a second dependency: no DOM-based
   sanitiser, no post-pass. The docs are repo-authored so today's risk is nil, but
   provenance is an argument about today's content and markdown permits raw HTML by spec.
-  It costs nothing — the three rendered docs contain no raw HTML at all.
+  It costs almost nothing — across the four rendered docs the only raw HTML is
+  `STRUCTURE.md`'s two `docs:tree` marker comments, which therefore show as escaped text.
 - **Why markdown-it over `marked`.** `marked` deprecated its own sanitise option and
   points at DOMPurify, which needs a DOM — awkward in a Node build step and a second
   dependency for a promise markdown-it keeps with a flag. markdown-it's default preset

@@ -25,6 +25,11 @@ Slice 1 is deliberately small. It ships the tabs and nothing they could later ho
 | Further components        | word gloss, reveal box; slider and resizable wait for a lesson that needs them  |
 | Nesting                   | depth 1: a tab never holds tabs                                                 |
 
+_(Amended 2026-10-13: media has since shipped — slice 2a,
+[`2026-10-07-tabs-media-design.md`](2026-10-07-tabs-media-design.md). A tab takes an
+optional `media` (image and/or audio, with an optional transcript array) after its
+instructions; see `src/lo/blocks/tabs-block-schema.ts`. The other rows remain later.)_
+
 ## 3. Config shape
 
 ```json
@@ -96,7 +101,9 @@ this slice's.)
 ## 6. Example
 
 `lo-config/lo-00-example/blocks/04-tabs/block.json`, listed in the Grammar section
-after `01-grammar`. Three placeholder tabs, rich text only.
+after `01-grammar`. Three placeholder tabs, rich text only. _(Amended 2026-10-13: the
+shipped example now has four tabs, three of them with media — image, audio and
+transcript — from slice 2a.)_
 
 ## 7. Verification
 

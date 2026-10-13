@@ -28,7 +28,8 @@ bun run format && bun run lint && bun run lint:css && bun run test && bun run bu
   `import.meta.glob` in `src/lo/load-lo-glob.ts` and reports a false failure.
 - `bun run guards` is the fast invariant sweep (~1s). A subset of `test`, never a
   substitute for the gate above.
-- Run the gate before every commit. Do not report success without running it.
+- Run the gate before every commit. Do not report success without running it. The
+  pre-push hook re-runs `guards` and `test`, but it is a backstop, not the gate.
 
 ## Hard constraints — these break the build
 
@@ -39,7 +40,10 @@ bun run format && bun run lint && bun run lint:css && bun run test && bun run bu
    `import.meta.glob` is Vite-only syntax. `load-lo-disk.ts` is the Node reader.
 3. **Every URL goes through `%BASE_URL%` (static head), `resolveAsset()`
    (runtime) or `resolveHomeHref()` (page links).** Never a bare relative or
-   root-absolute path. Verify under a sub-path: `BASE_URL=/course/ bun run build`.
+   root-absolute path. The one exception is a CSS `url()` to a `public/` file, which
+   is root-absolute because Vite rewrites it against the base (the Feijoa
+   `@font-face` rules in `src/styles/app.css`). Verify under a sub-path:
+   `BASE_URL=/course/ bun run build`.
 4. **Prerendered markup must equal the first client render.** Anything that
    cannot exist server-side goes behind `useIsHydrated`.
 5. **Never commit `.claude/tdd-guard/`** or `public/fonts/feijoa/*`.
@@ -88,7 +92,7 @@ guard to make a change pass** — if a guard fires, the code is wrong, or the ru
 genuinely needs a written-down narrowing with its reasoning in the guard header.
 
 The canonical short list is
-[`CONTRIBUTING.md` → "The 8 guards"](CONTRIBUTING.md#coming-as-the-template-grows).
+[`CONTRIBUTING.md` → "The 8 guards"](CONTRIBUTING.md#locked-spec-decisions).
 Do not fork a second copy of it.
 
 ## Commits

@@ -65,30 +65,30 @@ The theme is a chain of three links. Each link only ever reads the one above it.
 palette.css          →   tokens.css              →   every component
 Layer 1              Layer 2/3                       flashcards.css, home.css, …
 RAW VALUES           MEANINGS                        USES the meanings
---slate-3: #546072       --border: var(--slate-3)        border-color: var(--border)
+--slate-2: #b5bdc8       --border: var(--slate-2)        border-color: var(--border)
 "this exact grey"        "the colour of borders"         "draw a border"
 ```
 
 Read it right to left: a component asks for "the border colour", not for
-"#546072". So changing `--slate-3` once at the top changes every border in the
+"#b5bdc8". So changing `--slate-2` once at the top changes every border in the
 course — and nothing downstream had to know.
 
 That only holds while **no raw colour is ever written further down the chain**.
-A `#546072` typed straight into a component becomes invisible from the top: the
+A `#b5bdc8` typed straight into a component becomes invisible from the top: the
 next re-skin edits `palette.css`, that one component ignores it, and you get a
 slightly-wrong colour nobody can find. The template enforces the rule
 automatically — see [If a test goes red](#if-a-test-goes-red) below.
 
 ### The files
 
-| File                                  | Layer                 | Edit it when…                                            |
-| ------------------------------------- | --------------------- | -------------------------------------------------------- |
-| `palette.css`                         | 1 · primitives        | re-skinning the brand — the **only** place raw hex lives |
-| `tokens.css`                          | 2/3 · semantic ACTIVE | never by hand — it is a copy of one preset below         |
-| `tokens-variant-a-cambridge-blue.css` | preset                | switching the primary / CTA colour                       |
-| `tokens-variant-b-dark-blue.css`      | preset (default)      | switching the primary / CTA colour                       |
-| `tokens-variant-c-warm-blue.css`      | preset                | switching the primary / CTA colour                       |
-| `layout.css`                          | layout (not colour)   | changing the page width, gutter or reading measure       |
+| File                                  | Layer                 | Edit it when…                                             |
+| ------------------------------------- | --------------------- | --------------------------------------------------------- |
+| `palette.css`                         | 1 · primitives        | re-skinning the brand — the **only** place raw hex lives  |
+| `tokens.css`                          | 2/3 · semantic ACTIVE | never by hand — it carries the values of one preset below |
+| `tokens-variant-a-cambridge-blue.css` | preset                | switching the primary / CTA colour                        |
+| `tokens-variant-b-dark-blue.css`      | preset (default)      | switching the primary / CTA colour                        |
+| `tokens-variant-c-warm-blue.css`      | preset                | switching the primary / CTA colour                        |
+| `layout.css`                          | layout (not colour)   | changing the page width, gutter or reading measure        |
 
 All six are in **`src/styles/`**. `app.css` (beside them, imported by both the course
 stylesheet `src/index.css` and the debug pages' `src/debug.css`) imports `palette.css`,
@@ -159,8 +159,10 @@ sandbox's own nav.
 Open **`src/styles/palette.css`** and change the hex values. That is the whole job.
 
 The palette is two ramps — `--slate-*` (the neutral greys the interface is built
-from) and `--cam-*` (the Cambridge brand accents) — plus `--paper` (the page ground)
-and `--white`. Replace those values with
+from) and `--cam-*` (the Cambridge brand accents) — plus `--amber-deep` and
+`--amber-soft` (warning, light and dark), `--paper` (the page ground) and `--white`.
+The same file holds the two font tokens, `--font-display` and `--font-body` (see
+Job 3). Replace those values with
 another institution's and the entire course follows — every component, light
 mode and dark mode.
 
@@ -255,7 +257,7 @@ filenames the `@font-face` rules expect.
 ### Type baseline
 
 Set on `<html>` in `src/styles/app.css`: `font-size: 100%` (16px, but it scales with the
-reader's own browser setting — Cambridge minimum 16px, spec §7.2) and a
+reader's own browser setting — the Cambridge minimum is 16px) and a
 **unitless** `line-height: 1.4` (140% leading; unitless so nested text scales
 rather than freezing). Change these knowingly; they are accessibility floors.
 
@@ -312,7 +314,7 @@ how specific, so one stray rule can quietly override the whole design system.
 
 These are guards **f** (token integrity) and **g** (CSS layer discipline), in
 `src/guards/`. The full list of eight is in
-[`CONTRIBUTING.md`](CONTRIBUTING.md#coming-as-the-template-grows).
+[`CONTRIBUTING.md`](CONTRIBUTING.md#locked-spec-decisions).
 
 ---
 
