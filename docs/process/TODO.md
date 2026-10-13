@@ -1701,7 +1701,7 @@ no-preference` only.
   next steps (coverage rule in CI first) and open questions:
   `2026-10-12-team-workflow-handover.md`.
 
-**Found in the pre-handover check (2026-10-13). Do E4–E6 before colleagues get access** (E3 done).
+**Found in the pre-handover check (2026-10-13). Do E4 and E5 before colleagues get access** (E3, E6 done).
 
 - **E3 — TDD guard off by default. DONE 2026-10-14** (maintainer's decision). The
   committed `.claude/settings.json` ran `bunx tdd-guard` before every Claude
@@ -1724,10 +1724,11 @@ no-preference` only.
   (handover §3 item 4), but Feijoa is not committed (licence), so a CI-built zip ships
   the fallback font. Decide: build on the maintainer's machine, or give CI the fonts
   from a private place. Deploy targets per course are still open too (handover §4).
-- **E6 — content folders still owned in `CODEOWNERS`.** `ORGANIZATION.md` step 5:
-  before the first course repo exists, make `/lo-config/`, `/public/images/` and
-  `/public/audio/` ownerless, or `* @pedbad` makes content-only PRs wait for the
-  maintainer, against the 2026-10-12 decision that content needs no approval.
+- **E6 — content folders ownerless in `CODEOWNERS`. DONE 2026-10-14.**
+  `/lo-config/`, `/public/images/` and `/public/audio/` sit after the `* @pedbad` line
+  with no owner (`ORGANIZATION.md` step 5), so a content-only PR needs no approval once
+  branch protection requires code-owner review (E1); CI still validates it. CONTRIBUTING's
+  green path now says which content skips review. Course repos inherit the file.
 - **E7 — Claude skills that ship with the repo, test-first built in** (maintainer,
   2026-10-14; the idea is handover §3 item 3). Task recipes in `.claude/skills/`, so
   every course repo inherits them and a template sync updates them: `add-lo`,
