@@ -40,8 +40,10 @@ jobs:
       - name: Check formatting (Prettier)
         run: bun run format:check
 
-      - name: Test (Vitest)
-        run: bun run test
+      # Coverage only here, not in the pre-push hook: per-file bars fail a pull
+      # request whose new code has no test (docs/TOOLING.md, "Coverage").
+      - name: Test with coverage (Vitest)
+        run: bun run test:coverage
 
       - name: Build (tsc + vite)
         run: bun run build

@@ -67,8 +67,54 @@ export default defineConfig({
     // Explicit imports in every test (no globals) — keep it that way for clarity.
     globals: false,
     // `default` = human console output; `tdd-guard-vitest` writes results to
-    // .claude/tdd-guard/data/test.json so the repo-local TDD guard (see
-    // .claude/settings.json) can read Red/Green state. projectRoot pins that path.
+    // .claude/tdd-guard/data/test.json, which the TDD guard reads when someone opts
+    // in to it (off by default — docs/TOOLING.md, "TDD guard"). projectRoot pins it.
     reporters: ['default', ['tdd-guard-vitest', { projectRoot: import.meta.dirname }]],
+    // Coverage runs in CI only (`bun run test:coverage`), never in the pre-push hook.
+    // Per-file bars, so a new file with no test at all (0%) fails instead of
+    // disappearing into an average. Measured and agreed: docs/TOOLING.md, "Coverage".
+    coverage: {
+      provider: 'v8',
+      // Every source file counts, including ones no test imports.
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'src/**/*.test.{ts,tsx}',
+        'src/**/*.d.ts',
+        'src/**/*.fixture.ts',
+        // Vendored shadcn wrappers belong to the shadcn CLI, not this repo.
+        'src/components/ui/**',
+        // The browser entry: one createRoot/hydrate call.
+        'src/main.tsx',
+        // Debug pages, built only under DEBUG=1.
+        'src/sandbox/**',
+        'src/showcase/**',
+        'src/ui-showcase/**',
+        // Wiring, not logic. lazyRegistry is a table of lazy() imports that only a
+        // browser resolves; its keys are checked by registry-completeness.
+        'src/exercises/lazyRegistry.ts',
+        // Vite plugin glue that only runs inside a dev server / build.
+        'src/build/lo-dev-pages.ts',
+        'src/build/sandbox-docs-plugin.ts',
+      ],
+      reporter: ['text-summary', 'json-summary'],
+      // Vitest checks EVERY file against the top-level bar as well as against any
+      // glob it matches, so the top level stays 0 and each group names its files.
+      // `perFile` is read ONLY here, never inside a glob entry: without it each glob
+      // is one average, and a small untested file vanishes into it (verified
+      // 2026-10-14 — an untested file passed until this moved up here).
+      thresholds: {
+        perFile: true,
+        lines: 0,
+        // Logic: grading, schemas, config, src/lo, src/build, src/lib — every .ts
+        // that is not browser glue (below).
+        'src/!(audio|hooks)/**/!(use*|reorderAnimation).ts': { lines: 80 },
+        // Views: the suite renders static markup, so event handlers never run.
+        // The floor catches a component with no test; raise it as tests grow.
+        'src/**/*.tsx': { lines: 20 },
+        // Browser glue — src/hooks/, src/audio/, use*.ts, reorderAnimation.ts
+        // (scroll, audio, animation) — needs a DOM to test: counted and reported,
+        // no bar yet.
+      },
+    },
   },
 });
