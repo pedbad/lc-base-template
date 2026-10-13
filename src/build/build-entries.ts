@@ -13,6 +13,9 @@
  * THE FIX. Both are opt-in per build, behind ONE flag. `bun run build` — what CI and any
  * deploy runs — emits the course only. `DEBUG=1 bun run build` adds both back.
  *
+ * A third joined on 2026-10-13: `ui-showcase.html`, every block type rendered through
+ * the course page's own renderers (TODO §F4). Same rule, same flag, same list.
+ *
  * WHY ONE FLAG AND NOT TWO. Two flags would be two fail-closed rules to keep in step for
  * no gain: the dev server serves BOTH pages regardless of this list, so nobody needs a
  * deploy carrying one debug page and not the other. One name, one decision, one place a
@@ -51,6 +54,7 @@ const TRUTHY = ['1', 'true'];
 export const DEBUG_ENTRY_FILES = {
   showcase: 'exercise-showcase.html',
   sandbox: 'debug-sandbox.html',
+  ui: 'ui-showcase.html',
 } as const;
 
 /** Whether one env value reads as an explicit yes. */

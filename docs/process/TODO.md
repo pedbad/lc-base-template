@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-13 · **HEAD:** see `git log` · **Suite:** 158 files · 1661 tests green
+**Last updated:** 2026-10-13 · **HEAD:** see `git log` · **Suite:** 161 files · 1683 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -56,8 +56,7 @@ is exactly what the paragraph above is about.
   and dark: no horizontal scroll, cards stack below 1024 and sit two-up from 1024, and
   axe scoped to `#sources` reports no violations at any width.
 - **Then ask the maintainer what is next.** Candidates: §F2 (the remaining tabs-panel
-  entries), §F3 (tabs on phones), §F4 (`ui-showcase.html`, the block showcase the
-  maintainer asked about on 2026-10-12), §F6 (further components), the §E2 queue (the
+  entries), §F3 (tabs on phones), §F6 (further components), the §E2 queue (the
   ordered list in `2026-10-12-team-workflow-handover.md` §3, "Next, in order"; coverage
   rule in CI first), or a Deferred item.
   **Budget first:** CSS headroom is 0.91 kB after the cap went to 19 kB (`docs/TOOLING.md`, "Bundle budget"), so
@@ -1694,7 +1693,7 @@ no-preference` only.
 
 ---
 
-## F. Composite UI blocks — F1, F2a and F5 done
+## F. Composite UI blocks — F1, F2a, F4 and F5 done
 
 Reusable components authors drop into LO pages through config. Brainstorm decisions,
 the slice-1 scope and the open list live in
@@ -1711,8 +1710,18 @@ the slice-1 scope and the open list live in
 - **F3 — phones:** the dropdown chosen in the brainstorm (slice 1 stacks instead).
   Verify: below the phone breakpoint the tabs render as a dropdown, operable by keyboard
   alone; no sideways scroll at 320; axe clean in both themes.
-- **F4 — `ui-showcase.html`** behind `DEBUG_ENTRY_FILES`, rendering through the same
-  renderers. Verify: absent from `bun run build`, present under `DEBUG=1`.
+- **F4 — `ui-showcase.html`. DONE 2026-10-13** (`feat/ui-showcase`). Behind
+  `DEBUG_ENTRY_FILES`; absent from `bun run build`, present under `DEBUG=1`, base-aware
+  under `BASE_URL=/course/`. One section per registered block type, each shown both
+  `plain` and as a `card`: the example LO's own blocks first, an authored fixture only
+  for a type the example lacks (`prose`), then the missing presentation as a flipped
+  copy (`src/ui-showcase/block-groups.ts`). Every item renders through `LoBlock`, now
+  extracted from `lo-page-sections.tsx` so the course page and the showcase share one
+  path. `src/ui-showcase/` is kept out of `main-*.css` like the other debug folders (CSS
+  unchanged at 18.09 kB). Browser: 375 and 1440, light and dark, no sideways scroll, no
+  console errors. **Axe: one moderate `landmark-unique`** — the grammar block's table
+  region appears twice (card, then its plain copy) under the same caption, so two
+  regions share a name. A cost of showing the same content twice; open for a decision.
 - **F5 — `sources` block. DONE 2026-10-12** (references list: grouped, print/web
   icon, rich-text citation, optional note), for the legacy LOs' "Sources" pages. Plan
   `2026-10-12-sources-block-plan.md`. Gate green, CSS unchanged, JS +0.91 kB. Seen in a

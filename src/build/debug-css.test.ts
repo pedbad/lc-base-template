@@ -19,7 +19,7 @@ import { describe, expect, it } from 'vitest';
 const SRC = path.resolve(import.meta.dirname, '..');
 const read = (relative: string): string => readFileSync(path.join(SRC, relative), 'utf-8');
 
-const DEBUG_FOLDERS = ['./sandbox', './showcase'] as const;
+const DEBUG_FOLDERS = ['./sandbox', './showcase', './ui-showcase'] as const;
 
 describe('debug pages have their own stylesheet', () => {
   it('index.css does not scan the debug folders', () => {
@@ -42,7 +42,7 @@ describe('debug pages have their own stylesheet', () => {
     });
   });
 
-  it.each(['sandbox/main.tsx', 'showcase/main.tsx'])(
+  it.each(['sandbox/main.tsx', 'showcase/main.tsx', 'ui-showcase/main.tsx'])(
     '%s loads debug.css, not index.css',
     (entry) => {
       const source = read(entry);

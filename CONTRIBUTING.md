@@ -56,10 +56,10 @@ gates below are active immediately, no manual `git config` step.
 | `bun run format`        | Prettier — rewrite all files to the house style                         |
 | `bun run format:check`  | Prettier — verify formatting without writing                            |
 | `bun run docs:tree`     | Regenerate the folder tree in `STRUCTURE.md`                            |
-| `DEBUG=1 bun run build` | Build, plus the two debug pages — showcase and sandbox                  |
+| `DEBUG=1 bun run build` | Build, plus the three debug pages — both showcases and the sandbox      |
 
-`bun run dev` serves `/debug-sandbox.html` and `/exercise-showcase.html` whether or not
-that flag is set — **bookmark the two URLs**. Nothing in the course links to them and
+`bun run dev` serves `/debug-sandbox.html`, `/exercise-showcase.html` and
+`/ui-showcase.html` whether or not that flag is set — **bookmark the three URLs**. Nothing in the course links to them and
 nothing should: a deployed build contains neither file, so an in-course link would work
 locally and 404 for every reader. (Vite takes 5174 when 5173 is busy; it prints the port
 it chose.)

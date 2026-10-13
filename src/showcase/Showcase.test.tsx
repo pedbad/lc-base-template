@@ -35,8 +35,9 @@ describe('Showcase nav', () => {
     });
   });
 
-  test('links to the debug sandbox and course home, not to itself', () => {
+  test('links to the other debug pages and course home, not to itself', () => {
     expect(nav).toContain('href="/debug-sandbox.html"');
+    expect(nav).toContain('href="/ui-showcase.html"');
     expect(nav).not.toContain('href="/exercise-showcase.html"');
     expect(nav).toContain('Course home');
   });

@@ -16,11 +16,12 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, test } from 'vitest';
+import { DEBUG_ENTRY_FILES } from './build-entries';
 
 const ROOT = path.resolve(import.meta.dirname, '../..');
 const ORDER = '@layer properties, theme, base, components, utilities;';
 
-describe.each(['index.html', 'exercise-showcase.html', 'debug-sandbox.html'])('%s', (file) => {
+describe.each(['index.html', ...Object.values(DEBUG_ENTRY_FILES)])('%s', (file) => {
   const html = readFileSync(path.join(ROOT, file), 'utf8');
   const head = html.slice(html.indexOf('<head>'), html.indexOf('</head>'));
 

@@ -9,6 +9,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { findRawAssetSinks, findRelativeHeadAssets, guardedSourceFiles } from './asset-path';
+import { DEBUG_ENTRY_FILES } from '../build/build-entries';
 
 const REPO_ROOT = path.resolve(import.meta.dirname, '../..');
 
@@ -150,8 +151,8 @@ describe('the repo itself obeys guard c', () => {
   });
 
   it('prefixes every static <head> asset with %BASE_URL%', () => {
-    const violations = ['index.html', 'exercise-showcase.html', 'debug-sandbox.html'].flatMap(
-      (name) => findRelativeHeadAssets(readFileSync(path.join(REPO_ROOT, name), 'utf-8'), name),
+    const violations = ['index.html', ...Object.values(DEBUG_ENTRY_FILES)].flatMap((name) =>
+      findRelativeHeadAssets(readFileSync(path.join(REPO_ROOT, name), 'utf-8'), name),
     );
     expect(
       violations,

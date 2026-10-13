@@ -1,6 +1,6 @@
 /**
- * DebugPageHeader.test.tsx — the one header both debug pages share (the sandbox and the
- * exercise showcase), so their navs cannot drift apart.
+ * DebugPageHeader.test.tsx — the one header all three debug pages share (the sandbox,
+ * the exercise showcase and the UI showcase), so their navs cannot drift apart.
  */
 import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -36,9 +36,9 @@ describe('DebugPageHeader', () => {
     expect(html).not.toContain('href="#one"');
   });
 
-  test('the nav holds exactly three plain links: the other debug page, course home, the repo', () => {
+  test('the nav holds exactly four plain links: the other two debug pages, course home, the repo', () => {
     const nav = /<nav[^>]*>.*?<\/nav>/s.exec(html)?.[0] ?? '';
-    expect(nav.match(/<a /g)).toHaveLength(3);
+    expect(nav.match(/<a /g)).toHaveLength(4);
   });
 
   // Maintainer, 2026-10-13: both debug pages link to the source. An external link, so
@@ -52,8 +52,9 @@ describe('DebugPageHeader', () => {
     expect(repo).toMatch(/class="sr-only">[^<]*\(opens in a new tab\)/);
   });
 
-  test('links to the OTHER debug page and to course home, through the base', () => {
+  test('links to the OTHER debug pages and to course home, through the base', () => {
     expect(html).toContain('href="/exercise-showcase.html"');
+    expect(html).toContain('href="/ui-showcase.html"');
     expect(html).not.toContain('href="/debug-sandbox.html"');
     expect(html).toContain('Course home');
   });

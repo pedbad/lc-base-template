@@ -16,15 +16,16 @@ A build emits a static course: a landing page plus one page per Learning Object.
   page's body is prerendered, so it reads and navigates without JavaScript, and
   hydrates into the interactive app when JavaScript runs.
 
-Two debug pages exist and are **not part of a deployed course**. The exercise
+Three debug pages exist and are **not part of a deployed course**. The exercise
 showcase (`exercise-showcase.html`) is a gallery of every engine driven by
-fixtures; the debug sandbox (`debug-sandbox.html`) is a theme-token, typography
+fixtures; the UI showcase (`ui-showcase.html`) renders every block type, as a
+plain block and as a card, through the course page's own renderers; the debug sandbox (`debug-sandbox.html`) is a theme-token, typography
 and icon reference for the designer that also renders `DESIGNER.md`,
-`CONTRIBUTING.md`, `STRUCTURE.md` and `AGENTS.md` as HTML. Both are
+`CONTRIBUTING.md`, `STRUCTURE.md` and `AGENTS.md` as HTML. All three are
 **opt-in per build** behind one fail-closed flag (`DEBUG=1 bun run build`,
-or the older name `SHOWCASE=1`), so a deployed course contains neither unless
+or the older name `SHOWCASE=1`), so a deployed course contains none of them unless
 that flag was set. They are listed here so their absence is not mistaken for a
-broken link; do not treat either as a page of the course.
+broken link; do not treat any of them as a page of the course.
 
 ## Content blocks
 

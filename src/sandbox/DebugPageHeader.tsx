@@ -1,13 +1,13 @@
 /**
- * DebugPageHeader — the header both debug pages share: the sandbox and the exercise
- * showcase. Title, a one-line description, the theme switch, and a nav holding a
- * "jump to" menu of the page's own sections plus three plain links — the OTHER debug
- * page, course home and the GitHub repo. The sections sit in a shadcn dropdown because the showcase has 25 of
- * them, and a wrapping row of links that long is noise. One component, so the two navs
- * cannot drift apart.
+ * DebugPageHeader — the header all three debug pages share: the sandbox, the exercise
+ * showcase and the UI showcase. Title, a one-line description, the theme switch, and a
+ * nav holding a "jump to" menu of the page's own sections plus four plain links — the
+ * two OTHER debug pages, course home and the GitHub repo. The sections sit in a shadcn
+ * dropdown because the exercise showcase has 25 of them, and a wrapping row of links
+ * that long is noise. One component, so the navs cannot drift apart.
  *
- * It lives in `src/sandbox/` because the sandbox had it first; the showcase imports it.
- * Both pages are debug-only (`DEBUG=1`, see build-entries.ts), so neither ships.
+ * It lives in `src/sandbox/` because the sandbox had it first; the showcases import it.
+ * All three pages are debug-only (`DEBUG=1`, see build-entries.ts), so none ships.
  *
  * Cross-page hrefs go through `resolveAsset` / `resolveHomeHref`, never a bare relative
  * path, so they survive a non-root base. The repo link is absolute and external, so it
@@ -31,13 +31,14 @@ export interface DebugSection {
   readonly label: string;
 }
 
-/** The two debug pages. Each links to the one it is not. */
-type DebugPage = 'sandbox' | 'showcase';
+/** The three debug pages. Each links to the two it is not. */
+type DebugPage = 'sandbox' | 'showcase' | 'ui';
 
-const OTHER_PAGE: Readonly<Record<DebugPage, { href: string; label: string }>> = {
-  sandbox: { href: 'exercise-showcase.html', label: 'Exercise showcase' },
-  showcase: { href: 'debug-sandbox.html', label: 'Debug sandbox' },
-};
+const DEBUG_PAGES: readonly { page: DebugPage; href: string; label: string }[] = [
+  { page: 'sandbox', href: 'debug-sandbox.html', label: 'Debug sandbox' },
+  { page: 'showcase', href: 'exercise-showcase.html', label: 'Exercise showcase' },
+  { page: 'ui', href: 'ui-showcase.html', label: 'UI showcase' },
+];
 
 /**
  * The template's source. When the repo moves to the organisation
@@ -54,7 +55,7 @@ interface DebugPageHeaderProps {
   sections: readonly DebugSection[];
   /** The menu button's text, e.g. "Jump to card". */
   jumpLabel: string;
-  /** Which page this is, so the nav links to the other one and not to itself. */
+  /** Which page this is, so the nav links to the others and not to itself. */
   current: DebugPage;
 }
 
@@ -76,7 +77,7 @@ export function DebugPageHeader({
   jumpLabel,
   current,
 }: DebugPageHeaderProps) {
-  const other = OTHER_PAGE[current];
+  const others = DEBUG_PAGES.filter((entry) => entry.page !== current);
   return (
     <header className="border-b border-border bg-card">
       <div className="page-frame flex flex-wrap items-center gap-x-6 gap-y-3 py-4">
@@ -105,9 +106,11 @@ export function DebugPageHeader({
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          <a className={LINK_CLASS} href={resolveAsset(other.href)}>
-            {other.label}
-          </a>
+          {others.map((other) => (
+            <a key={other.page} className={LINK_CLASS} href={resolveAsset(other.href)}>
+              {other.label}
+            </a>
+          ))}
           <a className={LINK_CLASS} href={resolveHomeHref()}>
             Course home
           </a>
