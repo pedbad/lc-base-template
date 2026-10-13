@@ -8,12 +8,12 @@
  * The lead is its title. Lead and list are body size in full ink, overriding the
  * callout's `text-sm` and muted description on the children, so `Callout` is untouched.
  *
- * 7:5 AT `lg`, STACKED BELOW IT; ONE COLUMN WHEN THERE IS NO IMAGE. The card takes the
- * wider track so outcomes wrap less beside the art; 768 is too narrow for two columns
- * carrying artwork. Tracks are `minmax(0,Nfr)` rather than a bare `fr` because a long
+ * 5:7 AT `lg`, STACKED BELOW IT; ONE COLUMN WHEN THERE IS NO IMAGE. The image takes the
+ * wider track and the card the narrower (maintainer, 2026-10-13: art leads, the list
+ * is short); 768 is too narrow for two columns carrying artwork. Tracks are `minmax(0,Nfr)` rather than a bare `fr` because a long
  * unbroken word in an outcome blows out an `fr` track and takes the page into
  * horizontal overflow with it. Without an image the card holds the reading measure
- * instead of sitting in a 7/12 track beside a gap.
+ * instead of sitting in a 5/12 track beside a gap.
  *
  * NO STYLESHEET AND NO TOKEN. `VocabularyBlock` is the precedent: a block renderer
  * lays itself out with utilities. That keeps this out of guard f (raw `px`) and guard
@@ -79,7 +79,7 @@ export function OutcomesBlock({ content }: { content: unknown }) {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-start">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start">
       {callout}
       <div className="aspect-[3/2] w-full overflow-hidden rounded-lg border bg-card shadow-sm">
         <img

@@ -165,7 +165,7 @@ needs the number points here rather than restating it.
 | `main-*.css` | **< 18 kB**      | 17.96 kB            | 0.04 kB  |
 
 - **Outcomes as an info callout (2026-10-13): JS 113.41 → 113.45 kB, CSS 17.91 →
-  17.96 kB.** Reuses `Callout`; the CSS is the few new utilities (the 7:5 track, the
+  17.96 kB.** Reuses `Callout`; the CSS is the few new utilities (the 5:7 track, the
   18px tick, the image frame). **0.04 kB of CSS headroom is left: the next CSS change
   needs a budget lever first** (TODO "Then ask the maintainer").
 - **Sources block (2026-10-12, TODO §F5): JS 112.50 → 113.41 kB, CSS unchanged.**
