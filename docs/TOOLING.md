@@ -125,22 +125,46 @@ Layer 1 is the carrot; layers 2–4 are the stick.
   test imported only `test/expect/describe/afterEach` (zero Bun-specific mock/spy
   APIs), so only the import source changed (`bun:test` → `vitest`).
 
-### TDD guard — repo-local, opt-in, travels with the template
+### TDD guard — off by default, opt in per machine _(decision 2026-10-14)_
 
 - **What:** `tdd-guard` (`nizos/tdd-guard`) — a Claude Code `PreToolUse` hook that
-  blocks implementation writes unless a failing test exists (enforces Red→Green).
-- **How it's wired here:** **repo-local, not global.** The hook lives in this repo's
-  committed `.claude/settings.json` (`bunx tdd-guard` on Write/Edit), and the Vitest
-  reporter `tdd-guard-vitest` writes Red/Green state to
-  `.claude/tdd-guard/data/test.json` (gitignored). Cloning the template + `bun install`
-  is all a future LO author needs — the guard comes with the repo.
-- **Why repo-local:** it is deliberately **off** in any developer's global Claude
-  settings, so it guards work in THIS template without misfiring on their other
-  (non-Vitest) projects.
-- **Muting locally:** set `.claude/tdd-guard/data/config.json` → `{"guardEnabled":false}`
-  (gitignored, per-machine). The guard only affects Claude Code sessions — it is a
-  helper, not the real gate. **CI (lint · test · build) + branch protection are the
-  actual wall** that keeps mess out of the template.
+  blocks implementation writes unless a failing test exists (enforces Red→Green). The
+  Vitest reporter `tdd-guard-vitest` (wired in `vite.config.ts`) writes the Red/Green
+  state it reads to `.claude/tdd-guard/data/test.json` (gitignored); with the guard
+  off it is a harmless file. Both stay in `devDependencies` for anyone who opts in.
+- **Why off (2026-10-14, maintainer):** each check is a **headless** Claude call (the
+  Agent SDK, signed in as the developer). On the maintainer's Claude Team account those
+  calls are not covered by the seat: since 2026-10-12 they fail with `Credit balance
+is too low`, and the guard fails closed, so every Claude edit was blocked — and a
+  committed hook would have done the same to every colleague and every course repo.
+  Reproduced 2026-10-14: `claude -p` alone returns the same error while interactive
+  Claude Code works. Whether a given account pays for headless calls is a billing
+  question for its admin.
+- **The rule still stands without it:** `AGENTS.md` tells agents to start new code from
+  a failing test, and CI is the enforcement that costs nothing — the planned coverage
+  rule (TODO §E) fails a pull request whose new code has no tests. The guard checks
+  edits as they happen, so it cannot audit finished code before a deploy.
+- **Opting in** (a session where you want the lock and have credit): add the hook to
+  `.claude/settings.local.json`, which is gitignored, then restart Claude Code.
+
+  ```json
+  {
+    "hooks": {
+      "PreToolUse": [
+        {
+          "matcher": "Write|Edit|MultiEdit",
+          "hooks": [{ "type": "command", "command": "bunx tdd-guard" }]
+        }
+      ]
+    }
+  }
+  ```
+
+  Mute it again with `{"guardEnabled":false}` in `.claude/tdd-guard/data/config.json`
+  (gitignored, per machine), or remove the hook. Its `claude_cli` route
+  (`MODEL_TYPE=claude_cli`) looks for `~/.claude/local/claude`; a current install needs
+  `USE_SYSTEM_CLAUDE=true` as well. **Never write files through the shell to get past
+  it** — mute it instead.
 
 ### Vite — dev server + bundler
 

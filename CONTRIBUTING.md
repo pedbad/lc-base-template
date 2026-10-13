@@ -324,7 +324,7 @@ keeps every course consistent — **add content as data; don't quietly change th
 - `src/config/**` — the LO / exercise **schemas** and course config (the content contract).
 - `src/exercises/lazyRegistry.ts` + `src/exercises/lib/**` — core engine wiring / shared scaffold.
 - `.github/**`, `vite.config.ts`, `package.json`, `bun.lock`, tsconfig/eslint/prettier/stylelint,
-  `.claude/settings.json` — build, CI, and the TDD-guard setup.
+  `.claude/settings.json` — build, CI, and the repo's Claude Code settings.
 - `docs/specs/**` — the canonical specs authors build against.
 
 If a content PR finds itself editing a file in the second list, that's the signal to **stop

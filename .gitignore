@@ -40,3 +40,5 @@ graphify-out/
 
 # tdd-guard agent runtime scratch (per-machine state; .claude/launch.json stays tracked)
 .claude/tdd-guard/
+# Personal Claude Code settings, including an opted-in TDD guard (docs/TOOLING.md)
+.claude/settings.local.json
