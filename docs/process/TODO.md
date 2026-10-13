@@ -1701,6 +1701,31 @@ no-preference` only.
   next steps (coverage rule in CI first) and open questions:
   `2026-10-12-team-workflow-handover.md`.
 
+**Found in the pre-handover check (2026-10-13). Do E3–E6 before colleagues get access.**
+
+- **E3 — the TDD guard blocks every Claude Code user in the repo.** The committed
+  `.claude/settings.json` runs `bunx tdd-guard` before every Claude `Write`/`Edit`, and
+  it fails closed: on 2026-10-13 `Credit balance is too low` blocked a plain file write.
+  A colleague asking Claude to edit lesson JSON hits the same wall, and every course
+  repo inherits the file. Make it opt-in (off unless a maintainer enables it), or at
+  least document it in the E4 guide. Verify: a fresh clone without
+  `.claude/tdd-guard/data/config.json` lets Claude write a file.
+- **E4 — the colleague guide** (handover §3 item 2). A short page for the course-repo
+  colleague: the daily loop, which folders they may edit, how a template update arrives.
+  CONTRIBUTING is written for template developers, not for them. Link it, don't copy it.
+- **E5 — deploy route, and Feijoa.** "Release → zip in CI" is the preferred route
+  (handover §3 item 4), but Feijoa is not committed (licence), so a CI-built zip ships
+  the fallback font. Decide: build on the maintainer's machine, or give CI the fonts
+  from a private place. Deploy targets per course are still open too (handover §4).
+- **E6 — content folders still owned in `CODEOWNERS`.** `ORGANIZATION.md` step 5:
+  before the first course repo exists, make `/lo-config/`, `/public/images/` and
+  `/public/audio/` ownerless, or `* @pedbad` makes content-only PRs wait for the
+  maintainer, against the 2026-10-12 decision that content needs no approval.
+
+Still open from the same check, already tracked elsewhere: the coverage rule in CI
+(handover §3 item 1), E1 (fires at handover), confirming CC BY-NC 4.0 (handover §4),
+and a fresh Lighthouse run (the last audit was `a6e11a4`, 2026-07-11).
+
 ---
 
 ## F. Composite UI blocks — F1, F2a, F4 and F5 done
