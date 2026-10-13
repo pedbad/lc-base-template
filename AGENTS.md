@@ -56,6 +56,9 @@ bun run format && bun run lint && bun run lint:css && bun run test && bun run bu
 
 - **Add an LO by copying `lo-config/lo-00-example/`** to `lo-config/lo-NN-slug/`.
   Never register it anywhere — a folder is a lesson. Zod must pass at load.
+- **Never add an image or audio file the course does not own or may not share**
+  (a CD track, a web image without an open licence). Content is published under
+  CC BY-NC 4.0; the rule and what is allowed are in `CONTRIBUTING.md`.
 - **Course order is the `lo-NN-` ordinal and nothing else**, sorted numerically.
   Do not add an order list; reorder by renaming folders.
 - **Render-mirror naming:** `<ordinal>-<type>` inside `blocks/` and `exercises/`,

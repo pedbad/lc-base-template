@@ -83,6 +83,19 @@ page**, with no code change.
 2. Edit `lo.json` and each `blocks/*/block.json` / `exercises/*/exercise.json`.
 3. `bun run build && bun run preview` to click through the whole course.
 
+> **Only add pictures and audio that we made, or that we are clearly allowed to
+> share. Never upload audio from a textbook CD that is not ours, or an image taken
+> from the web that is not openly licensed.**
+>
+> Everything in `lo-config/`, `public/images/` and `public/audio/` is published under
+> CC BY-NC 4.0 ([`LICENSE`](LICENSE)), and we can only give that permission for
+> material we own. Allowed: recordings and images made by the Language Centre or its
+> staff, and openly licensed material whose licence allows this reuse (public domain,
+> CC0 or CC BY), credited where it appears. Not allowed: publishers' audio, textbook
+> scans, stock photos, or anything found online without such a licence. If you are
+> not sure, do not add it — ask the maintainer first. Content pull requests skip
+> owner review, so nobody else checks this for you.
+
 ### What an LO's card on the landing page reads from
 
 Three `lo.json` fields do double duty as that LO's card:
@@ -315,7 +328,8 @@ keeps every course consistent — **add content as data; don't quietly change th
 **Green path (author freely):**
 
 - **No owner review:** `lo-config/` JSON and the lesson media in `public/images/` and
-  `public/audio/`. `CODEOWNERS` leaves these ownerless, so a pull request touching only
+  `public/audio/` — **media we made or may share only** (see
+  [Authoring a Learning Object](#authoring-a-learning-object)). `CODEOWNERS` leaves these ownerless, so a pull request touching only
   them merges once CI is green — and CI still validates every LO against the schemas.
 - **Normal review:** new fixtures (copy an existing exercise fixture, change the Spanish
   content, wire it into the showcase), docs and process notes.
