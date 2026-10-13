@@ -59,7 +59,7 @@ is exactly what the paragraph above is about.
   maintainer asked about on 2026-10-12), §F6 (further components), the §E2 queue (the
   ordered list in `2026-10-12-team-workflow-handover.md` §3, "Next, in order"; coverage
   rule in CI first), or a Deferred item.
-  **Budget first:** CSS headroom is 0.89 kB after the cap went to 19 kB (`docs/TOOLING.md`, "Bundle budget"), so
+  **Budget first:** CSS headroom is 0.91 kB after the cap went to 19 kB (`docs/TOOLING.md`, "Bundle budget"), so
   any new rule in `main-*.css` needs a lever before it lands (a lazy per-feature sheet
   imported by the component that needs it).
 
@@ -1883,4 +1883,4 @@ build, so it cannot return. Two remain:
 | 2026-10-13 | see git   | **docs drift sweep** — stale hashes, figures and links corrected (branch `docs/drift-2026-10-13`)                                       |
 | 2026-10-13 | see git   | **GitHub repo link** — both debug pages' nav links the source, new tab, says so                                                         |
 | 2026-10-13 | see git   | **sources redesign** — groups as cards side by side, heading rule, divided entries, icon chip; CSS cap 19 kB (§F5)                      |
-| 2026-10-13 | see git   | **outcomes as an info callout** — lead as title, 5:7 beside a larger framed image, as french-lo-1 (spec 2026-09-11 §3)                  |
+| 2026-10-13 | see git   | **outcomes as an info callout** — lead as title, 50:50 beside a framed image, as french-lo-1 (spec 2026-09-11 §3)                       |

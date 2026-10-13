@@ -152,7 +152,7 @@ semantically pointless without one — the image is a plain grid child.
 > now sit in the existing info `Callout` (`src/components/shell/Callout.tsx`), which is
 > what french-lo-1 does with its info box: same tint, border, icon and `role="note"` as
 > every instructions box, the lead as its title. Lead and list are body size in full
-> ink; ticks are 18px. With an image the columns split **5:7** at `lg` (image wider) and
+> ink; ticks are 18px. With an image the columns split **50:50** at `lg`, as every image-beside-text block does, and
 > the image sits in a frame matching the card (`rounded-lg`, border, `shadow-sm`);
 > without one the card holds the reading measure. Still no stylesheet and no token —
 > `Callout` is reused unchanged. Decision 2 and the markup below describe the first

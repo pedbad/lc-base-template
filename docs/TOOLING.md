@@ -162,7 +162,7 @@ needs the number points here rather than restating it.
 | Asset        | Budget (gzipped) | Measured 2026-10-13 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
 | `main-*.js`  | **< 120 kB**     | 113.57 kB           | 6.43 kB  |
-| `main-*.css` | **< 19 kB**      | 18.11 kB            | 0.89 kB  |
+| `main-*.css` | **< 19 kB**      | 18.09 kB            | 0.91 kB  |
 
 - **Sources redesign; CSS cap 18 → 19 kB (2026-10-13, maintainer): JS 113.45 → 113.57
   kB, CSS 17.96 → 18.11 kB.** Groups as cards in an auto-fit grid, a heading rule,
@@ -170,7 +170,7 @@ needs the number points here rather than restating it.
   headroom could not hold them. The maintainer chose raising the cap over a lazy
   per-block sheet or a cut-down design; the lazy sheet stays the lever for next time.
 - **Outcomes as an info callout (2026-10-13): JS 113.41 → 113.45 kB, CSS 17.91 →
-  17.96 kB.** Reuses `Callout`; the CSS is the few new utilities (the 5:7 track, the
+  17.96 kB.** Reuses `Callout`; the CSS is the few new utilities (the track, the
   18px tick, the image frame). **0.04 kB of CSS headroom is left: the next CSS change
   needs a budget lever first** (TODO "Then ask the maintainer").
 - **Sources block (2026-10-12, TODO §F5): JS 112.50 → 113.41 kB, CSS unchanged.**

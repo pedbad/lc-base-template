@@ -172,11 +172,12 @@ test('a list-only block is one column at the reading measure', () => {
   expect(html).not.toContain('lg:grid-cols');
 });
 
-// With an image the image takes the wider track: 5:7 at `lg`, stacked below it.
-test('with an image the callout and the image split 5:7 at lg', () => {
+// With an image the two split evenly at `lg`, as every image-beside-text block does
+// (maintainer, 2026-10-13), stacked below it.
+test('with an image the callout and the image split 50:50 at lg', () => {
   const html = renderOutcomes({ ...valid, image: { src: 'images/a.svg', alt: '' } });
 
-  expect(html).toMatch(/^<div class="[^"]*lg:grid-cols-\[minmax\(0,5fr\)_minmax\(0,7fr\)\]/);
+  expect(html).toMatch(/^<div class="[^"]*lg:grid-cols-\[minmax\(0,1fr\)_minmax\(0,1fr\)\]/);
   expect(html).toContain('lg:items-start');
 });
 

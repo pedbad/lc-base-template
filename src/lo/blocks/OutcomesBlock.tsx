@@ -8,12 +8,13 @@
  * The lead is its title. Lead and list are body size in full ink, overriding the
  * callout's `text-sm` and muted description on the children, so `Callout` is untouched.
  *
- * 5:7 AT `lg`, STACKED BELOW IT; ONE COLUMN WHEN THERE IS NO IMAGE. The image takes the
- * wider track and the card the narrower (maintainer, 2026-10-13: art leads, the list
- * is short); 768 is too narrow for two columns carrying artwork. Tracks are `minmax(0,Nfr)` rather than a bare `fr` because a long
- * unbroken word in an outcome blows out an `fr` track and takes the page into
- * horizontal overflow with it. Without an image the card holds the reading measure
- * instead of sitting in a 5/12 track beside a gap.
+ * 50:50 AT `lg`, STACKED BELOW IT; ONE COLUMN WHEN THERE IS NO IMAGE. Even tracks, as
+ * every image-beside-text block (the intros, reading) splits (maintainer, 2026-10-13,
+ * after trying 7:5 and 5:7); 768 is too narrow for two columns carrying artwork.
+ * Tracks are `minmax(0,1fr)` rather than a bare `1fr` because a long unbroken word in
+ * an outcome blows out a `1fr` track and takes the page into horizontal overflow with
+ * it. Without an image the card holds the reading measure instead of sitting in half
+ * the frame beside a gap.
  *
  * NO STYLESHEET AND NO TOKEN. `VocabularyBlock` is the precedent: a block renderer
  * lays itself out with utilities. That keeps this out of guard f (raw `px`) and guard
@@ -64,7 +65,7 @@ export function OutcomesBlock({ content }: { content: unknown }) {
             <CircleCheck className="mt-1 size-4.5 shrink-0 text-success" aria-hidden="true" />
             {/* min-w-0: a flex item will not shrink below its min-content width by
                 default, so one long unbroken word in an authored outcome would push
-                the row wider than its track and undo the minmax(0,Nfr) above. */}
+                the row wider than its track and undo the minmax(0,1fr) above. */}
             <span className="min-w-0">
               <RichText nodes={item} />
             </span>
@@ -79,7 +80,7 @@ export function OutcomesBlock({ content }: { content: unknown }) {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start">
       {callout}
       <div className="aspect-[3/2] w-full overflow-hidden rounded-lg border bg-card shadow-sm">
         <img
