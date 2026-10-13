@@ -1780,6 +1780,53 @@ no-preference` only.
   ("new code needs a test beside it, or CI fails"). Verify: CI green on `main`, and a
   throwaway untested `.ts` file under `src/lib/` turns it red.
 
+**From the external engineering evaluation (2026-10-14, at `98e3109`)** — a review the
+maintainer brought in; it is not in the repo. Each finding below was re-checked against
+the code the same day. Four hold; its claim that strict TypeScript is off does not
+(TypeScript 6.0.3 turns `strict` on by default — probed: with no setting it rejects an
+implicit `any` and `null` as a `number`). Its central point stands: 1689 passing tests
+coexisted with a broken keyboard flow, because component tests render static markup and
+never press a key. **Order: E9–E11 before the handover, E12 just before or after it,
+E13 before real learners.**
+
+- **E9 — radio keyboard: arrows change the answer, focus stays put.**
+  `src/exercises/lib/ChoicePillGroup.tsx` `handleKeyDown` calls `onSelect(next)` but never
+  moves focus, so the next arrow press starts from the old pill again: focus A, Right,
+  Right selects B twice. Affects radio-quiz, reading and inline-choice. Fix: move focus
+  with the selection (a ref per pill), keeping wrap, Home/End and the roving tab stop.
+  Verify: an interaction test (E12's first case, or a DOM test here) asserts selection
+  AND `document.activeElement` after repeated arrows, both directions, wrapping.
+- **E10 — rich text accepts invalid interactive nesting.**
+  `src/lo/rich-text/parse-rich-text.ts` checks each tag alone, never what it sits inside:
+  `<a>` inside `<a>` parses to nested links, and an audio span inside a hover term
+  renders a button inside a button. Fix: reject interactive-inside-interactive (links,
+  popup links, hover terms, audio) with an author-facing message, as the parser already
+  does for banned tags. Pure logic, Node tests. Verify: both examples fail to parse with
+  a clear message; valid combinations (`<strong>` in a link, a link in `<em>`) still
+  pass. (The review's "a comment claims React guarantees valid nesting" was not found;
+  `RichText.tsx` claims only inline-safe output, which stays true.)
+- **E11 — write `"strict": true` explicitly** in `tsconfig.app.json` and
+  `tsconfig.node.json` (5 min). Already the TypeScript 6 default, so nothing should
+  change; written down so no reader or older tool assumes otherwise. Optional follow-up:
+  `noUncheckedIndexedAccess`, measured first. Verify: `bun run build` unchanged.
+- **E12 — a browser interaction suite in CI.** Playwright against the BUILT site,
+  including under `BASE_URL=/course/`: answer → check → edit → reveal → reset for
+  representative engines; keyboard selection and focus (E9); audio playing and failing;
+  hydration of a prerendered page with no console errors; axe on each page. Turns the
+  hand-run Playwright checks of 2026-10-13 into required CI checks. The biggest gain in
+  confidence; size it before starting (Chromium in CI, run time).
+- **E13 — before real learners: flashcard progress identity, and failure fallbacks.**
+  (a) `storageKey()` in `flashcards-storage.ts` hashes the deck's content: fixing a typo
+  in one card loses that deck's saved progress, two identical decks share progress, and
+  `|` inside a field can collide two fingerprints. Deliberate (no exercise id reaches
+  the engine) and documented in the file header, but decide a stable id (course + LO +
+  exercise + card) and a reset/migration policy while nobody has saved progress yet.
+  (b) `ExerciseHost.tsx` has a `Suspense` loading message but no error boundary, so a
+  failed chunk or render error has no fallback; `AudioManager.resume()` does
+  `play().catch(() => {})` and notifies "playing" before playback succeeds. Fix: a local
+  error fallback with retry/reload, and audio state set from the play outcome. Verify:
+  tests for a failing engine load and a rejected `play()`.
+
 Still open from the same check, already tracked elsewhere: the coverage rule in CI
 (E8, done 2026-10-14), E1 (fires at handover). **CC BY-NC 4.0 confirmed** as the content
 licence by the maintainer, 2026-10-14 (handover §4). The same day, CONTRIBUTING gained a
