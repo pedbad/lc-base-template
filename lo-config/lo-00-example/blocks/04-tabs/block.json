@@ -4,7 +4,7 @@
   "content": {
     "label": "Placeholder tabs",
     "intro": [
-      "Placeholder tabs. Each tab below is one entry in <em>blocks/04-tabs/block.json</em>; click a tab, or use the arrow keys, to switch. Tabs B to D show the media layouts."
+      "Placeholder tabs. Each tab below is one entry in <em>blocks/04-tabs/block.json</em>; click a tab, or use the arrow keys, to switch; on a narrow screen the tabs become a dropdown. Tabs B to D show the media layouts."
     ],
     "tabs": [
       {
