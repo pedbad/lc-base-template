@@ -312,11 +312,13 @@ chore: bump Stylelint to 17
 This is a **template**: many people will author Learning Objects from it. The rule that
 keeps every course consistent — **add content as data; don't quietly change the machinery.**
 
-**Green path (author freely, normal review):**
+**Green path (author freely):**
 
-- New LO content, fixtures, and `lo-config/` JSON.
-- Copy an existing exercise fixture, change the Spanish content, wire it into the showcase.
-- Docs and process notes.
+- **No owner review:** `lo-config/` JSON and the lesson media in `public/images/` and
+  `public/audio/`. `CODEOWNERS` leaves these ownerless, so a pull request touching only
+  them merges once CI is green — and CI still validates every LO against the schemas.
+- **Normal review:** new fixtures (copy an existing exercise fixture, change the Spanish
+  content, wire it into the showcase), docs and process notes.
 
 **Requires maintainer review (owned in [`.github/CODEOWNERS`](.github/CODEOWNERS)):**
 

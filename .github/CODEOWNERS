@@ -11,6 +11,14 @@
 # Everything defaults to the maintainer unless a more specific rule below wins.
 *                       @pedbad
 
+# --- Content: NO owner, so a content-only PR merges once CI is green ---
+# A pattern with no owner after it removes ownership. Content needs no approval
+# (decided 2026-10-12, docs/ORGANIZATION.md step 5); CI still validates every LO.
+# Changed here once: course repos inherit this file, so never edit it per course.
+/lo-config/
+/public/images/
+/public/audio/
+
 # --- Design system: tokens, theme, global CSS (drift here breaks every course) ---
 /src/styles/            @pedbad
 
@@ -21,7 +29,7 @@
 /src/exercises/lazyRegistry.ts   @pedbad
 /src/exercises/lib/              @pedbad
 
-# --- Build, tooling, CI, and the TDD-guard wiring ---
+# --- Build, tooling, CI, and the repo's Claude Code settings ---
 /.github/               @pedbad
 /vite.config.ts         @pedbad
 /package.json           @pedbad

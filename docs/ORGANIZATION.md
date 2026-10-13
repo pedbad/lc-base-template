@@ -133,7 +133,7 @@ Follow [`docs/BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md). Its UI path changes 
 single-maintainer lockout still apply: moving into an organisation does not add a second
 reviewer.
 
-**Before the first course repo exists**, make the content folders ownerless in the
+**Done 2026-10-14.** **Before the first course repo exists**, make the content folders ownerless in the
 template's `.github/CODEOWNERS`, so a content-only pull request needs no approval. Course
 repos inherit the file, so it is changed once here and never per course (a per-course edit
 would conflict on every sync). Add after the `*` default line:
