@@ -1718,7 +1718,9 @@ no-preference` only.
   never checked them; test-first was followed by hand (tests written and seen failing
   first).
 - **E4 — the colleague guide** (handover §3 item 2). A short page for the course-repo
-  colleague: the daily loop, which folders they may edit, how a template update arrives.
+  colleague: the daily loop, which folders they may edit, how a template update arrives,
+  and — first and in bold — the media-rights rule in CONTRIBUTING ("Authoring a
+  Learning Object").
   CONTRIBUTING is written for template developers, not for them. Link it, don't copy it.
 - **E5 — deploy route, and Feijoa.** "Release → zip in CI" is the preferred route
   (handover §3 item 4), but Feijoa is not committed (licence), so a CI-built zip ships
@@ -1743,7 +1745,10 @@ no-preference` only.
   fresh clone produces a failing test before any implementation file.
 
 Still open from the same check, already tracked elsewhere: the coverage rule in CI
-(handover §3 item 1), E1 (fires at handover), confirming CC BY-NC 4.0 (handover §4).
+(handover §3 item 1), E1 (fires at handover). **CC BY-NC 4.0 confirmed** as the content
+licence by the maintainer, 2026-10-14 (handover §4). The same day, CONTRIBUTING gained a
+bold rule (pointed to from LICENSE and AGENTS.md): only media we made or may share —
+no textbook-CD audio, no web images without an open licence. E4's guide must lead with it.
 
 **Lighthouse, 2026-10-13 (`6290f20`)** — the first audit since `a6e11a4` (2026-07-11).
 Built site under `vite preview` (gzip on), Lighthouse 12.8, mobile = simulated slow 4G
