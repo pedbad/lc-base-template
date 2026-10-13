@@ -123,3 +123,58 @@ test('a group with no heading renders no heading element', () => {
 
   expect(html).not.toMatch(/<h[1-6]/);
 });
+
+// Redesign (maintainer, 2026-10-13): groups as cards side by side, a heading rule,
+// divided entries, the kind icon in a tinted chip. Plan amendment in
+// docs/process/2026-10-12-sources-block-plan.md.
+const twoGroups = {
+  groups: [
+    { heading: 'Strategies', items: [printItem, webItem] },
+    { heading: 'Vocabulary', items: [printItem] },
+  ],
+};
+
+/** The class list captured by `pattern`'s first group, split into classes. */
+function classesOf(html: string, pattern: RegExp): string[] {
+  return (html.match(pattern)?.[1] ?? '').split(' ');
+}
+
+test('groups flow into an auto-fit grid, no longer held to the reading measure', () => {
+  const root = classesOf(renderSources(twoGroups), /^<div class="([^"]*)"/);
+
+  expect(root).toContain('grid-cols-[repeat(auto-fit,minmax(min(100%,26rem),1fr))]');
+  expect(root).not.toContain('max-w-(--measure)');
+});
+
+test('in a plain block each group is a card; inside a card it is not', () => {
+  const frame = ['rounded-lg', 'border', 'bg-card', 'shadow-sm'];
+  const plainGroup = classesOf(
+    renderSources(twoGroups, 'plain'),
+    /^<div[^>]*><div class="([^"]*)"/,
+  );
+  const cardGroup = classesOf(renderSources(twoGroups, 'card'), /^<div[^>]*><div class="([^"]*)"/);
+
+  for (const cls of frame) expect(plainGroup).toContain(cls);
+  for (const cls of frame) expect(cardGroup).not.toContain(cls);
+});
+
+test('a group heading carries the primary rule; entries are divided', () => {
+  const html = renderSources(twoGroups);
+
+  expect(classesOf(html, /<h3 class="([^"]*)"/)).toEqual(
+    expect.arrayContaining(['text-lg', 'border-b-2', 'border-primary']),
+  );
+  expect(classesOf(html, /<ul class="([^"]*)"/)).toContain('divide-y');
+});
+
+test('the kind icon sits in a tinted chip that is itself hidden', () => {
+  const html = renderSources(valid);
+
+  expect(html).toMatch(/<li[^>]*><span aria-hidden="true" class="[^"]*bg-primary\/10[^"]*"><svg/);
+});
+
+test('an extract note is small, italic and muted', () => {
+  expect(classesOf(renderSources(valid), /<p class="([^"]*)">This extract/)).toEqual(
+    expect.arrayContaining(['text-sm', 'italic', 'text-muted-foreground']),
+  );
+});

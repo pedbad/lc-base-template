@@ -154,16 +154,21 @@ Layer 1 is the carrot; layers 2–4 are the stick.
   the prerender pass will later write — see _Dev-server LO pages_ below.
 - **Rejected:** Create-React-App (deprecated), Webpack (slower, heavier config).
 
-### Bundle budget — JS < 120 kB, CSS < 18 kB gzipped _(decisions 2026-10-05, 2026-10-06, 2026-10-07, 2026-10-08)_
+### Bundle budget — JS < 120 kB, CSS < 19 kB gzipped _(decisions 2026-10-05, 2026-10-06, 2026-10-07, 2026-10-08, 2026-10-13)_
 
 **This is the one place the budget is written down.** Every other doc and comment that
 needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-13 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 120 kB**     | 113.45 kB           | 6.55 kB  |
-| `main-*.css` | **< 18 kB**      | 17.96 kB            | 0.04 kB  |
+| `main-*.js`  | **< 120 kB**     | 113.57 kB           | 6.43 kB  |
+| `main-*.css` | **< 19 kB**      | 18.11 kB            | 0.89 kB  |
 
+- **Sources redesign; CSS cap 18 → 19 kB (2026-10-13, maintainer): JS 113.45 → 113.57
+  kB, CSS 17.96 → 18.11 kB.** Groups as cards in an auto-fit grid, a heading rule,
+  divided entries, a tinted icon chip — all utilities, but new ones, and 0.04 kB of
+  headroom could not hold them. The maintainer chose raising the cap over a lazy
+  per-block sheet or a cut-down design; the lazy sheet stays the lever for next time.
 - **Outcomes as an info callout (2026-10-13): JS 113.41 → 113.45 kB, CSS 17.91 →
   17.96 kB.** Reuses `Callout`; the CSS is the few new utilities (the 5:7 track, the
   18px tick, the image frame). **0.04 kB of CSS headroom is left: the next CSS change

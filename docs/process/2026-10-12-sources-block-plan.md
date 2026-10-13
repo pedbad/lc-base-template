@@ -38,6 +38,16 @@ external-link icon for web, and a small note line under each citation.
 
 ---
 
+> **Amended 2026-10-13 (maintainer): the look changed after the build.** Groups now
+> flow into an auto-fit grid of ~26rem columns instead of one reading-measure column;
+> in a plain block each group is a card (`rounded-lg`, border, `bg-card`,
+> `shadow-sm`), inside an accordion card it is not. Each heading is `text-lg` over a
+> 2px primary rule; entries are divided; the kind icon sits in a tinted chip
+> (`bg-primary/10`, `text-primary`); the note is small, italic and muted. Schema,
+> content, labels and heading levels are unchanged. CSS cap raised to 19 kB for it
+> (`docs/TOOLING.md`, "Bundle budget"). The code and `sources-block.test.tsx` are
+> current; the markup below describes the first pass.
+
 ## Decisions already made
 
 | Decision                 | Choice                                                                                                                                                                                                             |
