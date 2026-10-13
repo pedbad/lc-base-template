@@ -1743,9 +1743,38 @@ no-preference` only.
   result. Skills **link** to `AGENTS.md`, `CONTRIBUTING.md` and the engine recipe
   (`src/exercises/reading/`) rather than copying them. Verify: each skill run from a
   fresh clone produces a failing test before any implementation file.
+- **E8 — coverage rule in CI: MEASURED 2026-10-14, not built** (handover §3 item 1). The
+  free enforcement now the TDD guard is off. Measured on `31f3b91` in a scratch clone
+  (`package.json`/`bun.lock` untouched): `@vitest/coverage-v8@4.1.10` (must match
+  Vitest), `include: src/**/*.{ts,tsx}`, 1686 tests green. Overall 71.4% of lines, but by
+  group:
+
+  | Group                                                                                                           | Files | Lines | Per-file min |
+  | --------------------------------------------------------------------------------------------------------------- | ----- | ----- | ------------ |
+  | **logic** (grading, schemas, config, `src/lo`, `src/build`)                                                     | 102   | 96.4% | 11.8%        |
+  | **views** (`.tsx`)                                                                                              | 63    | 54.8% | 20.8%        |
+  | **browser glue** (`src/hooks/`, `src/audio/`, `use*.ts`, `reorderAnimation.ts`)                                 | 10    | 25.9% | 0%           |
+  | excluded: tests, fixtures, `src/components/ui/` (vendored shadcn), `main.tsx`, sandbox / showcase / ui-showcase | 59    | —     | —            |
+
+  **Proposed per-file bars (lines), confirm when building:** logic **80%** (the
+  maintainer's global testing rule); views **20%** — all pass today, and a new component
+  with no test at all scores 0% and fails, which is the point; browser glue **none yet**
+  (counted and reported; testing it needs a DOM environment, a separate decision).
+  Logic below 80% today: `src/exercises/lib/html.ts` (62.5%, 8 lines) and
+  `src/config/course.config.ts` (75%, 4 lines) — one small test each; `lazyRegistry.ts`
+  (11.8%), `src/build/lo-dev-pages.ts` (27.3%) and `src/build/sandbox-docs-plugin.ts`
+  (50%) are wiring — exclude by name with the reason beside each. Views at 30% would
+  already fail 5 files, at 50% 13.
+
+  **To build (~1 h):** add the devDependency; the two tests; `coverage` block in
+  `vite.config.ts` (provider v8, the include/exclude above, `thresholds` with
+  `perFile: true` and glob entries per group, lines only to start); `--coverage` on the
+  CI test step only, not the pre-push hook; TOOLING section and a CONTRIBUTING line
+  ("new code needs a test beside it, or CI fails"). Verify: CI green on `main`, and a
+  throwaway untested `.ts` file under `src/lib/` turns it red.
 
 Still open from the same check, already tracked elsewhere: the coverage rule in CI
-(handover §3 item 1), E1 (fires at handover). **CC BY-NC 4.0 confirmed** as the content
+(E8, measured), E1 (fires at handover). **CC BY-NC 4.0 confirmed** as the content
 licence by the maintainer, 2026-10-14 (handover §4). The same day, CONTRIBUTING gained a
 bold rule (pointed to from LICENSE and AGENTS.md): only media we made or may share —
 no textbook-CD audio, no web images without an open licence. E4's guide must lead with it.
