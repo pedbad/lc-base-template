@@ -154,16 +154,25 @@ Layer 1 is the carrot; layers 2–4 are the stick.
   the prerender pass will later write — see _Dev-server LO pages_ below.
 - **Rejected:** Create-React-App (deprecated), Webpack (slower, heavier config).
 
-### Bundle budget — JS < 120 kB, CSS < 19 kB gzipped _(decisions 2026-10-05, 2026-10-06, 2026-10-07, 2026-10-08, 2026-10-13)_
+### Bundle budget — JS < 140 kB, CSS < 19 kB gzipped _(decisions 2026-10-05, 2026-10-06, 2026-10-07, 2026-10-08, 2026-10-13)_
 
 **This is the one place the budget is written down.** Every other doc and comment that
 needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-13 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 120 kB**     | 113.57 kB           | 6.43 kB  |
-| `main-*.css` | **< 19 kB**      | 18.09 kB            | 0.91 kB  |
+| `main-*.js`  | **< 140 kB**     | 135.45 kB           | 4.55 kB  |
+| `main-*.css` | **< 19 kB**      | 18.03 kB            | 0.97 kB  |
 
+- **Tabs dropdown on phones; JS cap 120 → 140 kB (2026-10-13, maintainer, TODO §F3):
+  JS 113.63 → 135.45 kB, CSS 18.09 → 18.03 kB.** Below the block's `@3xl` width the
+  tab row gives way to the vendored shadcn `Select`. Its CSS was already in the main
+  sheet (the select exercise uses it), and the narrow stack's classes went, so CSS
+  fell. The JS did not come for free: the select exercise is lazy, so Base UI's Select
+  and the Floating UI positioning under it had never been in `main-*.js`, and the tabs
+  block, on every LO page, pulls all of it in. The maintainer chose raising the cap
+  over a native `<select>` (no JS) or lazy-loading the Select behind a static
+  stand-in. Either stays a lever if the headroom runs out.
 - **Sources redesign; CSS cap 18 → 19 kB (2026-10-13, maintainer): JS 113.45 → 113.57
   kB, CSS 17.96 → 18.11 kB.** Groups as cards in an auto-fit grid, a heading rule,
   divided entries, a tinted icon chip — all utilities, but new ones, and 0.04 kB of
