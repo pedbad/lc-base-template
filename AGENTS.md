@@ -79,6 +79,9 @@ bun run format && bun run lint && bun run lint:css && bun run test && bun run bu
 - **A new exercise engine follows the recipe:** schema + pure grading +
   colocated tests + thin view + fixture + registry entry. Copy the shape of
   `src/exercises/reading/`.
+- **New code starts from a failing test** — write the test, run it, see it fail, then
+  write the code that makes it pass. No hook enforces this by default (the TDD guard
+  is opt-in, `docs/TOOLING.md`); CI and review do, so do not skip it.
 - **Tests sit beside the code** as `<name>.test.ts(x)`. Vitest only collects
   `src/**/*.test.{ts,tsx}` — a test outside `src/` never runs.
 - Files under 800 lines.
