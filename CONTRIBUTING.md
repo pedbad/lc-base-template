@@ -161,6 +161,9 @@ A set of labelled tabs, one panel showing at a time. Add it like any block: a
   in `lo-00-example` show each layout.
 - `"presentation": "plain"` puts the tabs straight under the section heading;
   `"card"` (with a `title`) wraps them in an accordion.
+- Below 48rem of block width the tab row gives way to a dropdown. From 48rem up the
+  labels must fit on one line, or the row wraps: keep them short (`lo-00-example`'s
+  four "Placeholder tab A"-length labels fit with room to spare).
 - A misspelt key fails the build rather than being ignored.
 
 Design and what is coming next (callouts and exercises in a tab):

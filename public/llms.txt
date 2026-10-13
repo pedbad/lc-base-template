@@ -31,7 +31,9 @@ broken link; do not treat any of them as a page of the course.
 
 An LO page is built from blocks declared in its JSON. Block types: `intro`,
 `prose`, `grammar`, `vocabulary`, `outcomes`, `tabs` and `sources`. A `tabs` block is a
-WAI-ARIA tab set (arrow keys, Home/End) whose panels hold rich text and optional media (an image, an audio player and a
+WAI-ARIA tab set (arrow keys, Home/End); below 48rem of block width the tab row is
+hidden and a select dropdown (a combobox, named like the tablist) chooses the panel
+instead. Its panels hold rich text and optional media (an image, an audio player and a
 transcript in a native `<details>` toggle); every
 panel is in the prerendered HTML, inactive ones carry `hidden`. A `sources` block is a
 references list: citations in `<ul>` groups, each with a print or web icon whose

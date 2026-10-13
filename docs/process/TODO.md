@@ -45,7 +45,7 @@ is exactly what the paragraph above is about.
 
 **Next (2026-10-13):** for the current commit see `git log main`. Section D is closed
 (the 2026-10-09 six, §D19–§D21 and their browser checks). Tabs on phones (§F3,
-branch `feat/tabs-phone-dropdown`) is the last feature in. Nothing else is ordered.
+`22b637d`) is the last feature in. Nothing else is ordered.
 
 - **`sources` block (§F5) is DONE** (2026-10-12, late): renderer, schema, example in
   `lo-00-example`'s new Sources section, CONTRIBUTING and llms.txt. Built with the
@@ -1710,7 +1710,7 @@ the slice-1 scope and the open list live in
 - **F2 — remaining panel entries:** callout, exercise by folder ref; transcript in the
   popup (`{ "modal": id }`); media as a standalone block. Verify: each entry in the
   example LO, guards b–h green.
-- **F3 — phones. DONE 2026-10-13** (`feat/tabs-phone-dropdown`). Below the block's
+- **F3 — phones. DONE 2026-10-13** (`22b637d`, docs `d72cd02`, `2d6f10c`). Below the block's
   `@3xl` container width (48rem) the tab row is hidden and the vendored shadcn `Select`
   stands in, sharing one `value` with the tabs; the narrow stack is gone. First built at
   `@xl` (36rem), where the example's four tabs wrapped between 36rem and ~43rem, so the
@@ -1908,4 +1908,4 @@ build, so it cannot return. Two remain:
 | 2026-10-13 | see git   | **GitHub repo link** — both debug pages' nav links the source, new tab, says so                                                         |
 | 2026-10-13 | see git   | **sources redesign** — groups as cards side by side, heading rule, divided entries, icon chip; CSS cap 19 kB (§F5)                      |
 | 2026-10-13 | see git   | **outcomes as an info callout** — lead as title, 50:50 beside a framed image, as french-lo-1 (spec 2026-09-11 §3)                       |
-| 2026-10-13 | see git   | **tabs on phones** — dropdown below `@3xl`, row above; JS cap 140 kB (§F3)                                                              |
+| 2026-10-13 | `22b637d` | **tabs on phones** — dropdown below `@3xl`, row above; JS cap 140 kB (§F3)                                                              |
