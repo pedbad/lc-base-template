@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-13 · **HEAD:** see `git log` · **Suite:** 158 files · 1646 tests green
+**Last updated:** 2026-10-13 · **HEAD:** see `git log` · **Suite:** 158 files · 1656 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -51,9 +51,10 @@ is exactly what the paragraph above is about.
   `lo-00-example`'s new Sources section, CONTRIBUTING and llms.txt. Built with the
   tdd-guard **muted locally** (its API credit ran out; `Credit balance is too low`),
   and it is **still paused**. **Re-enable it** (`{"guardEnabled":true}` in
-  `.claude/tdd-guard/data/config.json`) once the credit is topped up. Browser: seen at
-  1024 (nav highlights Sources), no overflow at 320; still open: 768/1440 and an axe
-  pass.
+  `.claude/tdd-guard/data/config.json`) once the credit is topped up. Browser: checked
+  2026-10-13 on the card layout (`81300b0`) at 320, 375, 768, 1024 and 1440 in light
+  and dark: no horizontal scroll, cards stack below 1024 and sit two-up from 1024, and
+  axe scoped to `#sources` reports no violations at any width.
 - **Then ask the maintainer what is next.** Candidates: §F2 (the remaining tabs-panel
   entries), §F3 (tabs on phones), §F4 (`ui-showcase.html`, the block showcase the
   maintainer asked about on 2026-10-12), §F6 (further components), the §E2 queue (the
