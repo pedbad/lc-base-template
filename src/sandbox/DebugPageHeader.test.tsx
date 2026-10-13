@@ -36,9 +36,20 @@ describe('DebugPageHeader', () => {
     expect(html).not.toContain('href="#one"');
   });
 
-  test('the nav holds exactly two plain links: the other debug page and course home', () => {
+  test('the nav holds exactly three plain links: the other debug page, course home, the repo', () => {
     const nav = /<nav[^>]*>.*?<\/nav>/s.exec(html)?.[0] ?? '';
-    expect(nav.match(/<a /g)).toHaveLength(2);
+    expect(nav.match(/<a /g)).toHaveLength(3);
+  });
+
+  // Maintainer, 2026-10-13: both debug pages link to the source. An external link, so
+  // it opens in a new tab and says so, as a rich-text link does.
+  test('links to the GitHub repo in a new tab, and says so', () => {
+    const repo = /<a [^>]*href="https:\/\/github\.com\/[^"]+"[^>]*>.*?<\/a>/s.exec(html)?.[0] ?? '';
+    expect(repo).toContain('target="_blank"');
+    expect(repo).toContain('rel="noopener noreferrer"');
+    expect(repo).toContain('GitHub repo');
+    expect(repo).toMatch(/<svg[^>]*aria-hidden="true"/);
+    expect(repo).toMatch(/class="sr-only">[^<]*\(opens in a new tab\)/);
   });
 
   test('links to the OTHER debug page and to course home, through the base', () => {

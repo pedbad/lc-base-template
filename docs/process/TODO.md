@@ -1881,5 +1881,6 @@ build, so it cannot return. Two remain:
 | 2026-10-12 | `b09d542` | **team workflow handover** — decisions and the ordered next steps; code-only review in ORGANIZATION (§E2)                               |
 | 2026-10-12 | `d1e301f` | **`sources` block** — grouped references, print/web icon, rich-text citation and note (§F5)                                             |
 | 2026-10-13 | see git   | **docs drift sweep** — stale hashes, figures and links corrected (branch `docs/drift-2026-10-13`)                                       |
+| 2026-10-13 | see git   | **GitHub repo link** — both debug pages' nav links the source, new tab, says so                                                         |
 | 2026-10-13 | see git   | **sources redesign** — groups as cards side by side, heading rule, divided entries, icon chip; CSS cap 19 kB (§F5)                      |
 | 2026-10-13 | see git   | **outcomes as an info callout** — lead as title, 5:7 beside a larger framed image, as french-lo-1 (spec 2026-09-11 §3)                  |

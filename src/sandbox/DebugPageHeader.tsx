@@ -1,8 +1,8 @@
 /**
  * DebugPageHeader — the header both debug pages share: the sandbox and the exercise
  * showcase. Title, a one-line description, the theme switch, and a nav holding a
- * "jump to" menu of the page's own sections plus two plain links — the OTHER debug page
- * and course home. The sections sit in a shadcn dropdown because the showcase has 25 of
+ * "jump to" menu of the page's own sections plus three plain links — the OTHER debug
+ * page, course home and the GitHub repo. The sections sit in a shadcn dropdown because the showcase has 25 of
  * them, and a wrapping row of links that long is noise. One component, so the two navs
  * cannot drift apart.
  *
@@ -10,10 +10,12 @@
  * Both pages are debug-only (`DEBUG=1`, see build-entries.ts), so neither ships.
  *
  * Cross-page hrefs go through `resolveAsset` / `resolveHomeHref`, never a bare relative
- * path, so they survive a non-root base.
+ * path, so they survive a non-root base. The repo link is absolute and external, so it
+ * opens in a new tab and says so, as a rich-text link does.
  */
 import { Menu as MenuPrimitive } from '@base-ui/react/menu';
-import { ChevronDownIcon } from 'lucide-react';
+import { ChevronDownIcon, ExternalLink } from 'lucide-react';
+import { resolveLabel } from '@/config/ui-strings';
 import { resolveAsset, resolveHomeHref } from '@/lib/assets';
 import { FOCUS_OUTLINE } from '@/components/shell/focus-outline';
 import ThemeToggle from '@/components/shell/ThemeToggle';
@@ -36,6 +38,12 @@ const OTHER_PAGE: Readonly<Record<DebugPage, { href: string; label: string }>> =
   sandbox: { href: 'exercise-showcase.html', label: 'Exercise showcase' },
   showcase: { href: 'debug-sandbox.html', label: 'Debug sandbox' },
 };
+
+/**
+ * The template's source. When the repo moves to the organisation
+ * (docs/ORGANIZATION.md), its `git grep` for the old address finds this line.
+ */
+const REPO_URL = 'https://github.com/pedbad/lc-base-template';
 
 interface DebugPageHeaderProps {
   title: string;
@@ -102,6 +110,16 @@ export function DebugPageHeader({
           </a>
           <a className={LINK_CLASS} href={resolveHomeHref()}>
             Course home
+          </a>
+          <a
+            className={`inline-flex items-center gap-1 ${LINK_CLASS}`}
+            href={REPO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub repo
+            <ExternalLink className="size-3.5" aria-hidden="true" />
+            <span className="sr-only"> {resolveLabel('opensInNewTab')}</span>
           </a>
         </nav>
         <ThemeToggle />
