@@ -49,6 +49,7 @@ gates below are active immediately, no manual `git config` step.
 | `bun run build`         | Type-check + bundle + prerender the landing page and one HTML per LO    |
 | `bun run preview`       | Serve the production build locally                                      |
 | `bun run test`          | Run the test suite (Vitest, one-shot)                                   |
+| `bun run test:coverage` | The suite plus per-file coverage bars — what CI runs                    |
 | `bun run guards`        | Just the repo-wide guard sweeps — fast; the pre-push hook runs it first |
 | `bun run test:watch`    | Vitest in watch mode                                                    |
 | `bun run lint`          | ESLint over the repo                                                    |
@@ -294,11 +295,17 @@ strongest (full rationale in [`docs/TOOLING.md`](docs/TOOLING.md#enforcement-lay
    (~10s). A red test **blocks the push**, so broken code never leaves your machine —
    even in a fork where GitHub Actions has not been switched on yet.
 4. **CI** — GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml))
-   re-runs `lint` · `lint:css` · `format:check` · `test` · `build` on every PR to
-   `main` and every push to `main`. The unbypassable wall.
+   re-runs `lint` · `lint:css` · `format:check` · `test:coverage` · `build` on every
+   PR to `main` and every push to `main`. The unbypassable wall.
 
 You can bypass the local hooks with `--no-verify` (`git commit` or `git push`), but CI
 will still catch it before merge. Don't rely on bypass.
+
+**New code needs a test beside it, or CI fails.** CI's test step measures coverage
+**per file**: logic (`.ts`) must reach 80% of lines and components (`.tsx`) 20%, so a
+new file with no test scores 0% and turns CI red. Run `bun run test:coverage` before
+you push to see what CI will see. The bars, what is left out and why:
+[`docs/TOOLING.md`](docs/TOOLING.md#coverage--per-file-bars-ci-only-decision-2026-10-14-todo-e8).
 
 ## Commit conventions
 

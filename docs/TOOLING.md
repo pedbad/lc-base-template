@@ -19,6 +19,7 @@ and `eslint.config.js`. The `README` links here rather than restating it.
 | --------------------------- | ---------------------------------------------- | ---- |
 | **Bun**                     | Package manager · runtime · script runner      | 1, 3 |
 | **Vitest**                  | Test runner (Vite-native)                      | 3    |
+| **@vitest/coverage-v8**     | Per-file coverage bars, enforced in CI only    | E8   |
 | **Vite**                    | Dev server · production bundler                | 2    |
 | **TypeScript**              | Language · type safety                         | 2    |
 | **Prettier**                | Code formatter (layout)                        | 4    |
@@ -64,7 +65,8 @@ to strongest:
 3. **Pre-push hook** — husky runs `bun run guards` then `bun run test`. Blocks a push
    whose tests fail. Bypassable with `--no-verify`.
 4. **CI** — GitHub Actions (`.github/workflows/ci.yml`) re-runs `lint` + `lint:css` +
-   `format:check` + `test` + `build` on every PR to `main` and every push to `main`.
+   `format:check` + `test:coverage` (the suite plus per-file coverage bars, see
+   "Coverage") + `build` on every PR to `main` and every push to `main`.
    The unbypassable wall: a
    `--no-verify` commit still fails here before merge. (All eight guards run inside
    `test`: b–h as the `src/guards/` sweeps, a through its colocated schema tests.)
@@ -165,6 +167,40 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
   (`MODEL_TYPE=claude_cli`) looks for `~/.claude/local/claude`; a current install needs
   `USE_SYSTEM_CLAUDE=true` as well. **Never write files through the shell to get past
   it** — mute it instead.
+
+### Coverage — per-file bars, CI only _(decision 2026-10-14, TODO §E8)_
+
+- **What:** `bun run test:coverage` = the whole suite plus `@vitest/coverage-v8`
+  (its version must match Vitest's). CI runs it in place of `bun run test`; the
+  pre-push hook does not, so pushes stay fast. Config: `vite.config.ts` →
+  `test.coverage`.
+- **Why:** with the TDD guard off (above), this is the check that new code arrives
+  with tests — free, on every pull request, whoever or whatever wrote the code. It
+  cannot tell whether the test came first, only that it exists.
+- **Per file, not an average:** a new file with no test scores 0% and fails on its own.
+  Every source file counts (`include: src/**`), even one no test imports.
+- **The bars (lines)**, from a measurement on `31f3b91`:
+
+  | Group                                                                               | Bar  | Then  |
+  | ----------------------------------------------------------------------------------- | ---- | ----- |
+  | Logic — every `.ts` outside the glue below                                          | 80%  | 96.4% |
+  | Views — every `.tsx` (the suite renders static markup, so event handlers never run) | 20%  | 54.8% |
+  | Browser glue — `src/hooks/`, `src/audio/`, `use*.ts`, `reorderAnimation.ts`         | none | 25.9% |
+
+  Glue needs a DOM to test, so it is counted and reported with no bar until a DOM
+  test environment is decided. Raise the views floor as their tests grow.
+
+- **Left out, each with its reason in the config:** tests, `.d.ts`, fixtures,
+  vendored `src/components/ui/`, `src/main.tsx`, the debug pages, and three files of
+  wiring — `lazyRegistry.ts` (lazy imports only a browser resolves; guard e checks
+  its keys), `src/build/lo-dev-pages.ts` and `src/build/sandbox-docs-plugin.ts` (Vite
+  plugin glue).
+- **Two Vitest traps, both met while building it:** every file is checked against
+  the top-level bar _as well as_ any glob it matches, so the top level is `lines: 0`
+  and each group is a glob; and `perFile` is read only at the top level — inside a
+  glob entry it is ignored, each glob becomes one average, and an untested file
+  passed. Verified by adding untested logic, view and hook files: the first two failed
+  CI's command, the hook did not.
 
 ### Vite — dev server + bundler
 
