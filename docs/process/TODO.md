@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-13 · **HEAD:** see `git log` · **Suite:** 161 files · 1683 tests green
+**Last updated:** 2026-10-13 · **HEAD:** see `git log` · **Suite:** 161 files · 1686 tests green
 · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -44,8 +44,8 @@ is exactly what the paragraph above is about.
 `import.meta.glob` in `load-lo-glob.ts` and reports a false failure.
 
 **Next (2026-10-13):** for the current commit see `git log main`. Section D is closed
-(the 2026-10-09 six, §D19–§D21 and their browser checks). The `sources` block (§F5,
-`d1e301f`) is the last feature in. Nothing else is ordered.
+(the 2026-10-09 six, §D19–§D21 and their browser checks). Tabs on phones (§F3,
+branch `feat/tabs-phone-dropdown`) is the last feature in. Nothing else is ordered.
 
 - **`sources` block (§F5) is DONE** (2026-10-12, late): renderer, schema, example in
   `lo-00-example`'s new Sources section, CONTRIBUTING and llms.txt. Built with the
@@ -55,13 +55,16 @@ is exactly what the paragraph above is about.
   2026-10-13 on the card layout (`81300b0`) at 320, 375, 768, 1024 and 1440 in light
   and dark: no horizontal scroll, cards stack below 1024 and sit two-up from 1024, and
   axe scoped to `#sources` reports no violations at any width.
+- **Tabs on phones (§F3) is DONE** (2026-10-13): below the block's `@3xl` width the tab
+  row gives way to the shadcn `Select`. It cost 21.8 kB of JS, and the maintainer
+  raised the JS cap to 140 kB (`docs/TOOLING.md`, "Bundle budget").
 - **Then ask the maintainer what is next.** Candidates: §F2 (the remaining tabs-panel
-  entries), §F3 (tabs on phones), §F6 (further components), the §E2 queue (the
+  entries), §F6 (further components), the §E2 queue (the
   ordered list in `2026-10-12-team-workflow-handover.md` §3, "Next, in order"; coverage
   rule in CI first), or a Deferred item.
-  **Budget first:** CSS headroom is 0.91 kB after the cap went to 19 kB (`docs/TOOLING.md`, "Bundle budget"), so
-  any new rule in `main-*.css` needs a lever before it lands (a lazy per-feature sheet
-  imported by the component that needs it).
+  **Budget first:** headroom is 4.55 kB of JS and 0.97 kB of CSS (`docs/TOOLING.md`,
+  "Bundle budget"), so any new rule in `main-*.css` needs a lever before it lands (a
+  lazy per-feature sheet imported by the component that needs it).
 
 **Browser verification:** the in-app browser pane stays hidden (no window focus, so
 focus events never fire and transitions stall). Use a headed Chromium driven by
@@ -1707,9 +1710,18 @@ the slice-1 scope and the open list live in
 - **F2 — remaining panel entries:** callout, exercise by folder ref; transcript in the
   popup (`{ "modal": id }`); media as a standalone block. Verify: each entry in the
   example LO, guards b–h green.
-- **F3 — phones:** the dropdown chosen in the brainstorm (slice 1 stacks instead).
-  Verify: below the phone breakpoint the tabs render as a dropdown, operable by keyboard
-  alone; no sideways scroll at 320; axe clean in both themes.
+- **F3 — phones. DONE 2026-10-13** (`feat/tabs-phone-dropdown`). Below the block's
+  `@3xl` container width (48rem) the tab row is hidden and the vendored shadcn `Select`
+  stands in, sharing one `value` with the tabs; the narrow stack is gone. First built at
+  `@xl` (36rem), where the example's four tabs wrapped between 36rem and ~43rem, so the
+  switch moved up (maintainer); a lesson whose tabs outgrow 48rem wraps again, and the
+  fix then is to measure the row (`TabsBlock.tsx` header). JS 113.63 → 135.45
+  kB (Base UI Select and Floating UI join `main-*.js`; the select exercise had them
+  only lazily), so the maintainer raised the JS cap 120 → 140 kB. CSS 18.09 → 18.03 kB.
+  Browser: 320, 375, 768, 820, 840, 880, 1024 and 1440, light and dark: no sideways
+  scroll (popup open included), dropdown up to 820 and the row, on one line, from 840; mouse and keyboard-only choice,
+  focus back on the trigger, state kept across a resize both ways, axe clean on the
+  block, no console errors. The wide row's computed styles match `main` exactly.
 - **F4 — `ui-showcase.html`. DONE 2026-10-13** (`feat/ui-showcase`). Behind
   `DEBUG_ENTRY_FILES`; absent from `bun run build`, present under `DEBUG=1`, base-aware
   under `BASE_URL=/course/`. One section per registered block type, each shown both
@@ -1724,8 +1736,8 @@ the slice-1 scope and the open list live in
   rich-text table's scroll container is now `role="group"`, which is not a landmark.)
 - **F5 — `sources` block. DONE 2026-10-12** (references list: grouped, print/web
   icon, rich-text citation, optional note), for the legacy LOs' "Sources" pages. Plan
-  `2026-10-12-sources-block-plan.md`. Gate green, CSS unchanged, JS +0.91 kB. Seen in a
-  browser at 1024 and 320; open: 768/1440 and axe.
+  `2026-10-12-sources-block-plan.md`. Gate green, CSS unchanged, JS +0.91 kB. Browser:
+  320, 375, 768, 1024 and 1440 in both themes, axe clean (see "Next" above).
 - **F6 — further components** (tabs spec §2, "Further components"): word gloss and
   reveal box; slider and resizable wait for a lesson that needs them. **Decision
   needed** before any build: the word gloss may already be covered by the §D17 hover
@@ -1896,3 +1908,4 @@ build, so it cannot return. Two remain:
 | 2026-10-13 | see git   | **GitHub repo link** — both debug pages' nav links the source, new tab, says so                                                         |
 | 2026-10-13 | see git   | **sources redesign** — groups as cards side by side, heading rule, divided entries, icon chip; CSS cap 19 kB (§F5)                      |
 | 2026-10-13 | see git   | **outcomes as an info callout** — lead as title, 50:50 beside a framed image, as french-lo-1 (spec 2026-09-11 §3)                       |
+| 2026-10-13 | see git   | **tabs on phones** — dropdown below `@3xl`, row above; JS cap 140 kB (§F3)                                                              |
