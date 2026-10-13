@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest';
-import { courseConfig } from './course.config';
+import { CourseConfigSchema, courseConfig } from './course.config';
 
 // Importing courseConfig runs CourseConfigSchema.parse() at module load.
 // If raw config is invalid, that parse throws here and this suite fails —
@@ -31,4 +31,17 @@ test('course.config: optional progressIcon is a relative asset path when present
     expect(progressIcon.length).toBeGreaterThan(0);
     expect(progressIcon.startsWith('/')).toBe(false);
   }
+});
+
+// The rule itself, not just today's values: the shipped config has no progressIcon,
+// so without these the `/`-prefix refinement never runs at all.
+test('course.config schema: a progressIcon must not start with "/"', () => {
+  const base = { ...courseConfig, progressIcon: undefined };
+
+  expect(CourseConfigSchema.safeParse({ ...base, progressIcon: 'icons/dot.svg' }).success).toBe(
+    true,
+  );
+  const rooted = CourseConfigSchema.safeParse({ ...base, progressIcon: '/icons/dot.svg' });
+  if (rooted.success) throw new Error('expected a root-absolute icon to be rejected');
+  expect(rooted.error.issues[0]?.message).toBe('relative to %BASE_URL%');
 });

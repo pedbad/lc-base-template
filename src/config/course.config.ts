@@ -18,8 +18,9 @@
  */
 import { z } from 'zod';
 
-/** The contract: what a valid course identity MUST look like. */
-const CourseConfigSchema = z.object({
+/** The contract: what a valid course identity MUST look like. Exported so its rules
+    are tested directly, not only against today's values. */
+export const CourseConfigSchema = z.object({
   /** Course display name. Accents/umlauts fine; blank rejected. */
   courseTitle: z.string().min(1),
   /** ISO-ish language code, e.g. "es", "de". */
