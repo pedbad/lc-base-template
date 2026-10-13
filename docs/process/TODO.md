@@ -22,7 +22,7 @@ nothing reachable from `vite.config.ts` may use `@/…` imports; never import
 **Verify gate — run before every commit:**
 
 ```bash
-bun run format && bun run lint && bun run lint:css && bun run test && bun run build
+bun run format && bun run lint && bun run lint:css && bun run test:coverage && bun run build
 ```
 
 `bun run guards` (`vitest run src/guards`) is the fast subset — **214** tests in ~1s — for
@@ -1743,7 +1743,14 @@ no-preference` only.
   result. Skills **link** to `AGENTS.md`, `CONTRIBUTING.md` and the engine recipe
   (`src/exercises/reading/`) rather than copying them. Verify: each skill run from a
   fresh clone produces a failing test before any implementation file.
-- **E8 — coverage rule in CI: MEASURED 2026-10-14, not built** (handover §3 item 1). The
+- **E8 — coverage rule in CI. DONE 2026-10-14** (`c0872bd`, tests `0f21c44`). Built as
+  measured below with the proposed bars (logic 80%, views 20%, glue none):
+  `bun run test:coverage`, CI's test step, the verify gate in AGENTS and here;
+  `html.ts`'s browser branch and `course.config.ts`'s `progressIcon` rule gained tests
+  (1689 tests); the three wiring files are excluded by name. Verified: green on the
+  tree, and throwaway untested logic and view files fail it while an untested hook
+  does not. Two Vitest traps found and written up in `docs/TOOLING.md`, "Coverage".
+  The measurement, as taken: (handover §3 item 1). The
   free enforcement now the TDD guard is off. Measured on `31f3b91` in a scratch clone
   (`package.json`/`bun.lock` untouched): `@vitest/coverage-v8@4.1.10` (must match
   Vitest), `include: src/**/*.{ts,tsx}`, 1686 tests green. Overall 71.4% of lines, but by
@@ -1774,7 +1781,7 @@ no-preference` only.
   throwaway untested `.ts` file under `src/lib/` turns it red.
 
 Still open from the same check, already tracked elsewhere: the coverage rule in CI
-(E8, measured), E1 (fires at handover). **CC BY-NC 4.0 confirmed** as the content
+(E8, done 2026-10-14), E1 (fires at handover). **CC BY-NC 4.0 confirmed** as the content
 licence by the maintainer, 2026-10-14 (handover §4). The same day, CONTRIBUTING gained a
 bold rule (pointed to from LICENSE and AGENTS.md): only media we made or may share —
 no textbook-CD audio, no web images without an open licence. E4's guide must lead with it.
