@@ -1723,8 +1723,26 @@ no-preference` only.
   maintainer, against the 2026-10-12 decision that content needs no approval.
 
 Still open from the same check, already tracked elsewhere: the coverage rule in CI
-(handover §3 item 1), E1 (fires at handover), confirming CC BY-NC 4.0 (handover §4),
-and a fresh Lighthouse run (the last audit was `a6e11a4`, 2026-07-11).
+(handover §3 item 1), E1 (fires at handover), confirming CC BY-NC 4.0 (handover §4).
+
+**Lighthouse, 2026-10-13 (`6290f20`)** — the first audit since `a6e11a4` (2026-07-11).
+Built site under `vite preview` (gzip on), Lighthouse 12.8, mobile = simulated slow 4G
+with 4× CPU, three runs averaged. Accessibility, Best Practices and SEO **100** on
+`index.html` and `example.html`, mobile and desktop; desktop Performance 100.
+
+| Mobile         | before F3 (`a2c468f`)        | now (`6290f20`)              |
+| -------------- | ---------------------------- | ---------------------------- |
+| `index.html`   | 98 · LCP 2.16 s · FCP 1.77 s | 97 · LCP 2.31 s · FCP 1.96 s |
+| `example.html` | 97 · LCP 2.25 s · FCP 1.80 s | 96 · LCP 2.40 s · FCP 1.95 s |
+
+CLS ≈ 0 and TBT < 40 ms throughout. LCP passes < 2.5 s, by 0.1 s on `example.html`;
+FCP misses < 1.5 s, and already did before F3, which cost ~0.15 s and one point. The
+hero is preloaded with `fetchpriority="high"`: 85% of its LCP is render delay. Levers,
+none a handover blocker: the one render-blocking stylesheet (~300 ms estimated), and
+41% (~55 KiB) of `main-*.js` unused at load — the tabs Select and every LO's JSON, so
+lazy-loading the Select or per-LO chunking (Deferred) both cut it. A single run once
+read 92 / LCP 2.9 s: noise, so average several. **Re-run on the first real course**:
+`example.html` has placeholder content and an SVG hero, and a photo hero weighs more.
 
 ---
 
