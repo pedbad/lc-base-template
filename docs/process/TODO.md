@@ -1728,6 +1728,18 @@ no-preference` only.
   before the first course repo exists, make `/lo-config/`, `/public/images/` and
   `/public/audio/` ownerless, or `* @pedbad` makes content-only PRs wait for the
   maintainer, against the 2026-10-12 decision that content needs no approval.
+- **E7 — Claude skills that ship with the repo, test-first built in** (maintainer,
+  2026-10-14; the idea is handover §3 item 3). Task recipes in `.claude/skills/`, so
+  every course repo inherits them and a template sync updates them: `add-lo`,
+  `add-exercise-engine`, `add-block-type` (a new content component, like `tabs` or
+  `sources`), `sync-from-template`, `before-pr`; plus a reviewer in
+  `.claude/agents/lc-reviewer.md`. **Every skill that writes code opens with the
+  test-first step**: write the test beside the code, run `bun run test`, see it fail,
+  only then write the code. With the TDD guard off by default (E3), the skills and
+  `AGENTS.md` are what keep Claude test-first, and CI's coverage rule checks the
+  result. Skills **link** to `AGENTS.md`, `CONTRIBUTING.md` and the engine recipe
+  (`src/exercises/reading/`) rather than copying them. Verify: each skill run from a
+  fresh clone produces a failing test before any implementation file.
 
 Still open from the same check, already tracked elsewhere: the coverage rule in CI
 (handover §3 item 1), E1 (fires at handover), confirming CC BY-NC 4.0 (handover §4).
