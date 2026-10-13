@@ -49,9 +49,9 @@ is exactly what the paragraph above is about.
 
 - **`sources` block (§F5) is DONE** (2026-10-12, late): renderer, schema, example in
   `lo-00-example`'s new Sources section, CONTRIBUTING and llms.txt. Built with the
-  tdd-guard **muted locally** (its API credit ran out; `Credit balance is too low`),
-  and it is **still paused**. **Re-enable it** (`{"guardEnabled":true}` in
-  `.claude/tdd-guard/data/config.json`) once the credit is topped up. Browser: checked
+  tdd-guard **muted locally** (its API credit ran out; `Credit balance is too low`).
+  Since 2026-10-14 the guard is **off by default** (§E3), so there is nothing to
+  re-enable. Browser: checked
   2026-10-13 on the card layout (`81300b0`) at 320, 375, 768, 1024 and 1440 in light
   and dark: no horizontal scroll, cards stack below 1024 and sit two-up from 1024, and
   axe scoped to `#sources` reports no violations at any width.
@@ -1701,15 +1701,22 @@ no-preference` only.
   next steps (coverage rule in CI first) and open questions:
   `2026-10-12-team-workflow-handover.md`.
 
-**Found in the pre-handover check (2026-10-13). Do E3–E6 before colleagues get access.**
+**Found in the pre-handover check (2026-10-13). Do E4–E6 before colleagues get access** (E3 done).
 
-- **E3 — the TDD guard blocks every Claude Code user in the repo.** The committed
-  `.claude/settings.json` runs `bunx tdd-guard` before every Claude `Write`/`Edit`, and
-  it fails closed: on 2026-10-13 `Credit balance is too low` blocked a plain file write.
-  A colleague asking Claude to edit lesson JSON hits the same wall, and every course
-  repo inherits the file. Make it opt-in (off unless a maintainer enables it), or at
-  least document it in the E4 guide. Verify: a fresh clone without
-  `.claude/tdd-guard/data/config.json` lets Claude write a file.
+- **E3 — TDD guard off by default. DONE 2026-10-14** (maintainer's decision). The
+  committed `.claude/settings.json` ran `bunx tdd-guard` before every Claude
+  `Write`/`Edit` and failed closed without credit, so it would have blocked every
+  colleague and course repo. The hook is gone from the committed file; opting in is a
+  snippet in the gitignored `.claude/settings.local.json` (`docs/TOOLING.md`, "TDD
+  guard"), now ignored in the repo's own `.gitignore`, not only the maintainer's global
+  one. `AGENTS.md` states the test-first rule instead, and the coverage rule in CI is
+  the free enforcement. Why the credit fails: each check is a headless Claude call;
+  `claude -p` alone returns `Credit balance is too low` on the maintainer's ADTIS
+  Claude Team login while interactive Claude Code works — a billing question for the
+  ADTIS admin, not for the repo. **Disclosed:** on 2026-10-13 the F3 edits
+  (`22b637d`) were written through the shell while the guard was on at home, so it
+  never checked them; test-first was followed by hand (tests written and seen failing
+  first).
 - **E4 — the colleague guide** (handover §3 item 2). A short page for the course-repo
   colleague: the daily loop, which folders they may edit, how a template update arrives.
   CONTRIBUTING is written for template developers, not for them. Link it, don't copy it.
