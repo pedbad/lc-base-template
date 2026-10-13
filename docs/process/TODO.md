@@ -58,6 +58,13 @@ is exactly what the paragraph above is about.
 - **Tabs on phones (§F3) is DONE** (2026-10-13): below the block's `@3xl` width the tab
   row gives way to the shadcn `Select`. It cost 21.8 kB of JS, and the maintainer
   raised the JS cap to 140 kB (`docs/TOOLING.md`, "Bundle budget").
+- **REMINDER for the maintainer, at work: run `/graphify` before the handover**
+  (decided 2026-10-13, at home). A one-off pre-handover review of code and docs
+  together: orphaned docs, coupling `STRUCTURE.md` does not show, specs that no longer
+  meet their code. Add `graphify-out/` to `.gitignore` first and do NOT commit the
+  output: a generated map nothing checks is the drift the guards exist to stop. Fix what
+  it finds in the real docs. Optionally one line in CONTRIBUTING saying contributors
+  can run it on their own fork. Delete this bullet once done.
 - **Then ask the maintainer what is next.** Candidates: §F2 (the remaining tabs-panel
   entries), §F6 (further components), the §E2 queue (the
   ordered list in `2026-10-12-team-workflow-handover.md` §3, "Next, in order"; coverage
