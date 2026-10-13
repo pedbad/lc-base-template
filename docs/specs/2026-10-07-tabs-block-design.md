@@ -15,15 +15,15 @@ Slice 1 is deliberately small. It ships the tabs and nothing they could later ho
 
 ## 2. Out of scope (later slices, agreed in the brainstorm)
 
-| Later                     | Decided so far                                                                  |
-| ------------------------- | ------------------------------------------------------------------------------- |
-| Panel entries beyond text | callout, media (image + audio + transcript), exercise by folder ref             |
-| Exercise state            | survives a tab switch (panels stay mounted — already true in slice 1)           |
-| Transcript                | both: inline disclosure (array) or existing popup (`{ "modal": id }`)           |
-| Phones                    | a dropdown was chosen; slice 1 stacks the tabs instead (§5), revisit in slice 2 |
-| Showcase page             | `ui-showcase.html` behind `DEBUG_ENTRY_FILES`                                   |
-| Further components        | word gloss, reveal box; slider and resizable wait for a lesson that needs them  |
-| Nesting                   | depth 1: a tab never holds tabs                                                 |
+| Later                     | Decided so far                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------ |
+| Panel entries beyond text | callout, media (image + audio + transcript), exercise by folder ref            |
+| Exercise state            | survives a tab switch (panels stay mounted — already true in slice 1)          |
+| Transcript                | both: inline disclosure (array) or existing popup (`{ "modal": id }`)          |
+| Phones                    | a dropdown — shipped 2026-10-13 (§5); slice 1 stacked the tabs                 |
+| Showcase page             | `ui-showcase.html` behind `DEBUG_ENTRY_FILES`                                  |
+| Further components        | word gloss, reveal box; slider and resizable wait for a lesson that needs them |
+| Nesting                   | depth 1: a tab never holds tabs                                                |
 
 _(Amended 2026-10-13: media has since shipped — slice 2a,
 [`2026-10-07-tabs-media-design.md`](2026-10-07-tabs-media-design.md). A tab takes an
@@ -94,7 +94,15 @@ this slice's.)
   tinted, bordered on three sides and joins the bordered panel beneath it.
 - **Narrow:** the tabs stack as a full-width vertical list above the panel, the active
   one tinted with a leading bar — what the reference does below 1170px. Every label
-  stays visible and nothing scrolls sideways at 320px.
+  stays visible and nothing scrolls sideways at 320px. _(Amended 2026-10-13, TODO §F3:
+  the stack is gone. Below the `@3xl` container width (48rem) the tab row is hidden and
+  the vendored shadcn `Select` stands in, named like the tablist and sharing its `value`;
+  at `@xl` (36rem) the example's four tabs wrapped before the switch, so it moved up.
+  A lesson whose tabs outgrow 48rem would wrap again; the cure then is to measure the
+  row and switch when it stops fitting, this breakpoint the pre-hydration fallback.
+  The panels keep their tab labels through `aria-labelledby`. The Select brought Base
+  UI's Select and Floating UI into `main-*.js` (+21.8 kB), and the JS cap went to 140
+  kB — `docs/TOOLING.md`, "Bundle budget".)_
 - Focus uses the shared `FOCUS_OUTLINE`, which survives forced colours.
 - No JS: the prerender shows the first panel; the tabs do nothing until hydration.
 

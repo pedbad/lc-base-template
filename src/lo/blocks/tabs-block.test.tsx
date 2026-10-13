@@ -233,3 +233,32 @@ test('every tab shows the hand cursor on hover, as an accordion trigger does', (
   expect(tabs).toHaveLength(3);
   tabs.forEach((tab) => expect(tab).toMatch(/class="[^"]*\bcursor-pointer\b/));
 });
+
+// Phones (§F3): below the block's @3xl container width (48rem) the tab row gives way to a
+// dropdown — the vendored shadcn Select the select exercise already ships. Both are in
+// the markup; a container query shows one. The unit environment is Node with no DOM,
+// so switching panels from the dropdown is verified in a browser, not here.
+
+test('a dropdown named like the tablist renders above the panels', () => {
+  const html = renderTabs(three);
+
+  const boxes = tagsWithRole(html, 'combobox');
+  expect(boxes).toHaveLength(1);
+  expect(boxes[0]).toContain('aria-label="Forms of address"');
+  expect(html.indexOf('role="combobox"')).toBeLessThan(html.indexOf('role="tabpanel"'));
+});
+
+test('the dropdown shows the first tab as chosen before any interaction', () => {
+  const html = renderTabs(three);
+  const box = html.slice(html.indexOf('role="combobox"'));
+
+  expect(box.slice(0, box.indexOf('</button>'))).toContain('>Tu<');
+});
+
+test('narrow shows the dropdown, @3xl shows the tab row — never both', () => {
+  const html = renderTabs(three);
+
+  expect(tagsWithRole(html, 'tablist')[0]).toMatch(/class="[^"]*\bhidden\b[^"]*@3xl:flex\b/);
+  const box = html.slice(0, html.indexOf('role="combobox"'));
+  expect(box.slice(box.lastIndexOf('<div'))).toMatch(/class="[^"]*@3xl:hidden\b/);
+});
