@@ -95,8 +95,10 @@ test('every tick is out of the accessibility tree — the list carries the seman
 
   // Correlate the attribute to the ELEMENT, not two independent totals: a regression
   // that moved aria-hidden off a tick onto some other node would keep both counts.
-  expect(html.match(/<svg[^>]*aria-hidden="true"/g)).toHaveLength(2);
-  expect(html.match(/<svg/g)).toHaveLength(2);
+  // Every <svg> — one tick per <li> plus the callout's own info icon — is hidden.
+  const svgs = html.match(/<svg/g) ?? [];
+  expect(html.match(/<svg[^>]*aria-hidden="true"/g)).toHaveLength(svgs.length);
+  expect(html.match(/<li[^>]*><svg[^>]*aria-hidden="true"/g)).toHaveLength(2);
 });
 
 test('a decorative image renders an empty alt AND is hidden from the tree', () => {
@@ -141,8 +143,50 @@ test('content that does not match the type fails loud, naming the type', () => {
   expect(() => renderOutcomes({ text: ['wrong shape'] })).toThrow(/outcomes/);
 });
 
-// §D11: below `lg` the text column spans the whole frame; the lead and list hold the
-// reading measure there. At `lg` each track is already narrower than it.
-test('the text column holds the reading measure', () => {
-  expect(renderOutcomes(valid)).toMatch(/^<div class="[^"]*"><div class="max-w-\(--measure\)"><p/);
+// The outcomes are an info Callout (amended 2026-10-13, spec 2026-09-11 §3): the
+// same pale tint and icon as every instructions box, with the lead as its title.
+test('the outcomes sit in an info callout, with the lead as its title', () => {
+  const html = renderOutcomes(valid);
+
+  expect(html).toContain('role="note"');
+  expect(html).toContain('bg-callout-info');
+  expect(html).toMatch(/data-slot="alert-title"[^>]*><p[^>]*font-semibold[^>]*>After completing/);
+  expect(html).toMatch(/data-slot="alert-description"[^>]*><ul/);
+});
+
+// Body size and full ink, not the callout's default `text-sm` and muted description.
+test('the lead and the outcomes read at body size in full ink', () => {
+  const html = renderOutcomes(valid);
+
+  expect(html).toMatch(/<p class="[^"]*text-base[^"]*">After completing/);
+  expect(html).toMatch(/<ul class="[^"]*text-base[^"]*"/);
+  expect(html).toMatch(/<li class="[^"]*text-foreground[^"]*"/);
+  expect(html).not.toMatch(/<li class="[^"]*text-muted-foreground/);
+});
+
+// §D11 still holds without an image: one column, held to the reading measure.
+test('a list-only block is one column at the reading measure', () => {
+  const html = renderOutcomes(valid);
+
+  expect(html).toMatch(/^<div class="[^"]*max-w-\(--measure\)[^"]*">/);
+  expect(html).not.toContain('lg:grid-cols');
+});
+
+// With an image the card takes the wider track: 7:5 at `lg`, stacked below it.
+test('with an image the callout and the image split 7:5 at lg', () => {
+  const html = renderOutcomes({ ...valid, image: { src: 'images/a.svg', alt: '' } });
+
+  expect(html).toMatch(/^<div class="[^"]*lg:grid-cols-\[minmax\(0,7fr\)_minmax\(0,5fr\)\]/);
+  expect(html).toContain('lg:items-start');
+});
+
+// The image frame matches the callout: same radius, a border, a faint shadow.
+test('the image sits in a rounded, bordered frame that reserves its box', () => {
+  const html = renderOutcomes({ ...valid, image: { src: 'images/a.svg', alt: '' } });
+  const frame = html.match(/<div class="([^"]*)"><img/)?.[1] ?? '';
+
+  for (const cls of ['aspect-[3/2]', 'rounded-lg', 'border', 'shadow-sm', 'overflow-hidden']) {
+    expect(frame.split(' ')).toContain(cls);
+  }
+  expect(html).toMatch(/<img[^>]*object-contain/);
 });

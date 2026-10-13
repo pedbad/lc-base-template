@@ -49,12 +49,12 @@ would walk straight into the XSS rule in `rules/ecc/web/security.md`.
 
 ## 1. Decisions
 
-| #   | Decision                | Chosen                                                                                                        | Rejected                                                                                                                                              |
-| --- | ----------------------- | ------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Where the outcomes live | **A new block `type: "outcomes"`**, holding the lead-in, the list and the image. Prose stays a `prose` block. | A new optional field on `TextBlockContentSchema`, which would silently give every prose block in a course an outcomes list and an image.              |
-| 2   | Visual treatment        | **No new surface.** A titled `<ul>` with ticks, no tint, no border.                                           | A second callout primitive; a `variant` prop on `InstructionsCallout`.                                                                                |
-| 3   | What image ships        | **`images/lo-placeholder.svg`**, already in `public/images/`.                                                 | Shipping no image (leaves the two-column path unexercised on the page it was built for); adding new artwork (new bytes against a live budget breach). |
-| 4   | The lead-in line        | **An authored `lead` field**, inline rich text, rendered as `<p>`.                                            | A `ui-strings.ts` key — that file's own doc scopes it to "the words the exercise chrome shows", and a content lead-in is not chrome. Nothing at all.  |
+| #   | Decision                | Chosen                                                                                                                     | Rejected                                                                                                                                              |
+| --- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Where the outcomes live | **A new block `type: "outcomes"`**, holding the lead-in, the list and the image. Prose stays a `prose` block.              | A new optional field on `TextBlockContentSchema`, which would silently give every prose block in a course an outcomes list and an image.              |
+| 2   | Visual treatment        | **No new surface.** A titled `<ul>` with ticks, no tint, no border. **(Amended 2026-10-13: the info `Callout` — see §3.)** | A second callout primitive; a `variant` prop on `InstructionsCallout`.                                                                                |
+| 3   | What image ships        | **`images/lo-placeholder.svg`**, already in `public/images/`.                                                              | Shipping no image (leaves the two-column path unexercised on the page it was built for); adding new artwork (new bytes against a live budget breach). |
+| 4   | The lead-in line        | **An authored `lead` field**, inline rich text, rendered as `<p>`.                                                         | A `ui-strings.ts` key — that file's own doc scopes it to "the words the exercise chrome shows", and a content lead-in is not chrome. Nothing at all.  |
 
 ### 1.1 Why decision 2 went to "no new surface"
 
@@ -147,6 +147,16 @@ semantically pointless without one — the image is a plain grid child.
 ---
 
 ## 3. The renderer
+
+> **Amended 2026-10-13 (maintainer, after comparing with french-lo-1).** The outcomes
+> now sit in the existing info `Callout` (`src/components/shell/Callout.tsx`), which is
+> what french-lo-1 does with its info box: same tint, border, icon and `role="note"` as
+> every instructions box, the lead as its title. Lead and list are body size in full
+> ink; ticks are 18px. With an image the columns split **7:5** at `lg` (card wider) and
+> the image sits in a frame matching the card (`rounded-lg`, border, `shadow-sm`);
+> without one the card holds the reading measure. Still no stylesheet and no token —
+> `Callout` is reused unchanged. Decision 2 and the markup below describe the first
+> pass; the code and `outcomes-block.test.tsx` are current.
 
 New file `src/lo/blocks/OutcomesBlock.tsx`, registered as `outcomes` in
 `BLOCK_RENDERERS` (`src/lo/blocks/block-renderers.ts`).
