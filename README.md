@@ -34,7 +34,8 @@ Verified toolchain (macOS, 2026-06-16):
 **Bun** is the package manager and runtime; **Vitest** is the test runner (`bun run test`).
 **Node** is optional: without it, `bun run` stands Bun in for `node`. If Node is
 installed, `bun run` uses it for the Vite, Vitest, ESLint and Prettier CLIs, so it must
-meet the minimum above (Vite will not run on older Node). (Bun installs/runs · Vitest tests · Vite bundles · Bun
+meet the minimum above (Vite will not run on older Node). `.nvmrc` pins the major
+version (`nvm use` picks it up) and CI uses the same file. (Bun installs/runs · Vitest tests · Vite bundles · Bun
 prerenders the static pages.)
 
 ## Setup
