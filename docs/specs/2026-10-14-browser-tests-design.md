@@ -41,8 +41,10 @@ Rejected:
 
 - `e2e/` at the repo root holds the specs, `playwright.config.ts` sits beside
   `vite.config.ts`. Outside `src/`, so Vitest never collects them and they do not count
-  toward the coverage bars. Both join `tsconfig.node.json`'s `include` so `tsc -b`
-  type-checks them; ESLint already lints the whole tree.
+  toward the coverage bars. `tsc -b` type-checks both: the config through
+  `tsconfig.node.json`'s `include`, the specs through their own `tsconfig.e2e.json`
+  (the only config with DOM types, for code inside `page.evaluate`); ESLint already
+  lints the whole tree.
 - `playwright.config.ts` starts `vite preview` itself (`webServer`) and sets `baseURL`
   to the preview origin plus `process.env.BASE_URL ?? '/'`. `vite preview` reads the
   same `base` as the build (`vite.config.ts`), so `BASE_URL=/course/` on both the
@@ -74,6 +76,8 @@ For `index.html` and `example.html`, in every browser:
 - **axe:** zero violations for the tags `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`,
   `wcag22aa`, on the whole page. The 2026-10-13 hand runs were clean, so any finding is
   real.
+
+_(Amended 2026-10-14, while building: Firefox reports the missing or partly unsupported Feijoa font as a console error, so the spec ignores exactly that message — "downloadable font" naming Feijoa — and nothing else; requesting Feijoa only when its files exist is TODO §E5. And `vite preview` answers a missing file inside the base with 200 (its SPA fallback), so the 4xx check catches base-path mistakes, not every missing file.)_
 
 ### 5.2 `e2e/choice-keyboard.spec.ts` — selection and focus move together (E9)
 

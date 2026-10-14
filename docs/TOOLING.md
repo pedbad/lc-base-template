@@ -202,6 +202,34 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
   passed. Verified by adding untested logic, view and hook files: the first two failed
   CI's command, the hook did not.
 
+### Browser tests (Playwright) — the built site in three browsers _(decision 2026-10-14, TODO §E12)_
+
+- **What:** `bun run test:e2e` runs `playwright test` against the **built** `dist/`,
+  served by `vite preview`, in Chromium, Firefox and WebKit. Specs live in `e2e/`, the
+  config in `playwright.config.ts`. Build first.
+- **Why:** the Vitest suite renders to strings in Node and never presses a key. 1689
+  green tests coexisted with a broken keyboard flow (§E9). Only a real browser sees
+  focus, hydration and a sub-path's URLs.
+- **Covers today (slice E12a):** every page loads with no console error, no uncaught
+  error, no failed request and no axe violation (WCAG 2.2 A + AA); the choice pills'
+  arrow keys move selection and focus together. Exercise flows (E12b) and the
+  showcase-only cases (E12c) come next.
+- **Three browsers, not one** (maintainer's choice): WebKit stands in for Safari.
+- **CI:** the `e2e` job runs the suite twice, at `/` and at `/course/`, beside
+  `verify`. A failure uploads the HTML report and traces as an artifact.
+- **Not in the pre-push hook**, which stays fast. **In the verify gate**, after `build`.
+- **Needs Node** (≥ 22.12, `.nvmrc`): Playwright's runner does not run on Bun.
+- **Once per machine:** `bunx playwright install chromium firefox webkit`.
+- **"No jsdom" still stands** (§A-h): this suite runs in real browsers, and Vitest stays
+  `environment: 'node'`.
+- **Rules:** navigate with relative paths (`'example.html'`, never `'/example.html'`) so
+  the base applies; no fixed sleeps, only auto-waiting assertions.
+- **One allowance:** Firefox's "downloadable font" console error naming **Feijoa** is
+  ignored, because Feijoa is never committed and the fallback is by design (§E5 tracks
+  requesting it only when present). Nothing else is.
+- **What the 4xx check sees:** `vite preview` answers a missing file inside the base
+  with 200 (SPA fallback), so it catches base-path mistakes, not every missing file.
+
 ### Vite — dev server + bundler
 
 - **What:** the dev server (instant hot-reload) and production build tool.

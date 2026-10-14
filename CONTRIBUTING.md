@@ -41,6 +41,9 @@ bun run dev     # start the Vite dev server
 `bun install` runs the `prepare` script, which installs husky — so the commit and push
 gates below are active immediately, no manual `git config` step.
 
+Once per machine, for the browser tests:
+`bunx playwright install chromium firefox webkit` (`docs/TOOLING.md`, "Browser tests").
+
 ## Everyday commands
 
 | Command                 | What it does                                                            |
@@ -50,6 +53,7 @@ gates below are active immediately, no manual `git config` step.
 | `bun run preview`       | Serve the production build locally                                      |
 | `bun run test`          | Run the test suite (Vitest, one-shot)                                   |
 | `bun run test:coverage` | The suite plus per-file coverage bars — what CI runs                    |
+| `bun run test:e2e`      | Browser tests against the last build — Chromium, Firefox, WebKit        |
 | `bun run guards`        | Just the repo-wide guard sweeps — fast; the pre-push hook runs it first |
 | `bun run test:watch`    | Vitest in watch mode                                                    |
 | `bun run lint`          | ESLint over the repo                                                    |
@@ -295,7 +299,7 @@ strongest (full rationale in [`docs/TOOLING.md`](docs/TOOLING.md#enforcement-lay
    (~10s). A red test **blocks the push**, so broken code never leaves your machine —
    even in a fork where GitHub Actions has not been switched on yet.
 4. **CI** — GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml))
-   re-runs `lint` · `lint:css` · `format:check` · `test:coverage` · `build` on every
+   re-runs `lint` · `lint:css` · `format:check` · `test:coverage` · `build` · `test:e2e` on every
    PR to `main` and every push to `main`. The unbypassable wall.
 
 You can bypass the local hooks with `--no-verify` (`git commit` or `git push`), but CI

@@ -217,6 +217,7 @@ as far as the tree is concerned.
 ├── docs/
 │   ├── process/
 │   └── specs/
+├── e2e/
 ├── lo-config/…
 ├── public/
 │   ├── audio/…

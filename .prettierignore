@@ -6,6 +6,8 @@ node_modules
 dist
 dist-ssr
 coverage
+playwright-report
+test-results
 
 # Lockfile — owned by Bun, not Prettier. Reformatting it would corrupt it.
 bun.lock

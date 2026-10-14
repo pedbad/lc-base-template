@@ -24,19 +24,21 @@ ship a static LTR-language course from a menu of ready exercise types.
 
 Verified toolchain (macOS, 2026-06-16):
 
-| Tool                                      | Minimum       | Tested  |
-| ----------------------------------------- | ------------- | ------- |
-| [Bun](https://bun.sh)                     | ≥ 1.3         | 1.3.14  |
-| [Node.js](https://nodejs.org) (optional)  | ≥ 22.12 (LTS) | 22.19.0 |
-| [Git](https://git-scm.com)                | ≥ 2.40        | 2.50.1  |
-| [GitHub CLI](https://cli.github.com) `gh` | ≥ 2.0         | 2.94.0  |
+| Tool                                                            | Minimum       | Tested  |
+| --------------------------------------------------------------- | ------------- | ------- |
+| [Bun](https://bun.sh)                                           | ≥ 1.3         | 1.3.14  |
+| [Node.js](https://nodejs.org) (optional; needed for `test:e2e`) | ≥ 22.12 (LTS) | 22.19.0 |
+| [Git](https://git-scm.com)                                      | ≥ 2.40        | 2.50.1  |
+| [GitHub CLI](https://cli.github.com) `gh`                       | ≥ 2.0         | 2.94.0  |
 
 **Bun** is the package manager and runtime; **Vitest** is the test runner (`bun run test`).
+(Bun installs/runs · Vitest tests · Vite bundles · Bun prerenders the static pages.)
 **Node** is optional: without it, `bun run` stands Bun in for `node`. If Node is
 installed, `bun run` uses it for the Vite, Vitest, ESLint and Prettier CLIs, so it must
 meet the minimum above (Vite will not run on older Node). `.nvmrc` pins the major
-version (`nvm use` picks it up) and CI uses the same file. (Bun installs/runs · Vitest tests · Vite bundles · Bun
-prerenders the static pages.)
+version (`nvm use` picks it up) and CI uses the same file.
+The browser tests (`bun run test:e2e`) are the exception: Playwright's runner needs
+Node.
 
 ## Setup
 

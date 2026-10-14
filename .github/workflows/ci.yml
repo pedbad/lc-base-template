@@ -56,3 +56,83 @@ jobs:
 
       - name: Build (tsc + vite)
         run: bun run build
+
+  # The browser suite (TODO §E12, docs/TOOLING.md "Browser tests"): the BUILT site in
+  # Chromium, Firefox and WebKit, once per base path so a root-absolute URL that only
+  # works at / fails here. Beside `verify`, not after it, so both report at once.
+  e2e:
+    name: Browser tests (${{ matrix.base }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        base: ['/', '/course/']
+    env:
+      BASE_URL: ${{ matrix.base }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3'
+
+      # Playwright's runner is Node, not Bun.
+      # `bun run` hands Vite, Vitest, ESLint and Prettier to Node when Node is on the
+      # PATH, so CI pins the same Node as `.nvmrc` instead of whatever the runner image
+      # ships (TODO §E15). An exact tag, not `@v7`: when adopted, the moving major tag
+      # pointed at a release younger than the two weeks this repo waits before adopting.
+      - name: Set up Node
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      # Browsers are ~500 MB; cache them per Playwright version. On a hit only the
+      # Linux system libraries are installed, which the cache cannot hold. Browsers are
+      # built per distro, so the key also names the runner image ($ImageOS, read here
+      # because the `env` context holds only workflow keys): an image move misses.
+      - name: Read the Playwright version and runner image
+        id: playwright
+        run: |
+          echo "version=$(node -p "require('./node_modules/@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+          echo "image=$ImageOS" >> "$GITHUB_OUTPUT"
+
+      # An exact tag, not `@v6`, for the same reason as setup-node above.
+      - name: Cache Playwright browsers
+        id: browser-cache
+        uses: actions/cache@v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.image }}-${{ steps.playwright.outputs.version }}
+
+      - name: Install browsers
+        if: steps.browser-cache.outputs.cache-hit != 'true'
+        run: bunx playwright install --with-deps chromium firefox webkit
+
+      - name: Install browser system libraries
+        if: steps.browser-cache.outputs.cache-hit == 'true'
+        run: bunx playwright install-deps chromium firefox webkit
+
+      - name: Build
+        run: bun run build
+
+      - name: Browser tests (Playwright)
+        run: bun run test:e2e
+
+      # An exact tag, not `@v7`, for the same reason as setup-node above.
+      - name: Upload the report
+        if: failure()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: playwright-report-${{ strategy.job-index }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+          # A "re-run failed jobs" uploads under the same name; replace, do not collide.
+          overwrite: true

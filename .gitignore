@@ -45,3 +45,7 @@ graphify-out/
 
 # Coverage reports (bun run test:coverage)
 coverage/
+
+# Playwright output (bun run test:e2e) — regenerated every run, never committed
+playwright-report/
+test-results/

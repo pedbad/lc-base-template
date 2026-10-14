@@ -63,6 +63,8 @@ export function ExerciseHost({ type, config }: ExerciseHostProps) {
       <ExerciseInstructions text={instructions} />
       {Engine ? (
         isHydrated ? (
+          // e2e/pages.spec.ts waits for no "Loading…" fallback left (the example page's
+          // `ready`), so rewording this text must update the spec too.
           <Suspense fallback={<p className="text-muted-foreground">Loading…</p>}>
             {/* eslint-disable-next-line react-hooks/static-components */}
             <Engine config={config} />
