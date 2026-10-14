@@ -9,8 +9,8 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-13 · **HEAD:** see `git log` · **Suite:** 161 files · 1686 tests green
-· CI green · `main` unprotected by decision (job E1).
+**Last updated:** 2026-10-14 · **HEAD:** see `git log` · **Suite:** 161 files · 1689 tests green
+(Vitest) · 30 Playwright tests (10 × 3 browsers, `bun run test:e2e`) · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
 `2026-08-06-post-phase-d-handover.md` §3. Read them before touching the build. In short:
@@ -22,7 +22,7 @@ nothing reachable from `vite.config.ts` may use `@/…` imports; never import
 **Verify gate — run before every commit:**
 
 ```bash
-bun run format && bun run lint && bun run lint:css && bun run test:coverage && bun run build
+bun run format && bun run lint && bun run lint:css && bun run test:coverage && bun run build && bun run test:e2e
 ```
 
 `bun run guards` (`vitest run src/guards`) is the fast subset — **214** tests in ~1s — for
@@ -43,9 +43,11 @@ is exactly what the paragraph above is about.
 `bun run test` (Vitest), **not** `bun test` — Bun's own runner throws on the
 `import.meta.glob` in `load-lo-glob.ts` and reports a false failure.
 
-**Next (2026-10-13):** for the current commit see `git log main`. Section D is closed
+**Next (2026-10-14):** for the current commit see `git log main`. Section D is closed
 (the 2026-10-09 six, §D19–§D21 and their browser checks). Tabs on phones (§F3,
-`22b637d`) is the last feature in. Nothing else is ordered.
+`22b637d`) is the last feature in. **E9** (`ec86eb7`), **E12a** (`cbda661`) and **E15**
+(`fe43305`) are done. The next coding items, in order: **E10**, then **E11**, then E14
+and E4.
 
 - **`sources` block (§F5) is DONE** (2026-10-12, late): renderer, schema, example in
   `lo-00-example`'s new Sources section, CONTRIBUTING and llms.txt. Built with the
@@ -1726,6 +1728,14 @@ no-preference` only.
   (handover §3 item 4), but Feijoa is not committed (licence), so a CI-built zip ships
   the fallback font. Decide: build on the maintainer's machine, or give CI the fonts
   from a private place. Deploy targets per course are still open too (handover §4).
+  **Found by E12a:** the site always requests Feijoa (the `@font-face` in
+  `src/styles/app.css`), so wherever the files are missing (fresh clones, CI, a deploy
+  without fonts) browsers make failing font requests and Firefox logs a console error.
+  `e2e/pages.spec.ts` ignores exactly that message until this is fixed. Decide with E5:
+  emit Feijoa's `@font-face` only when its files exist (a build-time check), AND deal
+  with the Bold cut: where the files do exist, Firefox still logs a "downloadable font"
+  error because it discards a table from that file (fix the file, or keep a narrower
+  allowance for it). Only then remove the spec's allowance.
 - **E6 — content folders ownerless in `CODEOWNERS`. DONE 2026-10-14.**
   `/lo-config/`, `/public/images/` and `/public/audio/` sit after the `* @pedbad` line
   with no owner (`ORGANIZATION.md` step 5), so a content-only PR needs no approval once
@@ -1786,16 +1796,17 @@ the code the same day. Four hold; its claim that strict TypeScript is off does n
 (TypeScript 6.0.3 turns `strict` on by default — probed: with no setting it rejects an
 implicit `any` and `null` as a `number`). Its central point stands: 1689 passing tests
 coexisted with a broken keyboard flow, because component tests render static markup and
-never press a key. **Order: E9–E11 before the handover, E12 just before or after it,
-E13 before real learners.**
+never press a key. **Order: E9–E11 before the handover, E12 just before or after it
+(E12a done 2026-10-14; E12b and E12c remain), E13 before real learners.**
 
-- **E9 — radio keyboard: arrows change the answer, focus stays put.**
-  `src/exercises/lib/ChoicePillGroup.tsx` `handleKeyDown` calls `onSelect(next)` but never
-  moves focus, so the next arrow press starts from the old pill again: focus A, Right,
-  Right selects B twice. Affects radio-quiz, reading and inline-choice. Fix: move focus
-  with the selection (a ref per pill), keeping wrap, Home/End and the roving tab stop.
-  Verify: an interaction test (E12's first case, or a DOM test here) asserts selection
-  AND `document.activeElement` after repeated arrows, both directions, wrapping.
+- **E9 — radio keyboard: arrows changed the answer, focus stayed put. DONE 2026-10-14**
+  (`ec86eb7`). `src/exercises/lib/ChoicePillGroup.tsx` `handleKeyDown` called
+  `onSelect(next)` but never moved focus, so the next arrow press started from the old
+  pill again: focus A, Right, Right selected B twice. Affected radio-quiz, reading and
+  inline-choice. Fixed with a ref per pill: focus follows the selection, with wrap,
+  Home/End and the roving tab stop kept. Tested by `e2e/choice-keyboard.spec.ts` in
+  Chromium, Firefox and WebKit (selection AND the focused element after repeated
+  arrows, both directions, wrapping); seen failing, 18 of 18, before the fix.
 - **E10 — rich text accepts invalid interactive nesting.**
   `src/lo/rich-text/parse-rich-text.ts` checks each tag alone, never what it sits inside:
   `<a>` inside `<a>` parses to nested links, and an audio span inside a hover term
@@ -1809,16 +1820,50 @@ E13 before real learners.**
   `tsconfig.node.json` (5 min). Already the TypeScript 6 default, so nothing should
   change; written down so no reader or older tool assumes otherwise. Optional follow-up:
   `noUncheckedIndexedAccess`, measured first. Verify: `bun run build` unchanged.
-- **E12 — a browser interaction suite in CI.** Playwright against the BUILT site,
-  including under `BASE_URL=/course/`: answer → check → edit → reveal → reset for
-  representative engines; keyboard selection and focus (E9); audio playing and failing;
-  hydration of a prerendered page with no console errors; axe on each page. Turns the
-  hand-run Playwright checks of 2026-10-13 into required CI checks. The biggest gain in
-  confidence; size it before starting (Chromium in CI, run time). Two more cases, from
-  a second review (below): **memory-match** — click and resize during the 620 ms "Show
-  answers" FLIP reorder, then assert every card is back in the grid with no stray
-  inline transform; **sequence audio** — scrub quickly while playing, then assert the
-  shown time and the playing position agree.
+  **Now three tsconfigs with compiler options** (E12a added `tsconfig.e2e.json`):
+  write `strict` in all three, or make `tsconfig.e2e.json` extend `tsconfig.node.json`
+  first so it inherits. A review suggested:
+
+  ```json
+  {
+    "extends": "./tsconfig.node.json",
+    "compilerOptions": {
+      "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.e2e.tsbuildinfo",
+      "lib": ["ES2023", "DOM"]
+    },
+    "include": ["e2e"]
+  }
+  ```
+
+- **E12 — a browser interaction suite in CI**, in three parts. Turns the hand-run
+  Playwright checks of 2026-10-13 into required CI checks; the biggest gain in
+  confidence.
+  - **E12a — browser suite foundation. DONE 2026-10-14** (`cbda661`; spec
+    `docs/specs/2026-10-14-browser-tests-design.md`). Playwright against the BUILT site
+    in Chromium, Firefox and WebKit: `index.html` and `example.html` load with no
+    console or uncaught error and no failed request, and pass axe (WCAG 2.2 A + AA);
+    plus E9's keyboard spec (`ec86eb7`). CI runs it at `/` and `/course/`. How to run it and
+    what it deliberately skips: `docs/TOOLING.md`, "Browser tests".
+  - **E12b — exercise flows** (its own spec): answer → check → edit → reveal → reset on
+    `select` and `radio-quiz`. Notes carried from the E12a reviews:
+    - axe currently skips everything inside closed `<details>` (the exercises) and
+      never opens a modal or hover card: add an axe pass with all `<details>` open and
+      one with a modal open; consider dark mode and a narrow viewport.
+    - Drive the roving tab stop with real Tab / Shift+Tab presses, and start from
+      nothing selected.
+    - `animationsSettled` covers page load only: an interaction that starts a new
+      animation needs its own wait.
+    - `#exercise-02-radio-quiz-heading` depends on the render-mirror folder name.
+  - **E12c — showcase-only cases** (its own spec; needs a `DEBUG=1` build in CI). From
+    a second review (below): **memory-match** — click and resize during the 620 ms
+    "Show answers" FLIP reorder, then assert every card is back in the grid with no
+    stray inline transform; **sequence audio** — scrub quickly while playing, then
+    assert the shown time and the playing position agree. Plus audio playing and audio
+    failing.
+  - Found while building E12a: LoCard's fade-in made axe flaky, so the spec waits for
+    running, finite, visible animations before axe (WebKit had never-settling finished
+    transitions in closed `<details>`). The font allowance and the `vite preview`
+    fallback limit are in `docs/TOOLING.md`, "Browser tests".
 - **E13 — before real learners: flashcard progress identity, and failure fallbacks.**
   (a) `storageKey()` in `flashcards-storage.ts` hashes the deck's content: fixing a typo
   in one card loses that deck's saved progress, two identical decks share progress, and
@@ -1853,12 +1898,13 @@ rather than the Language Centre's course factory; the maintainer took three smal
   course template, public so its CC BY-NC content can be shared; outside users must
   replace the branding (and Feijoa is never committed). Link `LICENSE` rather than
   restating it. Keep the template flag: `ORGANIZATION.md` relies on it.
-- **E15 — pin the Node version.** `bun run` hands Vite, Vitest, ESLint and Prettier to
-  Node when Node is installed, and nothing pins which Node: no `engines` field, no
-  `.nvmrc`, and CI uses whatever `ubuntu-latest` ships. Add `engines.node` (the README's
-  ≥ 22.12) and `.nvmrc`, and `actions/setup-node` with that version in `ci.yml`, so
-  local and CI resolve the same runtime. Verify: CI green, and its log shows the pinned
-  Node.
+- **E15 — pin the Node version. DONE 2026-10-14** (`fe43305`). `bun run` hands Vite,
+  Vitest, ESLint and Prettier to Node when Node is installed, and nothing pinned which
+  Node: no `engines` field, no `.nvmrc`, and CI used whatever `ubuntu-latest` ships.
+  Now `.nvmrc` is 22, `engines.node` is `>=22.12`, and both CI jobs run
+  `actions/setup-node` from `.nvmrc`, so local and CI resolve the same runtime.
+  **Verification still owed:** the first CI run on `main` shows Node 22.x in "Set up
+  Node".
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
@@ -2104,3 +2150,6 @@ build, so it cannot return. Two remain:
 | 2026-10-13 | see git   | **sources redesign** — groups as cards side by side, heading rule, divided entries, icon chip; CSS cap 19 kB (§F5)                      |
 | 2026-10-13 | see git   | **outcomes as an info callout** — lead as title, 50:50 beside a framed image, as french-lo-1 (spec 2026-09-11 §3)                       |
 | 2026-10-13 | `22b637d` | **tabs on phones** — dropdown below `@3xl`, row above; JS cap 140 kB (§F3)                                                              |
+| 2026-10-14 | `fe43305` | **Node pinned** — `.nvmrc` 22, `engines.node`, setup-node from `.nvmrc` in both CI jobs (E15)                                           |
+| 2026-10-14 | `cbda661` | **browser suite** — Playwright in Chromium, Firefox, WebKit: no console errors, axe clean, in CI at `/` and `/course/` (E12a)           |
+| 2026-10-14 | `ec86eb7` | **choice pills keep focus with the selection** — arrow keys no longer leave focus behind (E9)                                           |
