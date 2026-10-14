@@ -1842,6 +1842,28 @@ documented choice (spec §4); `SequenceAudioController`'s `liveStateRef` — no 
 Taken: flashcard keys need the LO + exercise id (E13a, as above), and the two
 interaction cases now in E12. Do not follow its priority list as written.
 
+**From a third review (2026-10-14)**, which judged the repo as a generic public starter
+rather than the Language Centre's course factory; the maintainer took three small items
+(about 30 min together) and set the rest aside.
+
+- **E14 — README opener: who this is for, and the branding rule.** The repo is public
+  and flagged as a GitHub template, and it commits Language Centre branding
+  (`public/logo.svg`, `public/images/footer/lc-logo-*.svg`, `elearning-logo-*.svg`).
+  Open the README with one short paragraph: this is the Cambridge Language Centre's
+  course template, public so its CC BY-NC content can be shared; outside users must
+  replace the branding (and Feijoa is never committed). Link `LICENSE` rather than
+  restating it. Keep the template flag: `ORGANIZATION.md` relies on it.
+- **E15 — pin the Node version.** `bun run` hands Vite, Vitest, ESLint and Prettier to
+  Node when Node is installed, and nothing pins which Node: no `engines` field, no
+  `.nvmrc`, and CI uses whatever `ubuntu-latest` ships. Add `engines.node` (the README's
+  ≥ 22.12) and `.nvmrc`, and `actions/setup-node` with that version in `ci.yml`, so
+  local and CI resolve the same runtime. Verify: CI green, and its log shows the pinned
+  Node.
+- **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
+  Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
+  so moving it keeps their top-level docs to what a course needs. Fix the links that
+  point to it (`md-links` will name them).
+
 Still open from the same check, already tracked elsewhere: the coverage rule in CI
 (E8, done 2026-10-14), E1 (fires at handover). **CC BY-NC 4.0 confirmed** as the content
 licence by the maintainer, 2026-10-14 (handover §4). The same day, CONTRIBUTING gained a
