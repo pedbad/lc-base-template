@@ -1814,7 +1814,11 @@ E13 before real learners.**
   representative engines; keyboard selection and focus (E9); audio playing and failing;
   hydration of a prerendered page with no console errors; axe on each page. Turns the
   hand-run Playwright checks of 2026-10-13 into required CI checks. The biggest gain in
-  confidence; size it before starting (Chromium in CI, run time).
+  confidence; size it before starting (Chromium in CI, run time). Two more cases, from
+  a second review (below): **memory-match** — click and resize during the 620 ms "Show
+  answers" FLIP reorder, then assert every card is back in the grid with no stray
+  inline transform; **sequence audio** — scrub quickly while playing, then assert the
+  shown time and the playing position agree.
 - **E13 — before real learners: flashcard progress identity, and failure fallbacks.**
   (a) `storageKey()` in `flashcards-storage.ts` hashes the deck's content: fixing a typo
   in one card loses that deck's saved progress, two identical decks share progress, and
@@ -1826,6 +1830,17 @@ E13 before real learners.**
   `play().catch(() => {})` and notifies "playing" before playback succeeds. Fix: a local
   error fallback with retry/reload, and audio state set from the play outcome. Verify:
   tests for a failing engine load and a rejected `play()`.
+
+**A second review (2026-10-14), checked the same day and mostly not actionable.** Of its
+nine claims: uncaught `play()` promises — false, all six calls catch (the real issue is
+the silent catch, E13b); listener leaks — mostly false (`once: true`, `useAudioClip`
+cleans up); `any` in `render-mirror.ts`/`prerender.tsx` — false, only the word in
+comments; jsdom mocks of `ResizeObserver`/`AudioContext` — false, the suite is Node with
+no such mocks; line-match layout thrashing — its fix (rAF-batched measuring) is already
+in place and there is no scroll listener; scroll spy without IntersectionObserver — a
+documented choice (spec §4); `SequenceAudioController`'s `liveStateRef` — no such name.
+Taken: flashcard keys need the LO + exercise id (E13a, as above), and the two
+interaction cases now in E12. Do not follow its priority list as written.
 
 Still open from the same check, already tracked elsewhere: the coverage rule in CI
 (E8, done 2026-10-14), E1 (fires at handover). **CC BY-NC 4.0 confirmed** as the content
