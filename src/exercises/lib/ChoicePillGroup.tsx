@@ -30,7 +30,7 @@
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §5, §7, §8.
  */
-import { type KeyboardEvent } from 'react';
+import { type KeyboardEvent, useRef } from 'react';
 import './choice-pill-group.css';
 
 interface ChoicePillGroupProps {
@@ -89,8 +89,13 @@ export function ChoicePillGroup({
   contentLang,
   stacksWhenNarrow = false,
 }: ChoicePillGroupProps) {
+  // One button per option, so a key press can move focus along with the selection.
+  const pillRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
   // Arrow keys move the selection within the group (roving focus); Space/Enter
   // re-commit the focused pill. Ported from inline-choice's handleChoiceKeyDown.
+  // Focus follows the selection (TODO §E9): left on the old pill, the next arrow
+  // press started from there again, so Right, Right selected the second pill twice.
   const handleKeyDown = (currentOptionIndex: number, event: KeyboardEvent<HTMLButtonElement>) => {
     const optionsLength = options.length;
     if (optionsLength <= 0) return;
@@ -123,6 +128,7 @@ export function ChoicePillGroup({
 
     event.preventDefault();
     onSelect(nextIndex);
+    pillRefs.current[nextIndex]?.focus();
   };
 
   const group = (
@@ -154,6 +160,9 @@ export function ChoicePillGroup({
             key={`${groupId}-${optionIndex}`}
             onClick={() => onSelect(optionIndex)}
             onKeyDown={(event) => handleKeyDown(optionIndex, event)}
+            ref={(pill) => {
+              pillRefs.current[optionIndex] = pill;
+            }}
             role="radio"
             tabIndex={isTabStop ? 0 : -1}
             type="button"
