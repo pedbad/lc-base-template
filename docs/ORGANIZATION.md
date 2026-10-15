@@ -56,8 +56,8 @@ branch rules on every course repo, and nobody else can switch them off.
 ## Still to decide before starting
 
 - [ ] **Deploy targets** for each course (CONTRIBUTING mentions two).
-- [ ] **Content licence variant.** `LICENSE` says CC BY-NC 4.0 (no commercial reuse).
-      Confirm that is the intended Creative Commons licence before courses go public.
+- [x] **Content licence variant.** CC BY-NC 4.0 (no commercial reuse), as `LICENSE`
+      says. Confirmed by the maintainer 2026-10-14.
 
 ---
 

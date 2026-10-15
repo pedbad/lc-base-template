@@ -93,7 +93,8 @@ bun run format && bun run lint && bun run lint:css && bun run test:coverage && b
   write the code that makes it pass. No hook enforces this by default (the TDD guard
   is opt-in, `docs/TOOLING.md`); CI and review do, so do not skip it.
 - **Tests sit beside the code** as `<name>.test.ts(x)`. Vitest only collects
-  `src/**/*.test.{ts,tsx}` — a test outside `src/` never runs.
+  `src/**/*.test.{ts,tsx}` — a test outside `src/` never runs. The one exception is
+  `e2e/`: Playwright specs, run by `test:e2e` (`STRUCTURE.md`).
 - Files under 800 lines.
 
 ## The eight guards

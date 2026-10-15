@@ -48,7 +48,7 @@ Every coding item from the 2026-10-14 handover is done: **E9** (`ec86eb7`), **E1
 (`cbda661`), **E15** (`fe43305`), E5's Feijoa-only-when-present (`f6b2f87`), **E10**
 (`fb73545`) and **E11** (`187dadc`). The **graphify review** is done too (2026-10-15,
 output not committed): six spec headers still read "pending" or "building on
-`feat/…`" for shipped work, three specs did not link their plans, and `STRUCTURE.md`
+`feat/…`" for shipped work, five specs did not link their plans, and `STRUCTURE.md`
 left out `e2e/` and `docs/ORGANIZATION.md`. All fixed. The import map breaks no rule:
 nothing `vite.config.ts` reaches uses `@/…`, and the two cross-folder imports
 `STRUCTURE.md` does not mention are harmless (engine fixtures import
