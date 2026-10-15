@@ -93,15 +93,37 @@ export const EXERCISE_HEADINGS = {
  * interaction that starts one. `animationsSettled()` is for page load.
  */
 export async function animationsInside(scope: Locator): Promise<void> {
-  // Finite ones only: an endless animation (a spinner) never finishes.
+  // Same filter as animationsSettled: running, finite, on a rendered element. WebKit can
+  // leave a transition inside a closed <details> (a transcript) unsettled forever.
   await scope.evaluate((element) =>
     Promise.all(
       element
         .getAnimations({ subtree: true })
-        .filter((animation) => animation.effect?.getTiming().iterations !== Infinity)
-        .map((animation) => animation.finished.catch(() => {})),
+        .filter((animation) => {
+          const { effect } = animation;
+          const target = effect instanceof KeyframeEffect ? effect.target : null;
+          return (
+            animation.playState === 'running' &&
+            effect?.getTiming().iterations !== Infinity &&
+            target?.checkVisibility() !== false
+          );
+        })
+        .map((animation) => animation.finished.catch(() => undefined)),
     ),
   );
+}
+
+/**
+ * example.html is ready: hydrated, and every lazy engine chunk rendered. The engines
+ * render only after hydration (ExerciseHost), so a radiogroup in the DOM proves both
+ * happened; no "Loading…" Suspense fallback left proves EVERY engine's chunk rendered
+ * (the `select` engine renders no radiogroup). Attached, not visible: the exercises sit
+ * in closed <details>. getByText does not filter by visibility, so it counts fallbacks
+ * inside closed <details> too.
+ */
+export async function exampleReady(page: Page): Promise<void> {
+  await expect(page.locator('[role="radiogroup"]').first()).toBeAttached();
+  await expect(page.getByText('Loading…', { exact: true })).toHaveCount(0);
 }
 
 /**

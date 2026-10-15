@@ -9,7 +9,12 @@
  */
 import { expect, test, type Page } from '@playwright/test';
 
-import { animationsSettled, expectNoAxeViolations, watchForProblems } from './support';
+import {
+  animationsSettled,
+  exampleReady,
+  expectNoAxeViolations,
+  watchForProblems,
+} from './support';
 
 interface PageCase {
   /** Relative to the base URL — never a leading slash. */
@@ -20,20 +25,7 @@ interface PageCase {
 
 const PAGES: PageCase[] = [
   { path: 'index.html', ready: async () => {} },
-  {
-    path: 'example.html',
-    // The exercise engines are lazy chunks that render only after hydration
-    // (ExerciseHost). A radiogroup in the DOM proves hydration happened and a chunk
-    // loaded; no "Loading…" Suspense fallback left proves EVERY engine's chunk rendered
-    // (lo-00-example also has a `select` engine, which renders no radiogroup). Attached,
-    // not visible: the exercises sit in closed <details>, and role queries skip hidden
-    // elements, so the radiogroup is a CSS locator. getByText does not filter by
-    // visibility, so it counts fallbacks inside closed <details> too.
-    ready: async (page) => {
-      await expect(page.locator('[role="radiogroup"]').first()).toBeAttached();
-      await expect(page.getByText('Loading…', { exact: true })).toHaveCount(0);
-    },
-  },
+  { path: 'example.html', ready: exampleReady },
 ];
 
 for (const { path, ready } of PAGES) {

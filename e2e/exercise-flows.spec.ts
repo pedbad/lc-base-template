@@ -7,7 +7,7 @@
  */
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
-import { EXERCISE_HEADINGS, openExercise } from './support';
+import { EXERCISE_HEADINGS, exampleReady, openExercise } from './support';
 
 const button = (scope: Locator, name: string): Locator =>
   scope.getByRole('button', { name, exact: true });
@@ -30,6 +30,7 @@ test.describe('radio-quiz: answer, check, edit, reveal, reset', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto('example.html');
+    await exampleReady(page);
     quiz = await openExercise(page, EXERCISE_HEADINGS.radioQuiz);
   });
 
@@ -113,6 +114,7 @@ test.describe('select: answer, check, edit, reveal, reset', () => {
   test.beforeEach(async ({ page: browserPage }) => {
     page = browserPage;
     await page.goto('example.html');
+    await exampleReady(page);
     exercise = await openExercise(page, EXERCISE_HEADINGS.select);
   });
 

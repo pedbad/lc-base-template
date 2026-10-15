@@ -11,6 +11,7 @@ import {
   EXERCISE_HEADINGS,
   animationsInside,
   animationsSettled,
+  exampleReady,
   expectNoAxeViolations,
   openExercise,
 } from './support';
@@ -77,7 +78,11 @@ const OPEN_STATES: { name: string; open: (page: Page) => Promise<void> }[] = [
       const term = page.getByRole('button', { name: "Learning Object's JSON" });
       await term.focus();
       await expect(term).toHaveAttribute('aria-expanded', 'true');
-      await animationsSettled(page);
+      // Wait for the card itself and its fade: the attribute flips before the fade starts.
+      const cardId = await term.getAttribute('aria-controls');
+      const card = page.locator(`[id="${cardId}"]`);
+      await expect(card).toBeVisible();
+      await animationsInside(card);
     },
   },
 ];
@@ -101,8 +106,8 @@ for (const colorScheme of ['light', 'dark'] as const) {
     for (const { name, open } of OPEN_STATES) {
       test(`example.html with ${name} has no axe violations`, async ({ page }) => {
         await page.goto('example.html');
-        // Hydrated, so the accordions, links and terms respond to input.
-        await expect(page.locator('[role="radiogroup"]').first()).toBeAttached();
+        // Hydrated with every engine rendered, so the page responds to input.
+        await exampleReady(page);
         await animationsSettled(page);
         await open(page);
         await expectNoAxeViolations(page);
