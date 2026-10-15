@@ -122,6 +122,27 @@ export async function openExercise(page: Page, headingId: string): Promise<Locat
 
 /** Runs axe with the WCAG tags above and fails listing every violation. */
 export async function expectNoAxeViolations(page: Page): Promise<void> {
-  const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
+  const builder = new AxeBuilder({ page }).withTags(WCAG_TAGS);
+  if (page.context().browser()?.browserType().name() === 'webkit') {
+    builder.exclude(BASE_UI_FOCUS_GUARD);
+  }
+  const results = await builder.analyze();
   expect(results.violations).toEqual([]);
 }
+
+/**
+ * Base UI's focus-guard sentinels, left out of axe in WebKit ONLY (maintainer's decision,
+ * 2026-10-15, TODO §E12b). While a Base UI popup is open (the Dialog behind the popup
+ * modal, a Select's dropdown), Base UI puts an invisible, focusable <span> at each edge of
+ * the focus trap. In Safari only it gives them `role="button"`: VoiceOver's virtual
+ * cursor fires focus events only on buttons, and the trap relies on them
+ * (node_modules/@base-ui/react/esm/utils/FocusGuard.js). They carry no name, so axe
+ * reports `aria-command-name` (serious). The markup is Base UI's, not ours: no prop
+ * names them. Reported upstream as mui/base-ui#5237 (open on 2026-10-15).
+ *
+ * What stays checked: everything else on the page in WebKit, and the guards themselves
+ * in Chromium and Firefox (there `aria-hidden`, which axe accepts). Recheck on every
+ * Base UI upgrade: delete this exclusion once #5237 is fixed and the WebKit open-state
+ * passes stay green without it.
+ */
+const BASE_UI_FOCUS_GUARD = '[data-base-ui-focus-guard]';
