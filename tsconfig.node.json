@@ -14,7 +14,9 @@
     "moduleDetection": "force",
     "noEmit": true,
 
-    /* Linting */
+    /* Linting. `strict` is TypeScript 6's default; written down so no reader or older
+       tool assumes otherwise (TODO §E11). */
+    "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,

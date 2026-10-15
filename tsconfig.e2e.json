@@ -1,24 +1,11 @@
 {
+  /* The browser specs: tsconfig.node.json's options (strict included) plus DOM types,
+     which only code inside page.evaluate() needs. Kept apart so vite.config.ts and the
+     build plugins it imports stay Node-only (AGENTS.md hard constraints 1-2). */
+  "extends": "./tsconfig.node.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.e2e.tsbuildinfo",
-    "target": "es2023",
-    "lib": ["ES2023", "DOM"],
-    "module": "esnext",
-    "types": ["node"],
-    "skipLibCheck": true,
-
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
-    "moduleDetection": "force",
-    "noEmit": true,
-
-    /* Linting */
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "lib": ["ES2023", "DOM"]
   },
   "include": ["e2e"]
 }
