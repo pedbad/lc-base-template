@@ -219,12 +219,8 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
   hover card open, in light and dark (`axe-open-states.spec.ts`). Shared helpers:
   `e2e/support.ts`. The showcase-only cases (E12c) come next.
 - **One exclusion, WebKit only** (maintainer's decision, 2026-10-15): Base UI's
-  focus-guard sentinels (`[data-base-ui-focus-guard]`) are left out of axe. In Safari
-  Base UI gives them `role="button"` for VoiceOver, with no name, so axe reports
-  `aria-command-name`; the markup is Base UI's, reported upstream as
-  [mui/base-ui#5237](https://github.com/mui/base-ui/issues/5237). The reason sits beside
-  the exclusion in `e2e/support.ts`. Recheck on every Base UI upgrade and delete it once
-  #5237 is fixed.
+  focus-guard sentinels are left out of axe. Why, the upstream issue and when to remove
+  it: the comment on `BASE_UI_FOCUS_GUARD` in `e2e/support.ts`.
 - **Three browsers, not one** (maintainer's choice): WebKit stands in for Safari.
 - **CI:** the `e2e` job runs the suite twice, at `/` and at `/course/`, beside
   `verify`. A failure uploads the HTML report and traces as an artifact.

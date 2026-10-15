@@ -1851,10 +1851,8 @@ never press a key. **Order: E9–E11 before the handover, E12 just before or aft
     planted break. axe now runs with every `<details>` open, each popup open, a select
     dropdown open and the hover card open, in light and dark, and both pages as loaded
     in dark: no violations. Narrow viewports were left out by decision. **One
-    exclusion, WebKit only:** Base UI's focus-guard sentinels, nameless `role="button"`
-    spans in Safari (upstream [mui/base-ui#5237](https://github.com/mui/base-ui/issues/5237));
-    the reason and the recheck rule are in `e2e/support.ts` and `docs/TOOLING.md`.
-    Recheck on every Base UI upgrade. **Open, for a later decision:** an exercise's
+    exclusion, WebKit only:** Base UI's focus-guard sentinels (why, and when to remove
+    it: `BASE_UI_FOCUS_GUARD` in `e2e/support.ts`). **Open, for a later decision:** an exercise's
     per-question tick or cross is `aria-hidden`, so a screen reader hears only the
     progress count, not which answer was wrong (axe does not flag it).
   - **E12c — showcase-only cases** (its own spec; needs a `DEBUG=1` build in CI). From

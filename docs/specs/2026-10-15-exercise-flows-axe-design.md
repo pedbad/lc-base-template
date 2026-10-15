@@ -61,8 +61,9 @@ names and visibility, and the progress line (`role="status"`, "{correct} correct
 5. **Reset:** after a check, Reset. Back to step 1's state.
 
 **select** (answers: "soy", "eres", "es", one per sentence): the same five steps, with
-one wrong option chosen in one sentence. A select is opened by its trigger (named
-"Answer for blank N") and an option chosen with `getByRole('option', { name })`.
+one wrong option chosen in one sentence. A blank is found by its sentence (the row's grid, then its one `combobox`), opened, and
+an option chosen with `getByRole('option', { name })`; the shown value is read from the
+trigger's `lang` span.
 
 **Keyboard path, from nothing selected** (radio-quiz): Tabbing on from the accordion
 summary, the first pill to take focus is question 1's first pill; Tab again lands on question 2's first pill, not on
