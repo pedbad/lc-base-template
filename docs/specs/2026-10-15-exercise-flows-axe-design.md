@@ -1,6 +1,6 @@
 # Browser tests — slice E12b design: exercise flows, and axe in open states
 
-**Date:** 2026-10-15 · **Status:** agreed, building on `test/e12b-exercise-flows`
+**Date:** 2026-10-15 · **Status:** built 2026-10-15 (`bbd0637`, `6737464`, `c6c3d3f`); one WebKit-only axe exclusion, §7
 **TODO:** §E12b · **Builds on:**
 [`2026-10-14-browser-tests-design.md`](2026-10-14-browser-tests-design.md) (E12a)
 · **Plan:** [`2026-10-15-exercise-flows-axe-plan.md`](../process/2026-10-15-exercise-flows-axe-plan.md)
@@ -108,6 +108,15 @@ goes to the maintainer. Known and out of scope: the per-question tick or cross i
 `aria-hidden`, so a screen reader hears only the progress line's count, not which
 question was wrong. axe does not flag it (nothing is wrong per WCAG's automated rules);
 it is noted for a later decision, not fixed here.
+
+**Found while building (2026-10-15):** in WebKit, with a Base UI popup open (the
+Dialog, a Select's dropdown), Base UI's focus-guard sentinels are nameless
+`role="button"` spans, given that role in Safari for VoiceOver's sake, and axe reports
+`aria-command-name`. The markup is Base UI's and no prop names it. **Maintainer's
+decision:** leave `[data-base-ui-focus-guard]` out of axe in WebKit only, with the reason
+beside the exclusion in `e2e/support.ts`; it is already reported upstream as
+[mui/base-ui#5237](https://github.com/mui/base-ui/issues/5237). Recheck on every Base UI
+upgrade.
 
 ## 8. Done when
 

@@ -10,7 +10,7 @@ session, on either machine.
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
 **Last updated:** 2026-10-15 · **HEAD:** see `git log` · **Suite:** 162 files · 1706 tests green
-(Vitest) · 30 Playwright tests (10 × 3 browsers, `bun run test:e2e`) · CI green · `main` unprotected by decision (job E1).
+(Vitest) · 96 Playwright tests (32 × 3 browsers, `bun run test:e2e`) · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
 `2026-08-06-post-phase-d-handover.md` §3. Read them before touching the build. In short:
@@ -54,7 +54,7 @@ nothing `vite.config.ts` reaches uses `@/…`, and the two cross-folder imports
 `STRUCTURE.md` does not mention are harmless (engine fixtures import
 `src/showcase/fixture-types.ts`; `src/build/source-negation.ts` reuses
 `src/guards/asset-path.ts`). **E14** (README opener) and **E4** (`COURSE_GUIDE.md`) are
-done (2026-10-15). What is left, in order: **E12b**, E5's
+done (2026-10-15), and so is **E12b** (exercise flows, axe in open states). What is left, in order: E5's
 deploy route, E7, and at the handover E1 and the organisation move (E16 after it); E13
 before real learners. Since PR #9, merge a PR by fast-forwarding `main` once its CI is
 green (`git merge --ff-only` + push), so the hashes cited here survive; GitHub's
@@ -1806,7 +1806,7 @@ the code the same day. Four hold; its claim that strict TypeScript is off does n
 implicit `any` and `null` as a `number`). Its central point stands: 1689 passing tests
 coexisted with a broken keyboard flow, because component tests render static markup and
 never press a key. **Order: E9–E11 before the handover, E12 just before or after it
-(E12a done 2026-10-14; E12b and E12c remain), E13 before real learners.**
+(E12a done 2026-10-14, E12b 2026-10-15; E12c remains), E13 before real learners.**
 
 - **E9 — radio keyboard: arrows changed the answer, focus stayed put. DONE 2026-10-14**
   (`ec86eb7`). `src/exercises/lib/ChoicePillGroup.tsx` `handleKeyDown` called
@@ -1843,16 +1843,20 @@ never press a key. **Order: E9–E11 before the handover, E12 just before or aft
     console or uncaught error and no failed request, and pass axe (WCAG 2.2 A + AA);
     plus E9's keyboard spec (`ec86eb7`). CI runs it at `/` and `/course/`. How to run it and
     what it deliberately skips: `docs/TOOLING.md`, "Browser tests".
-  - **E12b — exercise flows** (its own spec): answer → check → edit → reveal → reset on
-    `select` and `radio-quiz`. Notes carried from the E12a reviews:
-    - axe currently skips everything inside closed `<details>` (the exercises) and
-      never opens a modal or hover card: add an axe pass with all `<details>` open and
-      one with a modal open; consider dark mode and a narrow viewport.
-    - Drive the roving tab stop with real Tab / Shift+Tab presses, and start from
-      nothing selected.
-    - `animationsSettled` covers page load only: an interaction that starts a new
-      animation needs its own wait.
-    - `#exercise-02-radio-quiz-heading` depends on the render-mirror folder name.
+  - **E12b — exercise flows and axe in open states. DONE 2026-10-15** (helpers
+    `bbd0637`, flows `6737464`, axe `c6c3d3f`; spec
+    `docs/specs/2026-10-15-exercise-flows-axe-design.md`). `select` and `radio-quiz` go
+    through answer → Check → edit → Show answers → Reset, and Tab / Shift+Tab move
+    between questions from nothing selected; each test was seen failing against a
+    planted break. axe now runs with every `<details>` open, each popup open, a select
+    dropdown open and the hover card open, in light and dark, and both pages as loaded
+    in dark: no violations. Narrow viewports were left out by decision. **One
+    exclusion, WebKit only:** Base UI's focus-guard sentinels, nameless `role="button"`
+    spans in Safari (upstream [mui/base-ui#5237](https://github.com/mui/base-ui/issues/5237));
+    the reason and the recheck rule are in `e2e/support.ts` and `docs/TOOLING.md`.
+    Recheck on every Base UI upgrade. **Open, for a later decision:** an exercise's
+    per-question tick or cross is `aria-hidden`, so a screen reader hears only the
+    progress count, not which answer was wrong (axe does not flag it).
   - **E12c — showcase-only cases** (its own spec; needs a `DEBUG=1` build in CI). From
     a second review (below): **memory-match** — click and resize during the 620 ms
     "Show answers" FLIP reorder, then assert every card is back in the grid with no

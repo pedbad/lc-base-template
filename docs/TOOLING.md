@@ -210,10 +210,21 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
 - **Why:** the Vitest suite renders to strings in Node and never presses a key. 1689
   green tests coexisted with a broken keyboard flow (§E9). Only a real browser sees
   focus, hydration and a sub-path's URLs.
-- **Covers today (slice E12a):** every page loads with no console error, no uncaught
-  error, no failed request and no axe violation (WCAG 2.2 A + AA); the choice pills'
-  arrow keys move selection and focus together. Exercise flows (E12b) and the
-  showcase-only cases (E12c) come next.
+- **Covers today (slices E12a, E12b):** every page loads with no console error, no
+  uncaught error, no failed request and no axe violation (WCAG 2.2 A + AA)
+  (`pages.spec.ts`); the choice pills' arrow keys move selection and focus together
+  (`choice-keyboard.spec.ts`); `select` and `radio-quiz` go through answer, Check, edit,
+  Show answers and Reset, and Tab moves between questions (`exercise-flows.spec.ts`);
+  axe passes with every accordion open, each popup open, a select dropdown open and the
+  hover card open, in light and dark (`axe-open-states.spec.ts`). Shared helpers:
+  `e2e/support.ts`. The showcase-only cases (E12c) come next.
+- **One exclusion, WebKit only** (maintainer's decision, 2026-10-15): Base UI's
+  focus-guard sentinels (`[data-base-ui-focus-guard]`) are left out of axe. In Safari
+  Base UI gives them `role="button"` for VoiceOver, with no name, so axe reports
+  `aria-command-name`; the markup is Base UI's, reported upstream as
+  [mui/base-ui#5237](https://github.com/mui/base-ui/issues/5237). The reason sits beside
+  the exclusion in `e2e/support.ts`. Recheck on every Base UI upgrade and delete it once
+  #5237 is fixed.
 - **Three browsers, not one** (maintainer's choice): WebKit stands in for Safari.
 - **CI:** the `e2e` job runs the suite twice, at `/` and at `/course/`, beside
   `verify`. A failure uploads the HTML report and traces as an artifact.
