@@ -283,7 +283,7 @@ describe('interactive nesting', () => {
 
   test('rejects an audio icon inside a hover term', () => {
     expect(() => parseRichText(`${HOVER}word ${AUDIO}</span>`)).toThrow(
-      /audio icon inside a hover term/,
+      /an audio icon inside a hover term/,
     );
   });
 
@@ -323,6 +323,13 @@ describe('interactive nesting', () => {
         ],
       },
     ]);
+  });
+
+  // A malformed <span> is not a control yet, so the clearer existing message wins.
+  test('leaves a malformed span inside a link to the span rule', () => {
+    expect(() => parseRichText(`${LINK}a <span class="x"></span></a>`)).toThrow(
+      /only supported as an audio icon/,
+    );
   });
 
   test('still accepts controls side by side', () => {

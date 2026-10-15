@@ -275,6 +275,22 @@ function controlName(tag: Tag): string {
 }
 
 /**
+ * The control a tag will render as, or undefined when it is not one yet: a `<span>`
+ * with neither `data-hover-target` nor `data-audio` is malformed, and its own rule in
+ * makeAudio explains that better than a nesting message would.
+ */
+function asControl(tag: Tag): string | undefined {
+  const isMalformedSpan =
+    tag.name === 'span' &&
+    tag.attributes['data-hover-target'] === undefined &&
+    tag.attributes['data-audio'] === undefined;
+  return isMalformedSpan ? undefined : controlName(tag);
+}
+
+/** "a link", "an audio icon". */
+const withArticle = (name: string): string => `${/^[aeiou]/.test(name) ? 'an' : 'a'} ${name}`;
+
+/**
  * Reject a control opened inside another (TODO §E10). Links and popup links render as
  * `<a>`, hover terms and audio icons as `<button>`, and HTML allows neither inside the
  * other: browsers and assistive tech handle it unpredictably, and a keyboard user may
@@ -285,12 +301,13 @@ function assertNotInsideControl(
   tag: Tag,
   fail: (message: string) => never,
 ): void {
+  const inner = asControl(tag);
   const outer = stack.findLast((frame) => frame.control !== undefined);
-  if (outer === undefined) return;
+  if (inner === undefined || outer?.control === undefined) return;
   fail(
-    `a ${controlName(tag)} inside a ${outer.control} is not allowed: each is a control, ` +
-      'and a control inside another cannot be used reliably by keyboard or screen ' +
-      'reader. Put them side by side instead.',
+    `${withArticle(inner)} inside ${withArticle(outer.control)} is not allowed: each is a ` +
+      'control, and a control inside another cannot be used reliably by keyboard or ' +
+      'screen reader. Put them side by side instead.',
   );
 }
 
@@ -364,7 +381,7 @@ export function parseRichText(html: string, source?: string): readonly RichTextN
         stack.push({
           name: 'a',
           children: [],
-          control: controlName(tag),
+          control: asControl(tag),
           // A popup when it asks for one; otherwise a plain link.
           close: (children) =>
             controlName(tag) === 'popup link'
@@ -377,7 +394,7 @@ export function parseRichText(html: string, source?: string): readonly RichTextN
         stack.push({
           name: 'span',
           children: [],
-          control: controlName(tag),
+          control: asControl(tag),
           // A hover term when it names a card; otherwise an audio icon.
           close: (children) =>
             controlName(tag) === 'hover term'
