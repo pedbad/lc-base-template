@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-15 · **HEAD:** see `git log` · **Suite:** 162 files · 1706 tests green
+**Last updated:** 2026-10-16 · **HEAD:** see `git log` · **Suite:** 165 files · 1722 tests green
 (Vitest) · 96 Playwright tests (32 × 3 browsers, `bun run test:e2e`) · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -55,8 +55,8 @@ nothing `vite.config.ts` reaches uses `@/…`, and the two cross-folder imports
 `src/showcase/fixture-types.ts`; `src/build/source-negation.ts` reuses
 `src/guards/asset-path.ts`). **E14** (README opener) and **E4** (`COURSE_GUIDE.md`) are
 done (2026-10-15), and so is **E12b** (exercise flows, axe in open states). What is left, in order: E5's
-deploy route, E7, and at the handover E1 and the organisation move (E16 after it); E13
-before real learners. Since PR #9, merge a PR by fast-forwarding `main` once its CI is
+deploy route, E7, and at the handover E1 and the organisation move (E16 after it); E13b
+before real learners (E13a done 2026-10-15). Since PR #9, merge a PR by fast-forwarding `main` once its CI is
 green (`git merge --ff-only` + push), so the hashes cited here survive; GitHub's
 "rebase" merge rewrote them.
 
@@ -1866,11 +1866,20 @@ never press a key. **Order: E9–E11 before the handover, E12 just before or aft
     transitions in closed `<details>`). The font allowance and the `vite preview`
     fallback limit are in `docs/TOOLING.md`, "Browser tests".
 - **E13 — before real learners: flashcard progress identity, and failure fallbacks.**
-  (a) `storageKey()` in `flashcards-storage.ts` hashes the deck's content: fixing a typo
-  in one card loses that deck's saved progress, two identical decks share progress, and
-  `|` inside a field can collide two fingerprints. Deliberate (no exercise id reaches
-  the engine) and documented in the file header, but decide a stable id (course + LO +
-  exercise + card) and a reset/migration policy while nobody has saved progress yet.
+  (a) **DONE 2026-10-15.** A deck's progress is kept under the course's base path plus
+  its LO and exercise folder names (`lo-03-food/02-flashcards`), handed down as a
+  `progressId` through `ExerciseHost`; each card is kept by its target word, which the
+  schema now requires to be unique per deck. The maintainer chose folder names over an
+  authored id, so renaming a folder (inserting a lesson renumbers the rest) or moving
+  the base path starts a deck afresh, and fixing a target word restarts that one card
+  (CONTRIBUTING says so). Card ids can be built-in names (`constructor`), so the
+  scheduler and the progress circles read own keys only. The "saves your progress"
+  instruction line now needs a `progressId` too.
+  Policy: storage moved to `v2` and ignores `v1` entries, with no migration, as nobody
+  had saved progress. A deck with no `progressId` saves nothing; the showcase passes
+  one per card. Was: `storageKey()` hashed the card content, so a typo fix lost the
+  deck's progress, two identical decks shared it, and `|` in a field could collide two
+  fingerprints.
   (b) `ExerciseHost.tsx` has a `Suspense` loading message but no error boundary, so a
   failed chunk or render error has no fallback; `AudioManager.resume()` does
   `play().catch(() => {})` and notifies "playing" before playback succeeds. Fix: a local

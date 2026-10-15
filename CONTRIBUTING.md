@@ -138,6 +138,11 @@ The `lo-NN-` number in the folder name orders the cards, the lesson nav and the 
 It is sorted **numerically**, so `lo-9-` precedes `lo-10-` (alphabetically it would
 not). `course.config.ts` has no order list — a second source for the same fact would
 be free to drift from the folders silently. **To reorder a course, rename folders.**
+Settle the order before learners start. A flashcards deck keeps their saved progress
+under the site's base path and its LO and exercise folder names, so renaming either
+folder (inserting a lesson renames every one after it) or moving the site starts that
+deck afresh. Inside a deck each card is kept by its target word: fixing the English
+side keeps a card's progress, fixing the target word starts that one card afresh.
 
 ### Tabs block
 

@@ -136,6 +136,10 @@ options: { shuffle?, srs? }
   LO+exercise. Wrong cards resurface soon; known cards fade. "Reset progress"
   control. Graceful fallback when storage is absent/corrupt/cleared. SSG
   pre-renders first paint (card 1 front); shipped JS reads `localStorage` on mount.
+  **Keying as built (E13a, 2026-10-15):** the course's base path plus the LO and
+  exercise folder names, with each card kept by its target word (unique per deck).
+  The first build hashed the card content instead, so a typo fix lost the deck's
+  progress. Detail: the header of `src/exercises/flashcards/flashcards-storage.ts`.
 
 ## 5. Conjugation table — design (build after flashcards)
 
