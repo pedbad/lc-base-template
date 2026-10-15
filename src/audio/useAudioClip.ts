@@ -1,7 +1,8 @@
 /**
  * useAudioClip — playback state + a single click handler for an AudioManager-driven
  * clip (the animated-speaker variant). Holds status / progress / duration, wires the
- * AudioManager external-stop subscription (so another clip starting resets this one),
+ * AudioManager subscription (another clip starting resets this one; a refused resume
+ * shows paused, via clipStatus.ts),
  * attaches media listeners to the off-DOM Audio element, and toggles play/pause.
  *
  * Ported from french-lo-1's components/AudioClip/useAudioClip.js (typed).
@@ -9,6 +10,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { SyntheticEvent } from 'react';
 import AudioManager from './AudioManager';
+import { statusAfterManagerChange } from './clipStatus';
 import { resolveAsset } from '@/lib/assets';
 
 export type ClipStatus = 'stopped' | 'playing' | 'paused';
@@ -59,17 +61,15 @@ export function useAudioClip(
     [onStatusChange],
   );
 
-  // External stop (another clip starting) resets local status — otherwise status
-  // stays 'playing' and the next click would pause instead of replay.
+  // Follow the manager (statusAfterManagerChange): another clip starting stops this
+  // one, otherwise the next click would pause instead of replay; a refused resume
+  // shows paused rather than a stuck "playing".
   useEffect(() => {
     const unsubscribe = AudioManager.subscribe((managerState) => {
-      if (
-        managerState.activeId !== clipId &&
-        (statusRef.current === 'playing' || statusRef.current === 'paused')
-      ) {
-        setStatus('stopped');
-        setProgress(0);
-      }
+      const next = statusAfterManagerChange(managerState, clipId, statusRef.current);
+      if (next === null) return;
+      setStatus(next);
+      if (next === 'stopped') setProgress(0);
     });
     return unsubscribe;
   }, [clipId, setStatus]);

@@ -28,6 +28,13 @@ export interface PlayOptions {
 
 type Listener = (state: AudioManagerState) => void;
 
+/**
+ * A `play()` cut short by a `pause()` or a new source rejects with AbortError. That is
+ * the learner (or a clip switch) stopping it, not the browser refusing to play.
+ */
+const isInterrupted = (error: unknown): boolean =>
+  error instanceof Error && error.name === 'AbortError';
+
 const clamp01 = (value: number): number => Math.max(0, Math.min(1, value));
 
 class AudioManager {
@@ -54,24 +61,30 @@ class AudioManager {
       { once: true },
     );
 
-    audio.addEventListener(
-      'error',
-      () => {
-        if (this.activeAudio === audio) this.clearActive();
-        onError?.();
-      },
-      { once: true },
-    );
+    // A missing file fires `error` AND rejects play(): report the failure once.
+    let failed = false;
+    const fail = () => {
+      if (failed) return;
+      failed = true;
+      if (this.activeAudio === audio) this.clearActive();
+      onError?.();
+    };
+
+    audio.addEventListener('error', fail, { once: true });
 
     this.activeAudio = audio;
     this.activeId = id;
 
     // Start playback BEFORE notifying: HTMLMediaElement.play() flips .paused
     // synchronously, so subscribers see isPlaying: true the moment a clip starts.
-    audio.play().catch(() => {
-      // Only clear if this clip is still active — a stopAll() from rapid switching
-      // may already have replaced it, and we must not clobber the new clip.
-      if (this.activeAudio === audio) this.clearActive();
+    // A refused play (autoplay policy, unplayable file) clears the clip and tells the
+    // caller, so nobody is left showing "playing" (TODO §E13b). Only while this clip is
+    // still active — a stopAll() from rapid switching may already have replaced it, and
+    // we must not clobber the new clip — and never for an interrupted play.
+    audio.play().catch((error: unknown) => {
+      if (isInterrupted(error) || this.activeAudio !== audio) return;
+      console.warn(`AudioManager: could not play ${source}.`, error);
+      fail();
     });
     this.notify();
     return audio;
@@ -96,7 +109,15 @@ class AudioManager {
       document.querySelectorAll('audio').forEach((el) => el.pause());
     }
     this.registeredElements.forEach((el) => el.pause());
-    this.activeAudio.play().catch(() => {});
+    // Notified at once, as play() starts; a refused resume is then corrected from the
+    // outcome, so subscribers end on "not playing" rather than a stale "playing".
+    const audio = this.activeAudio;
+    audio.play().catch((error: unknown) => {
+      if (isInterrupted(error) || this.activeAudio !== audio) return;
+      console.warn(`AudioManager: could not resume ${this.activeId ?? 'the clip'}.`, error);
+      audio.pause();
+      this.notify();
+    });
     this.notify();
   }
 
