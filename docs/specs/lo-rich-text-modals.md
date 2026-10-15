@@ -70,7 +70,12 @@ allowlist is closed by design: a typo like `<storng>` must fail loudly rather th
 vanish from the page.
 
 Nesting is allowed (`<strong>très <em>très</em> formel</strong>`). Unclosed and
-mismatched tags are errors.
+mismatched tags are errors. _(Amended 2026-10-15, TODO §E10:)_ the one exception is a
+control inside a control. A link, popup link, hover term or audio icon may not sit
+inside another of them, at any depth: each renders as an `<a>` or a `<button>`, and
+one inside another is invalid HTML a keyboard or screen-reader user cannot operate. It
+is rejected at load with a message naming both; put them side by side. Emphasis inside
+a control, and a control inside emphasis, are fine.
 
 ### Where rich text is accepted
 
@@ -350,7 +355,7 @@ too and neither owns it.
 
 | Guard                       | Asserts                                                                                                                                                                                                                                                                                                                                               |
 | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `parse-rich-text.test.ts`   | each allowlisted tag; nesting; entity decode incl. numeric; `<b>`/`<i>` rejected with a message naming the semantic replacement; unknown tag rejected; unclosed/mismatched tag rejected; non-empty audio span rejected; plain string → single text node (back-compat)                                                                                 |
+| `parse-rich-text.test.ts`   | each allowlisted tag; nesting, and a control inside a control rejected; entity decode incl. numeric; `<b>`/`<i>` rejected with a message naming the semantic replacement; unknown tag rejected; unclosed/mismatched tag rejected; non-empty audio span rejected; plain string → single text node (back-compat)                                        |
 | `RichText.test.tsx`         | nodes → expected DOM; audio node mounts `AudioClip`; modal link renders a `<button>`, not an `<a>`                                                                                                                                                                                                                                                    |
 | `lo-page-sections.test.tsx` | block prose renders as rich text, not escaped literal markup: authored `<strong>` becomes an element and a modal link becomes a `type="button"`                                                                                                                                                                                                       |
 | `lo-rich-text.test.ts`      | repo-wide, per LO: every `data-modal-target` (in modals AND block prose) resolves to a declared modal; every `data-audio` path is under `audio/<slug>/` **and** resolves to a real file in `public/` — mirroring `showcase-audio-assets.test.ts`. Plus: the example LO declares a modal, links to it from prose, and that modal carries an audio icon |
