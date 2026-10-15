@@ -19,9 +19,11 @@ async function firstQuestionPills(page: Page): Promise<Locator[]> {
     .getByRole('radio');
   await expect(pills).toHaveCount(3);
   // LoAccordion animates the panel open with the Web Animations API. In WebKit a click
-  // that lands mid-animation was occasionally lost (about 1 run in 160: event target
-  // unchanged, selection not made). A person cannot click that fast, so wait for the
-  // open animation to finish, as they would — an auto-waiting condition, not a sleep.
+  // landing within milliseconds of the pills appearing was occasionally lost (about 1
+  // run in 60-160: same element, no layout shift, selection not made). Without the
+  // animation (reduced motion) the same spec passed 360 of 360, so the open animation
+  // is the cause. A person aims after the panel opens, so wait for that animation to
+  // finish — an auto-waiting condition, not a sleep.
   await quiz
     .locator('.details-inner')
     .evaluate((panel) =>
