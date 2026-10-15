@@ -47,8 +47,7 @@ is exactly what the paragraph above is about.
 (the 2026-10-09 six, §D19–§D21 and their browser checks). Tabs on phones (§F3,
 `22b637d`) is the last feature in. **E9** (`ec86eb7`), **E12a** (`cbda661`) and **E15**
 (`fe43305`) are done, and on 2026-10-15 E5's Feijoa-only-when-present (`f6b2f87`) and
-**E10** (`32bbe8c`). The next coding items, in order: **E11**, then E14
-and E4.
+**E10** (`fb73545`). E11 is done too. The next items, in order: **E14**, then E4.
 
 - **`sources` block (§F5) is DONE** (2026-10-12, late): renderer, schema, example in
   `lo-00-example`'s new Sources section, CONTRIBUTING and llms.txt. Built with the
@@ -1809,7 +1808,7 @@ never press a key. **Order: E9–E11 before the handover, E12 just before or aft
   Home/End and the roving tab stop kept. Tested by `e2e/choice-keyboard.spec.ts` in
   Chromium, Firefox and WebKit (selection AND the focused element after repeated
   arrows, both directions, wrapping); seen failing, 18 of 18, before the fix.
-- **E10 — rich text accepts invalid interactive nesting. DONE 2026-10-15** (`32bbe8c`,
+- **E10 — rich text accepts invalid interactive nesting. DONE 2026-10-15** (`fb73545`,
   review fixes after it). Opening a link, popup link, hover term or audio icon while
   another is open now fails at load, naming both ("a hover term inside a popup link …
   put them side by side"); emphasis in either direction still parses, and a malformed
@@ -1822,25 +1821,11 @@ never press a key. **Order: E9–E11 before the handover, E12 just before or aft
   a clear message; valid combinations (`<strong>` in a link, a link in `<em>`) still
   pass. (The review's "a comment claims React guarantees valid nesting" was not found;
   `RichText.tsx` claims only inline-safe output, which stays true.)
-- **E11 — write `"strict": true` explicitly** in `tsconfig.app.json` and
-  `tsconfig.node.json` (5 min). Already the TypeScript 6 default, so nothing should
-  change; written down so no reader or older tool assumes otherwise. Optional follow-up:
-  `noUncheckedIndexedAccess`, measured first. Verify: `bun run build` unchanged.
-  **Now three tsconfigs with compiler options** (E12a added `tsconfig.e2e.json`):
-  write `strict` in all three, or make `tsconfig.e2e.json` extend `tsconfig.node.json`
-  first so it inherits. A review suggested:
-
-  ```json
-  {
-    "extends": "./tsconfig.node.json",
-    "compilerOptions": {
-      "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.e2e.tsbuildinfo",
-      "lib": ["ES2023", "DOM"]
-    },
-    "include": ["e2e"]
-  }
-  ```
-
+- **E11 — write `"strict": true` explicitly. DONE 2026-10-15.** In `tsconfig.app.json`
+  and `tsconfig.node.json`; `tsconfig.e2e.json` now `extends` the node config, so it
+  inherits `strict` with no copy to drift (a probe implicit `any` in `e2e/` fails).
+  Already the TypeScript 6 default, so `tsc -b` output is unchanged. Optional
+  follow-up: `noUncheckedIndexedAccess`, measured first.
 - **E12 — a browser interaction suite in CI**, in three parts. Turns the hand-run
   Playwright checks of 2026-10-13 into required CI checks; the biggest gain in
   confidence.
@@ -2160,5 +2145,5 @@ build, so it cannot return. Two remain:
 | 2026-10-14 | `cbda661` | **browser suite** — Playwright in Chromium, Firefox, WebKit: no console errors, axe clean, in CI at `/` and `/course/` (E12a)           |
 | 2026-10-14 | `ec86eb7` | **choice pills keep focus with the selection** — arrow keys no longer leave focus behind (E9)                                           |
 | 2026-10-15 | `f6b2f87` | **Feijoa only when present** — a Vite plugin declares the font only when its files exist; red `main` at `/course/` fixed (E5)           |
-| 2026-10-15 | `80bc28e` | **WebKit click flake** — the keyboard spec waits for the accordion's open animation before clicking (E9 spec)                           |
-| 2026-10-15 | `32bbe8c` | **no control inside a control** — rich text rejects a link, popup, hover term or audio icon nested in another (E10)                     |
+| 2026-10-15 | `f82ac23` | **WebKit click flake** — the keyboard spec waits for the accordion's open animation before clicking (E9 spec)                           |
+| 2026-10-15 | `fb73545` | **no control inside a control** — rich text rejects a link, popup, hover term or audio icon nested in another (E10)                     |
