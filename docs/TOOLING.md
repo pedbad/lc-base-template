@@ -224,9 +224,10 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
   `environment: 'node'`.
 - **Rules:** navigate with relative paths (`'example.html'`, never `'/example.html'`) so
   the base applies; no fixed sleeps, only auto-waiting assertions.
-- **One allowance:** Firefox's "downloadable font" console error naming **Feijoa** is
-  ignored, because Feijoa is never committed and the fallback is by design (§E5 tracks
-  requesting it only when present). Nothing else is.
+- **One allowance:** where the licensed Feijoa files exist (never in CI), Firefox
+  discards an unsupported table from the Bold cut and logs it as a console error;
+  exactly those messages are ignored. A missing Feijoa is not excused: the
+  `feijoaFonts()` plugin declares it only when its files exist (§E5).
 - **What the 4xx check sees:** `vite preview` answers a missing file inside the base
   with 200 (SPA fallback), so it catches base-path mistakes, not every missing file.
 
@@ -729,10 +730,15 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
     Regular/SemiBold/Bold). Self-hosted by Vite (no Google-CDN call → privacy +
     no render-blocking third party). **Committed.**
   - **Feijoa** — display. **Commercial** (Klim Type Foundry) — spec §12 /
-    decision #18: **never committed.** Declared via `@font-face` pointing at
-    git-ignored `public/fonts/feijoa/`; dropped in per Cambridge deploy only.
-    `font-display: swap` + Open Sans fallback → fresh clones render correctly with
-    no invisible-text flash and no missing-glyph boxes.
+    decision #18: **never committed.** Files go in git-ignored
+    `public/fonts/feijoa/`, dropped in per Cambridge deploy only. The `@font-face`
+    rules come from the `feijoaFonts()` Vite plugin (`src/build/feijoa-fonts.ts`,
+    _decision 2026-10-15, TODO §E5_): an inline `<style>` in each page's `<head>`,
+    only when all three files exist, URLs under the real base. Until 2026-10-15 they
+    sat in `app.css` and requested the files even when absent; under a sub-path the
+    URL also escaped the base, because Vite rewrites a CSS `url()` only for a file
+    that exists at build time. `font-display: swap` + Open Sans fallback → fresh
+    clones render correctly with no invisible-text flash and no missing-glyph boxes.
 - **Token wiring (same one-edit-point philosophy as colour):**
   - `palette.css` (Layer 1, **shared** — NOT per-preset, so switching `--primary`
     presets never touches fonts): `--font-display: 'Feijoa','Open Sans','Arial',sans-serif`

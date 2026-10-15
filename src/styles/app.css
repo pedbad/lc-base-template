@@ -22,32 +22,11 @@
 
 /* Feijoa = official Cambridge display font (headings/titles). COMMERCIAL (Klim) —
    spec §12 / decision #18: the font files are NEVER committed. public/fonts/feijoa/
-   is git-ignored and populated per Cambridge deploy only. Until then these files are
-   absent, so `font-display: swap` + the Open Sans fallback in --font-display mean
-   headings render in Open Sans on any fresh clone (no FOIT, no missing-glyph boxes). */
-@font-face {
-  font-family: Feijoa;
-  src: url('/fonts/feijoa/Feijoa-Medium-Cambridge.otf') format('opentype');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: Feijoa;
-  src: url('/fonts/feijoa/Feijoa-MediumItalic-Cambridge.otf') format('opentype');
-  font-weight: 500;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: Feijoa;
-  src: url('/fonts/feijoa/Feijoa-Bold-Cambridge.otf') format('opentype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
+   is git-ignored and populated per Cambridge deploy only. Its @font-face rules are
+   NOT here: the feijoaFonts() Vite plugin (src/build/feijoa-fonts.ts) adds them to
+   each page only when all three files exist, with URLs under the real base. Without
+   the files, headings render in Open Sans via --font-display and nothing requests a
+   font that is not there (TODO §E5). */
 
 @custom-variant dark (&:is(.dark *));
 

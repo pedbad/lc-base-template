@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { loDevPages } from './src/build/lo-dev-pages';
 import { sandboxDocs } from './src/build/sandbox-docs-plugin';
 import { debugEntries } from './src/build/build-entries';
+import { feijoaFonts } from './src/build/feijoa-fonts';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -30,7 +31,10 @@ export default defineConfig({
   // and build time, so the debug sandbox's Docs hub shows the real `.md` files with no
   // copy to drift and no markdown parser in any bundle (spec §14, buildlist 18). It is
   // inert for every entry that does not import that module.
-  plugins: [react(), tailwindcss(), loDevPages(), sandboxDocs(import.meta.dirname)],
+  // feijoaFonts() adds Feijoa's @font-face rules to each page only when the licensed
+  // files are in public/fonts/feijoa/, so a clone or deploy without them requests no
+  // missing font (TODO §E5).
+  plugins: [react(), tailwindcss(), loDevPages(), sandboxDocs(import.meta.dirname), feijoaFonts()],
   // `@` → ./src so shadcn component imports resolve (e.g. `@/components/ui/button`).
   resolve: {
     alias: {

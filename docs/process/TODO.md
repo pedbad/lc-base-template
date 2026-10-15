@@ -1728,14 +1728,15 @@ no-preference` only.
   (handover §3 item 4), but Feijoa is not committed (licence), so a CI-built zip ships
   the fallback font. Decide: build on the maintainer's machine, or give CI the fonts
   from a private place. Deploy targets per course are still open too (handover §4).
-  **Found by E12a:** the site always requests Feijoa (the `@font-face` in
-  `src/styles/app.css`), so wherever the files are missing (fresh clones, CI, a deploy
-  without fonts) browsers make failing font requests and Firefox logs a console error.
-  `e2e/pages.spec.ts` ignores exactly that message until this is fixed. Decide with E5:
-  emit Feijoa's `@font-face` only when its files exist (a build-time check), AND deal
-  with the Bold cut: where the files do exist, Firefox still logs a "downloadable font"
-  error because it discards a table from that file (fix the file, or keep a narrower
-  allowance for it). Only then remove the spec's allowance.
+  **Feijoa only when present — DONE 2026-10-15.** Found by E12a: the site always
+  requested Feijoa (the `@font-face` in `app.css`), so wherever the files were missing
+  browsers made failing font requests, and under `/course/` the URL also escaped the
+  base (Vite rewrites a CSS `url()` only for a file that exists at build time). This
+  turned `main`'s first `e2e` CI run red at `/course/`. Now the `feijoaFonts()` Vite
+  plugin (`src/build/feijoa-fonts.ts`) adds the rules as an inline `<style>` only when
+  all three files exist, URLs under the real base. The spec's allowance shrank to the
+  Bold cut's Firefox "table discarded" notice, which only appears where the files
+  exist; fixing that file is optional. Still open here: the deploy route.
 - **E6 — content folders ownerless in `CODEOWNERS`. DONE 2026-10-14.**
   `/lo-config/`, `/public/images/` and `/public/audio/` sit after the `* @pedbad` line
   with no owner (`ORGANIZATION.md` step 5), so a content-only PR needs no approval once

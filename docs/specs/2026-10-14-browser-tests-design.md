@@ -79,6 +79,8 @@ For `index.html` and `example.html`, in every browser:
 
 _(Amended 2026-10-14, while building: Firefox reports the missing or partly unsupported Feijoa font as a console error, so the spec ignores exactly that message — "downloadable font" naming Feijoa — and nothing else; requesting Feijoa only when its files exist is TODO §E5. And `vite preview` answers a missing file inside the base with 200 (its SPA fallback), so the 4xx check catches base-path mistakes, not every missing file.)_
 
+_(Amended 2026-10-15: the first CI run on `main` failed at `/course/`, because without the font files the Feijoa URL also escaped the base. The `feijoaFonts()` plugin now declares Feijoa only when its files exist (TODO §E5), and the allowance is down to Firefox's "table discarded" notice for the Bold cut, which appears only where the files exist.)_
+
 ### 5.2 `e2e/choice-keyboard.spec.ts` — selection and focus move together (E9)
 
 On `example.html`, the radio-quiz's first question. The quiz sets `shuffle: true`, so

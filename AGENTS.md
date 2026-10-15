@@ -46,10 +46,11 @@ bun run format && bun run lint && bun run lint:css && bun run test:coverage && b
    `import.meta.glob` is Vite-only syntax. `load-lo-disk.ts` is the Node reader.
 3. **Every URL goes through `%BASE_URL%` (static head), `resolveAsset()`
    (runtime) or `resolveHomeHref()` (page links).** Never a bare relative or
-   root-absolute path. The one exception is a CSS `url()` to a `public/` file, which
-   is root-absolute because Vite rewrites it against the base (the Feijoa
-   `@font-face` rules in `src/styles/app.css`). Verify under a sub-path:
-   `BASE_URL=/course/ bun run build`.
+   root-absolute path. A CSS `url()` to a `public/` file is no exception: Vite
+   rewrites it against the base only when the file exists at build time, so a
+   git-ignored file (Feijoa) escapes the base. Build-time URLs come from a plugin
+   that knows the base instead (`src/build/feijoa-fonts.ts`). Verify under a
+   sub-path: `BASE_URL=/course/ bun run build`, and `bun run test:e2e` under the same.
 4. **Prerendered markup must equal the first client render.** Anything that
    cannot exist server-side goes behind `useIsHydrated`.
 5. **Never commit `.claude/tdd-guard/`** or `public/fonts/feijoa/*`.
