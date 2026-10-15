@@ -1809,10 +1809,12 @@ never press a key. **Order: E9–E11 before the handover, E12 just before or aft
   Home/End and the roving tab stop kept. Tested by `e2e/choice-keyboard.spec.ts` in
   Chromium, Firefox and WebKit (selection AND the focused element after repeated
   arrows, both directions, wrapping); seen failing, 18 of 18, before the fix.
-- **E10 — rich text accepts invalid interactive nesting. DONE 2026-10-15** (`32bbe8c`).
-  Opening a link, popup link, hover term or audio icon while another is open now fails
-  at load, naming both ("a hover term inside a popup link … put them side by side");
-  emphasis in either direction still parses. 7 Node tests. Was: the parser checked each tag alone, never what it sat inside:
+- **E10 — rich text accepts invalid interactive nesting. DONE 2026-10-15** (`32bbe8c`,
+  review fixes after it). Opening a link, popup link, hover term or audio icon while
+  another is open now fails at load, naming both ("a hover term inside a popup link …
+  put them side by side"); emphasis in either direction still parses, and a malformed
+  `<span>` keeps its own clearer message. The rich-text spec says so. Was: the parser
+  checked each tag alone, never what it sat inside:
   `<a>` inside `<a>` parses to nested links, and an audio span inside a hover term
   renders a button inside a button. Fix: reject interactive-inside-interactive (links,
   popup links, hover terms, audio) with an author-facing message, as the parser already
@@ -1908,7 +1910,7 @@ rather than the Language Centre's course factory; the maintainer took three smal
   Now `.nvmrc` is 22, `engines.node` is `>=22.12`, and both CI jobs run
   `actions/setup-node` from `.nvmrc`, so local and CI resolve the same runtime.
   **Verified 2026-10-15:** CI's "Set up Node" resolved `.nvmrc` as 22 and ran v22.23.3
-  (PR #7's run).
+  (CI run 38719802857).
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
