@@ -18,6 +18,15 @@ async function firstQuestionPills(page: Page): Promise<Locator[]> {
     .getByRole('radiogroup', { name: 'Choose answer for question 1' })
     .getByRole('radio');
   await expect(pills).toHaveCount(3);
+  // LoAccordion animates the panel open with the Web Animations API. In WebKit a click
+  // that lands mid-animation was occasionally lost (about 1 run in 160: event target
+  // unchanged, selection not made). A person cannot click that fast, so wait for the
+  // open animation to finish, as they would — an auto-waiting condition, not a sleep.
+  await quiz
+    .locator('.details-inner')
+    .evaluate((panel) =>
+      Promise.all(panel.getAnimations().map((animation) => animation.finished.catch(() => {}))),
+    );
   return [pills.nth(0), pills.nth(1), pills.nth(2)];
 }
 
