@@ -19,7 +19,7 @@ invisible-text flash and no missing-glyph boxes — a fresh clone looks correct.
 ## To enable real Feijoa (you must hold a valid Cambridge/Klim licence)
 
 Drop your licensed font files into **this folder** with these exact names — they
-match the `@font-face` rules in `src/styles/app.css`:
+match `FEIJOA_FACES` in `src/build/feijoa-fonts.ts`:
 
 | File                                | weight | style  |
 | ----------------------------------- | ------ | ------ |
@@ -30,14 +30,17 @@ match the `@font-face` rules in `src/styles/app.css`:
 These are the official Cambridge-distributed filenames — drop them in exactly as
 downloaded, no renaming.
 
-No code change needed — the `@font-face` `src` URLs already point here. Restart
-`bun run dev` (or rebuild) and headings switch to Feijoa automatically.
+No code change needed. The `feijoaFonts()` build plugin adds the `@font-face`
+rules to every page **only when all three files are here** (with only some, it warns
+and uses Open Sans for all headings). Reload `bun run dev` (or rebuild) and headings
+switch to Feijoa automatically. Without the files, no page requests them.
 
 ### Optional: optimise for the web (`.woff2`)
 
 `.otf` files are large. For production, convert each to `.woff2` (~40–50% smaller,
-faster load) and update the three `src: url(... .otf) format('opentype')` lines in
-`src/styles/app.css` to `url(... .woff2) format('woff2')`. Use any tool you trust, e.g.
+faster load) and update the three filenames in `FEIJOA_FACES` and the
+`format('opentype')` in `feijoaFontFaceCss()`, both in `src/build/feijoa-fonts.ts`, to
+`.woff2` and `format('woff2')`; its test pins both. Use any tool you trust, e.g.
 `woff2_compress Feijoa-Medium-Cambridge.otf` (from Google's `woff2` utils) or `fonttools`.
 
 ## Rules

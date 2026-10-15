@@ -49,16 +49,17 @@ const isCancelled = (errorText: string | undefined): boolean =>
   /aborted|cancelled/i.test(errorText ?? '');
 
 /**
- * Firefox reports a web font it cannot use as a console error; Chromium and WebKit stay
- * silent. Feijoa is licensed and never committed (AGENTS.md hard constraint 5), so on a
- * fresh clone and in CI its files are missing and headings fall back to Open Sans by
- * design (src/styles/app.css). Where the files exist, Firefox still discards a table from
- * the Bold cut and uses the font. Both are known and harmless; requesting Feijoa only
- * when its files exist is TODO §E5. Narrow on purpose: any other font, any other error,
- * still fails.
+ * Where the licensed Feijoa files exist (never in CI: they are never committed), Firefox
+ * discards an unsupported `kern` table from the Bold cut, logs it as a console error, and
+ * uses the font anyway. Known and harmless, so exactly those two messages are ignored.
+ * A MISSING Feijoa is not excused: since TODO §E5 the feijoaFonts() plugin
+ * (src/build/feijoa-fonts.ts) declares the font only when its files exist, so a request
+ * for an absent cut is a real failure. Any other font, any other error, still fails.
  */
 const isKnownFeijoaFontNotice = (text: string): boolean =>
-  /downloadable font: .*font-family: "Feijoa"/.test(text);
+  /downloadable font: (kern: Unsupported table version|Table discarded).*font-family: "Feijoa"/.test(
+    text,
+  );
 
 /** Collects every problem from this moment on. */
 function watchForProblems(page: Page): string[] {

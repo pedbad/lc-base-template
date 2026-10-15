@@ -223,10 +223,10 @@ Two official Cambridge typefaces, wired through the **same chain** as the colour
 Full rationale and the type-baseline decisions are in
 [`docs/TOOLING.md`](docs/TOOLING.md) → "Cambridge typography".
 
-| Font          | Role             | Licence           | In repo? | Delivery                              |
-| ------------- | ---------------- | ----------------- | -------- | ------------------------------------- |
-| **Open Sans** | body / UI text   | Free (Apache-2.0) | ✅ yes   | npm `@fontsource-variable/open-sans`  |
-| **Feijoa**    | display/headings | Commercial (Klim) | ❌ never | `@font-face` → `public/fonts/feijoa/` |
+| Font          | Role             | Licence           | In repo? | Delivery                                                             |
+| ------------- | ---------------- | ----------------- | -------- | -------------------------------------------------------------------- |
+| **Open Sans** | body / UI text   | Free (Apache-2.0) | ✅ yes   | npm `@fontsource-variable/open-sans`                                 |
+| **Feijoa**    | display/headings | Commercial (Klim) | ❌ never | `public/fonts/feijoa/`, declared by a build plugin only when present |
 
 The two font tokens live in **`palette.css`** (Layer 1), not in the per-preset
 variant files — switching the `--primary` preset must never change the fonts:
@@ -250,9 +250,11 @@ the `@font-face` files. Never set `font-family` on an individual component.
 Feijoa is commercial (spec §12 / decision #18), so `public/fonts/feijoa/*` is
 git-ignored. On a fresh clone the files are absent and **headings fall back to
 Open Sans automatically** — `font-display: swap`, so no flash and no
-missing-glyph boxes. That is expected, not a bug. To enable real Feijoa, see
-[`public/fonts/feijoa/README.md`](public/fonts/feijoa/README.md) for the exact
-filenames the `@font-face` rules expect.
+missing-glyph boxes. That is expected, not a bug. Its `@font-face` rules are added
+by the `feijoaFonts()` build plugin (`src/build/feijoa-fonts.ts`) only when all three
+files are present, so a clone without them requests no font at all. To enable real
+Feijoa, see [`public/fonts/feijoa/README.md`](public/fonts/feijoa/README.md) for the
+exact filenames.
 
 ### Type baseline
 
