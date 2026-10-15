@@ -18,6 +18,7 @@ import { Suspense } from 'react';
 import { type ExerciseType } from '@/config/exercise-types';
 import { getExercise } from '@/exercises/lazyRegistry';
 import { useIsHydrated } from '@/hooks/useIsHydrated';
+import { ExerciseErrorBoundary } from './ExerciseErrorBoundary';
 import { ExerciseInstructions } from './ExerciseInstructions';
 import { resolveInstructions, savesProgress } from './instructions';
 
@@ -66,12 +67,15 @@ export function ExerciseHost({ type, config, progressId }: ExerciseHostProps) {
       <ExerciseInstructions text={instructions} />
       {Engine ? (
         isHydrated ? (
-          // e2e/pages.spec.ts waits for no "Loading…" fallback left (the example page's
-          // `ready`), so rewording this text must update the spec too.
-          <Suspense fallback={<p className="text-muted-foreground">Loading…</p>}>
-            {/* eslint-disable-next-line react-hooks/static-components */}
-            <Engine config={config} progressId={progressId} />
-          </Suspense>
+          // e2e/support.ts's exampleReady waits for no "Loading…" fallback and no error
+          // alert left, so rewording this text must update it too. The boundary
+          // catches a chunk that fails to load or an engine that throws (TODO §E13b).
+          <ExerciseErrorBoundary>
+            <Suspense fallback={<p className="text-muted-foreground">Loading…</p>}>
+              {/* eslint-disable-next-line react-hooks/static-components */}
+              <Engine config={config} progressId={progressId} />
+            </Suspense>
+          </ExerciseErrorBoundary>
         ) : (
           <p className="text-muted-foreground">This exercise needs JavaScript to run.</p>
         )

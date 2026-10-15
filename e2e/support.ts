@@ -124,6 +124,8 @@ export async function animationsInside(scope: Locator): Promise<void> {
 export async function exampleReady(page: Page): Promise<void> {
   await expect(page.locator('[role="radiogroup"]').first()).toBeAttached();
   await expect(page.getByText('Loading…', { exact: true })).toHaveCount(0);
+  // An engine that failed shows ExerciseErrorBoundary's alert instead of "Loading…".
+  await expect(page.getByRole('alert')).toHaveCount(0);
 }
 
 /**
