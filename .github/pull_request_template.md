@@ -18,9 +18,10 @@
 
 ## Checks (all must pass locally before review)
 
-- [ ] `bun run test` — green
+- [ ] `bun run test:coverage` — green, every file above its coverage bar
 - [ ] `bun run lint` · `bun run lint:css` — clean
 - [ ] `bun run build` — succeeds
+- [ ] `bun run test:e2e` — green (browser tests, against that build)
 - [ ] `bun run format:check` — clean
 - [ ] New pure logic has colocated tests (≥80% on the logic file)
 

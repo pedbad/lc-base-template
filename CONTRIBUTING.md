@@ -363,8 +363,8 @@ If a content PR finds itself editing a file in the second list, that's the signa
 and ask** — usually the content model needs extending, not the component patched.
 
 **Every PR** goes through [`.github/pull_request_template.md`](.github/pull_request_template.md):
-green `bun run format:check · lint · lint:css · test · build`, plus the keyboard / landmark / contrast / screenshot
-checks CI can't fully judge.
+the checks CI runs, plus the keyboard / landmark / contrast / screenshot checks CI can't
+fully judge.
 
 **`main` is NOT protected yet.** While the template is a single-maintainer build, changes
 go straight to `main` and the verify gate (`AGENTS.md`, "Verify before you claim done")
