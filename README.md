@@ -20,6 +20,15 @@ ship a static LTR-language course from a menu of ready exercise types.
 
 ---
 
+**Who this is for.** This is the course template of the **Language Centre, University
+of Cambridge**: our developers build each course from it. It is public so that its
+CC BY-NC learning content can be shared, and anyone may build on it. If you are not the
+Language Centre, replace the branding before you publish: the logos in `public/logo.svg`
+and `public/images/footer/`, wired up in `src/config/course.config.ts` and
+`src/config/footer.config.ts`. The Feijoa heading font is never committed, so your
+headings fall back to Open Sans. What may be reused, and on what terms:
+[`LICENSE`](LICENSE).
+
 ## Prerequisites
 
 Verified toolchain (macOS, 2026-06-16):

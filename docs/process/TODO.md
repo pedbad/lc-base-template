@@ -1888,7 +1888,9 @@ interaction cases now in E12. Do not follow its priority list as written.
 rather than the Language Centre's course factory; the maintainer took three small items
 (about 30 min together) and set the rest aside.
 
-- **E14 — README opener: who this is for, and the branding rule.** The repo is public
+- **E14 — README opener: who this is for, and the branding rule. DONE 2026-10-15**:
+  a "Who this is for" paragraph under the badges names the branding files and where they
+  are wired, says Feijoa is never committed, and links `LICENSE`. Was: the repo is public
   and flagged as a GitHub template, and it commits Language Centre branding
   (`public/logo.svg`, `public/images/footer/lc-logo-*.svg`, `elearning-logo-*.svg`).
   Open the README with one short paragraph: this is the Cambridge Language Centre's
