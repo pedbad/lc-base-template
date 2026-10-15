@@ -210,13 +210,15 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
 - **Why:** the Vitest suite renders to strings in Node and never presses a key. 1689
   green tests coexisted with a broken keyboard flow (§E9). Only a real browser sees
   focus, hydration and a sub-path's URLs.
-- **Covers today (slices E12a, E12b):** every page loads with no console error, no
+- **Covers today (slices E12a, E12b, plus E13b):** every page loads with no console error, no
   uncaught error, no failed request and no axe violation (WCAG 2.2 A + AA)
   (`pages.spec.ts`); the choice pills' arrow keys move selection and focus together
   (`choice-keyboard.spec.ts`); `select` and `radio-quiz` go through answer, Check, edit,
   Show answers and Reset, and Tab moves between questions (`exercise-flows.spec.ts`);
   axe passes with every accordion open, each popup open, a select dropdown open and the
-  hover card open, in light and dark (`axe-open-states.spec.ts`). Shared helpers:
+  hover card open, in light and dark (`axe-open-states.spec.ts`); an engine whose chunk
+  fails to load shows a reload notice while the other exercise still works
+  (`exercise-failure.spec.ts`). Shared helpers:
   `e2e/support.ts`. The showcase-only cases (E12c) come next.
 - **One exclusion, WebKit only** (maintainer's decision, 2026-10-15): Base UI's
   focus-guard sentinels are left out of axe. Why, the upstream issue and when to remove

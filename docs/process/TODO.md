@@ -9,8 +9,8 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-16 · **HEAD:** see `git log` · **Suite:** 165 files · 1722 tests green
-(Vitest) · 96 Playwright tests (32 × 3 browsers, `bun run test:e2e`) · CI green · `main` unprotected by decision (job E1).
+**Last updated:** 2026-10-16 · **HEAD:** see `git log` · **Suite:** 167 files · 1734 tests green
+(Vitest) · 99 Playwright tests (33 × 3 browsers, `bun run test:e2e`) · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
 `2026-08-06-post-phase-d-handover.md` §3. Read them before touching the build. In short:
@@ -55,8 +55,8 @@ nothing `vite.config.ts` reaches uses `@/…`, and the two cross-folder imports
 `src/showcase/fixture-types.ts`; `src/build/source-negation.ts` reuses
 `src/guards/asset-path.ts`). **E14** (README opener) and **E4** (`COURSE_GUIDE.md`) are
 done (2026-10-15), and so is **E12b** (exercise flows, axe in open states). What is left, in order: E5's
-deploy route, E7, and at the handover E1 and the organisation move (E16 after it); E13b
-before real learners (E13a done 2026-10-15). Since PR #9, merge a PR by fast-forwarding `main` once its CI is
+deploy route, E7, and at the handover E1 and the organisation move (E16 after it); E13
+is done (E13a 2026-10-15, E13b 2026-10-16). Since PR #9, merge a PR by fast-forwarding `main` once its CI is
 green (`git merge --ff-only` + push), so the hashes cited here survive; GitHub's
 "rebase" merge rewrote them.
 
@@ -87,7 +87,7 @@ transitions stall): drive the installed Playwright browsers from a throwaway spe
 `e2e/` that you delete afterwards. The Playwright MCP needs a browser extension that
 is not installed. **Known, 2026-10-16:** on the MacBook Pro (macOS 27.0.1) Playwright's
 Firefox 155 (`@playwright/test` 1.63) will not start, "Could not find profile folder",
-even by hand and outside the sandbox, so the local suite runs 64 of 96 there and CI's
+even by hand and outside the sandbox, so the local suite runs 66 of 99 there and CI's
 Ubuntu run is the Firefox check. Recheck on the next Playwright upgrade.
 
 ---
@@ -1883,11 +1883,21 @@ never press a key. **Order: E9–E11 before the handover, E12 just before or aft
   one per card. Was: `storageKey()` hashed the card content, so a typo fix lost the
   deck's progress, two identical decks shared it, and `|` in a field could collide two
   fingerprints.
-  (b) `ExerciseHost.tsx` has a `Suspense` loading message but no error boundary, so a
-  failed chunk or render error has no fallback; `AudioManager.resume()` does
-  `play().catch(() => {})` and notifies "playing" before playback succeeds. Fix: a local
-  error fallback with retry/reload, and audio state set from the play outcome. Verify:
-  tests for a failing engine load and a rejected `play()`.
+  (b) **DONE 2026-10-16.** `ExerciseErrorBoundary` wraps each engine in `ExerciseHost`:
+  a chunk that fails to load, or an engine that throws, becomes "This exercise could
+  not load" with a **Reload the page** button, logged, and the other exercises keep
+  working (`e2e/exercise-failure.spec.ts`). Reload, not an in-place retry, because
+  `React.lazy` keeps a failed import. Audio now follows the play outcome: a refused
+  `play()` clears the clip, calls `onError` once and warns; a refused `resume()` warns
+  and tells subscribers "not playing", and the speaker icon shows paused
+  (`clipStatus.ts`); a play interrupted by a pause is not a failure. Was: no error
+  boundary, and `resume()` did `play().catch(() => {})` after announcing "playing".
+  Proved in a browser for a failed chunk, including Reload bringing the exercise back;
+  an engine that throws while rendering relies on the same React boundary, untested.
+  **Not covered, for later:** focus is not moved to the notice if an engine crashes
+  under the learner's focus; a pause from outside the page (media keys, a phone call)
+  still leaves the speaker on "playing"; a missing clip only resets the speaker, with a
+  console warning and no message to the learner; no browser test plays audio (E12c).
 
 **A second review (2026-10-14), checked the same day and mostly not actionable.** Of its
 nine claims: uncaught `play()` promises — false, all six calls catch (the real issue is
