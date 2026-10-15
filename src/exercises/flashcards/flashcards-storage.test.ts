@@ -1,12 +1,6 @@
 import { test, expect, afterEach } from 'vitest';
 import { storageKey, loadSrsState, saveSrsState, clearSrsState } from './flashcards-storage';
 import { initSrsState, gradeCard } from './srs-scheduler';
-import type { FlashcardsContent } from './flashcards-schema';
-
-const content = (n: number): FlashcardsContent => ({
-  cards: Array.from({ length: n }, (_, i) => ({ target: `t${i}`, native: `n${i}` })),
-});
-
 /** A minimal in-memory Storage stand-in, installed on a fake `window` for a test. */
 function installWindow(): Map<string, string> {
   const map = new Map<string, string>();
@@ -25,11 +19,19 @@ afterEach(() => {
   console.warn = realWarn;
 });
 
-test('storageKey: stable for the same deck, distinct for different decks', () => {
-  const a = content(3);
-  expect(storageKey(a)).toBe(storageKey(content(3)));
-  expect(storageKey(a)).not.toBe(storageKey(content(4)));
-  expect(storageKey(a).startsWith('flashcards-srs:')).toBe(true);
+test('storageKey: built from the course base and the progress id, never the cards', () => {
+  expect(storageKey('/', 'lo-03-food/02-flashcards')).toBe(
+    'flashcards-srs:v2:/lo-03-food/02-flashcards',
+  );
+  expect(storageKey('/course/', 'lo-03-food/02-flashcards')).toBe(
+    'flashcards-srs:v2:/course/lo-03-food/02-flashcards',
+  );
+});
+
+test('storageKey: two decks in one course never share a key', () => {
+  expect(storageKey('/', 'lo-01-a/02-flashcards')).not.toBe(
+    storageKey('/', 'lo-02-b/02-flashcards'),
+  );
 });
 
 test('loadSrsState: no window → in-memory fresh deck (never throws)', () => {

@@ -17,7 +17,28 @@ test('buildDeck: keeps authored order when shuffle is off and assigns stable ids
     false,
   );
   expect(deck.map((c) => c.target)).toEqual(['uno', 'dos']);
-  expect(deck.map((c) => c.id)).toEqual(['0', '1']);
+  expect(deck.map((c) => c.id)).toEqual(['uno', 'dos']);
+});
+
+test('buildDeck: a card keeps its id when another card is added before it', () => {
+  const before = buildDeck({ cards: [{ target: 'dos', native: 'two' }] }, false);
+  const after = buildDeck(
+    {
+      cards: [
+        { target: 'uno', native: 'one' },
+        { target: 'dos', native: 'two' },
+      ],
+    },
+    false,
+  );
+  expect(after.find((c) => c.target === 'dos')?.id).toBe(before[0].id);
+});
+
+test('buildDeck: fixing the native side keeps the id; the id ignores how an accent is typed', () => {
+  const typo = buildDeck({ cards: [{ target: 'caf\u00e9', native: 'cofee' }] }, false);
+  const fixed = buildDeck({ cards: [{ target: 'cafe\u0301', native: 'coffee' }] }, false);
+  expect(typo[0].id).toBe('caf\u00e9');
+  expect(fixed[0].id).toBe('caf\u00e9');
 });
 
 test('buildDeck: reorders cards when shuffle is on', () => {
@@ -132,20 +153,20 @@ const three = () =>
 
 test('initDeckState: fixes the circle order to the starting queue, no results yet', () => {
   const state = initDeckState(three());
-  expect(state.order).toEqual(['0', '1', '2']);
+  expect(state.order).toEqual(['uno', 'dos', 'tres']);
   expect(state.results).toEqual({});
 });
 
 test('rate: records again and good against the card, and the latest rating wins', () => {
   let state = initDeckState(three());
   state = deckReducer(state, { kind: 'rate', grade: 'again' }); // uno → back of queue
-  expect(state.results).toEqual({ '0': 'again' });
+  expect(state.results).toEqual({ uno: 'again' });
   state = deckReducer(state, { kind: 'rate', grade: 'good' }); // dos
   state = deckReducer(state, { kind: 'rate', grade: 'good' }); // tres
   state = deckReducer(state, { kind: 'rate', grade: 'good' }); // uno again, now known
-  expect(state.results).toEqual({ '0': 'good', '1': 'good', '2': 'good' });
+  expect(state.results).toEqual({ uno: 'good', dos: 'good', tres: 'good' });
   // The circle order never moves, even though uno was re-queued.
-  expect(state.order).toEqual(['0', '1', '2']);
+  expect(state.order).toEqual(['uno', 'dos', 'tres']);
 });
 
 test('restart: clears the results and takes the new queue order', () => {
@@ -153,5 +174,5 @@ test('restart: clears the results and takes the new queue order', () => {
   const reversed = [...three()].reverse();
   state = deckReducer(state, { kind: 'restart', queue: reversed });
   expect(state.results).toEqual({});
-  expect(state.order).toEqual(['2', '1', '0']);
+  expect(state.order).toEqual(['tres', 'dos', 'uno']);
 });

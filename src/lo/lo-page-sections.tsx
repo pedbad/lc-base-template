@@ -26,8 +26,9 @@ import type { AssembledLo, AssembledSection } from './assemble-lo';
 import { LoBlock } from './LoBlock';
 
 /** One section's blocks, then its exercises, each in declared order. Each block renders
- * through `LoBlock`, which owns the plain/card branch. */
-function sectionContent(section: AssembledSection): ReactNode {
+ * through `LoBlock`, which owns the plain/card branch. An exercise saves progress under
+ * its LO and exercise folders (`lo-03-food/02-flashcards`). */
+function sectionContent(section: AssembledSection, slug: string): ReactNode {
   return (
     <div className="space-y-3">
       {section.blocks.map(({ ref, config }) => (
@@ -38,7 +39,7 @@ function sectionContent(section: AssembledSection): ReactNode {
         <LoAccordion key={`exercise-${ref}`} id={`exercise-${ref}`} title={config.title}>
           {/* ExerciseHost renders the instruction box itself, so the accordion's own
               instructions slot stays empty here — one instruction box, not two. */}
-          <ExerciseHost type={config.type} config={config} />
+          <ExerciseHost type={config.type} config={config} progressId={`${slug}/${ref}`} />
         </LoAccordion>
       ))}
     </div>
@@ -51,6 +52,6 @@ export function toPageSections(lo: AssembledLo): PageSection[] {
     id: section.id,
     label: section.label,
     ...(section.navLabel === undefined ? {} : { navLabel: section.navLabel }),
-    content: sectionContent(section),
+    content: sectionContent(section, lo.slug),
   }));
 }

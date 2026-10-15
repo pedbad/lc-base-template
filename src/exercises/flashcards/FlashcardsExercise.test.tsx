@@ -130,6 +130,13 @@ describe('ProgressDots', () => {
     expect(dots({ a: 'good', b: 'good' })).not.toContain('data-complete');
   });
 
+  test('a card named like a built-in (constructor) starts pending', () => {
+    const html = renderToStaticMarkup(
+      <ProgressDots order={['constructor']} results={{}} currentId={null} />,
+    );
+    expect(html).toContain('data-result="pending"');
+  });
+
   test('numbers each circle for the staggered hop', () => {
     expect(dots({})).toContain('--slot-index:2');
   });
@@ -139,7 +146,67 @@ describe('ProgressDots', () => {
 // forgetting it is a separate, quieter button, shown only when progress is saved.
 test('with saved progress, Reset sits beside a Clear saved progress button', () => {
   const footer = (html: string) => html.slice(html.indexOf('class="flashcards-footer"'));
-  expect(footer(render({ srs: true }))).toContain('>Clear saved progress</button>');
+  const saving = renderToStaticMarkup(
+    <FlashcardsExercise
+      config={{ ...config, options: { ...config.options, srs: true } }}
+      progressId="lo-03-food/02-flashcards"
+    />,
+  );
+  expect(footer(saving)).toContain('>Clear saved progress</button>');
   expect(footer(render())).not.toContain('Clear saved progress');
   expect(footer(render()).match(/<button/g)).toHaveLength(1);
+});
+
+// E13a (maintainer, 2026-10-15): saved progress is found by where the deck lives (its
+// LO and exercise folders), handed in as `progressId`, never by what the cards say.
+describe('FlashcardsExercise saved progress', () => {
+  const KEY = 'flashcards-srs:v2:/lo-03-food/02-flashcards';
+  // 'la mesa' is due now and the other two are not, so a loaded save draws it first.
+  const SAVED = {
+    step: 3,
+    cards: {
+      'la casa': { box: 2, due: 5 },
+      'el perro': { box: 2, due: 5 },
+      'la mesa': { box: 1, due: 0 },
+    },
+  };
+  const srsConfig = { ...config, options: { ...config.options, srs: true } };
+
+  /** Run with a fake localStorage holding `entries`; returns the keys read. */
+  function withStorage(entries: Record<string, unknown>, run: () => void): string[] {
+    const map = new Map(Object.entries(entries).map(([k, v]) => [k, JSON.stringify(v)]));
+    const reads: string[] = [];
+    const getItem = (k: string) => {
+      reads.push(k);
+      return map.get(k) ?? null;
+    };
+    (globalThis as { window?: unknown }).window = { localStorage: { getItem } };
+    try {
+      run();
+    } finally {
+      delete (globalThis as { window?: unknown }).window;
+    }
+    return reads;
+  }
+
+  test('loads the save kept under its LO and exercise', () => {
+    withStorage({ [KEY]: SAVED }, () => {
+      const html = renderToStaticMarkup(
+        <FlashcardsExercise config={srsConfig} progressId="lo-03-food/02-flashcards" />,
+      );
+      // Only the current card is drawn: the due one, not the first authored.
+      expect(html).toContain('la mesa');
+      expect(html).not.toContain('la casa');
+    });
+  });
+
+  test('a deck with no progressId never touches storage and offers no Clear', () => {
+    let html = '';
+    const reads = withStorage({ [KEY]: SAVED }, () => {
+      html = renderToStaticMarkup(<FlashcardsExercise config={srsConfig} />);
+    });
+    expect(reads).toEqual([]);
+    expect(html).toContain('la casa');
+    expect(html).not.toContain('Clear saved progress');
+  });
 });

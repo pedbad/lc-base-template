@@ -23,6 +23,27 @@ test('flashcards: rejects an empty deck', () => {
   expect(parsed.success).toBe(false);
 });
 
+test('flashcards: rejects two cards with the same target word, naming it', () => {
+  const parsed = FlashcardsContentSchema.safeParse({
+    cards: [
+      { target: 'el banco', native: 'the bank' },
+      { target: 'el banco', native: 'the bench' },
+    ],
+  });
+  expect(parsed.success).toBe(false);
+  expect(parsed.error?.issues[0]?.message).toContain('"el banco"');
+});
+
+test('flashcards: rejects a repeated target even when its accent is typed differently', () => {
+  const parsed = FlashcardsContentSchema.safeParse({
+    cards: [
+      { target: 'caf\u00e9', native: 'coffee' },
+      { target: 'cafe\u0301', native: 'café' },
+    ],
+  });
+  expect(parsed.success).toBe(false);
+});
+
 test('flashcards: rejects a card missing target or native', () => {
   const noTarget = FlashcardsContentSchema.safeParse({ cards: [{ native: 'the dog' }] });
   const noNative = FlashcardsContentSchema.safeParse({ cards: [{ target: 'el perro' }] });

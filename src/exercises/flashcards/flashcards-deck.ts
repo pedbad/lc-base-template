@@ -10,7 +10,17 @@
  */
 import type { FlashcardsContent } from './flashcards-schema';
 
-/** One deck card: an authored card plus a stable id for React keys and requeueing. */
+/**
+ * A card's id: its target word, in one Unicode form so `café` typed with a combined or
+ * a separate accent is the same card. Saved progress is kept per id (E13a), so adding,
+ * removing or reordering cards keeps every other card's progress, and fixing the
+ * native side changes nothing. The schema rejects two cards with one id.
+ */
+export function cardId(target: string): string {
+  return target.normalize('NFC');
+}
+
+/** One deck card: an authored card plus its id (`cardId`) for keys, requeueing and saves. */
 export interface DeckCard {
   id: string;
   target: string;
@@ -29,12 +39,9 @@ export function shuffle<T>(input: readonly T[]): T[] {
   return out;
 }
 
-/**
- * Expand the authored cards into a deck (stable ids from authored order), shuffled
- * when the author opted in.
- */
+/** Expand the authored cards into a deck (ids from `cardId`), shuffled when the author opted in. */
 export function buildDeck(content: FlashcardsContent, doShuffle: boolean): DeckCard[] {
-  const cards: DeckCard[] = content.cards.map((card, index) => ({ id: String(index), ...card }));
+  const cards: DeckCard[] = content.cards.map((card) => ({ id: cardId(card.target), ...card }));
   return doShuffle ? shuffle(cards) : cards;
 }
 

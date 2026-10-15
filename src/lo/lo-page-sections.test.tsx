@@ -5,8 +5,10 @@
  * preserved, and the heading outline the spec fixes (h2 per section from PageLayout,
  * h3 per accordion from LoAccordion — never a skip).
  */
+import { isValidElement, type ReactElement, type ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { test, expect } from 'vitest';
+import { ExerciseHost } from '@/exercises/lib/ExerciseHost';
 import { loadLo } from './load-lo-disk';
 import { toPageSections } from './lo-page-sections';
 import { ModalProvider } from './rich-text/modal/ModalProvider';
@@ -86,6 +88,21 @@ test('toPageSections: renders one accordion per exercise, in declared order', ()
   expect(html.indexOf('Placeholder select exercise')).toBeLessThan(
     html.indexOf('Placeholder multiple-choice quiz'),
   );
+});
+
+/** Every ExerciseHost element in a section's tree, in order (no render needed). */
+function exerciseHosts(node: ReactNode): ReactElement<{ progressId?: string }>[] {
+  if (Array.isArray(node)) return node.flatMap(exerciseHosts);
+  if (!isValidElement<{ children?: ReactNode; progressId?: string }>(node)) return [];
+  if (node.type === ExerciseHost) return [node];
+  return exerciseHosts(node.props.children);
+}
+
+test('toPageSections: each exercise saves progress under its LO and exercise folders', () => {
+  const ids = sections.flatMap((section) =>
+    exerciseHosts(section.content).map((host) => host.props.progressId),
+  );
+  expect(ids).toEqual(['lo-00-example/01-select', 'lo-00-example/02-radio-quiz']);
 });
 
 test('toPageSections: accordion ids are unique across the whole page', () => {

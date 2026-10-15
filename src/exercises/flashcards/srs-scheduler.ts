@@ -40,11 +40,17 @@ function freshSchedule(): CardSchedule {
   return { box: SRS_MIN_BOX, due: 0 };
 }
 
+/**
+ * A card's own schedule, or undefined. Ids are target words, so one may be a built-in
+ * object name ("constructor"); `Object.hasOwn` keeps it from reading `Object`'s.
+ */
+function scheduleOf(state: SrsState, id: string): CardSchedule | undefined {
+  return Object.hasOwn(state.cards, id) ? state.cards[id] : undefined;
+}
+
 /** Build a fresh scheduler state: every id in box 1, due 0, review counter at 0. */
 export function initSrsState(ids: readonly string[]): SrsState {
-  const cards: Record<string, CardSchedule> = {};
-  for (const id of ids) cards[id] = freshSchedule();
-  return { step: 0, cards };
+  return { step: 0, cards: Object.fromEntries(ids.map((id) => [id, freshSchedule()])) };
 }
 
 /** A self-rating: `good` = recalled it, `again` = missed it. Matches the deck grade. */
@@ -57,7 +63,7 @@ export type SrsGrade = 'again' | 'good';
  */
 export function gradeCard(state: SrsState, id: string, grade: SrsGrade): SrsState {
   const step = state.step + 1;
-  const current = state.cards[id] ?? freshSchedule();
+  const current = scheduleOf(state, id) ?? freshSchedule();
   const box = grade === 'good' ? Math.min(current.box + 1, SRS_MAX_BOX) : SRS_MIN_BOX;
   const due = step + intervalForBox(box);
   return { step, cards: { ...state.cards, [id]: { box, due } } };
@@ -69,7 +75,7 @@ export function gradeCard(state: SrsState, id: string, grade: SrsGrade): SrsStat
  * load-order applied to a freshly-built deck when SRS is enabled.
  */
 export function dueOrder(state: SrsState, ids: readonly string[]): string[] {
-  const dueOf = (id: string) => state.cards[id]?.due ?? 0;
+  const dueOf = (id: string) => scheduleOf(state, id)?.due ?? 0;
   return [...ids].sort((a, b) => dueOf(a) - dueOf(b));
 }
 
@@ -80,7 +86,6 @@ export function dueOrder(state: SrsState, ids: readonly string[]): string[] {
  * the source of truth for which cards exist; the store only remembers their boxes.
  */
 export function reconcileSrsState(state: SrsState, ids: readonly string[]): SrsState {
-  const cards: Record<string, CardSchedule> = {};
-  for (const id of ids) cards[id] = state.cards[id] ?? freshSchedule();
+  const cards = Object.fromEntries(ids.map((id) => [id, scheduleOf(state, id) ?? freshSchedule()]));
   return { step: state.step, cards };
 }

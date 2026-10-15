@@ -21,14 +21,19 @@
  *   - direction?      which side faces front by default. 'target-native' (default)
  *                     = Spanish→English, recognition-first (spec §4).
  *   - lockDirection?  hide the learner's direction toggle (author locks the deck).
- *   - srs?            reserved for the Step 2 localStorage spaced-repetition layer;
- *                     ignored by the in-memory Step 1 engine.
+ *   - srs?            spaced repetition (Step 2): cards the learner missed lead the
+ *                     next round. Progress is saved in the browser when the page says
+ *                     where the deck lives (`progressId`, E13a; flashcards-storage.ts).
+ *
+ * Each card's `target` word must be unique in its deck: it is the card's id for saved
+ * progress (`cardId` in flashcards-deck.ts).
  *
  * Spec: docs/specs/2026-07-03-new-exercise-engines-design.md §4.
  */
 import { z } from 'zod';
 import { instructionsField } from '../lib/instructions';
 import { ExerciseConfigSchema, ExerciseOptionsSchema } from '@/config/lo-schema';
+import { cardId } from './flashcards-deck';
 
 /** Which card side faces front. `target-native` = Spanish→English (recognition-first). */
 export const FLASHCARD_DIRECTIONS = ['target-native', 'native-target'] as const;
@@ -42,11 +47,38 @@ export const FlashcardSchema = z.object({
 });
 export type Flashcard = z.infer<typeof FlashcardSchema>;
 
-export const FlashcardsContentSchema = z.object({
-  ...instructionsField,
-  cards: z.array(FlashcardSchema).min(1),
-  footnote: z.string().min(1).optional(),
-});
+/** The first target word that appears twice in a deck (by `cardId`), or undefined. */
+function repeatedTarget(cards: readonly Flashcard[]): string | undefined {
+  const seen = new Set<string>();
+  for (const card of cards) {
+    const id = cardId(card.target);
+    if (seen.has(id)) return card.target;
+    seen.add(id);
+  }
+  return undefined;
+}
+
+/**
+ * A target word may appear once per deck: it is the card's id for saved progress
+ * (`cardId`), and a learner shown it could not tell which answer is wanted anyway.
+ */
+export const FlashcardsContentSchema = z
+  .object({
+    ...instructionsField,
+    cards: z.array(FlashcardSchema).min(1),
+    footnote: z.string().min(1).optional(),
+  })
+  .superRefine((content, ctx) => {
+    const repeated = repeatedTarget(content.cards);
+    if (repeated === undefined) return;
+    ctx.addIssue({
+      code: 'custom',
+      path: ['cards'],
+      message:
+        `Two flashcards both say "${repeated}". Each card's target word must be unique ` +
+        `in its deck: make it one card with both meanings on its native side.`,
+    });
+  });
 export type FlashcardsContent = z.infer<typeof FlashcardsContentSchema>;
 
 /**

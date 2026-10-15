@@ -25,6 +25,12 @@ import type { ExerciseType } from '@/config/exercise-types';
  */
 export interface ExerciseComponentProps {
   config: unknown;
+  /**
+   * Where this exercise lives, for anything it saves in the browser: the LO and
+   * exercise folders (`lo-03-food/02-flashcards`) on an LO page, the card on the
+   * showcase. Absent means "save nothing". Only flashcards reads it today (E13a).
+   */
+  progressId?: string;
 }
 
 /** A lazily-loaded exercise engine component. */

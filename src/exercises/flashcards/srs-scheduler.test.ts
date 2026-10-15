@@ -85,3 +85,14 @@ test('reconcileSrsState: keeps known cards, adds missing as fresh, drops stale i
   expect(reconciled.cards.b).toBeUndefined(); // dropped
   expect(reconciled.step).toBe(stored.step); // step carried over
 });
+
+// Card ids are target words since E13a, so one can be a built-in object name: a
+// Spanish deck may well hold "constructor". It must read as a plain, unrated card.
+test('a card named like a built-in (constructor) is a fresh card, not Object', () => {
+  // Typed `string` so TypeScript does not read `.constructor` as Object's own member.
+  const id: string = 'constructor';
+  const empty = { step: 0, cards: {} };
+  expect(reconcileSrsState(empty, [id]).cards[id]).toEqual({ box: SRS_MIN_BOX, due: 0 });
+  expect(gradeCard(empty, id, 'good').cards[id]?.box).toBe(SRS_MIN_BOX + 1);
+  expect(dueOrder({ step: 0, cards: { a: { box: 2, due: 5 } } }, ['a', id])).toEqual([id, 'a']);
+});

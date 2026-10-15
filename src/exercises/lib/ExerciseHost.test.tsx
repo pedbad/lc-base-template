@@ -54,3 +54,26 @@ describe('ExerciseHost layout', () => {
     expect(engine).toBeGreaterThan(instructions);
   });
 });
+
+// E13a: a flashcards deck saves only when the page says where it lives, so the
+// "saves your progress" line follows the progressId, not `srs` alone.
+describe('ExerciseHost saved-progress line', () => {
+  const DECK = {
+    type: 'flashcards',
+    title: 'Deck',
+    content: { cards: [{ target: 'uno', native: 'one' }] },
+    options: { srs: true },
+  };
+
+  test('promises saved progress when the deck has somewhere to save it', () => {
+    const html = renderToStaticMarkup(
+      <ExerciseHost type="flashcards" config={DECK} progressId="lo-01-a/01-flashcards" />,
+    );
+    expect(html).toContain('saves your progress');
+  });
+
+  test('promises nothing when the host gives no progressId', () => {
+    const html = renderToStaticMarkup(<ExerciseHost type="flashcards" config={DECK} />);
+    expect(html).not.toContain('saves your progress');
+  });
+});

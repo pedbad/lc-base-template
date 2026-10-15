@@ -51,7 +51,11 @@ export default function Showcase() {
                 className="scroll-mt-6 rounded-lg border p-6"
               >
                 <h2 className="mb-4 text-xl font-semibold">{fixture.title}</h2>
-                <ExerciseHost type={fixture.type} config={fixture.config} />
+                <ExerciseHost
+                  type={fixture.type}
+                  config={fixture.config}
+                  progressId={`showcase/${fixture.id}`}
+                />
               </article>
             ))}
           </section>

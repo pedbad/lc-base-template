@@ -14,18 +14,23 @@
  *   - Content drift safe. A load reconciles the stored state against the deck's current
  *     ids (`reconcileSrsState`), so adding/removing/renaming cards can never desync.
  *
- * KEYING: no LO/exercise id flows through `ExerciseComponentProps` (it carries only
- * `config: unknown`), so the persistence key is derived from a hash of the deck content
- * (term/translation/asset of each card) via the shared `seedFromId`. This is stable
- * across reloads and distinct per distinct deck — the practical "per LO + exercise"
- * distinction, since different exercises carry different cards. Two byte-identical decks
- * in two LOs would share progress; accepted, as there is no id available to separate
- * them. Bump `STORAGE_VERSION` if the persisted shape ever changes.
+ * KEYING (E13a, 2026-10-15): a deck's progress lives under the course's base path plus
+ * its `progressId` — the LO and exercise folders it sits in (`lo-03-food/02-flashcards`),
+ * handed down by the LO page through `ExerciseHost`. It does not depend on what the
+ * cards say, so a typo fix keeps the deck's progress (a fixed target word restarts
+ * that one card); two decks are two folders, so they never share it; and the base
+ * path keeps two courses on one site apart. Renaming either folder (reordering a
+ * course) or moving the base path starts that deck afresh: the maintainer chose
+ * folder names over an authored id. Inside a deck, cards are kept by their target word
+ * (`cardId` in `flashcards-deck.ts`). A deck with no `progressId` saves nothing.
+ *
+ * Bump `STORAGE_VERSION` if the key or the persisted shape ever changes. v1 keyed a
+ * hash of the card content; v2 ignores v1 entries rather than migrating them, as no
+ * learner had saved progress when it changed.
  *
  * Spec: docs/specs/2026-07-03-new-exercise-engines-design.md §4.2.
  */
 import { z } from 'zod';
-import { seedFromId } from '@/exercises/lib/exerciseScaffold';
 import {
   SRS_MIN_BOX,
   SRS_MAX_BOX,
@@ -33,9 +38,8 @@ import {
   reconcileSrsState,
   type SrsState,
 } from './srs-scheduler';
-import type { FlashcardsContent } from './flashcards-schema';
 
-const STORAGE_VERSION = 'v1';
+const STORAGE_VERSION = 'v2';
 const STORAGE_PREFIX = `flashcards-srs:${STORAGE_VERSION}:`;
 
 /** Untrusted-input schema for a persisted scheduler state (mirrors `SrsState`). */
@@ -50,12 +54,12 @@ const StoredSrsStateSchema = z.object({
   ),
 });
 
-/** A stable per-deck storage key derived from the card content (see file header). */
-export function storageKey(content: FlashcardsContent): string {
-  const fingerprint = content.cards
-    .map((c) => `${c.target}|${c.native}|${c.image ?? ''}|${c.audio ?? ''}`)
-    .join('~');
-  return `${STORAGE_PREFIX}${seedFromId(fingerprint)}`;
+/**
+ * A deck's storage key: the course `base` path (ending in `/`) plus its `progressId`
+ * (see file header).
+ */
+export function storageKey(base: string, progressId: string): string {
+  return `${STORAGE_PREFIX}${base}${progressId}`;
 }
 
 /**

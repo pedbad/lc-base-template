@@ -37,7 +37,7 @@ import { useReducer, useState, type CSSProperties } from 'react';
 import { Frown, RotateCcw, Smile } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AudioClip } from '@/components/audio/AudioClip';
-import { resolveAsset } from '@/lib/assets';
+import { resolveAsset, resolveHomeHref } from '@/lib/assets';
 import { TARGET_LANG } from '@/lib/lang';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import {
@@ -47,6 +47,7 @@ import {
 } from './flashcards-schema';
 import {
   buildDeck,
+  cardId,
   deckReducer,
   initDeckState,
   type DeckCard,
@@ -83,7 +84,7 @@ function orderByDue(cards: readonly DeckCard[], srs: SrsState): DeckCard[] {
     .filter((card): card is DeckCard => card !== undefined);
 }
 
-export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
+export default function FlashcardsExercise({ config, progressId }: ExerciseComponentProps) {
   const parsed = FlashcardsExerciseConfigSchema.safeParse(config);
 
   // Hooks must run unconditionally — build a safe initial deck even when the config
@@ -91,15 +92,17 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
   const options = parsed.success ? FlashcardsOptionsSchema.parse(parsed.data.options ?? {}) : null;
   const content = parsed.success ? parsed.data.content : null;
 
-  // SRS wiring (design §4.2), engaged only when the author opts in. Card ids are
-  // `String(index)` from buildDeck and are shuffle-independent, so they derive
-  // straight from the content — no need to build the deck to seed the scheduler.
+  // SRS wiring (design §4.2), engaged only when the author opts in. Card ids are the
+  // target words (`cardId`, as buildDeck assigns them), so they derive straight from
+  // the content — no need to build the deck to seed the scheduler. Progress is saved
+  // only when the host says where the deck lives (`progressId`, E13a); without one the
+  // scheduler still orders this visit's deck, in memory.
   const srsEnabled = Boolean(options?.srs) && content !== null;
-  const cardIds = content ? content.cards.map((_, index) => String(index)) : [];
-  const storeKey = srsEnabled && content ? storageKey(content) : '';
+  const cardIds = content ? content.cards.map((card) => cardId(card.target)) : [];
+  const storeKey = srsEnabled && progressId ? storageKey(resolveHomeHref(), progressId) : null;
 
   const [srs, setSrs] = useState<SrsState>(() =>
-    srsEnabled ? loadSrsState(storeKey, cardIds) : initSrsState(cardIds),
+    storeKey ? loadSrsState(storeKey, cardIds) : initSrsState(cardIds),
   );
 
   const [state, dispatch] = useReducer(
@@ -139,7 +142,7 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
     if (srsEnabled && current) {
       const nextSrs = gradeCard(srs, current.id, grade);
       setSrs(nextSrs);
-      saveSrsState(storeKey, nextSrs);
+      if (storeKey) saveSrsState(storeKey, nextSrs);
     }
     dispatch({ kind: 'rate', grade });
   };
@@ -150,7 +153,7 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
 
   // Clear saved progress: forget the stored schedule and start a fresh deck from box 1.
   const handleClearProgress = () => {
-    clearSrsState(storeKey);
+    if (storeKey) clearSrsState(storeKey);
     const fresh = initSrsState(cardIds);
     setSrs(fresh);
     dispatch({ kind: 'restart', queue: freshQueue(fresh) });
@@ -167,7 +170,7 @@ export default function FlashcardsExercise({ config }: ExerciseComponentProps) {
         <RotateCcw aria-hidden="true" />
         {resolveLabel('reset')}
       </Button>
-      {srsEnabled ? <ClearProgress onClear={handleClearProgress} /> : null}
+      {storeKey ? <ClearProgress onClear={handleClearProgress} /> : null}
     </div>
   );
 
@@ -315,7 +318,8 @@ export function ProgressDots({ order, results, currentId }: ProgressDotsProps) {
       data-complete={isComplete ? 'true' : undefined}
     >
       {order.map((id, index) => {
-        const result = results[id] ?? 'pending';
+        // Own keys only: a card id can be a built-in name such as "constructor".
+        const result = Object.hasOwn(results, id) ? results[id] : 'pending';
         return (
           <li
             key={id}
