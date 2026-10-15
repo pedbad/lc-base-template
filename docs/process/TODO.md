@@ -53,8 +53,8 @@ left out `e2e/` and `docs/ORGANIZATION.md`. All fixed. The import map breaks no 
 nothing `vite.config.ts` reaches uses `@/…`, and the two cross-folder imports
 `STRUCTURE.md` does not mention are harmless (engine fixtures import
 `src/showcase/fixture-types.ts`; `src/build/source-negation.ts` reuses
-`src/guards/asset-path.ts`). What is left, in order: **E14** (README opener), **E4** (colleague
-guide), then **E12b**, E5's
+`src/guards/asset-path.ts`). **E14** (README opener) and **E4** (`COURSE_GUIDE.md`) are
+done (2026-10-15). What is left, in order: **E12b**, E5's
 deploy route, E7, and at the handover E1 and the organisation move (E16 after it); E13
 before real learners. Since PR #9, merge a PR by fast-forwarding `main` once its CI is
 green (`git merge --ff-only` + push), so the hashes cited here survive; GitHub's
@@ -1709,7 +1709,7 @@ no-preference` only.
   next steps (coverage rule in CI first) and open questions:
   `2026-10-12-team-workflow-handover.md`.
 
-**Found in the pre-handover check (2026-10-13). Do E4 and E5 before colleagues get access** (E3, E6 done).
+**Found in the pre-handover check (2026-10-13). Do E5 before colleagues get access** (E3, E4, E6 done).
 
 - **E3 — TDD guard off by default. DONE 2026-10-14** (maintainer's decision). The
   committed `.claude/settings.json` ran `bunx tdd-guard` before every Claude
@@ -1725,11 +1725,13 @@ no-preference` only.
   (`22b637d`) were written through the shell while the guard was on at home, so it
   never checked them; test-first was followed by hand (tests written and seen failing
   first).
-- **E4 — the colleague guide** (handover §3 item 2). A short page for the course-repo
-  colleague: the daily loop, which folders they may edit, how a template update arrives,
-  and — first and in bold — the media-rights rule in CONTRIBUTING ("Authoring a
-  Learning Object").
-  CONTRIBUTING is written for template developers, not for them. Link it, don't copy it.
+- **E4 — the colleague guide. DONE 2026-10-15:** [`COURSE_GUIDE.md`](../../COURSE_GUIDE.md),
+  linked from the README's docs table, CONTRIBUTING's sibling docs and
+  `ORGANIZATION.md` step 8. It opens with the media rule in bold, then setup, the three
+  folders a colleague may edit, the daily loop and how a template update arrives;
+  CONTRIBUTING is linked, not copied. Repo URLs are placeholders
+  (`<organisation>/<course-repo>`) until the organisation move (E2) names them. Was:
+  a short page for the course-repo colleague (handover §3 item 2).
 - **E5 — deploy route, and Feijoa.** "Release → zip in CI" is the preferred route
   (handover §3 item 4), but Feijoa is not committed (licence), so a CI-built zip ships
   the fallback font. Decide: build on the maintainer's machine, or give CI the fonts
@@ -1913,7 +1915,7 @@ Still open from the same check, already tracked elsewhere: the coverage rule in 
 (E8, done 2026-10-14), E1 (fires at handover). **CC BY-NC 4.0 confirmed** as the content
 licence by the maintainer, 2026-10-14 (handover §4). The same day, CONTRIBUTING gained a
 bold rule (pointed to from LICENSE and AGENTS.md): only media we made or may share —
-no textbook-CD audio, no web images without an open licence. E4's guide must lead with it.
+no textbook-CD audio, no web images without an open licence. E4's guide leads with it.
 
 **Lighthouse, 2026-10-13 (`6290f20`)** — the first audit since `a6e11a4` (2026-07-11).
 Built site under `vite preview` (gzip on), Lighthouse 12.8, mobile = simulated slow 4G

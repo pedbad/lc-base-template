@@ -202,9 +202,10 @@ under **Organisation → Teams** and give the team Write on its repo instead.
 ## Step 8 — The colleague's setup
 
 They clone the **course repo** (not the template), then `bun install`. That installs the
-pre-commit and pre-push hooks automatically — nothing to configure. From there the daily
-workflow is in [`CONTRIBUTING.md`](../CONTRIBUTING.md): a branch per LO, a pull request into
-the course repo's `main`, CI green before merge.
+pre-commit and pre-push hooks automatically — nothing to configure. Send them
+[`COURSE_GUIDE.md`](../COURSE_GUIDE.md), with the course repo's real address in place of
+its placeholders: setup, what they may edit, and the daily loop (a branch per LO, a pull
+request into the course repo's `main`, CI green before merge).
 
 ## Step 9 — Bringing template updates into a course
 

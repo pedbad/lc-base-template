@@ -10,7 +10,8 @@ How to work in this repo: setup, everyday commands, the commit gate, and convent
 >
 > For **why** each tool was chosen (not how to use it), see [`docs/TOOLING.md`](docs/TOOLING.md).
 >
-> Three sibling docs cover the audiences this one does not:
+> Four sibling docs cover the audiences this one does not:
+> [`COURSE_GUIDE.md`](COURSE_GUIDE.md) (colleagues writing a course in its own repo),
 > [`DESIGNER.md`](DESIGNER.md) (change colours and fonts without touching code),
 > [`STRUCTURE.md`](STRUCTURE.md) (what every folder is for) and
 > [`AGENTS.md`](AGENTS.md) (house rules for AI coding agents).
