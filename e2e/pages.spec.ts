@@ -7,11 +7,9 @@
  * BASE_URL=/course/ a root-absolute URL 404s, so this is the base-path check, hard
  * constraint 3).
  */
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
-/** axe rule tags: WCAG 2.0, 2.1 and 2.2, levels A and AA. */
-const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
+import { animationsSettled, expectNoAxeViolations, watchForProblems } from './support';
 
 interface PageCase {
   /** Relative to the base URL — never a leading slash. */
@@ -38,75 +36,6 @@ const PAGES: PageCase[] = [
   },
 ];
 
-/**
- * A request the browser cancelled itself (a media range request superseded by the next
- * one) is not a broken one. Note what the 4xx check can see: `vite preview` answers a
- * missing file INSIDE the base with the landing page and 200 (its SPA fallback), so the
- * check catches requests that escape the base — the base-path mistakes it is for — not
- * every missing file.
- */
-const isCancelled = (errorText: string | undefined): boolean =>
-  /aborted|cancelled/i.test(errorText ?? '');
-
-/**
- * Where the licensed Feijoa files exist (never in CI: they are never committed), Firefox
- * discards an unsupported `kern` table from the Bold cut, logs it as a console error, and
- * uses the font anyway. Known and harmless, so exactly those two messages are ignored.
- * A MISSING Feijoa is not excused: since TODO §E5 the feijoaFonts() plugin
- * (src/build/feijoa-fonts.ts) declares the font only when its files exist, so a request
- * for an absent cut is a real failure. Any other font, any other error, still fails.
- */
-const isKnownFeijoaFontNotice = (text: string): boolean =>
-  /downloadable font: (kern: Unsupported table version|Table discarded).*font-family: "Feijoa"/.test(
-    text,
-  );
-
-/** Collects every problem from this moment on. */
-function watchForProblems(page: Page): string[] {
-  const problems: string[] = [];
-  page.on('console', (message) => {
-    if (message.type() === 'error' && !isKnownFeijoaFontNotice(message.text())) {
-      problems.push(`console error: ${message.text()}`);
-    }
-  });
-  page.on('pageerror', (error) => problems.push(`uncaught: ${error.message}`));
-  page.on('requestfailed', (request) => {
-    const errorText = request.failure()?.errorText;
-    if (!isCancelled(errorText)) problems.push(`request failed: ${request.url()} (${errorText})`);
-  });
-  page.on('response', (response) => {
-    if (response.status() >= 400) problems.push(`HTTP ${response.status()}: ${response.url()}`);
-  });
-  return problems;
-}
-
-/**
- * Waits for entry animations to finish. Mid-flight, a fade-in (LoCard's on the landing
- * page) blends text toward the background and axe measures a contrast the settled page
- * does not have. Only running, finite animations on a rendered element: an endless one
- * (a spinner) never finishes, and WebKit can report CSS transitions inside a closed
- * <details> as "finished" while their `finished` promise never settles — text axe does
- * not measure anyway. An auto-waiting condition, not a sleep.
- */
-async function animationsSettled(page: Page): Promise<void> {
-  await page.evaluate(() =>
-    Promise.all(
-      document
-        .getAnimations()
-        .filter((animation) => {
-          const { effect } = animation;
-          const target = effect instanceof KeyframeEffect ? effect.target : null;
-          return (
-            animation.playState === 'running' &&
-            effect?.getTiming().iterations !== Infinity &&
-            target?.checkVisibility() !== false
-          );
-        })
-        .map((animation) => animation.finished.catch(() => undefined)),
-    ),
-  );
-}
-
 for (const { path, ready } of PAGES) {
   test.describe(path, () => {
     test('loads and hydrates with no errors and no failed requests', async ({ page }) => {
@@ -120,8 +49,7 @@ for (const { path, ready } of PAGES) {
       await page.goto(path, { waitUntil: 'load' });
       await ready(page);
       await animationsSettled(page);
-      const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
-      expect(results.violations).toEqual([]);
+      await expectNoAxeViolations(page);
     });
   });
 }

@@ -9,26 +9,17 @@
  */
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
+import { EXERCISE_HEADINGS, openExercise } from './support';
+
 /** Opens the radio-quiz accordion and returns question 1's three pills, in order. */
 async function firstQuestionPills(page: Page): Promise<Locator[]> {
   await page.goto('example.html');
-  const quiz = page.locator('details', { has: page.locator('#exercise-02-radio-quiz-heading') });
-  await quiz.locator('summary').click();
+  // openExercise waits for the open animation: the WebKit lost-click lesson.
+  const quiz = await openExercise(page, EXERCISE_HEADINGS.radioQuiz);
   const pills = quiz
     .getByRole('radiogroup', { name: 'Choose answer for question 1' })
     .getByRole('radio');
   await expect(pills).toHaveCount(3);
-  // LoAccordion animates the panel open with the Web Animations API. In WebKit a click
-  // landing within milliseconds of the pills appearing was occasionally lost (about 1
-  // run in 60-160: same element, no layout shift, selection not made). Without the
-  // animation (reduced motion) the same spec passed 360 of 360, so the open animation
-  // is the cause. A person aims after the panel opens, so wait for that animation to
-  // finish — an auto-waiting condition, not a sleep.
-  await quiz
-    .locator('.details-inner')
-    .evaluate((panel) =>
-      Promise.all(panel.getAnimations().map((animation) => animation.finished.catch(() => {}))),
-    );
   return [pills.nth(0), pills.nth(1), pills.nth(2)];
 }
 
