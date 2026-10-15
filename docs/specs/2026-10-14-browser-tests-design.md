@@ -2,6 +2,7 @@
 
 **Date:** 2026-10-14 · **Status:** built 2026-10-14 (`cbda661`; the E9 case `ec86eb7`), amended below as CI taught us
 **TODO:** §E12 (this slice), §E9 (its first real case), §E15 (its prerequisite)
+· **Plan:** [`2026-10-14-browser-tests-plan.md`](../process/2026-10-14-browser-tests-plan.md)
 
 ## 1. Why
 

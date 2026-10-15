@@ -46,8 +46,15 @@ is exactly what the paragraph above is about.
 **Next (2026-10-15):** for the current commit see `git log main`. Section D is closed.
 Every coding item from the 2026-10-14 handover is done: **E9** (`ec86eb7`), **E12a**
 (`cbda661`), **E15** (`fe43305`), E5's Feijoa-only-when-present (`f6b2f87`), **E10**
-(`fb73545`) and **E11** (`187dadc`). What is left, in order: the **graphify review**
-(bullet below), **E14** (README opener), **E4** (colleague guide), then **E12b**, E5's
+(`fb73545`) and **E11** (`187dadc`). The **graphify review** is done too (2026-10-15,
+output not committed): six spec headers still read "pending" or "building on
+`feat/…`" for shipped work, three specs did not link their plans, and `STRUCTURE.md`
+left out `e2e/` and `docs/ORGANIZATION.md`. All fixed. The import map breaks no rule:
+nothing `vite.config.ts` reaches uses `@/…`, and the two cross-folder imports
+`STRUCTURE.md` does not mention are harmless (engine fixtures import
+`src/showcase/fixture-types.ts`; `src/build/source-negation.ts` reuses
+`src/guards/asset-path.ts`). What is left, in order: **E14** (README opener), **E4** (colleague
+guide), then **E12b**, E5's
 deploy route, E7, and at the handover E1 and the organisation move (E16 after it); E13
 before real learners. Since PR #9, merge a PR by fast-forwarding `main` once its CI is
 green (`git merge --ff-only` + push), so the hashes cited here survive; GitHub's
@@ -64,13 +71,6 @@ green (`git merge --ff-only` + push), so the hashes cited here survive; GitHub's
 - **Tabs on phones (§F3) is DONE** (2026-10-13): below the block's `@3xl` width the tab
   row gives way to the shadcn `Select`. It cost 21.8 kB of JS, and the maintainer
   raised the JS cap to 140 kB (`docs/TOOLING.md`, "Bundle budget").
-- **REMINDER for the maintainer, at work: run `/graphify` before the handover**
-  (decided 2026-10-13, at home). A one-off pre-handover review of code and docs
-  together: orphaned docs, coupling `STRUCTURE.md` does not show, specs that no longer
-  meet their code. `graphify-out/` is already git-ignored; do NOT commit the
-  output: a generated map nothing checks is the drift the guards exist to stop. Fix what
-  it finds in the real docs. Optionally one line in CONTRIBUTING saying contributors
-  can run it on their own fork. Delete this bullet once done.
 - **Then ask the maintainer what is next.** Candidates: §F2 (the remaining tabs-panel
   entries), §F6 (further components), the §E2 queue (the
   ordered list in `2026-10-12-team-workflow-handover.md` §3, "Next, in order"; coverage

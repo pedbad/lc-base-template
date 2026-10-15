@@ -1,7 +1,8 @@
 # Exercise Engines — Design Spec
 
 **Date:** 2026-06-19
-**Status:** Approved (brainstormed 2026-06-19), ready for an implementation plan
+**Status:** Approved (brainstormed 2026-06-19). Built in Phases A and B from 2026-06-19;
+Phase A plan: [`2026-06-19-phase-a-exercise-foundation-plan.md`](../process/2026-06-19-phase-a-exercise-foundation-plan.md)
 **Scope:** How the 12 interactive exercise engines are ported from `french-lo-1`
 into `lc-base-template`, the behavior they all share, and the order we build them.
 **Extends:** the main design spec `docs/specs/2026-06-15-lc-base-template-design.md`

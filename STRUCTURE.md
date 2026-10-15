@@ -30,6 +30,7 @@ folder exists.**
 | `public/`    | **Static assets**, copied verbatim to the site root — audio, images, fonts, icons |
 | `src/`       | **The application** — engines, loader, shell, styles, guards                      |
 | `scripts/`   | **Build-time Node scripts** run by `bun`, outside the Vite bundle                 |
+| `e2e/`       | **Browser tests** — Playwright specs run against the built site                   |
 | `docs/`      | **Specs, tooling rationale and process history** — the written record             |
 | `.github/`   | **CI and repo policy** — the workflow, CODEOWNERS, PR template                    |
 | `dist/`      | Build output. Generated, git-ignored, never edited.                               |
@@ -140,6 +141,11 @@ There is no `tests/` folder. A test sits beside the file it tests, as
 `<name>.test.ts(x)`. Vitest picks up `src/**/*.test.{ts,tsx}` — so **a test only
 runs if it is under `src/`**. A test file anywhere else is silently never run.
 
+The one exception is `e2e/`: Playwright specs (`<name>.spec.ts`) that drive the
+**built** site in real browsers, run by `bun run test:e2e`, not by Vitest. They test
+whole pages, so they have no single file to sit beside. How to run them:
+[`docs/TOOLING.md`](docs/TOOLING.md), "Browser tests".
+
 ## `scripts/` — Node-side build steps
 
 Run by `bun`, outside the Vite bundle. Two rules apply here, and equally to
@@ -163,6 +169,7 @@ Run by `bun`, outside the Vite bundle. Two rules apply here, and equally to
 | `docs/specs/`               | The canonical designs authors build against                   |
 | `docs/process/`             | Handovers, buildlist, and `TODO.md` — the live worklist       |
 | `docs/BRANCH_PROTECTION.md` | Setup steps for when `main` gets protected                    |
+| `docs/ORGANIZATION.md`      | The planned move to the team organisation (maintainer)        |
 
 **Start at [`docs/process/TODO.md`](docs/process/TODO.md)** in a new session — it
 is the single source of truth for what is still open.

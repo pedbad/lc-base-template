@@ -1,6 +1,7 @@
 # Tabs block — slice 2a: media in a tab
 
-**Date:** 2026-10-07 · **Status:** agreed, building on `feat/tabs-media`
+**Date:** 2026-10-07 · **Status:** built 2026-10-07 (TODO §F2a)
+· **Plan:** [`2026-10-07-tabs-media-plan.md`](../process/2026-10-07-tabs-media-plan.md)
 **Builds on:** [`2026-10-07-tabs-block-design.md`](2026-10-07-tabs-block-design.md)
 (slice 1). This is the first of the F2 panel entries (`docs/process/TODO.md` §F2).
 

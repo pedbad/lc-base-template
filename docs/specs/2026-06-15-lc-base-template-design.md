@@ -1,7 +1,8 @@
 # LC Base Template — Design Spec
 
 **Date:** 2026-06-15
-**Status:** Approved (brainstorm output). Build session pending.
+**Status:** Approved (brainstorm output). Built in Phases A–D (2026-06-19 to 2026-08-06);
+still the full planned scope. What is open: [`docs/process/TODO.md`](../process/TODO.md).
 **Author:** Pedram Badakhchani
 **Source:** Brainstorm session continuing parked work from `docs/process/FUTURE_PROJECTS.md` + `docs/process/LC_BASE_TEMPLATE_BUILD_HANDOVER.md`.
 **Reference impl:** `french-lo-1` (proven, but NOT the template — carries content + naming tech-debt).

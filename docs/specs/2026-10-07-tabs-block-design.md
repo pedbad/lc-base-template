@@ -1,6 +1,7 @@
 # Tabs block — slice 1 design
 
-**Date:** 2026-10-07 · **Status:** agreed, building on `feat/tabs-block`
+**Date:** 2026-10-07 · **Status:** built 2026-10-07 (TODO §F1)
+· **Plan:** [`2026-10-07-tabs-block-plan.md`](../process/2026-10-07-tabs-block-plan.md)
 **Reference:** french-lo-1 "Pronunciation Focus — Demystifying French Pronunciation"
 (`Group` + `displayAsTabs` in `src/render/renderLearningObject.jsx`).
 

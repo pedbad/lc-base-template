@@ -1,7 +1,8 @@
 # Design — New exercise engines (catalog + first three)
 
-**Status:** brainstorm approved 2026-07-03. Design record; implementation deferred
-to a fresh session (flashcards first).
+**Status:** brainstorm approved 2026-07-03. Design record. The first three are built:
+flashcards (2026-07-03, SRS after), conjugation and reading (2026-07-11). The rest of the
+catalog is not.
 **Author:** session 2026-07-03
 **Scope:** define a catalog of new language-learning exercise types beyond the 12
 built in Phase B, converge on the first three to build, and specify each enough to

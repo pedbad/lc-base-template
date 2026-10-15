@@ -1006,4 +1006,5 @@ Deliverables:
 
 **Naming:** overriding `--text-base`/`--text-sm`/`--text-lg` in `@theme` is the intended v4 way to set your scale — it remaps the plain `text-*` utilities. Do **not** invent a prefixed parallel scale (`text-fs-*`/`text-content-*`) to "avoid collision"; there is no collision, you simply own the scale. (If the project still carries a `@config "…/tailwind.config.js"` with a `theme.fontSize` map, that already owns `text-*` — fold it into `@theme`, don't duplicate it.)
 
-See `docs/process/TAILWIND_V4.md` → "Arbitrary font-size vars silently parsed as color".
+See `docs/process/TAILWIND_V4.md` **in the French LO project** (not in this repo) →
+"Arbitrary font-size vars silently parsed as color".

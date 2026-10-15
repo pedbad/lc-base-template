@@ -1,6 +1,7 @@
 # The introduction's outcomes callout and illustration split
 
-**Date:** 2026-09-11 · **Status:** approved, not yet implemented · **Baseline:** `b0be11a`
+**Date:** 2026-09-11 · **Status:** built 2026-09-11 (`366e611`) · **Baseline:** `b0be11a`
+· **Plan:** [`2026-09-11-intro-outcomes-and-split-plan.md`](../process/2026-09-11-intro-outcomes-and-split-plan.md)
 
 Follows `7e22990`, which un-carded the introduction (no accordion, no border, no
 chevron, no `<h3>`, prose flush at the section's left edge). This spec covers the two
