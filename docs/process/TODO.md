@@ -46,7 +46,8 @@ is exactly what the paragraph above is about.
 **Next (2026-10-14):** for the current commit see `git log main`. Section D is closed
 (the 2026-10-09 six, §D19–§D21 and their browser checks). Tabs on phones (§F3,
 `22b637d`) is the last feature in. **E9** (`ec86eb7`), **E12a** (`cbda661`) and **E15**
-(`fe43305`) are done. The next coding items, in order: **E10**, then **E11**, then E14
+(`fe43305`) are done, and on 2026-10-15 E5's Feijoa-only-when-present (`f6b2f87`) and
+**E10** (`32bbe8c`). The next coding items, in order: **E11**, then E14
 and E4.
 
 - **`sources` block (§F5) is DONE** (2026-10-12, late): renderer, schema, example in
@@ -1808,8 +1809,10 @@ never press a key. **Order: E9–E11 before the handover, E12 just before or aft
   Home/End and the roving tab stop kept. Tested by `e2e/choice-keyboard.spec.ts` in
   Chromium, Firefox and WebKit (selection AND the focused element after repeated
   arrows, both directions, wrapping); seen failing, 18 of 18, before the fix.
-- **E10 — rich text accepts invalid interactive nesting.**
-  `src/lo/rich-text/parse-rich-text.ts` checks each tag alone, never what it sits inside:
+- **E10 — rich text accepts invalid interactive nesting. DONE 2026-10-15** (`32bbe8c`).
+  Opening a link, popup link, hover term or audio icon while another is open now fails
+  at load, naming both ("a hover term inside a popup link … put them side by side");
+  emphasis in either direction still parses. 7 Node tests. Was: the parser checked each tag alone, never what it sat inside:
   `<a>` inside `<a>` parses to nested links, and an audio span inside a hover term
   renders a button inside a button. Fix: reject interactive-inside-interactive (links,
   popup links, hover terms, audio) with an author-facing message, as the parser already
@@ -1904,8 +1907,8 @@ rather than the Language Centre's course factory; the maintainer took three smal
   Node: no `engines` field, no `.nvmrc`, and CI used whatever `ubuntu-latest` ships.
   Now `.nvmrc` is 22, `engines.node` is `>=22.12`, and both CI jobs run
   `actions/setup-node` from `.nvmrc`, so local and CI resolve the same runtime.
-  **Verification still owed:** the first CI run on `main` shows Node 22.x in "Set up
-  Node".
+  **Verified 2026-10-15:** CI's "Set up Node" resolved `.nvmrc` as 22 and ran v22.23.3
+  (PR #7's run).
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
@@ -2154,3 +2157,6 @@ build, so it cannot return. Two remain:
 | 2026-10-14 | `fe43305` | **Node pinned** — `.nvmrc` 22, `engines.node`, setup-node from `.nvmrc` in both CI jobs (E15)                                           |
 | 2026-10-14 | `cbda661` | **browser suite** — Playwright in Chromium, Firefox, WebKit: no console errors, axe clean, in CI at `/` and `/course/` (E12a)           |
 | 2026-10-14 | `ec86eb7` | **choice pills keep focus with the selection** — arrow keys no longer leave focus behind (E9)                                           |
+| 2026-10-15 | `f6b2f87` | **Feijoa only when present** — a Vite plugin declares the font only when its files exist; red `main` at `/course/` fixed (E5)           |
+| 2026-10-15 | `80bc28e` | **WebKit click flake** — the keyboard spec waits for the accordion's open animation before clicking (E9 spec)                           |
+| 2026-10-15 | `32bbe8c` | **no control inside a control** — rich text rejects a link, popup, hover term or audio icon nested in another (E10)                     |
