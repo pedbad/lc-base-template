@@ -85,7 +85,10 @@ green (`git merge --ff-only` + push), so the hashes cited here survive; GitHub's
 the in-app browser pane stays hidden (no window focus, so focus events never fire and
 transitions stall): drive the installed Playwright browsers from a throwaway spec in
 `e2e/` that you delete afterwards. The Playwright MCP needs a browser extension that
-is not installed.
+is not installed. **Known, 2026-10-16:** on the MacBook Pro (macOS 27.0.1) Playwright's
+Firefox 155 (`@playwright/test` 1.63) will not start, "Could not find profile folder",
+even by hand and outside the sandbox, so the local suite runs 64 of 96 there and CI's
+Ubuntu run is the Firefox check. Recheck on the next Playwright upgrade.
 
 ---
 
