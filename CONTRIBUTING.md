@@ -101,6 +101,11 @@ page**, with no code change.
 > not sure, do not add it — ask the maintainer first. Content pull requests skip
 > owner review, so nobody else checks this for you.
 
+Rich text in `text` fields takes the tags listed in
+[`docs/specs/lo-rich-text-modals.md`](docs/specs/lo-rich-text-modals.md). The rule
+authors most often trip on: a link, popup link, hover term or audio icon cannot sit
+inside another one. Put them side by side; the build names both if you forget.
+
 ### What an LO's card on the landing page reads from
 
 Three `lo.json` fields do double duty as that LO's card:

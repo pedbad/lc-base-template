@@ -248,10 +248,15 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
 **This is the one place the budget is written down.** Every other doc and comment that
 needs the number points here rather than restating it.
 
-| Asset        | Budget (gzipped) | Measured 2026-10-13 | Headroom |
+| Asset        | Budget (gzipped) | Measured 2026-10-15 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 140 kB**     | 135.45 kB           | 4.55 kB  |
-| `main-*.css` | **< 19 kB**      | 18.03 kB            | 0.97 kB  |
+| `main-*.js`  | **< 140 kB**     | 135.68 kB           | 4.32 kB  |
+| `main-*.css` | **< 19 kB**      | 17.96 kB            | 1.04 kB  |
+
+- **E9 focus refs and the Feijoa plugin (2026-10-15, TODO §E9, §E5): JS 135.45 →
+  135.68 kB, CSS 18.03 → 17.96 kB.** The choice pills gained a ref per pill; Feijoa's
+  three `@font-face` rules left `app.css` for an inline `<style>` the
+  `feijoaFonts()` plugin writes only when the font files exist.
 
 - **Tabs dropdown on phones; JS cap 120 → 140 kB (2026-10-13, maintainer, TODO §F3):
   JS 113.63 → 135.45 kB, CSS 18.09 → 18.03 kB.** Below the block's `@3xl` width the

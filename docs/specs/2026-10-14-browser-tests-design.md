@@ -1,6 +1,6 @@
 # Browser tests — slice E12a design
 
-**Date:** 2026-10-14 · **Status:** agreed in the brainstorm, not yet built
+**Date:** 2026-10-14 · **Status:** built 2026-10-14 (`cbda661`; the E9 case `ec86eb7`), amended below as CI taught us
 **TODO:** §E12 (this slice), §E9 (its first real case), §E15 (its prerequisite)
 
 ## 1. Why

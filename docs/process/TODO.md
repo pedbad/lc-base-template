@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-14 · **HEAD:** see `git log` · **Suite:** 161 files · 1689 tests green
+**Last updated:** 2026-10-15 · **HEAD:** see `git log` · **Suite:** 162 files · 1706 tests green
 (Vitest) · 30 Playwright tests (10 × 3 browsers, `bun run test:e2e`) · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -43,11 +43,15 @@ is exactly what the paragraph above is about.
 `bun run test` (Vitest), **not** `bun test` — Bun's own runner throws on the
 `import.meta.glob` in `load-lo-glob.ts` and reports a false failure.
 
-**Next (2026-10-14):** for the current commit see `git log main`. Section D is closed
-(the 2026-10-09 six, §D19–§D21 and their browser checks). Tabs on phones (§F3,
-`22b637d`) is the last feature in. **E9** (`ec86eb7`), **E12a** (`cbda661`) and **E15**
-(`fe43305`) are done, and on 2026-10-15 E5's Feijoa-only-when-present (`f6b2f87`) and
-**E10** (`fb73545`). E11 is done too. The next items, in order: **E14**, then E4.
+**Next (2026-10-15):** for the current commit see `git log main`. Section D is closed.
+Every coding item from the 2026-10-14 handover is done: **E9** (`ec86eb7`), **E12a**
+(`cbda661`), **E15** (`fe43305`), E5's Feijoa-only-when-present (`f6b2f87`), **E10**
+(`fb73545`) and **E11** (`187dadc`). What is left, in order: the **graphify review**
+(bullet below), **E14** (README opener), **E4** (colleague guide), then **E12b**, E5's
+deploy route, E7, and at the handover E1 and the organisation move (E16 after it); E13
+before real learners. Since PR #9, merge a PR by fast-forwarding `main` once its CI is
+green (`git merge --ff-only` + push), so the hashes cited here survive; GitHub's
+"rebase" merge rewrote them.
 
 - **`sources` block (§F5) is DONE** (2026-10-12, late): renderer, schema, example in
   `lo-00-example`'s new Sources section, CONTRIBUTING and llms.txt. Built with the
@@ -63,7 +67,7 @@ is exactly what the paragraph above is about.
 - **REMINDER for the maintainer, at work: run `/graphify` before the handover**
   (decided 2026-10-13, at home). A one-off pre-handover review of code and docs
   together: orphaned docs, coupling `STRUCTURE.md` does not show, specs that no longer
-  meet their code. Add `graphify-out/` to `.gitignore` first and do NOT commit the
+  meet their code. `graphify-out/` is already git-ignored; do NOT commit the
   output: a generated map nothing checks is the drift the guards exist to stop. Fix what
   it finds in the real docs. Optionally one line in CONTRIBUTING saying contributors
   can run it on their own fork. Delete this bullet once done.
@@ -71,15 +75,17 @@ is exactly what the paragraph above is about.
   entries), §F6 (further components), the §E2 queue (the
   ordered list in `2026-10-12-team-workflow-handover.md` §3, "Next, in order"; coverage
   rule in CI first), or a Deferred item.
-  **Budget first:** headroom is 4.55 kB of JS and 0.97 kB of CSS (`docs/TOOLING.md`,
+  **Budget first:** headroom is 4.32 kB of JS and 1.04 kB of CSS (`docs/TOOLING.md`,
   "Bundle budget"), so any new rule in `main-*.css` needs a lever before it lands (a
   lazy per-feature sheet imported by the component that needs it).
 
-**Browser verification:** the in-app browser pane stays hidden (no window focus, so
-focus events never fire and transitions stall). Use a headed Chromium driven by
-`playwright-core` from a scratch directory, pointed at the cached
-`~/Library/Caches/ms-playwright/chromium-1223/` build, with `@axe-core/playwright`.
-The Playwright MCP needs a browser extension that is not installed.
+**Browser verification:** first choice since 2026-10-14 is the repo's own suite,
+`bun run build && bun run test:e2e` (Chromium, Firefox, WebKit; `docs/TOOLING.md`,
+"Browser tests"); add a spec there rather than a one-off script. For an ad-hoc look,
+the in-app browser pane stays hidden (no window focus, so focus events never fire and
+transitions stall): drive the installed Playwright browsers from a throwaway spec in
+`e2e/` that you delete afterwards. The Playwright MCP needs a browser extension that
+is not installed.
 
 ---
 
