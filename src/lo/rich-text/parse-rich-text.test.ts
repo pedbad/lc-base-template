@@ -266,3 +266,66 @@ describe('rejections', () => {
     );
   });
 });
+
+// TODO §E10. Links, popup links, hover terms and audio icons are each a control (a
+// link or a button). A control inside another is invalid HTML that keyboard and
+// screen-reader users cannot operate, so the parser rejects it as it rejects a
+// banned tag: at load, with the author told what to do instead.
+describe('interactive nesting', () => {
+  const LINK = '<a href="https://example.com">';
+  const POPUP = '<a class="modal-link" data-modal-target="tuvous">';
+  const HOVER = '<span class="hover-term" data-hover-target="lo-json">';
+  const AUDIO = '<span data-audio="a.mp3"></span>';
+
+  test('rejects a link inside a link, naming both', () => {
+    expect(() => parseRichText(`${LINK}a ${POPUP}b</a></a>`)).toThrow(/popup link inside a link/);
+  });
+
+  test('rejects an audio icon inside a hover term', () => {
+    expect(() => parseRichText(`${HOVER}word ${AUDIO}</span>`)).toThrow(
+      /audio icon inside a hover term/,
+    );
+  });
+
+  test('rejects a self-closing audio icon inside a link', () => {
+    expect(() => parseRichText(`${LINK}listen <span data-audio="a.mp3"/></a>`)).toThrow(
+      /audio icon inside a link/,
+    );
+  });
+
+  test('catches a control nested deeper, through emphasis', () => {
+    expect(() => parseRichText(`${POPUP}<em>see ${HOVER}x</span></em></a>`)).toThrow(
+      /hover term inside a popup link/,
+    );
+  });
+
+  test('tells the author what to do instead, and names the source', () => {
+    expect(() => parseRichText(`${LINK}a ${LINK}b</a></a>`, 'blocks/01-intro/block.json')).toThrow(
+      /blocks\/01-intro\/block\.json: .*side by side/,
+    );
+  });
+
+  test('still accepts emphasis inside a control and a control inside emphasis', () => {
+    expect(parseRichText(`${LINK}<strong>bold</strong></a>`)).toEqual([
+      {
+        kind: 'link',
+        href: 'https://example.com',
+        children: [{ kind: 'strong', children: [{ kind: 'text', value: 'bold' }] }],
+      },
+    ]);
+    expect(parseRichText(`<em>${POPUP}v</a> ${AUDIO}</em>`)).toEqual([
+      {
+        kind: 'em',
+        children: [
+          { kind: 'modalLink', target: 'tuvous', children: [{ kind: 'text', value: 'v' }] },
+          { kind: 'text', value: ' ' },
+          { kind: 'audio', soundFile: 'a.mp3' },
+        ],
+      },
+    ]);
+  });
+
+  test('still accepts controls side by side', () => {
+    expect(parseRichText(`${LINK}a</a> ${HOVER}b</span>${AUDIO}`)).toHaveLength(4);
+  });
+});

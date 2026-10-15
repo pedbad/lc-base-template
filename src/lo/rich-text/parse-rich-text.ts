@@ -256,6 +256,42 @@ interface Frame {
   readonly children: RichTextNode[];
   /** Builds the finished node once the closing tag arrives. */
   readonly close: (children: readonly RichTextNode[]) => RichTextNode;
+  /** What an author calls it, when it renders as a control (a link or a button). */
+  readonly control?: string;
+}
+
+/**
+ * The author's name for the control an `<a>` or `<span>` renders as. The frame's `close`
+ * below picks its builder from this too, so the message and the node never disagree.
+ */
+function controlName(tag: Tag): string {
+  if (tag.name === 'a') {
+    return tag.attributes['data-modal-target'] !== undefined ||
+      hasToken(tag.attributes.class, 'modal-link')
+      ? 'popup link'
+      : 'link';
+  }
+  return tag.attributes['data-hover-target'] !== undefined ? 'hover term' : 'audio icon';
+}
+
+/**
+ * Reject a control opened inside another (TODO §E10). Links and popup links render as
+ * `<a>`, hover terms and audio icons as `<button>`, and HTML allows neither inside the
+ * other: browsers and assistive tech handle it unpredictably, and a keyboard user may
+ * not reach the inner one. Checked on open, so a self-closing audio icon counts too.
+ */
+function assertNotInsideControl(
+  stack: readonly Frame[],
+  tag: Tag,
+  fail: (message: string) => never,
+): void {
+  const outer = stack.findLast((frame) => frame.control !== undefined);
+  if (outer === undefined) return;
+  fail(
+    `a ${controlName(tag)} inside a ${outer.control} is not allowed: each is a control, ` +
+      'and a control inside another cannot be used reliably by keyboard or screen ' +
+      'reader. Put them side by side instead.',
+  );
 }
 
 /**
@@ -324,24 +360,27 @@ export function parseRichText(html: string, source?: string): readonly RichTextN
         break;
       }
       case 'a':
+        assertNotInsideControl(stack, tag, fail);
         stack.push({
           name: 'a',
           children: [],
+          control: controlName(tag),
           // A popup when it asks for one; otherwise a plain link.
           close: (children) =>
-            tag.attributes['data-modal-target'] !== undefined ||
-            hasToken(tag.attributes.class, 'modal-link')
+            controlName(tag) === 'popup link'
               ? makeModalLink(tag.attributes, children, fail)
               : makeLink(tag.attributes, children, fail),
         });
         break;
       case 'span':
+        assertNotInsideControl(stack, tag, fail);
         stack.push({
           name: 'span',
           children: [],
+          control: controlName(tag),
           // A hover term when it names a card; otherwise an audio icon.
           close: (children) =>
-            tag.attributes['data-hover-target'] !== undefined
+            controlName(tag) === 'hover term'
               ? makeHoverTerm(tag.attributes, children, fail)
               : makeAudio(tag.attributes, children, fail),
         });
