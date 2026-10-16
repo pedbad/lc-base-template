@@ -19,6 +19,29 @@ function reader(overrides: Record<string, Partial<AssembledLo>> = {}) {
   });
 }
 
+// The example lesson is every course's master copy: authors copy it to start a lesson
+// and never delete it (the test suites run on it). Learners must not meet it, so it
+// leaves the course's own list by itself once the course has a lesson of its own.
+describe('buildLoIndex and the example lesson', () => {
+  it('lists the example while it is the only lesson, as in the template', () => {
+    const index = buildLoIndex(['lo-00-example'], reader());
+
+    expect(index.map((entry) => entry.folder)).toEqual(['lo-00-example']);
+  });
+
+  it('leaves the example out once the course has a lesson of its own', () => {
+    const index = buildLoIndex(['lo-00-example', 'lo-01-greetings', 'lo-02-food'], reader());
+
+    expect(index.map((entry) => entry.folder)).toEqual(['lo-01-greetings', 'lo-02-food']);
+  });
+
+  it('hides only the example, not another lesson numbered 00', () => {
+    const index = buildLoIndex(['lo-00-example', 'lo-00-welcome'], reader());
+
+    expect(index.map((entry) => entry.folder)).toEqual(['lo-00-welcome']);
+  });
+});
+
 describe('buildLoIndex', () => {
   it('returns one entry per LO folder, with its slug and manifest copy', () => {
     const index = buildLoIndex(
