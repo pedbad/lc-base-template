@@ -138,6 +138,7 @@ A few things worth knowing before you trust it:
 - **Use the theme switch at the top right.** Half of what the page shows is a
   light/dark pair, and the two are set independently in `tokens.css`. A re-skin is
   not finished until both look right.
+- **Try a palette before you switch to it.** See "Preview a palette" just below.
 - **If the two type specimens look identical, Feijoa is not installed.** That is
   correct behaviour, not a bug — the font is commercial and never committed, so it
   falls back to Open Sans. See "Feijoa is never committed" below.
@@ -151,6 +152,35 @@ deployed unless a build explicitly asks for it (`DEBUG=1 bun run build`), so
 nothing you do there can reach a learner. The exercise showcase — every exercise
 type with sample content — sits behind the same flag and is linked from the
 sandbox's own nav.
+
+### Preview a palette
+
+The **Preview preset** drop-down beside the theme switch lists every
+`src/styles/tokens-variant-*.css`, named from its file name
+(`tokens-variant-c-warm-blue.css` → "C · Warm Blue"). Pick one and the colours
+change at once, light and dark, with no rebuild. "As built" is the preset
+`tokens.css` holds now; picking it puts the real colours back.
+
+The choice follows you. Every page of the dev server and of a `DEBUG=1` build uses
+it (the course home, the lessons, both showcases) and says so in a small
+"Previewing palette: … · Reset" label in the bottom corner. Reset there, or "As
+built" here, returns to the real colours. It is kept in your browser only: nobody
+else sees it, and a normal build carries none of it.
+
+It is a **preview only**. Nothing on disk changes; the real switch is still Job 2.
+
+**Adding a designer's palette.** A new file appears in the drop-down by itself:
+
+1. New colours go into `palette.css` first, as Job 1 says: raw hex lives only
+   there. List each new name in `src/sandbox/sandbox-catalog.ts` too, or its test
+   fails (that is the sandbox showing every primitive).
+2. Copy a variant to a new letter and name, e.g.
+   `src/styles/tokens-variant-d-french.css`, and point its tokens at the new
+   primitives, in **both** the `:root` and the `.dark` block. Keep every token
+   name; `token-presets.test.ts` fails on a missing or extra one, and
+   `token-contrast.test.ts` checks the new file's contrast.
+3. `bun run dev` shows it at once. For the team, build the demo site
+   ([`DEPLOY.md` → "Demo build for the team"](DEPLOY.md#demo-build-for-the-team)).
 
 ---
 
@@ -198,6 +228,7 @@ so the button's _edge_ is visible, not just its label). **Preset A is below that
 threshold** — it is brand-accurate but the button outline is faint, so choose it
 knowingly. Text contrast passes comfortably in all three.
 
+To compare them first, use the sandbox's drop-down ("Preview a palette" above).
 To switch, copy your chosen preset over the active file:
 
 ```bash

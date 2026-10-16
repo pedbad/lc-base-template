@@ -38,7 +38,10 @@ and ask the user.
 Follow the job in [`DESIGNER.md`](../../../DESIGNER.md) that matches the request: Job 1
 for colours, Job 2 for the button preset, Job 3 for fonts. That file says which file to
 edit, which never to hand-edit, and what each preset's contrast trade-off is; tell the
-user about the trade-off before switching. Raw colours belong only where
+user about the trade-off before switching. Before a preset switch, or for a palette a
+designer sent, let the user see it first in the sandbox's **Preview preset** drop-down
+(`DESIGNER.md` → "Preview a palette", which also says how to add a new palette file); it
+is preview only, so the switch itself is still Job 2. Raw colours belong only where
 [`AGENTS.md` → "Code rules"](../../../AGENTS.md#code-rules) allows.
 
 Check light **and** dark in the sandbox, as `DESIGNER.md` → "How to read the sandbox"

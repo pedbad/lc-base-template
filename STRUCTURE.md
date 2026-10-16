@@ -109,7 +109,7 @@ work. **Guard c** checks the form; **guard d** checks the file is actually there
 | `src/audio/`       | Audio playback manager and its hook.                                                                                                                         |
 | `src/showcase/`    | The opt-in debug gallery of every engine with sample content.                                                                                                |
 | `src/ui-showcase/` | The opt-in debug gallery of every block type, plain and as a card, through the course page's own `LoBlock`.                                                  |
-| `src/sandbox/`     | The opt-in debug sandbox — tokens, type, the icon sprite and the docs hub.                                                                                   |
+| `src/sandbox/`     | The opt-in debug sandbox — tokens, type, the icon sprite, the docs hub and the palette preview.                                                              |
 | `src/docs/`        | Documentation checks — the `STRUCTURE.md` tree generator, its freshness test, and the markdown link check.                                                   |
 
 ### Inside `src/exercises/`

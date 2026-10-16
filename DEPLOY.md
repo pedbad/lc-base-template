@@ -124,7 +124,9 @@ It takes under a minute and writes the finished site into `dist/`. A good build:
 If it stops with a message naming a file under `lo-config/`, a lesson has a mistake in
 it. Do not deploy: send the message to the lesson's author or the maintainer.
 
-**Never build with `DEBUG=1`.** That adds three internal test pages to `dist/`.
+**Never build with `DEBUG=1` for the course's address.** That adds three internal test
+pages and the palette preview to `dist/`; they belong only on a
+[demo build for the team](#demo-build-for-the-team).
 
 ## 6. Check the build before uploading
 
@@ -255,9 +257,26 @@ version: `git switch --detach <version>`, then steps 2, 5, 6 and 7, then
 **Moving a course to a new address** is a new build (step 4). Learners' saved flashcard
 progress stays behind at the old address: it is kept per address in their browser.
 
+## Demo build for the team
+
+To let the team try a palette a designer sent (`DESIGNER.md` → "Preview a palette"),
+build a **separate demo site** with the debug pages in it, at its own address:
+
+```bash
+DEBUG=1 BASE_URL=/demo/ bun run build
+```
+
+Upload `dist/` to the team-only folder for `/demo/`, **never** to the course's live
+address: the demo carries internal test pages. On the demo site, open
+`debug-sandbox.html`, pick the palette, then browse the course home, the example lesson,
+`exercise-showcase.html` and `ui-showcase.html` in those colours. The choice is kept in
+each viewer's own browser; "Reset" in the corner label undoes it. A new palette file
+needs a new demo build.
+
 ## Never
 
 - commit the Feijoa files, or put them anywhere public other than the built site;
-- build with `DEBUG=1`;
+- build with `DEBUG=1` for the course's address (only for the
+  [team demo](#demo-build-for-the-team));
 - copy a build to an address it was not built for;
 - deploy from a branch other than `main`, or when `main`'s CI is red.
