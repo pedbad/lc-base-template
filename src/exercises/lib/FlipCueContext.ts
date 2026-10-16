@@ -15,12 +15,15 @@ export interface FlipCueControl {
   readonly recordTurn: () => boolean;
   /** The last exit has finished (or a Reset cut it short): the cue is gone. */
   readonly finishLeaving: () => void;
+  /** Bring the cue back as if new: forget the saved flag and this visit's turns. */
+  readonly restore: () => void;
 }
 
 export const STATIC_FLIP_CUE: FlipCueControl = {
   phase: 'shown',
   recordTurn: () => false,
   finishLeaving: () => {},
+  restore: () => {},
 };
 
 export const FlipCueContext = createContext<FlipCueControl>(STATIC_FLIP_CUE);

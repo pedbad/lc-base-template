@@ -3,7 +3,13 @@
  * (TODO §E21). Stored values are untrusted and storage may be missing or throw.
  */
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { flipCueKey, isFlipCueRetired, retireFlipCue, subscribeFlipCue } from './flip-cue-store';
+import {
+  flipCueKey,
+  isFlipCueRetired,
+  restoreFlipCue,
+  retireFlipCue,
+  subscribeFlipCue,
+} from './flip-cue-store';
 
 /** A minimal in-memory Storage on a fake `window`, as flashcards-storage.test.ts does. */
 function installWindow(): Map<string, string> {
@@ -104,6 +110,36 @@ describe('retireFlipCue', () => {
     installThrowingWindow();
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     expect(() => retireFlipCue('k')).not.toThrow();
+    expect(warn).toHaveBeenCalledOnce();
+  });
+});
+
+// Flashcards' Clear saved progress brings the corner back (maintainer, 2026-10-16).
+describe('restoreFlipCue', () => {
+  test('forgets the retirement and tells subscribers', () => {
+    installWindow();
+    retireFlipCue('k');
+    const listener = vi.fn();
+    const unsubscribe = subscribeFlipCue(listener);
+    restoreFlipCue('k');
+    expect(isFlipCueRetired('k')).toBe(false);
+    expect(listener).toHaveBeenCalledOnce();
+    unsubscribe();
+  });
+
+  test('does nothing with no key or no window', () => {
+    const listener = vi.fn();
+    const unsubscribe = subscribeFlipCue(listener);
+    restoreFlipCue(null);
+    restoreFlipCue('k');
+    expect(listener).not.toHaveBeenCalled();
+    unsubscribe();
+  });
+
+  test('warns, and does not throw, when storage throws', () => {
+    installThrowingWindow();
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    expect(() => restoreFlipCue('k')).not.toThrow();
     expect(warn).toHaveBeenCalledOnce();
   });
 });

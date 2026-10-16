@@ -34,7 +34,11 @@ with it.
   **Tap to flip** stay bold.
 - **Reduced motion: one quiet fade for every cue**, no sparkles. CSS only, in a
   `@media (prefers-reduced-motion: reduce)` block (AGENTS.md).
-- **Out:** a setting or button to bring the cue back; retiring it across a whole
+- **Flashcards' Clear saved progress brings it back** (maintainer, 2026-10-16): that
+  button already means "start this deck as new", so it forgets the flag and this visit's
+  turns too. A hard refresh does not: it leaves localStorage alone. Memory-match has no
+  such button, so its cue stays retired.
+- **Out:** a separate setting or button to bring the cue back; retiring it across a whole
   course; saving the turn count.
 
 ## 3. Units

@@ -18,7 +18,13 @@ import {
   recordTurn,
   type FlipCueSession,
 } from './flip-cue-phase';
-import { flipCueKey, isFlipCueRetired, retireFlipCue, subscribeFlipCue } from './flip-cue-store';
+import {
+  flipCueKey,
+  isFlipCueRetired,
+  restoreFlipCue,
+  retireFlipCue,
+  subscribeFlipCue,
+} from './flip-cue-store';
 
 const notRetiredOnServer = () => false;
 
@@ -46,6 +52,10 @@ export function useFlipCue(progressId: string | undefined): FlipCueControl {
         return result.retiresNow;
       },
       finishLeaving: () => commit(finishLeaving(sessionRef.current)),
+      restore: () => {
+        restoreFlipCue(key);
+        commit(INITIAL_FLIP_CUE_SESSION);
+      },
     };
   }, [session, isStoredRetired, key]);
 }

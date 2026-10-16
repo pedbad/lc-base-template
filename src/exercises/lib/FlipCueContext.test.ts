@@ -12,6 +12,7 @@ describe('STATIC_FLIP_CUE', () => {
     expect(STATIC_FLIP_CUE.recordTurn()).toBe(false);
     expect(STATIC_FLIP_CUE.recordTurn()).toBe(false);
     STATIC_FLIP_CUE.finishLeaving();
+    STATIC_FLIP_CUE.restore();
     expect(STATIC_FLIP_CUE.phase).toBe('shown');
   });
 });

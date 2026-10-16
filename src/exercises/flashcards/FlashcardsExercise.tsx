@@ -171,8 +171,11 @@ export default function FlashcardsExercise({ config, progressId }: ExerciseCompo
   };
 
   // Clear saved progress: forget the stored schedule and start a fresh deck from box 1.
+  // It also brings the Tap to flip corner back, as for a new learner (TODO §E21).
   const handleClearProgress = () => {
     if (storeKey) clearSrsState(storeKey);
+    flipCue.restore();
+    setCueExit(null);
     const fresh = initSrsState(cardIds);
     setSrs(fresh);
     dispatch({ kind: 'restart', queue: freshQueue(fresh) });

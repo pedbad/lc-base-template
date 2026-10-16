@@ -2045,7 +2045,8 @@ rather than the Language Centre's course factory; the maintainer took three smal
   exit on the next front, since the third turn shows the back. Saved per exercise under
   its `progressId` (`flip-cue:v1:`); the turn count is not. `ExerciseHost` owns the phase
   (`useFlipCue`) and shares it through `FlipCueContext`; the store is read with
-  `useSyncExternalStore`, so the prerender still shows the cue. Reduced motion: one plain
+  `useSyncExternalStore`, so the prerender still shows the cue. Flashcards' **Clear saved
+  progress** brings the corner back (maintainer, 2026-10-16); a hard refresh does not. Reduced motion: one plain
   fade, no delay, no sparkles (CSS only, tested in `flip-cue-css.test.ts`, which also
   holds the CSS durations to `FLIP_CUE_EXIT_MS`). Checked by hand in Chromium on the dev
   server's exercise showcase: both memory decks and the flashcards deck, a reload after

@@ -56,7 +56,23 @@ export function retireFlipCue(key: string | null): void {
   listeners.forEach((listener) => listener());
 }
 
-/** Hear every retire in this tab; returns the unsubscribe. */
+/**
+ * Forget the retirement, so the cue shows again, and tell subscribers. Flashcards'
+ * Clear saved progress calls it (maintainer, 2026-10-16). No-op with no key or storage.
+ */
+export function restoreFlipCue(key: string | null): void {
+  const store = key ? getStorage() : null;
+  if (!key || !store) return;
+  try {
+    store.removeItem(key);
+  } catch (error) {
+    console.warn(`flip cue: could not clear ${key}.`, error);
+    return;
+  }
+  listeners.forEach((listener) => listener());
+}
+
+/** Hear every retire or restore in this tab; returns the unsubscribe. */
 export function subscribeFlipCue(listener: () => void): () => void {
   listeners.add(listener);
   return () => {
