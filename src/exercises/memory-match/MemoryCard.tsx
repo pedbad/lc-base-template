@@ -10,10 +10,14 @@
  * button — a <button> inside a <button> is invalid HTML and fails jsx-a11y. It only
  * shows once the card is revealed or matched, so it never leaks which cards have a
  * word before the learner flips them.
+ *
+ * The corner retires once three cards are turned (TODO §E21): the deck hands each card
+ * its exit, and `showCue` turns false once every exit has played.
  */
 import { memo } from 'react';
 import { AudioClip } from '@/components/audio/AudioClip';
 import { FlipCue } from '@/exercises/lib/FlipCue';
+import type { FlipCueExit } from '@/exercises/lib/flip-cue-exits';
 import { resolveAsset } from '@/lib/assets';
 import { TARGET_LANG } from '@/lib/lang';
 
@@ -37,6 +41,12 @@ interface MemoryCardProps {
   disabled: boolean;
   onFlip: (card: DeckCard) => void;
   setRef: (id: string, element: HTMLButtonElement | null) => void;
+  /** False once the deck's flip cue has gone. */
+  showCue?: boolean;
+  cueExit?: FlipCueExit | null;
+  cueDelayMs?: number;
+  /** Given to the one card whose exit ends last. */
+  onCueExitEnd?: () => void;
 }
 
 function MemoryCardComponent({
@@ -46,6 +56,10 @@ function MemoryCardComponent({
   disabled,
   onFlip,
   setRef,
+  showCue = true,
+  cueExit = null,
+  cueDelayMs,
+  onCueExitEnd,
 }: MemoryCardProps) {
   const isFaceUp = isRevealed || isMatched;
   const label = isFaceUp
@@ -76,7 +90,9 @@ function MemoryCardComponent({
         <span className="memory-card-inner">
           <span className="memory-card-face memory-card-back" aria-hidden="true">
             ?
-            <FlipCue />
+            {showCue ? (
+              <FlipCue exit={cueExit} delayMs={cueDelayMs} onExitEnd={onCueExitEnd} />
+            ) : null}
           </span>
           <span className="memory-card-face memory-card-front" aria-hidden="true">
             {card.kind === 'text' ? (

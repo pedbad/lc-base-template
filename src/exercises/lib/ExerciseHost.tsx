@@ -11,6 +11,10 @@
  * `content.instructions` off it to compute the box text; everything else is passed
  * straight through to the engine untouched.
  *
+ * It also owns the exercise's flip-cue phase (useFlipCue, TODO §E21) and shares it
+ * through FlipCueContext, so the instruction box drops its Tap to flip pointer at the
+ * moment the flip engine below retires its corners.
+ *
  * Spec: docs/process/2026-07-02-instructions-box-handover.md §3.
  */
 import { Suspense } from 'react';
@@ -20,6 +24,8 @@ import { getExercise } from '@/exercises/lazyRegistry';
 import { useIsHydrated } from '@/hooks/useIsHydrated';
 import { ExerciseErrorBoundary } from './ExerciseErrorBoundary';
 import { ExerciseInstructions } from './ExerciseInstructions';
+import { FlipCueContext } from './FlipCueContext';
+import { useFlipCue } from './useFlipCue';
 import { resolveInstructions, savesProgress } from './instructions';
 
 interface ExerciseHostProps {
@@ -55,6 +61,7 @@ export function ExerciseHost({ type, config, progressId }: ExerciseHostProps) {
   // also exactly what a reader with JavaScript off needs to be told, since no
   // exercise can work without it. Non-hydrating roots never see this branch.
   const isHydrated = useIsHydrated();
+  const flipCue = useFlipCue(progressId);
 
   // Every engine spans the column, like the instruction box above it. §D11 held them
   // to a 48rem track (widgets sized `width: 100%` stretched into empty space at the
@@ -63,27 +70,29 @@ export function ExerciseHost({ type, config, progressId }: ExerciseHostProps) {
   // width — and which inputs grow with it, by the maintainer's choice — lives in its
   // own CSS; do not bring back a shared cap to "fix" a wide row.
   return (
-    <div>
-      <ExerciseInstructions text={instructions} />
-      {Engine ? (
-        isHydrated ? (
-          // e2e/support.ts's exampleReady waits for no "Loading…" fallback and no error
-          // alert left, so rewording this text must update it too. The boundary
-          // catches a chunk that fails to load or an engine that throws (TODO §E13b).
-          <ExerciseErrorBoundary>
-            <Suspense fallback={<p className="text-muted-foreground">Loading…</p>}>
-              {/* eslint-disable-next-line react-hooks/static-components */}
-              <Engine config={config} progressId={progressId} />
-            </Suspense>
-          </ExerciseErrorBoundary>
+    <FlipCueContext value={flipCue}>
+      <div>
+        <ExerciseInstructions text={instructions} flipGlyph={flipCue.phase} />
+        {Engine ? (
+          isHydrated ? (
+            // e2e/support.ts's exampleReady waits for no "Loading…" fallback and no error
+            // alert left, so rewording this text must update it too. The boundary
+            // catches a chunk that fails to load or an engine that throws (TODO §E13b).
+            <ExerciseErrorBoundary>
+              <Suspense fallback={<p className="text-muted-foreground">Loading…</p>}>
+                {/* eslint-disable-next-line react-hooks/static-components */}
+                <Engine config={config} progressId={progressId} />
+              </Suspense>
+            </ExerciseErrorBoundary>
+          ) : (
+            <p className="text-muted-foreground">This exercise needs JavaScript to run.</p>
+          )
         ) : (
-          <p className="text-muted-foreground">This exercise needs JavaScript to run.</p>
-        )
-      ) : (
-        <p className="text-destructive">
-          No engine registered for type <code>{type}</code>.
-        </p>
-      )}
-    </div>
+          <p className="text-destructive">
+            No engine registered for type <code>{type}</code>.
+          </p>
+        )}
+      </div>
+    </FlipCueContext>
   );
 }

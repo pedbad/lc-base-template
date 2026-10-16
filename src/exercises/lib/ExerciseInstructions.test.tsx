@@ -24,6 +24,26 @@ describe('ExerciseInstructions', () => {
     expect(html).not.toContain('**');
   });
 
+  // TODO §E21: the pointer goes with the cards' corners once three are turned.
+  test('fades the Tap to flip pointer while the corners leave, keeping the words', () => {
+    const html = renderToStaticMarkup(
+      <ExerciseInstructions text="**Tap to flip** it." flipGlyph="leaving" />,
+    );
+    expect(html).toMatch(
+      /<strong[^>]*><svg[^>]*lucide-spline-pointer[^>]*flip-cue-glyph-leaving[^>]*>[\s\S]*?<\/svg>Tap to flip<\/strong>/,
+    );
+  });
+
+  test('drops the Tap to flip pointer once the corners are gone, keeping the words', () => {
+    const html = renderToStaticMarkup(
+      <ExerciseInstructions text="**Tap to flip** it, then **Reset**." flipGlyph="gone" />,
+    );
+    expect(html).not.toContain('lucide-spline-pointer');
+    expect(html).toContain('>Tap to flip</strong>');
+    // Other controls keep their glyphs.
+    expect(html).toContain('text-destructive');
+  });
+
   test('prefixes known button names with their coloured control glyph', () => {
     const html = renderToStaticMarkup(
       <ExerciseInstructions text="Select **Check**, **Reset**, or **Show answers**." />,

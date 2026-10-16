@@ -13,6 +13,8 @@
  * (success / destructive / primary — mirroring ExerciseFooter) so the reference reads
  * as the actual control. **Tap to flip** names the corner on a flip card (FlipCue) and
  * carries its pointer, in --primary (the corner's Dark Blue would vanish in dark mode).
+ * Once three cards are turned the pointer fades with the corners, then goes, and the
+ * words stay (`flipGlyph`, TODO §E21).
  * Unknown bold names (custom overrides) render bold, no icon.
  *
  * a11y: `role="note"` (this is course-author guidance, not a live alert). The text
@@ -26,10 +28,13 @@ import { Fragment, type ComponentType } from 'react';
 import { CircleCheck, Eye, RotateCcw, SplinePointer } from 'lucide-react';
 
 import Callout from '@/components/shell/Callout';
+import type { FlipCuePhase } from './flip-cue-phase';
 
 interface ExerciseInstructionsProps {
   /** Resolved instruction copy, or `null`/empty to render nothing. */
   text: string | null;
+  /** The flip cue's phase: the Tap to flip pointer fades while `leaving`, then goes. */
+  flipGlyph?: FlipCuePhase;
 }
 
 /** A control's inline glyph + its identity colour, keyed by the name the copy bolds. */
@@ -43,20 +48,24 @@ const BUTTON_GLYPHS: Record<
   'tap to flip': { Icon: SplinePointer, color: 'text-primary' },
 };
 
+const FLIP_NAME = 'tap to flip';
+
 /** Split copy on `**bold**` markers into alternating plain / strong segments. */
-function renderWithBold(text: string) {
+function renderWithBold(text: string, flipGlyph: FlipCuePhase) {
   return text.split('**').map((segment, index) => {
     // Even segments are plain prose between the `**` markers.
     if (index % 2 === 0) return <Fragment key={index}>{segment}</Fragment>;
 
     // Odd segments are button names → bold, with the matching control glyph.
-    const glyph = BUTTON_GLYPHS[segment.trim().toLowerCase()];
+    const name = segment.trim().toLowerCase();
+    const glyph = name === FLIP_NAME && flipGlyph === 'gone' ? undefined : BUTTON_GLYPHS[name];
+    const leaving = name === FLIP_NAME && flipGlyph === 'leaving' ? ' flip-cue-glyph-leaving' : '';
     return (
       // Kept as normal inline text (not inline-flex) so the label sits on the same
       // baseline as the surrounding prose; only the icon is nudged to align with it.
       <strong key={index} className="font-semibold text-foreground">
         {glyph ? (
-          <glyph.Icon className={`mr-1 inline size-4 align-[-0.2em] ${glyph.color}`} />
+          <glyph.Icon className={`mr-1 inline size-4 align-[-0.2em] ${glyph.color}${leaving}`} />
         ) : null}
         {segment}
       </strong>
@@ -64,12 +73,12 @@ function renderWithBold(text: string) {
   });
 }
 
-export function ExerciseInstructions({ text }: ExerciseInstructionsProps) {
+export function ExerciseInstructions({ text, flipGlyph = 'shown' }: ExerciseInstructionsProps) {
   if (text === null || text.trim() === '') return null;
 
   return (
     // The one tinted info box every page uses (`Callout`), so exercise instructions
     // look exactly like accordion and tab instructions — and like the debug sandbox.
-    <Callout className="mb-4">{renderWithBold(text)}</Callout>
+    <Callout className="mb-4">{renderWithBold(text, flipGlyph)}</Callout>
   );
 }

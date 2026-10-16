@@ -31,9 +31,13 @@
  * speaker keeps its own. Only target-language content is wrapped in
  * `lang={TARGET_LANG}`; all chrome stays `en`.
  *
+ * Flip cue (TODO §E21): each turn from front to back counts towards the host's
+ * FlipCueContext. The turn that retires the corner picks its exit, which plays on the
+ * next front shown — the third turn shows the back, where the corner cannot be seen go.
+ *
  * Spec: docs/specs/2026-07-03-new-exercise-engines-design.md §4.
  */
-import { useReducer, useState, type CSSProperties } from 'react';
+import { useContext, useReducer, useState, type CSSProperties } from 'react';
 import { Frown, RotateCcw, Smile } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AudioClip } from '@/components/audio/AudioClip';
@@ -59,6 +63,8 @@ import { RateButtons } from './RateButtons';
 import { ClearProgress } from './ClearProgress';
 import { EXERCISE_BUTTONS } from '@/exercises/lib/exercise-buttons';
 import { FlipCue } from '@/exercises/lib/FlipCue';
+import { FlipCueContext } from '@/exercises/lib/FlipCueContext';
+import { planExits, type PlannedExit } from '@/exercises/lib/flip-cue-exits';
 import { resolveLabel } from '@/config/ui-strings';
 import './flashcards.css';
 
@@ -68,6 +74,8 @@ const languageNames = new Intl.DisplayNames(['en'], { type: 'language' });
 /** Face and direction labels, e.g. "Spanish" / "English", from the language code. */
 const TARGET_NAME = languageNames.of(TARGET_LANG) ?? TARGET_LANG;
 const NATIVE_NAME = languageNames.of(NATIVE_LANG) ?? NATIVE_LANG;
+/** Let the next front turn into view before its corner leaves. */
+const CUE_EXIT_START_MS = 350;
 
 /**
  * Reorder a freshly-built deck so the most-due cards lead (SRS load-order). A fresh
@@ -118,6 +126,9 @@ export default function FlashcardsExercise({ config, progressId }: ExerciseCompo
     options?.direction ?? 'target-native',
   );
 
+  const flipCue = useContext(FlipCueContext);
+  const [cueExit, setCueExit] = useState<PlannedExit | null>(null);
+
   if (!parsed.success || !content || !options) {
     return (
       <p className="text-sm text-destructive">
@@ -150,6 +161,14 @@ export default function FlashcardsExercise({ config, progressId }: ExerciseCompo
   // Reset starts the round again and keeps the saved memory, so struggled cards still
   // lead (maintainer, 2026-10-12). Forgetting it is ClearProgress, a separate button.
   const handleReset = () => dispatch({ kind: 'restart', queue: freshQueue(srs) });
+
+  // A turn from front to back counts towards retiring the corner (TODO §E21).
+  const handleFlip = () => {
+    if (!state.flipped && flipCue.recordTurn()) {
+      setCueExit(planExits(['front'], Math.random, CUE_EXIT_START_MS)[0] ?? null);
+    }
+    dispatch({ kind: 'flip' });
+  };
 
   // Clear saved progress: forget the stored schedule and start a fresh deck from box 1.
   const handleClearProgress = () => {
@@ -245,7 +264,13 @@ export default function FlashcardsExercise({ config, progressId }: ExerciseCompo
                 {frontText}
               </span>
               {speaker(targetOnFront)}
-              <FlipCue />
+              {flipCue.phase === 'gone' ? null : (
+                <FlipCue
+                  exit={flipped ? null : (cueExit?.exit ?? null)}
+                  delayMs={cueExit?.delayMs}
+                  onExitEnd={flipCue.finishLeaving}
+                />
+              )}
             </span>
             <span
               className="flashcards-face flashcards-face-back"
@@ -273,7 +298,7 @@ export default function FlashcardsExercise({ config, progressId }: ExerciseCompo
             data-flipped={flipped}
             aria-pressed={flipped}
             aria-label={flipped ? 'Card back, click to flip to front' : 'Card front, click to flip'}
-            onClick={() => dispatch({ kind: 'flip' })}
+            onClick={handleFlip}
           />
         </div>
       </div>

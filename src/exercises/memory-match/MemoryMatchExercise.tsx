@@ -11,14 +11,20 @@
  * with the shared FLIP helper (reorderAnimation). `options.sampleSize` plays a random
  * N of M pairs; the deck is always shuffled (shuffle is N/A — spec §5.2).
  *
+ * Flip cue (TODO §E21): every card turned face up counts towards the host's
+ * FlipCueContext. The turn that retires the corners gives every card its own random
+ * exit, staggered in deck order so they ripple across the grid.
+ *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5.2, §5.3, §7, §8.
  */
-import { useEffect, useLayoutEffect, useReducer, useRef } from 'react';
+import { useContext, useEffect, useLayoutEffect, useReducer, useRef, useState } from 'react';
 import AudioManager from '@/audio/AudioManager';
 import { resolveAsset } from '@/lib/assets';
 import { ExerciseOptionsSchema } from '@/config/lo-schema';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import { ExerciseFooter } from '../lib/ExerciseFooter';
+import { FlipCueContext } from '../lib/FlipCueContext';
+import { latestEnding, planExits, type PlannedExit } from '../lib/flip-cue-exits';
 import { ProgressMeter } from '../lib/ProgressMeter';
 import { captureFlipPositions, playFlipAnimation } from '../lib/reorderAnimation';
 import { MemoryCard, type DeckCard } from './MemoryCard';
@@ -32,6 +38,8 @@ const REVEAL_PAUSE_MS = 450;
 const CARD_TRANSITION_MS = FLIP_DURATION_MS + REVEAL_PAUSE_MS;
 const REORDER_DURATION_MS = 620;
 const REORDER_STAGGER_MS = 18;
+/** Let the turned card start its flip before the corners leave. */
+const CUE_EXIT_START_MS = 250;
 
 interface GameState {
   cards: DeckCard[];
@@ -86,6 +94,9 @@ export default function MemoryMatchExercise({ config }: ExerciseComponentProps) 
     }),
   );
 
+  const flipCue = useContext(FlipCueContext);
+  const [cueExits, setCueExits] = useState<readonly PlannedExit[] | null>(null);
+
   const cardRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const mountedRef = useRef(true);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
@@ -137,6 +148,16 @@ export default function MemoryMatchExercise({ config }: ExerciseComponentProps) 
   const handleFlip = (card: DeckCard) => {
     if (flipped.length === 2 || flipped.includes(card.id) || matched.includes(card.id)) return;
 
+    if (flipCue.recordTurn()) {
+      setCueExits(
+        planExits(
+          cards.map((c) => c.id),
+          Math.random,
+          CUE_EXIT_START_MS,
+        ),
+      );
+    }
+
     const newFlipped = [...flipped, card.id];
     dispatch({ kind: 'patch', patch: { flipped: newFlipped } });
     if (newFlipped.length !== 2) return;
@@ -165,6 +186,9 @@ export default function MemoryMatchExercise({ config }: ExerciseComponentProps) 
 
   const handleReset = () => {
     AudioManager.stopAll();
+    // A new deck never replays the exit: a cue still leaving is gone now.
+    flipCue.finishLeaving();
+    setCueExits(null);
     dispatch({ kind: 'reset', cards: buildDeck(content, options.sampleSize) });
   };
 
@@ -186,6 +210,9 @@ export default function MemoryMatchExercise({ config }: ExerciseComponentProps) 
       },
     });
   };
+
+  const exitById = new Map(cueExits?.map((entry) => [entry.id, entry]));
+  const lastExitId = cueExits ? latestEnding(cueExits) : null;
 
   const canReveal = canShowMemoryAnswers({
     nTries,
@@ -210,6 +237,10 @@ export default function MemoryMatchExercise({ config }: ExerciseComponentProps) 
               }
               onFlip={handleFlip}
               setRef={setCardRef}
+              showCue={flipCue.phase !== 'gone'}
+              cueExit={exitById.get(card.id)?.exit ?? null}
+              cueDelayMs={exitById.get(card.id)?.delayMs}
+              onCueExitEnd={card.id === lastExitId ? flipCue.finishLeaving : undefined}
             />
           </li>
         ))}

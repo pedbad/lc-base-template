@@ -37,4 +37,217 @@
     width: 1.75rem;
     height: 1.75rem;
   }
+
+  /* Retiring (TODO §E21): three cards turned, each corner plays the exit FlipCue was
+     given, after its --flip-cue-delay, and holds its last frame until the engine stops
+     rendering it. The durations equal FLIP_CUE_EXIT_MS (flip-cue-exits.ts). */
+  .flip-cue[data-exit] {
+    transform-origin: 100% 100%;
+  }
+
+  /* Peel: lifts and curls like a sticker, then drops off the card. */
+  .flip-cue[data-exit='peel'] {
+    animation: flip-cue-peel 1400ms ease-in var(--flip-cue-delay, 0ms) both;
+  }
+
+  @keyframes flip-cue-peel {
+    0% {
+      opacity: 1;
+      transform: none;
+    }
+
+    30% {
+      transform: rotate(-8deg) translate(-0.25rem, -0.375rem) scale(1.04);
+    }
+
+    55% {
+      opacity: 1;
+      transform: rotate(-25deg) translate(-0.625rem, -1.125rem) scale(1.05);
+    }
+
+    100% {
+      opacity: 0;
+      transform: rotate(35deg) translate(1.25rem, 7.5rem) scale(0.9);
+    }
+  }
+
+  /* Pop: swells, then bursts into the five sparkles beside it. */
+  .flip-cue[data-exit='pop'] {
+    animation: flip-cue-pop 1300ms ease-in var(--flip-cue-delay, 0ms) both;
+  }
+
+  @keyframes flip-cue-pop {
+    0% {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    50% {
+      opacity: 1;
+      transform: scale(1.25);
+    }
+
+    70%,
+    100% {
+      opacity: 0;
+      transform: scale(1.4);
+    }
+  }
+
+  .flip-cue-sparks {
+    position: absolute;
+    right: calc(var(--flip-cue-size, 7rem) / 4);
+    bottom: calc(var(--flip-cue-size, 7rem) / 4);
+  }
+
+  .flip-cue-spark {
+    position: absolute;
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 50%;
+    background: var(--flip-cue);
+    animation: flip-cue-spark 1300ms ease-out var(--flip-cue-delay, 0ms) both;
+  }
+
+  /* Five directions fanning up and out of the corner, -150° to -30°. */
+  .flip-cue-spark:nth-child(1) {
+    --spark-x: -0.87;
+    --spark-y: -0.5;
+  }
+
+  .flip-cue-spark:nth-child(2) {
+    --spark-x: -0.5;
+    --spark-y: -0.87;
+  }
+
+  .flip-cue-spark:nth-child(3) {
+    --spark-x: 0;
+    --spark-y: -1;
+  }
+
+  .flip-cue-spark:nth-child(4) {
+    --spark-x: 0.5;
+    --spark-y: -0.87;
+  }
+
+  .flip-cue-spark:nth-child(5) {
+    --spark-x: 0.87;
+    --spark-y: -0.5;
+  }
+
+  @keyframes flip-cue-spark {
+    0%,
+    50% {
+      opacity: 0;
+      transform: none;
+    }
+
+    55% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+      transform: translate(calc(var(--spark-x) * 3rem), calc(var(--spark-y) * 3rem)) scale(0.4);
+    }
+  }
+
+  /* Wave: the pointer waves goodbye, then the triangle slides out of the corner. */
+  .flip-cue[data-exit='wave'] {
+    animation: flip-cue-wave 1500ms cubic-bezier(0.5, 0, 0.75, 0) var(--flip-cue-delay, 0ms) both;
+  }
+
+  .flip-cue[data-exit='wave'] svg {
+    animation: flip-cue-wave-hand 900ms ease-in-out var(--flip-cue-delay, 0ms);
+  }
+
+  @keyframes flip-cue-wave {
+    0%,
+    60% {
+      opacity: 1;
+      transform: none;
+    }
+
+    100% {
+      opacity: 0;
+      transform: translate(100%, 100%);
+    }
+  }
+
+  @keyframes flip-cue-wave-hand {
+    0%,
+    100% {
+      transform: none;
+    }
+
+    20%,
+    60% {
+      transform: rotate(-25deg);
+    }
+
+    40%,
+    80% {
+      transform: rotate(20deg);
+    }
+  }
+
+  /* Tuck: a little bounce, then it shrinks into the corner. */
+  .flip-cue[data-exit='tuck'] {
+    animation: flip-cue-tuck 1300ms ease-in-out var(--flip-cue-delay, 0ms) both;
+  }
+
+  @keyframes flip-cue-tuck {
+    0% {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    25% {
+      transform: scale(1.15);
+    }
+
+    45% {
+      transform: scale(0.95);
+    }
+
+    60% {
+      transform: scale(1.05);
+    }
+
+    100% {
+      opacity: 0;
+      transform: scale(0);
+    }
+  }
+
+  /* The instruction box's pointer before **Tap to flip** fades with the corners. */
+  .flip-cue-glyph-leaving {
+    animation: flip-cue-fade 900ms ease-in both;
+  }
+
+  @keyframes flip-cue-fade {
+    to {
+      opacity: 0;
+    }
+  }
+
+  /* Reduced motion: one quiet fade for every corner, all at once — the shorthand
+     resets the delay — with no wave and no sparkles. */
+  @media (prefers-reduced-motion: reduce) {
+    .flip-cue[data-exit] {
+      animation: flip-cue-fade 400ms ease-out forwards;
+    }
+
+    .flip-cue[data-exit] svg {
+      animation: none;
+    }
+
+    .flip-cue-sparks {
+      display: none;
+    }
+
+    .flip-cue-glyph-leaving {
+      animation-duration: 400ms;
+    }
+  }
 }
