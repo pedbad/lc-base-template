@@ -14,7 +14,12 @@
 import { createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { PresetBanner } from './PresetBanner';
-import { PRESET_CHANGE_EVENT, PRESET_STORAGE_KEY, readChoice, writeChoice } from './preset-choice';
+import {
+  PRESET_CHANGE_EVENT,
+  PRESET_STORAGE_KEY,
+  chosenPreset,
+  writeChoice,
+} from './preset-choice';
 import { TOKEN_PRESETS, applyTokenPreset } from './preset-preview';
 
 let bannerRoot: Root | null = null;
@@ -41,10 +46,8 @@ function showBanner(label: string | null) {
 }
 
 function sync() {
-  const id = readChoice(localStorage);
-  const preset = TOKEN_PRESETS.find((p) => p.id === id);
-  // A remembered preset whose file has since gone: forget it rather than keep asking.
-  if (id !== null && !preset) writeChoice(localStorage, null);
+  // An unknown choice shows the real colours here and is left alone (chosenPreset).
+  const preset = chosenPreset(localStorage, TOKEN_PRESETS);
   applyTokenPreset(document, preset?.css ?? null);
   showBanner(preset?.label ?? null);
 }

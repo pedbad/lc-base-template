@@ -25,6 +25,20 @@ export function readChoice(storage: Storage): string | null {
   }
 }
 
+/**
+ * The remembered preset, if this page knows it. Read-only on purpose: a page built
+ * before a palette file was added (an old tab, a stale build) does not know that
+ * preset, and must show the real colours without deleting a choice that every page
+ * of the same origin shares — the pages that know it keep previewing it.
+ */
+export function chosenPreset<T extends { readonly id: string }>(
+  storage: Storage,
+  presets: readonly T[],
+): T | undefined {
+  const id = readChoice(storage);
+  return id === null ? undefined : presets.find((preset) => preset.id === id);
+}
+
 /** Remembers `id`, or forgets the choice when it is null. */
 export function writeChoice(storage: Storage, id: string | null): void {
   try {

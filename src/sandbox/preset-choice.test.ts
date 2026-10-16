@@ -3,7 +3,7 @@
  * localStorage, per viewer, and never a reason for a page to throw.
  */
 import { describe, expect, it } from 'vitest';
-import { PRESET_STORAGE_KEY, readChoice, writeChoice } from './preset-choice';
+import { PRESET_STORAGE_KEY, chosenPreset, readChoice, writeChoice } from './preset-choice';
 
 /** A Storage stand-in backed by a Map. */
 function memoryStorage(): Storage {
@@ -60,5 +60,30 @@ describe('preset choice', () => {
   it('carries on when storage refuses a write', () => {
     expect(() => writeChoice(brokenStorage, 'a-cambridge-blue')).not.toThrow();
     expect(() => writeChoice(brokenStorage, null)).not.toThrow();
+  });
+});
+
+describe('chosenPreset', () => {
+  const presets = [{ id: 'a-cambridge-blue' }, { id: 'z-test' }];
+
+  it('finds the remembered preset among the ones this page knows', () => {
+    const storage = memoryStorage();
+    writeChoice(storage, 'z-test');
+    expect(chosenPreset(storage, presets)).toEqual({ id: 'z-test' });
+  });
+
+  it('is undefined when nothing is chosen', () => {
+    expect(chosenPreset(memoryStorage(), presets)).toBeUndefined();
+  });
+
+  // The bug this caught (2026-10-16): a tab opened before a palette file was added
+  // read the newer tab's choice, did not know it, and deleted it, so the drop-down
+  // seemed to do nothing. A page that does not know a preset shows the real colours
+  // and leaves the choice for the pages that do.
+  it('leaves a choice it does not know in place', () => {
+    const storage = memoryStorage();
+    writeChoice(storage, 'french');
+    expect(chosenPreset(storage, presets)).toBeUndefined();
+    expect(readChoice(storage)).toBe('french');
   });
 });
