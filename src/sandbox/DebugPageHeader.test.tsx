@@ -2,9 +2,11 @@
  * DebugPageHeader.test.tsx — the one header all three debug pages share (the sandbox,
  * the exercise showcase and the UI showcase), so their navs cannot drift apart.
  */
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { DebugPageHeader } from './DebugPageHeader';
+import { DEBUG_HEADER_HEIGHT_VAR, DebugPageHeader } from './DebugPageHeader';
 
 const html = renderToStaticMarkup(
   <DebugPageHeader
@@ -89,5 +91,25 @@ describe('DebugPageHeader', () => {
     const row = /<header[^>]*><div class="([^"]*)"/.exec(html)?.[1] ?? '';
     expect(row).toMatch(/\bpage-frame\b/);
     expect(row).not.toMatch(/\bmax-w-|\bpx-\d/);
+  });
+
+  // §E18 follow-up (maintainer, 2026-10-16): the bar holding the jump menu, the palette
+  // drop-down and the theme switch stays in view while a debug page scrolls.
+  test('is pinned to the top of the page, over the content it scrolls past', () => {
+    const header = /<header class="([^"]*)"/.exec(html)?.[1] ?? '';
+    expect(header).toMatch(/\bsticky\b/);
+    expect(header).toMatch(/\btop-0\b/);
+    expect(header).toMatch(/\bz-\d+\b/);
+    expect(header).toMatch(/\bbg-card\b/);
+  });
+
+  // A pinned bar would cover a jump-link target and a focused control (WCAG 2.4.11).
+  // The header publishes its measured height; debug.css pads the page's scroll by it.
+  test('debug.css keeps anchors and focus clear of the pinned bar', () => {
+    const debugCss = readFileSync(path.resolve(import.meta.dirname, '../debug.css'), 'utf8');
+    const layered = /@layer base\s*\{([\s\S]*?)\n\}/.exec(debugCss)?.[1] ?? '';
+    expect(layered).toMatch(
+      new RegExp(`html\\s*\\{[^}]*scroll-padding-top:[^;]*var\\(${DEBUG_HEADER_HEIGHT_VAR}`),
+    );
   });
 });

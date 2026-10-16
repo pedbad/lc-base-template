@@ -9,11 +9,18 @@
  * It lives in `src/sandbox/` because the sandbox had it first; the showcases import it.
  * All three pages are debug-only (`DEBUG=1`, see build-entries.ts), so none ships.
  *
+ * PINNED (§E18 follow-up, maintainer 2026-10-16). The bar stays at the top while the
+ * page scrolls, so the jump menu, the palette drop-down and the theme switch are always
+ * in reach. A pinned bar would hide a jump-link target or a focused control under it
+ * (WCAG 2.4.11), so it publishes its measured height as DEBUG_HEADER_HEIGHT_VAR and
+ * `debug.css` pads the page's scrolling by that much. Measured, not fixed: the row wraps
+ * on a narrow screen, and a guessed height would be wrong at one width or another.
+ *
  * Cross-page hrefs go through `resolveAsset` / `resolveHomeHref`, never a bare relative
  * path, so they survive a non-root base. The repo link is absolute and external, so it
  * opens in a new tab and says so, as a rich-text link does.
  */
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { Menu as MenuPrimitive } from '@base-ui/react/menu';
 import { ChevronDownIcon, ExternalLink } from 'lucide-react';
 import { resolveLabel } from '@/config/ui-strings';
@@ -62,6 +69,30 @@ interface DebugPageHeaderProps {
   tools?: ReactNode;
 }
 
+/** The custom property on `<html>` holding the pinned header's height (debug.css reads it). */
+export const DEBUG_HEADER_HEIGHT_VAR = '--debug-header-height';
+
+/** Keeps DEBUG_HEADER_HEIGHT_VAR equal to the element's height, in an effect only. */
+function usePublishedHeight() {
+  const ref = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || typeof ResizeObserver === 'undefined') return;
+    const root = document.documentElement;
+    // A measured length, so px: it is the browser's own unit for it, not a design value.
+    const publish = () =>
+      root.style.setProperty(DEBUG_HEADER_HEIGHT_VAR, `${element.offsetHeight}px`);
+    publish();
+    const observer = new ResizeObserver(publish);
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty(DEBUG_HEADER_HEIGHT_VAR);
+    };
+  }, []);
+  return ref;
+}
+
 const LINK_CLASS = `rounded-sm underline underline-offset-4 hover:no-underline ${FOCUS_OUTLINE}`;
 
 /**
@@ -82,8 +113,9 @@ export function DebugPageHeader({
   tools,
 }: DebugPageHeaderProps) {
   const others = DEBUG_PAGES.filter((entry) => entry.page !== current);
+  const headerRef = usePublishedHeight();
   return (
-    <header className="border-b border-border bg-card">
+    <header ref={headerRef} className="sticky top-0 z-40 border-b border-border bg-card">
       <div className="page-frame flex flex-wrap items-center gap-x-6 gap-y-3 py-4">
         <div className="mr-auto">
           <h1 className="font-heading text-2xl font-bold">{title}</h1>
