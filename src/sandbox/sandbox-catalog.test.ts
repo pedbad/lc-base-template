@@ -41,7 +41,8 @@ function declaredTokens(css: string): Set<string> {
 
 const paletteNames = declaredTokens(palette);
 const tokenNames = declaredTokens(tokens);
-const primitiveNames = PRIMITIVE_SWATCHES.flatMap((group) => group.tokens);
+const primitives = PRIMITIVE_SWATCHES.flatMap((group) => group.colours);
+const primitiveNames = primitives.map((colour) => colour.token);
 const semanticPairs = SEMANTIC_SWATCHES.flatMap((group) => group.pairs);
 
 describe('primitive swatches', () => {
@@ -57,6 +58,40 @@ describe('primitive swatches', () => {
 
   it('list each token once', () => {
     expect(new Set(primitiveNames).size).toBe(primitiveNames.length);
+  });
+});
+
+// §E19: the brand board shows each primitive to a client, so each needs a plain name,
+// a job and a partner (the colour it pairs with for the "Aa" and the contrast badge).
+describe('primitive colours as a client reads them', () => {
+  it('each has a name and a one-sentence job', () => {
+    const incomplete = primitives.filter((c) => !c.name.trim() || !/^[A-Z].*\.$/.test(c.job));
+    expect(incomplete.map((c) => c.token)).toEqual([]);
+  });
+
+  it('names are unique', () => {
+    const names = primitives.map((c) => c.name);
+    expect(new Set(names).size).toBe(names.length);
+  });
+
+  it('each partner is another primitive palette.css declares', () => {
+    const bad = primitives.filter((c) => c.partner === c.token || !paletteNames.has(c.partner));
+    expect(bad.map((c) => c.token)).toEqual([]);
+  });
+
+  it('shares are positive, and the bar carries the brand', () => {
+    const shared = primitives.filter((c) => c.share !== undefined);
+    expect(shared.filter((c) => !((c.share ?? 0) > 0))).toEqual([]);
+    expect(shared.map((c) => c.token)).toEqual(
+      expect.arrayContaining(['--paper', '--slate-4', '--cam-blue', '--cam-dark-blue']),
+    );
+  });
+});
+
+describe('colour in use', () => {
+  it('draws each semantic group and each strip as a different specimen', () => {
+    const kinds = [...SEMANTIC_SWATCHES, ...SWATCH_STRIPS].map((group) => group.specimen);
+    expect(new Set(kinds).size).toBe(kinds.length);
   });
 });
 

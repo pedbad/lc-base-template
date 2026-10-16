@@ -11,6 +11,10 @@
  * cannot drift from the theme. A catalog holding copies of the values would be the
  * hand-copied duplication the docs hub exists to avoid, one layer down.
  *
+ * The primitives also carry what a client reads on the brand board (§E19): a plain name,
+ * a one-sentence job, a partner token and an optional share. That is prose and judgement,
+ * not colour — the live values come from the page, never from here.
+ *
  * `sandbox-catalog.test.ts` joins these names back to `palette.css`, `tokens.css` and
  * `public/icons.svg` in BOTH directions, so a renamed token fails the suite and a newly
  * added one fails until it is listed.
@@ -22,12 +26,31 @@ import type { VariantProps } from 'class-variance-authority';
 import type { CalloutVariant } from '@/components/shell/Callout';
 import type { buttonVariants } from '@/components/ui/button';
 
-/** A group of primitive colour tokens — Layer 1, the only place real values live. */
+/** One primitive as the brand board shows it (§E19). Names only, never a value. */
+export interface PrimitiveColour {
+  readonly token: string;
+  /** What a client calls it: "Cambridge Blue", not `--cam-blue`. */
+  readonly name: string;
+  /** Its job in one plain sentence. */
+  readonly job: string;
+  /** The primitive it pairs with: the swatch's "Aa" and the contrast badge use it. */
+  readonly partner: string;
+  /**
+   * Its share of the course's visual weight, for the "at a glance" bar. A design
+   * judgement, tuned by eye; a primitive without one is not in the bar.
+   */
+  readonly share?: number;
+}
+
+/** A group of primitive colours — Layer 1, the only place real values live. */
 export interface PrimitiveGroup {
   readonly title: string;
   readonly note: string;
-  readonly tokens: readonly string[];
+  readonly colours: readonly PrimitiveColour[];
 }
+
+/** How the brand board draws a group of semantic tokens in use (§E19). */
+export type SpecimenKind = 'surfaces' | 'actions' | 'states' | 'sidebar' | 'lines' | 'chart';
 
 /** A semantic surface and the text token meant to sit on it — Layer 2. */
 export interface SemanticPair {
@@ -42,6 +65,7 @@ export interface SemanticGroup {
   readonly title: string;
   readonly note: string;
   readonly pairs: readonly SemanticPair[];
+  readonly specimen: SpecimenKind;
 }
 
 /** Tokens with no text partner — lines, rings, and the data-viz ramp. */
@@ -49,6 +73,7 @@ export interface StripGroup {
   readonly title: string;
   readonly note: string;
   readonly tokens: readonly string[];
+  readonly specimen: SpecimenKind;
 }
 
 /** One font family, shown at the sizes it is actually used at. */
@@ -61,34 +86,142 @@ export interface TypeSpecimen {
 }
 
 /**
- * Layer 1 — the primitives, grouped as `palette.css` groups them. Editing one of these
+ * Layer 1 — the primitives, grouped by the job they do for a client. Editing one of these
  * re-skins everything downstream, which is why they come first on the page.
  */
 export const PRIMITIVE_SWATCHES: readonly PrimitiveGroup[] = [
   {
-    title: 'Greyscale — Cambridge Slate',
-    note: 'Text is Slate 4, never pure black. Slate 2 is lines and borders. Paper is the page ground — off-white, because a pure-white page raises visual stress for dyslexic readers; cards stay White so they lift off it.',
-    tokens: ['--white', '--paper', '--slate-1', '--slate-2', '--slate-3', '--slate-4'],
+    title: 'Core — the Cambridge Blue family',
+    note: 'The brand. Cambridge Blue leads; Dark Blue carries text and the main buttons.',
+    colours: [
+      {
+        token: '--cam-blue',
+        name: 'Cambridge Blue',
+        job: 'The prominent brand colour.',
+        partner: '--cam-dark-blue',
+        share: 16,
+      },
+      {
+        token: '--cam-light-blue',
+        name: 'Cambridge Light Blue',
+        job: 'A soft brand tint for highlights.',
+        partner: '--cam-dark-blue',
+      },
+      {
+        token: '--cam-warm-blue',
+        name: 'Cambridge Warm Blue',
+        job: 'A brighter brand blue for details.',
+        partner: '--slate-4',
+        share: 6,
+      },
+      {
+        token: '--cam-dark-blue',
+        name: 'Cambridge Dark Blue',
+        job: 'The accent, and the colour of the main buttons.',
+        partner: '--white',
+        share: 10,
+      },
+    ],
   },
   {
-    title: 'Core — Cambridge Blue family',
-    note: 'Cambridge Blue is the prominent brand colour; Dark Blue is an accent.',
-    tokens: ['--cam-blue', '--cam-light-blue', '--cam-warm-blue', '--cam-dark-blue'],
+    title: 'Neutrals — Cambridge Slate and paper',
+    note: 'Most of every page. Text is Slate 4, never pure black; the page ground is Paper.',
+    colours: [
+      {
+        token: '--paper',
+        name: 'Paper',
+        job: 'The page ground, off-white to spare dyslexic readers glare.',
+        partner: '--slate-4',
+        share: 40,
+      },
+      {
+        token: '--white',
+        name: 'White',
+        job: 'Cards, so they lift off the paper.',
+        partner: '--slate-4',
+      },
+      { token: '--slate-1', name: 'Slate 1', job: 'The lightest surface.', partner: '--slate-4' },
+      { token: '--slate-2', name: 'Slate 2', job: 'Lines and borders.', partner: '--slate-4' },
+      { token: '--slate-3', name: 'Slate 3', job: 'Secondary text.', partner: '--white' },
+      { token: '--slate-4', name: 'Slate 4', job: 'Body text.', partner: '--paper', share: 22 },
+    ],
   },
   {
-    title: 'Secondary accents',
-    note: 'Used alongside the core family, never alone: states and data viz.',
-    tokens: ['--cam-crest', '--cam-cherry', '--cam-purple', '--cam-indigo', '--cam-dark-crest'],
+    title: 'Accents',
+    note: 'Used alongside the core, never alone: charts, states and the odd highlight.',
+    colours: [
+      {
+        token: '--cam-crest',
+        name: 'Crest',
+        job: 'A warm accent for charts.',
+        partner: '--slate-4',
+        share: 2,
+      },
+      {
+        token: '--cam-cherry',
+        name: 'Cherry',
+        job: 'A strong accent for charts.',
+        partner: '--white',
+        share: 2,
+      },
+      {
+        token: '--cam-purple',
+        name: 'Purple',
+        job: 'A cool accent for charts.',
+        partner: '--slate-4',
+        share: 2,
+      },
+      {
+        token: '--cam-indigo',
+        name: 'Indigo',
+        job: 'A deep accent for charts.',
+        partner: '--white',
+        share: 2,
+      },
+      {
+        token: '--cam-dark-crest',
+        name: 'Dark Crest',
+        job: 'Errors and wrong answers.',
+        partner: '--white',
+        share: 2,
+      },
+    ],
   },
   {
-    title: 'Greens — three, on purpose',
-    note: 'Bright for charts, deep for AA success text on light, soft for AA on dark.',
-    tokens: ['--cam-green', '--cam-green-deep', '--cam-green-soft'],
-  },
-  {
-    title: 'Ambers — two, for warnings',
-    note: 'Deep for AA warning text on light, soft for AA on dark.',
-    tokens: ['--amber-deep', '--amber-soft'],
+    title: 'Feedback — greens and ambers',
+    note: 'Two or three of each on purpose: one per job, each passing AA where it is used.',
+    colours: [
+      {
+        token: '--cam-green',
+        name: 'Green',
+        job: 'Bright green for charts.',
+        partner: '--slate-4',
+      },
+      {
+        token: '--cam-green-deep',
+        name: 'Deep Green',
+        job: 'Correct answers on light surfaces.',
+        partner: '--white',
+      },
+      {
+        token: '--cam-green-soft',
+        name: 'Soft Green',
+        job: 'Correct answers on dark surfaces.',
+        partner: '--slate-4',
+      },
+      {
+        token: '--amber-deep',
+        name: 'Deep Amber',
+        job: 'Warnings on light surfaces.',
+        partner: '--white',
+      },
+      {
+        token: '--amber-soft',
+        name: 'Soft Amber',
+        job: 'Warnings on dark surfaces.',
+        partner: '--slate-4',
+      },
+    ],
   },
 ] as const;
 
@@ -100,6 +233,7 @@ export const PRIMITIVE_SWATCHES: readonly PrimitiveGroup[] = [
 export const SEMANTIC_SWATCHES: readonly SemanticGroup[] = [
   {
     title: 'Surfaces',
+    specimen: 'surfaces',
     note: 'The page, cards and popovers, each with the text colour meant to sit on it.',
     pairs: [
       { token: '--background', on: '--foreground', use: 'the page itself' },
@@ -109,6 +243,7 @@ export const SEMANTIC_SWATCHES: readonly SemanticGroup[] = [
   },
   {
     title: 'Actions',
+    specimen: 'actions',
     note: 'Primary is the CTA colour a preset switch changes — see DESIGNER.md Job 2.',
     pairs: [
       { token: '--primary', on: '--primary-foreground', use: 'the main call to action' },
@@ -119,6 +254,7 @@ export const SEMANTIC_SWATCHES: readonly SemanticGroup[] = [
   },
   {
     title: 'States',
+    specimen: 'states',
     note: 'Answer feedback lives here. Both are AA against their own foreground.',
     pairs: [
       { token: '--destructive', on: '--destructive-foreground', use: 'wrong answers, errors' },
@@ -128,6 +264,7 @@ export const SEMANTIC_SWATCHES: readonly SemanticGroup[] = [
   },
   {
     title: 'Sidebar',
+    specimen: 'sidebar',
     note: 'A neutral surface with brand-blue actions, kept separate from the page.',
     pairs: [
       { token: '--sidebar', on: '--sidebar-foreground', use: 'the sidebar surface' },
@@ -141,11 +278,13 @@ export const SEMANTIC_SWATCHES: readonly SemanticGroup[] = [
 export const SWATCH_STRIPS: readonly StripGroup[] = [
   {
     title: 'Lines and rings',
+    specimen: 'lines',
     note: 'Borders, input outlines and the focus ring. Never set these per component.',
     tokens: ['--border', '--input', '--ring', '--sidebar-border', '--sidebar-ring'],
   },
   {
     title: 'Data viz ramp',
+    specimen: 'chart',
     note: 'Five chart slots, in order. Charts pick these up by index, not by name.',
     tokens: ['--chart-1', '--chart-2', '--chart-3', '--chart-4', '--chart-5'],
   },

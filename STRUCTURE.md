@@ -279,6 +279,7 @@ as far as the tree is concerned.
     │       ├── hover/
     │       └── modal/
     ├── sandbox/
+    │   └── palette/
     ├── showcase/
     ├── styles/
     └── ui-showcase/
