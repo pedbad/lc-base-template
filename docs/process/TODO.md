@@ -48,7 +48,11 @@ Done 2026-10-14 to 2026-10-16: **E9** (`ec86eb7`), **E10** (`fb73545`), **E11**
 (`187dadc`), **E12a** (`cbda661`), **E12b**, **E15** (`fe43305`), **E4**
 (`COURSE_GUIDE.md`), **E14** (README opener), **E5** (`DEPLOY.md`), **E13** (a and b,
 with the follow-ups), **E17** (the example lesson hides itself) and the screen-reader
-verdicts, **E7** (the Claude skills, 2026-10-16) and **E18** (the palette preview, `fe57694`). The **graphify review** (2026-10-15, output not committed) fixed six stale
+verdicts, **E7** (the Claude skills, 2026-10-16), **E18** (the palette preview, `fe57694`),
+**E19** (the brand board, `071be35`) and **E20** (the image comparison slider,
+`99d1b68`). **In review, stacked:** **E21** (the flip cue retires, PR #20, branch
+`feat/e21-flip-cue-retire`) and **E22** (the flashcards done card, PR #21, branch
+`feat/e22-flashcards-done-card`, based on E21's branch). The **graphify review** (2026-10-15, output not committed) fixed six stale
 spec headers, five missing plan links and two `STRUCTURE.md` gaps; the import map
 breaks no rule (nothing `vite.config.ts` reaches uses `@/…`; the two unmentioned
 cross-folder imports, engine fixtures → `src/showcase/fixture-types.ts` and
@@ -57,12 +61,18 @@ cross-folder imports, engine fixtures → `src/showcase/fixture-types.ts` and
 **Decided 2026-10-16: finish all template work before the organisation move.** What is
 left, in order:
 
+0. **Merge E21 then E22** once each one's CI is green: fast-forward `main` to
+   `feat/e21-flip-cue-retire`, push, then to `feat/e22-flashcards-done-card` (the rule
+   below), and close both PRs.
 1. **Firefox on the work iMac**: `bun run test:e2e` should run all 108 there (the
    MacBook Pro cannot start Playwright's Firefox; "Browser verification" below).
 2. **E12c**: showcase-only browser cases, audio playing and failing among them; needs a
    `DEBUG=1` build in CI. Add E18's palette preview there (pick a preset, `--primary`
    changes in both themes on another page, Reset restores it): today it is checked by
-   hand only, and only its absence from a normal build runs in CI.
+   hand only, and only its absence from a normal build runs in CI. Add E21 and E22 too:
+   three turns retire the corners and the instruction pointer, a reload keeps them gone,
+   flashcards' Clear saved progress brings them back, reduced motion fades; a finished
+   flashcards deck leaves the done card and the Reset button does not move.
 3. Optional: one build that works in any folder, since addresses keep changing
    (`DEPLOY.md` says rebuild per address). Investigate before deciding.
 4. **Then the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1 as its
@@ -87,8 +97,8 @@ green (`git merge --ff-only` + push), so the hashes cited here survive; GitHub's
   entries), §F6 (further components), the §E2 queue (the
   ordered list in `2026-10-12-team-workflow-handover.md` §3, "Next, in order"; coverage
   rule in CI first), or a Deferred item.
-  **Budget first:** headroom is 4.32 kB of JS and 1.04 kB of CSS (`docs/TOOLING.md`,
-  "Bundle budget"), so any new rule in `main-*.css` needs a lever before it lands (a
+  **Budget first:** the headroom is in `docs/TOOLING.md`, "Bundle budget" (about 1 kB of
+  CSS on 2026-10-16), so any new rule in `main-*.css` needs a lever before it lands (a
   lazy per-feature sheet imported by the component that needs it).
 
 **Browser verification:** first choice since 2026-10-14 is the repo's own suite,
