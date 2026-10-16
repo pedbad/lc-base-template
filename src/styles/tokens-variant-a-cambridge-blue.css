@@ -140,6 +140,12 @@
        it is the background contrast checkers (WAVE, axe) measure the title against, since
        they cannot see an image. Without it the title read dark-on-dark in dark mode. */
     --hero-art-ground: var(--cam-light-blue);
+
+    /* The grounds a mark drawn for a light or a dark background is shown on, in the
+       sandbox's image comparison (E20). Not themed: a light-ground mark needs a light
+       ground whichever theme is on, so there is no .dark copy. */
+    --mark-ground-light: var(--paper);
+    --mark-ground-dark: var(--slate-4);
   }
 
   .dark {

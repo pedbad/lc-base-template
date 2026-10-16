@@ -2023,6 +2023,19 @@ rather than the Language Centre's course factory; the maintainer took three smal
   Chromium, light and dark, with presets C and Z; the automated browser check waits for
   E12c. Design:
   [`2026-10-16-palette-brand-board-design.md`](../specs/2026-10-16-palette-brand-board-design.md).
+- **E20 — the sandbox's light/dark image pairs as a comparison slider. DONE 2026-10-16**
+  (`99d1b68`). Each `-black`/`-white` and `-light`/`-dark` pair in the Images section is one
+  wide tile: the dark-ground image underneath, the light-ground one clipped over it with
+  `clip-path`, a handle that starts at 50%, "Light" and "Dark" chips, and a native range
+  input (named "Compare light and dark: <name>") that pointer drag also sets. Pairs come
+  from the file names; `image-pairs.test.ts` fails if a variant's other half is missing.
+  Two new tokens, `--mark-ground-light` and `--mark-ground-dark`, the same in both themes
+  (`af6f63d`), also fix the dark theme hiding every footer mark on a flipped ground. Found
+  by hand: without `preventDefault` on pointerdown the browser moved focus back to
+  `<body>`, so the arrow keys stopped working after a drag. Checked by hand in Chromium:
+  drag, arrow keys, Tab focus ring, light and dark, 375px and 1440px. Design:
+  [`2026-10-16-image-compare-slider-design.md`](../specs/2026-10-16-image-compare-slider-design.md);
+  plan: [`2026-10-16-image-compare-slider-plan.md`](2026-10-16-image-compare-slider-plan.md).
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
@@ -2276,3 +2289,4 @@ build, so it cannot return. Two remain:
 | 2026-10-15 | `fb73545` | **no control inside a control** — rich text rejects a link, popup, hover term or audio icon nested in another (E10)                                |
 | 2026-10-16 | `fe57694` | **palette preview** — sandbox drop-down over every `tokens-variant-*.css`, kept per viewer on every DEBUG page; none of it in a normal build (E18) |
 | 2026-10-16 | `071be35` | **brand board** — sandbox Colour section: proportion bar, a card per colour with live HEX/RGB and contrast, each role in use (E19)                 |
+| 2026-10-16 | `99d1b68` | **image comparison slider** — sandbox Images section: each light/dark pair as one slider on theme-fixed grounds (E20)                              |
