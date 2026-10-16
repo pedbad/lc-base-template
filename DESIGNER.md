@@ -225,7 +225,9 @@ bun run dev     # leave running; the browser updates as you save
 
 Three presets ship. They differ only in `--primary`, `--ring` and their twins
 (`--primary-foreground`, `--sidebar-primary*`, `--sidebar-ring`) — the palette
-underneath is identical, so this is a small, safe, reversible change.
+underneath is identical, so this is a small, safe, reversible change. (A fourth file,
+`tokens-variant-z-test.css`, is the preview's test card, not a choice: never copy it
+over `tokens.css`. See "Preview a palette".)
 
 | Preset                  | `--primary` (light)    | CTA on white          | Feel                       |
 | ----------------------- | ---------------------- | --------------------- | -------------------------- |

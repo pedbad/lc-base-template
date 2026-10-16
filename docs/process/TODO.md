@@ -9,8 +9,8 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-16 · **HEAD:** see `git log` · **Suite:** 167 files · 1748 tests green
-(Vitest) · 99 Playwright tests (33 × 3 browsers, `bun run test:e2e`) · CI green · `main` unprotected by decision (job E1).
+**Last updated:** 2026-10-16 · **HEAD:** see `git log` · **Suite:** 173 files · 1845 tests green
+(Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
 `2026-08-06-post-phase-d-handover.md` §3. Read them before touching the build. In short:
