@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-16 · **HEAD:** see `git log` · **Suite:** 173 files · 1845 tests green
+**Last updated:** 2026-10-16 · **HEAD:** see `git log` · **Suite:** 189 files · 1974 tests green
 (Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -2036,11 +2036,21 @@ rather than the Language Centre's course factory; the maintainer took three smal
   drag, arrow keys, Tab focus ring, light and dark, 375px and 1440px. Design:
   [`2026-10-16-image-compare-slider-design.md`](../specs/2026-10-16-image-compare-slider-design.md);
   plan: [`2026-10-16-image-compare-slider-plan.md`](2026-10-16-image-compare-slider-plan.md).
-- **E21 — the "Tap to flip" corner retires after three turns.** A learner's suggestion
-  (maintainer, 2026-10-16): once three cards are turned in a flashcards or memory-match
-  exercise, its `FlipCue` triangles leave with a random exit (peel and pop most often,
-  sometimes wave or tuck) and the instruction box drops its pointer glyph. Remembered per
-  exercise. Design:
+- **E21 — the "Tap to flip" corner retires after three turns. DONE 2026-10-16**
+  (`1eccb86`). A learner's suggestion (maintainer, 2026-10-16): once three cards are
+  turned in a flashcards or memory-match exercise, its `FlipCue` corners leave with a
+  random weighted exit — peel 35%, pop 35% (with sparkles), wave 15%, tuck 15% — 70 ms
+  apart across a memory grid, and the instruction box fades out its pointer glyph,
+  keeping the words **Tap to flip**. Flashcards count front-to-back turns and play the
+  exit on the next front, since the third turn shows the back. Saved per exercise under
+  its `progressId` (`flip-cue:v1:`); the turn count is not. `ExerciseHost` owns the phase
+  (`useFlipCue`) and shares it through `FlipCueContext`; the store is read with
+  `useSyncExternalStore`, so the prerender still shows the cue. Reduced motion: one plain
+  fade, no delay, no sparkles (CSS only, tested in `flip-cue-css.test.ts`, which also
+  holds the CSS durations to `FLIP_CUE_EXIT_MS`). Checked by hand in Chromium on the dev
+  server's exercise showcase: both memory decks and the flashcards deck, a reload after
+  retiring. The example lesson has no flip exercise, so no browser test plays the turns;
+  reduced motion was not checked in a browser. Design:
   [`2026-10-16-flip-cue-retire-design.md`](../specs/2026-10-16-flip-cue-retire-design.md);
   plan: [`2026-10-16-flip-cue-retire-plan.md`](2026-10-16-flip-cue-retire-plan.md).
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
@@ -2297,3 +2307,4 @@ build, so it cannot return. Two remain:
 | 2026-10-16 | `fe57694` | **palette preview** — sandbox drop-down over every `tokens-variant-*.css`, kept per viewer on every DEBUG page; none of it in a normal build (E18) |
 | 2026-10-16 | `071be35` | **brand board** — sandbox Colour section: proportion bar, a card per colour with live HEX/RGB and contrast, each role in use (E19)                 |
 | 2026-10-16 | `99d1b68` | **image comparison slider** — sandbox Images section: each light/dark pair as one slider on theme-fixed grounds (E20)                              |
+| 2026-10-16 | `1eccb86` | **flip cue retires** — three cards turned, the Tap to flip corners leave with a random exit and the instruction glyph fades (E21)                  |

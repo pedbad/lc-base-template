@@ -15,21 +15,26 @@ reduced motion in CSS; one concern per commit.
 
 ## Tasks
 
-- [ ] **1. Exits.** `flip-cue-exits.test.ts` first (weights sum to 100, boundaries of
+- [x] **1. Exits.** `flip-cue-exits.test.ts` first (weights sum to 100, boundaries of
       each band, plan delays and order), see it fail, then `flip-cue-exits.ts`.
-- [ ] **2. Store.** `flip-cue-store.test.ts` first (key, absent / set / junk value, no
+- [x] **2. Store.** `flip-cue-store.test.ts` first (key, absent / set / junk value, no
       storage, a throwing storage, subscribers told on retire), then `flip-cue-store.ts`.
-- [ ] **3. Hook and context.** `useFlipCue.test.tsx` first (starts `shown`; the third
-      turn returns true and leaves; saved; `finishLeaving` → `gone`; a stored flag →
-      `gone`; no key → memory only), then `useFlipCue.ts` and `FlipCueContext.ts`.
-- [ ] **4. Cue view and CSS.** Extend `FlipCue.test.tsx` (`data-exit`, delay, sparkles
+- [x] **3. Phase and context.** The suite has no DOM, so the hook's logic moved into
+      pure `flip-cue-phase.ts`: its test first (starts `shown`; the third turn returns
+      true and leaves; `finishLeaving` → `gone`; a stored flag → `gone`, but not while
+      leaving), then the module, `FlipCueContext.ts` (default tested) and the glue
+      `useFlipCue.ts`.
+- [x] **4. Cue view and CSS.** Extend `FlipCue.test.tsx` (`data-exit`, delay, sparkles
       for pop only, `onExitEnd` on its own animation only) and add
       `flip-cue-css.test.ts` (a keyframe per exit, reduced-motion fade, all in a layer),
       then `FlipCue.tsx` and `flip-cue.css`.
-- [ ] **5. Instructions.** Extend `ExerciseInstructions.test.tsx` (glyph shown, leaving,
+- [x] **5. Instructions.** Extend `ExerciseInstructions.test.tsx` (glyph shown, leaving,
       gone), then the prop; `ExerciseHost` provides the context and passes the phase.
-- [ ] **6. Engines.** Flashcards and memory-match tests through a host (three turns
-      retire, exits planned, nothing replayed after Reset), then the wiring.
-- [ ] **7. Check.** Full gate; by hand in the dev server: both engines, light and dark,
-      reduced motion, a reload after retiring.
-- [ ] **8. Docs.** TODO §E21 done with a log row; the spec's status. Commit.
+- [x] **6. Engines.** Flashcards and memory-match render no corner once `gone`, and a
+      host prerenders the pointer whatever was saved (`flip-cue-engines.test.tsx`), then
+      the wiring. The clicks themselves were played by hand: the suite has no DOM.
+- [x] **7. Check.** Full gate green; by hand in Chromium on the dev server's showcase:
+      both memory decks, the flashcards deck, a reload after retiring. Not checked in a
+      browser: dark mode (the corner keeps one token pair for both themes) and reduced
+      motion (its CSS is tested in `flip-cue-css.test.ts`).
+- [x] **8. Docs.** TODO §E21 done with a log row; the spec's status. Commit.

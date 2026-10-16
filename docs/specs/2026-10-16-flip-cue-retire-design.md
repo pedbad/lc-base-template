@@ -1,6 +1,6 @@
 # Flip cards — the "Tap to flip" corner retires after three turns (E21)
 
-**Date:** 2026-10-16 · **Status:** designed
+**Date:** 2026-10-16 · **Status:** built 2026-10-16 (`1eccb86`)
 **TODO:** §E21 · **Builds on:** `FlipCue` (2026-10-09, scaled for memory-match 2026-10-12)
 
 ## 1. Why
@@ -65,6 +65,6 @@ memory-match's Reset also calls it, so a new deck never replays the exit.
 
 ## 5. Verify
 
-Unit tests for every unit above; the engines' tests drive three turns through a real
-`ExerciseHost`. By hand in Chromium on the dev server: flashcards and memory-match,
+Unit tests for every unit but the hook (glue: the suite has no DOM); the engines'
+tests render each phase through `FlipCueContext`. By hand in Chromium on the dev server: flashcards and memory-match,
 light and dark, reduced motion on and off, a reload after retiring.
