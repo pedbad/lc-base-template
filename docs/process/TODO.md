@@ -2014,6 +2014,11 @@ rather than the Language Centre's course factory; the maintainer took three smal
   rows: title, page tools and the theme switch (top right again) on the first, the nav
   on its own row below, on all three debug pages (`PresetPicker.test.tsx`,
   `DebugPageHeader.test.tsx`).
+- **E19 — the sandbox's Colour section as a brand board. OPEN** (maintainer, 2026-10-16).
+  A proportion bar, a card per primitive (name, job, live HEX/RGB, contrast badge, token
+  fold) and each semantic role shown in use, values read live after hydration, names
+  only in the catalog. Design:
+  [`2026-10-16-palette-brand-board-design.md`](../specs/2026-10-16-palette-brand-board-design.md).
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
