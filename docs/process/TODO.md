@@ -2036,6 +2036,13 @@ rather than the Language Centre's course factory; the maintainer took three smal
   drag, arrow keys, Tab focus ring, light and dark, 375px and 1440px. Design:
   [`2026-10-16-image-compare-slider-design.md`](../specs/2026-10-16-image-compare-slider-design.md);
   plan: [`2026-10-16-image-compare-slider-plan.md`](2026-10-16-image-compare-slider-plan.md).
+- **E21 — the "Tap to flip" corner retires after three turns.** A learner's suggestion
+  (maintainer, 2026-10-16): once three cards are turned in a flashcards or memory-match
+  exercise, its `FlipCue` triangles leave with a random exit (peel and pop most often,
+  sometimes wave or tuck) and the instruction box drops its pointer glyph. Remembered per
+  exercise. Design:
+  [`2026-10-16-flip-cue-retire-design.md`](../specs/2026-10-16-flip-cue-retire-design.md);
+  plan: [`2026-10-16-flip-cue-retire-plan.md`](2026-10-16-flip-cue-retire-plan.md).
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
