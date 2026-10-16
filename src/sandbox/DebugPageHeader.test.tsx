@@ -65,6 +65,15 @@ describe('DebugPageHeader', () => {
     expect(html).toContain('role="switch"');
   });
 
+  // Maintainer, 2026-10-16: the theme switch is back at the top right, in the title's
+  // row, and the nav takes a row of its own below. Source order follows that reading
+  // order, so tabbing meets the switch before the nav.
+  test('puts the theme switch in the top row and the nav on a row of its own below', () => {
+    expect(html.indexOf('role="switch"')).toBeLessThan(html.indexOf('<nav'));
+    const nav = /<nav[^>]*class="([^"]*)"/.exec(html)?.[1] ?? '';
+    expect(nav).toMatch(/\bbasis-full\b/);
+  });
+
   // §E18: the sandbox puts its preset drop-down beside the theme switch; the
   // showcases pass nothing and render nothing extra.
   test('renders page-specific tools just before the theme switch, outside the nav', () => {
@@ -80,8 +89,8 @@ describe('DebugPageHeader', () => {
       />,
     );
     const tool = withTools.indexOf('id="tool"');
-    expect(tool).toBeGreaterThan(withTools.indexOf('</nav>'));
     expect(tool).toBeLessThan(withTools.indexOf('role="switch"'));
+    expect(withTools.indexOf('role="switch"')).toBeLessThan(withTools.indexOf('<nav'));
     expect(html).not.toContain('id="tool"');
   });
 

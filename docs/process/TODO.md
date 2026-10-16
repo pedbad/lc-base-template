@@ -2008,6 +2008,12 @@ rather than the Language Centre's course factory; the maintainer took three smal
   that did not know the chosen preset (a tab opened before the file was added) deleted
   the shared choice, so the drop-down seemed to do nothing in every tab. Now it shows
   the real colours and leaves the choice (`chosenPreset`, tested).
+  **Layout, 2026-10-16 (maintainer):** the picker is a narrow column — label above the
+  drop-down, then the samples (ring chip, "Button", and four icon-only buttons: default,
+  secondary, outline, destructive) and the hint below. The debug header now has two
+  rows: title, page tools and the theme switch (top right again) on the first, the nav
+  on its own row below, on all three debug pages (`PresetPicker.test.tsx`,
+  `DebugPageHeader.test.tsx`).
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that

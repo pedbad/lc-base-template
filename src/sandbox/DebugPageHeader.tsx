@@ -16,6 +16,10 @@
  * `debug.css` pads the page's scrolling by that much. Measured, not fixed: the row wraps
  * on a narrow screen, and a guessed height would be wrong at one width or another.
  *
+ * TWO ROWS (maintainer, 2026-10-16): the title, this page's tools and the theme switch
+ * share the top row, the switch at its right end; the nav takes the row below. Source
+ * order matches, so tabbing reaches the switch before the nav.
+ *
  * Cross-page hrefs go through `resolveAsset` / `resolveHomeHref`, never a bare relative
  * path, so they survive a non-root base. The repo link is absolute and external, so it
  * opens in a new tab and says so, as a rich-text link does.
@@ -65,7 +69,7 @@ interface DebugPageHeaderProps {
   jumpLabel: string;
   /** Which page this is, so the nav links to the others and not to itself. */
   current: DebugPage;
-  /** Controls only this page has, shown just before the theme switch (§E18). */
+  /** Controls only this page has, shown in the top row just before the theme switch (§E18). */
   tools?: ReactNode;
 }
 
@@ -116,12 +120,19 @@ export function DebugPageHeader({
   const headerRef = usePublishedHeight();
   return (
     <header ref={headerRef} className="sticky top-0 z-40 border-b border-border bg-card">
-      <div className="page-frame flex flex-wrap items-center gap-x-6 gap-y-3 py-4">
-        <div className="mr-auto">
+      <div className="page-frame flex flex-wrap items-start gap-x-6 gap-y-3 py-4">
+        <div className="min-w-0 flex-1 basis-64">
           <h1 className="font-heading text-2xl font-bold">{title}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{description}</p>
         </div>
-        <nav aria-label={navLabel} className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+        {tools}
+        <div className="shrink-0 pt-1">
+          <ThemeToggle />
+        </div>
+        <nav
+          aria-label={navLabel}
+          className="flex basis-full flex-wrap items-center gap-x-5 gap-y-2 text-sm"
+        >
           <DropdownMenu>
             <DropdownMenuTrigger
               className={`inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 font-medium hover:bg-muted ${FOCUS_OUTLINE}`}
@@ -161,8 +172,6 @@ export function DebugPageHeader({
             <span className="sr-only"> {resolveLabel('opensInNewTab')}</span>
           </a>
         </nav>
-        {tools}
-        <ThemeToggle />
       </div>
     </header>
   );
