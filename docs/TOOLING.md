@@ -219,13 +219,27 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
   hover card open, in light and dark (`axe-open-states.spec.ts`); an engine whose chunk
   fails to load shows a reload notice while the other exercise still works
   (`exercise-failure.spec.ts`). Shared helpers:
-  `e2e/support.ts`. The showcase-only cases (E12c) come next.
+  `e2e/support.ts`.
+- **The debug pages (E12c), a second suite in `e2e/debug/`:** only a `DEBUG=1` build
+  has the showcases and the sandbox (AGENTS.md hard constraint 6), so these specs run
+  only against one, and the course specs only against a normal build.
+  `playwright.config.ts` picks the suite from the same `DEBUG` the build reads:
+  `DEBUG=1 bun run build && DEBUG=1 bun run test:e2e` (add `BASE_URL=/course/` to both
+  for the sub-path). Covered: a showcase clip plays, and a clip that cannot load says
+  "Sound unavailable"; the palette preview recolours another page in both themes and
+  Reset restores it; the flip cue retires after three turns, stays retired after a
+  reload, comes back with flashcards' Clear saved progress, and fades under reduced
+  motion; a finished flashcards deck shows its done card and Reset does not move.
+  Helpers: `e2e/debug/debug-support.ts`. Still to come (E12d): memory-match resized
+  during "Show answers", sequence-audio scrubbing, the brand board.
 - **One exclusion, WebKit only** (maintainer's decision, 2026-10-15): Base UI's
   focus-guard sentinels are left out of axe. Why, the upstream issue and when to remove
   it: the comment on `BASE_UI_FOCUS_GUARD` in `e2e/support.ts`.
 - **Three browsers, not one** (maintainer's choice): WebKit stands in for Safari.
-- **CI:** the `e2e` job runs the suite twice, at `/` and at `/course/`, beside
-  `verify`. A failure uploads the HTML report and traces as an artifact.
+- **CI:** the `e2e` job runs four ways, beside `verify`: the course suite and the
+  `DEBUG=1` suite, each at `/` and at `/course/`. A failure uploads the HTML report and
+  traces as an artifact. The gate in AGENTS.md runs the course suite only; run the
+  debug suite by hand when a change touches a debug page or what it shows.
 - **Not in the pre-push hook**, which stays fast. **In the verify gate**, after `build`.
 - **Needs Node** (≥ 22.12, `.nvmrc`): Playwright's runner does not run on Bun.
 - **Once per machine:** `bunx playwright install chromium firefox webkit`.

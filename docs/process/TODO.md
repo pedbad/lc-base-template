@@ -10,7 +10,7 @@ session, on either machine.
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
 **Last updated:** 2026-10-16 · **HEAD:** see `git log` · **Suite:** 190 files · 1984 tests green
-(Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) · CI green · `main` unprotected by decision (job E1).
+(Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 27 on a `DEBUG=1` build (9 × 3, `e2e/debug/`) · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
 `2026-08-06-post-phase-d-handover.md` §3. Read them before touching the build. In short:
@@ -51,7 +51,8 @@ with the follow-ups), **E17** (the example lesson hides itself) and the screen-r
 verdicts, **E7** (the Claude skills, 2026-10-16), **E18** (the palette preview, `fe57694`),
 **E19** (the brand board, `071be35`) and **E20** (the image comparison slider,
 `99d1b68`), **E21** (the flip cue retires, `1eccb86`) and **E22** (the flashcards done
-card, `5f670b8`), both fast-forwarded 2026-10-16. The **graphify review** (2026-10-15, output not committed) fixed six stale
+card, `5f670b8`), both fast-forwarded 2026-10-16, and **E12c** (the `DEBUG=1` browser
+suite). The **graphify review** (2026-10-15, output not committed) fixed six stale
 spec headers, five missing plan links and two `STRUCTURE.md` gaps; the import map
 breaks no rule (nothing `vite.config.ts` reaches uses `@/…`; the two unmentioned
 cross-folder imports, engine fixtures → `src/showcase/fixture-types.ts` and
@@ -60,15 +61,12 @@ cross-folder imports, engine fixtures → `src/showcase/fixture-types.ts` and
 **Decided 2026-10-16: finish all template work before the organisation move.** What is
 left, in order:
 
-1. **Firefox on the work iMac**: `bun run test:e2e` should run all 108 there (the
+1. **Firefox on the work iMac**: `bun run test:e2e` should run all 108 there, and the
+   27 of the debug suite after a `DEBUG=1` build (the
    MacBook Pro cannot start Playwright's Firefox; "Browser verification" below).
-2. **E12c**: showcase-only browser cases, audio playing and failing among them; needs a
-   `DEBUG=1` build in CI. Add E18's palette preview there (pick a preset, `--primary`
-   changes in both themes on another page, Reset restores it): today it is checked by
-   hand only, and only its absence from a normal build runs in CI. Add E21 and E22 too:
-   three turns retire the corners and the instruction pointer, a reload keeps them gone,
-   flashcards' Clear saved progress brings them back, reduced motion fades; a finished
-   flashcards deck leaves the done card and the Reset button does not move.
+2. **E12d**: the debug-build cases E12c left (below): memory-match resized during
+   "Show answers", sequence audio scrubbed while playing, and E19's brand board (real
+   HEX after load, axe clean). `e2e/debug/` and the `DEBUG=1` CI legs are in place.
 3. Optional: one build that works in any folder, since addresses keep changing
    (`DEPLOY.md` says rebuild per address). Investigate before deciding.
 4. **Then the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1 as its
@@ -1859,7 +1857,7 @@ the code the same day. Four hold; its claim that strict TypeScript is off does n
 implicit `any` and `null` as a `number`). Its central point stands: 1689 passing tests
 coexisted with a broken keyboard flow, because component tests render static markup and
 never press a key. **Order: E9–E11 before the handover, E12 just before or after it
-(E12a done 2026-10-14, E12b 2026-10-15; E12c remains), E13 before real learners.**
+(E12a done 2026-10-14, E12b 2026-10-15, E12c 2026-10-16; E12d remains), E13 before real learners.**
 
 - **E9 — radio keyboard: arrows changed the answer, focus stayed put. DONE 2026-10-14**
   (`ec86eb7`). `src/exercises/lib/ChoicePillGroup.tsx` `handleKeyDown` called
@@ -1910,12 +1908,22 @@ never press a key. **Order: E9–E11 before the handover, E12 just before or aft
     only the progress count. `ResultSlot` now adds the verdict in screen-reader-only
     words (the course's `correct` / `incorrect` labels) to every graded row; the icon
     stays decorative. Engines with their own marking (`AnswerFeedback`) already spoke.
-  - **E12c — showcase-only cases** (its own spec; needs a `DEBUG=1` build in CI). From
-    a second review (below): **memory-match** — click and resize during the 620 ms
-    "Show answers" FLIP reorder, then assert every card is back in the grid with no
-    stray inline transform; **sequence audio** — scrub quickly while playing, then
-    assert the shown time and the playing position agree. Plus audio playing and audio
-    failing.
+  - **E12c — the debug pages in CI. DONE 2026-10-16.** Specs in `e2e/debug/`, run only
+    against a `DEBUG=1` build, and a `DEBUG=1` leg per base path in CI's `e2e` job: a
+    showcase clip playing and failing, E18's palette preview, E21's flip cue and E22's
+    done card. What each covers and how to run it: `docs/TOOLING.md`, "Browser tests".
+    Each case was seen failing against a planted break (three turns made four, the
+    failure callback dropped, the preset applied on the sandbox only, the done card
+    unwrapped, the fade lengthened, Clear's restore removed). `preset-preview.spec.ts`
+    now fails, instead of skipping, if a normal-suite run finds the debug pages in
+    `dist/`. Passes in Chromium and WebKit at `/` and `/course/`; Firefox runs in CI
+    (the MacBook cannot start it).
+  - **E12d — the rest of the debug-page cases.** From a second review (below):
+    **memory-match** — click and resize during the 620 ms "Show answers" FLIP reorder,
+    then assert every card is back in the grid with no stray inline transform;
+    **sequence audio** — scrub quickly while playing, then assert the shown time and
+    the playing position agree. From E19: the brand board shows real HEX values after
+    load and passes axe.
   - Found while building E12a: LoCard's fade-in made axe flaky, so the spec waits for
     running, finite, visible animations before axe (WebKit had never-settling finished
     transitions in closed `<details>`). The font allowance and the `vite preview`
@@ -1950,8 +1958,9 @@ never press a key. **Order: E9–E11 before the handover, E12 just before or aft
   the notice (never stolen from elsewhere); a pause or resume from outside the page
   (media keys, a phone call) reaches the speaker, which shows paused or playing; a clip
   that cannot play says "Sound unavailable" and dims, still clickable to retry.
-  **Still open:** no browser test plays audio (E12c); the speaker's hook wiring is
-  browser glue with no DOM test (its pure rule, `clipStatus.ts`, is tested).
+  Since E12c a browser test plays a clip to its end and checks "Sound unavailable"
+  (`e2e/debug/showcase-audio.spec.ts`). The outside pause and resume stay untested in a
+  browser; their pure rule, `clipStatus.ts`, is unit-tested.
 
 **A second review (2026-10-14), checked the same day and mostly not actionable.** Of its
 nine claims: uncaught `play()` promises — false, all six calls catch (the real issue is
@@ -2005,7 +2014,8 @@ rather than the Language Centre's course factory; the maintainer took three smal
   `DESIGNER.md` "Preview a palette" (and how to add one), `DEPLOY.md` "Demo build for
   the team" (`DEBUG=1 BASE_URL=/demo/`, never the live address), the `change-theme`
   skill. Checked by hand in Chromium on a `DEBUG=1` build: sandbox, home, example
-  lesson, both showcases, Reset, light and dark. The CI browser case waits for E12c.
+  lesson, both showcases, Reset, light and dark. Since E12c the CI browser case is
+  `e2e/debug/palette-preview.spec.ts`.
   **Follow-ups, 2026-10-16 (maintainer):** a loud **Z · Test** preset
   (`tokens-variant-z-test.css`, cherry / crest / purple / indigo from `palette.css`, AA
   in both themes) so the preview is obvious on every page; `token-presets.test.ts` fails
@@ -2027,7 +2037,7 @@ rather than the Language Centre's course factory; the maintainer took three smal
   review the first read moved into the store's subscription, so no probe is added during
   render and a late preset is still caught. Checked by hand in
   Chromium, light and dark, with presets C and Z; the automated browser check waits for
-  E12c. Design:
+  E12d. Design:
   [`2026-10-16-palette-brand-board-design.md`](../specs/2026-10-16-palette-brand-board-design.md).
 - **E20 — the sandbox's light/dark image pairs as a comparison slider. DONE 2026-10-16**
   (`99d1b68`). Each `-black`/`-white` and `-light`/`-dark` pair in the Images section is one
@@ -2056,8 +2066,8 @@ rather than the Language Centre's course factory; the maintainer took three smal
   fade, no delay, no sparkles (CSS only, tested in `flip-cue-css.test.ts`, which also
   holds the CSS durations to `FLIP_CUE_EXIT_MS`). Checked by hand in Chromium on the dev
   server's exercise showcase: both memory decks and the flashcards deck, a reload after
-  retiring. The example lesson has no flip exercise, so no browser test plays the turns
-  (E12c will). Checked again 2026-10-16 with Playwright against the dev server, in dark
+  retiring. The example lesson has no flip exercise, so the turns are played on the
+  showcase (`e2e/debug/flip-cue.spec.ts`, since E12c). Checked again 2026-10-16 with Playwright against the dev server, in dark
   and light: the third flashcards turn plays a random exit (`peel` seen) and fades the
   pointer glyph (`flip-cue-fade`, 0.9 s), the corner detaches, a reload keeps it gone,
   and Clear saved progress (then its in-place **Clear**) brings it back; under reduced
@@ -2075,7 +2085,7 @@ rather than the Language Centre's course factory; the maintainer took three smal
   motion. Checked by hand in Chromium: the Reset button does not move. Checked again
   2026-10-16 with Playwright in dark: the Reset button's top moved 0 px on every turn and
   at completion, and the done card reads clearly on the dark card surface. The ease-in
-  itself was not measured.
+  itself was not measured. In CI since E12c (`e2e/debug/flashcards-done.spec.ts`).
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that

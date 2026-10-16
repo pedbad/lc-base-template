@@ -29,7 +29,8 @@ bun run format && bun run lint && bun run lint:css && bun run test:coverage && b
   (`docs/TOOLING.md`, "Coverage").
 - `test:e2e` is the browser suite against the build that precedes it; it needs Node
   and a one-time `bunx playwright install chromium firefox webkit`
-  (`docs/TOOLING.md`, "Browser tests").
+  (`docs/TOOLING.md`, "Browser tests"). The debug pages have a second suite, which CI
+  also runs; when a change touches them, run it too (same section).
 - Use `bun run test` (Vitest). **Never `bun test`** — Bun's runner throws on the
   `import.meta.glob` in `src/lo/load-lo-glob.ts` and reports a false failure.
 - `bun run guards` is the fast invariant sweep (~1s). A subset of `test`, never a

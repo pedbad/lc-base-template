@@ -144,7 +144,8 @@ runs if it is under `src/`**. A test file anywhere else is silently never run.
 
 The one exception is `e2e/`: Playwright specs (`<name>.spec.ts`) that drive the
 **built** site in real browsers, run by `bun run test:e2e`, not by Vitest. They test
-whole pages, so they have no single file to sit beside. How to run them:
+whole pages, so they have no single file to sit beside. `e2e/debug/` holds the specs
+for the debug pages, which run only against a `DEBUG=1` build. How to run them:
 [`docs/TOOLING.md`](docs/TOOLING.md), "Browser tests".
 
 ## `scripts/` — Node-side build steps
