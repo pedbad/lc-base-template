@@ -41,4 +41,24 @@ describe('PresetPicker', () => {
       'As built (tokens.css = B · Yankee)',
     );
   });
+
+  // §E18 follow-up: presets differ only in the primary and ring colours, so the change
+  // must be visible where you click, wherever on the page you are.
+  it('shows a live sample of the primary colour and its text colour, hidden from screen readers', () => {
+    const html = render('');
+    const sample =
+      /<span[^>]*data-slot="preset-sample"[^>]*>.*?<\/span><\/span>/s.exec(html)?.[0] ?? '';
+    expect(sample).toContain('aria-hidden="true"');
+    expect(sample).toMatch(/class="[^"]*\bbg-primary\b[^"]*\btext-primary-foreground\b/);
+    expect(sample).toMatch(/class="[^"]*\brounded-full\b[^"]*\bbg-primary\b/);
+  });
+
+  it("says what a preset changes, as the select's description", () => {
+    const html = render('');
+    const describedBy = /<select[^>]*aria-describedby="([^"]+)"/.exec(html)?.[1];
+    expect(describedBy).toBeTruthy();
+    expect(html).toMatch(
+      new RegExp(`id="${describedBy}"[^>]*>Presets change the button and focus-ring colours`),
+    );
+  });
 });

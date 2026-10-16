@@ -8,6 +8,11 @@
  * on every page, does the recolouring. One code path for "chosen here" and "chosen on
  * another page", and the banner's Reset moves this select back too.
  *
+ * A LIVE SAMPLE beside it (§E18 follow-up): presets differ only in the primary and ring
+ * colours, which most of the page does not show, so a small primary "button" and a chip
+ * ringed in `--ring` repaint where you click. Decorative, so hidden from screen readers;
+ * the hint, which says what a preset changes, is the select's description.
+ *
  * A NATIVE `<select>`: one labelled control with one value, which the browser already
  * makes keyboard- and screen-reader-complete. Its value comes from storage through
  * useSyncExternalStore, whose server snapshot is "As built", so no read happens during
@@ -41,6 +46,7 @@ const serverChoice = () => AS_BUILT;
 
 export function PresetPicker({ presets, activeCss }: PresetPickerProps) {
   const id = useId();
+  const hintId = useId();
   const stored = useSyncExternalStore(subscribe, currentChoice, serverChoice);
   // A remembered id whose file has gone reads as "As built", as the boot script treats it.
   const value = presets.some((p) => p.id === stored) ? stored : AS_BUILT;
@@ -53,23 +59,39 @@ export function PresetPicker({ presets, activeCss }: PresetPickerProps) {
   };
 
   return (
-    <div className="flex items-center gap-2 text-sm">
-      <label htmlFor={id} className="font-medium">
-        Preview preset
-      </label>
-      <select
-        id={id}
-        value={value}
-        onChange={handleChange}
-        className={`rounded-md border border-border bg-card px-2 py-1.5 text-foreground hover:bg-muted ${FOCUS_OUTLINE}`}
-      >
-        <option value={AS_BUILT}>{asBuilt}</option>
-        {presets.map((preset) => (
-          <option key={preset.id} value={preset.id}>
-            {preset.label}
-          </option>
-        ))}
-      </select>
+    <div className="flex flex-col gap-1 text-sm">
+      <div className="flex flex-wrap items-center gap-2">
+        <label htmlFor={id} className="font-medium">
+          Preview preset
+        </label>
+        <select
+          id={id}
+          value={value}
+          onChange={handleChange}
+          aria-describedby={hintId}
+          className={`rounded-md border border-border bg-card px-2 py-1.5 text-foreground hover:bg-muted ${FOCUS_OUTLINE}`}
+        >
+          <option value={AS_BUILT}>{asBuilt}</option>
+          {presets.map((preset) => (
+            <option key={preset.id} value={preset.id}>
+              {preset.label}
+            </option>
+          ))}
+        </select>
+        <span
+          data-slot="preset-sample"
+          aria-hidden="true"
+          className="inline-flex items-center gap-2"
+        >
+          <span className="size-5 rounded-full border border-border bg-primary ring-2 ring-ring ring-offset-1 ring-offset-card" />
+          <span className="rounded-md bg-primary px-2 py-1 text-xs font-medium text-primary-foreground">
+            Button
+          </span>
+        </span>
+      </div>
+      <p id={hintId} className="text-xs text-muted-foreground">
+        Presets change the button and focus-ring colours; compare in light mode.
+      </p>
     </div>
   );
 }
