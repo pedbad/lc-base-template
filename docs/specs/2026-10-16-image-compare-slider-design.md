@@ -1,6 +1,6 @@
 # Debug sandbox — light/dark image pairs as a comparison slider (E20)
 
-**Date:** 2026-10-16 · **Status:** approved, building
+**Date:** 2026-10-16 · **Status:** built 2026-10-16 (`af6f63d`, `99d1b68`)
 **TODO:** §E20 · **Builds on:** the sandbox's Images section (2026-10-08) and E19
 
 ## 1. Why

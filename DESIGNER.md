@@ -113,12 +113,13 @@ It is one page, built from the same files you edit, so it can never be out of da
 Nothing on it is hand-written: every square, specimen and icon is generated from
 `palette.css`, `tokens.css` and `public/icons.svg` as they are **right now**.
 
-| Section        | What it shows                                                                                    | Read it when…                                                       |
-| -------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
-| **Colour**     | The palette at a glance, a card per colour with live values and contrast, and each colour in use | you need a colour's value or token name, or want to check a re-skin |
-| **Typography** | Both font families as specimens, plus the four sizes the course uses                             | you changed fonts, or want to know if Feijoa is live                |
-| **Icons**      | Every icon in the sprite, with its id                                                            | you need an icon's name                                             |
-| **Docs**       | This guide, plus CONTRIBUTING, STRUCTURE and AGENTS, rendered from their markdown                | you want the docs without leaving the browser                       |
+| Section        | What it shows                                                                                             | Read it when…                                                       |
+| -------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| **Colour**     | The palette at a glance, a card per colour with live values and contrast, and each colour in use          | you need a colour's value or token name, or want to check a re-skin |
+| **Typography** | Both font families as specimens, plus the four sizes the course uses                                      | you changed fonts, or want to know if Feijoa is live                |
+| **Icons**      | Every icon in the sprite, with its id                                                                     | you need an icon's name                                             |
+| **Images**     | Every image with its path and pixel size; a mark drawn for both grounds as one slider, light against dark | you replace an image, or check a light/dark pair lines up           |
+| **Docs**       | This guide, plus CONTRIBUTING, STRUCTURE and AGENTS, rendered from their markdown                         | you want the docs without leaving the browser                       |
 
 A few things worth knowing before you trust it:
 
