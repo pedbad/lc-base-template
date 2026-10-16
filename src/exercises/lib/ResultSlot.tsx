@@ -6,12 +6,17 @@
  * fixed-width grid column,
  * so toggling the icon on Check / Show-answers never shifts the sentence.
  *
+ * The icon is decorative; a graded row also says its verdict in screen-reader-only
+ * words (the course's `correct` / `incorrect` labels), so a screen reader hears which
+ * row was wrong, not just the progress count (decided 2026-10-16).
+ *
  * Extracted from the select engine's inlined slot; engine #2 (inline-choice) uses
  * the identical row layout and reuses this.
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §7.
  */
 import { CircleCheckBig, CircleX } from 'lucide-react';
+import { resolveLabel } from '@/config/ui-strings';
 
 interface ResultSlotProps {
   /** Whether this row has been graded (a tick/cross should show). */
@@ -22,13 +27,16 @@ interface ResultSlotProps {
 
 export function ResultSlot({ hasResult, isCorrect }: ResultSlotProps) {
   return (
-    <span aria-hidden className="flex items-center justify-center">
+    <span className="flex items-center justify-center">
       {hasResult ? (
-        isCorrect ? (
-          <CircleCheckBig className="size-8 text-success" />
-        ) : (
-          <CircleX className="size-8 text-destructive" />
-        )
+        <>
+          {isCorrect ? (
+            <CircleCheckBig aria-hidden className="size-8 text-success" />
+          ) : (
+            <CircleX aria-hidden className="size-8 text-destructive" />
+          )}
+          <span className="sr-only">{resolveLabel(isCorrect ? 'correct' : 'incorrect')}</span>
+        </>
       ) : null}
     </span>
   );

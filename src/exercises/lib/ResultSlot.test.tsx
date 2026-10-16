@@ -24,4 +24,22 @@ describe('ResultSlot', () => {
     expect(html).toMatch(new RegExp(`<svg[^>]*class="[^"]*\\b${icon}\\b`));
     expect(html).toMatch(new RegExp(`<svg[^>]*class="[^"]*\\bsize-8\\b[^"]*${colour}`));
   });
+
+  // The icons are decorative (aria-hidden), so a screen reader used to hear only the
+  // progress count, not which row was wrong (TODO §E12b, decided 2026-10-16). Each
+  // graded row now says its verdict in words, with the same labels the course uses.
+  test.each([
+    [true, 'Correct!'],
+    [false, 'Incorrect'],
+  ])('isCorrect=%s also says %s to a screen reader', (isCorrect, words) => {
+    const html = renderToStaticMarkup(<ResultSlot hasResult isCorrect={isCorrect} />);
+
+    expect(html).toContain(`<span class="sr-only">${words}</span>`);
+  });
+
+  test('says nothing to a screen reader until the row is graded', () => {
+    const html = renderToStaticMarkup(<ResultSlot hasResult={false} isCorrect={false} />);
+
+    expect(html).not.toContain('sr-only');
+  });
 });
