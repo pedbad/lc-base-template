@@ -60,14 +60,19 @@ jobs:
   # The browser suite (TODO §E12, docs/TOOLING.md "Browser tests"): the BUILT site in
   # Chromium, Firefox and WebKit, once per base path so a root-absolute URL that only
   # works at / fails here. Beside `verify`, not after it, so both report at once.
+  # Once per build too (§E12c): the course build runs every spec but e2e/debug/, the
+  # DEBUG=1 build only e2e/debug/ (the debug pages' own cases); playwright.config.ts
+  # picks the suite from the same DEBUG the build reads. Set on those two steps only (the
+  # `debug` npm convention reads DEBUG too); an empty DEBUG is off.
   e2e:
-    name: Browser tests (${{ matrix.base }})
+    name: Browser tests (${{ matrix.base }}${{ matrix.debug && ', DEBUG=1' || '' }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
         base: ['/', '/course/']
+        debug: [false, true]
     env:
       BASE_URL: ${{ matrix.base }}
     steps:
@@ -120,9 +125,13 @@ jobs:
 
       - name: Build
         run: bun run build
+        env:
+          DEBUG: ${{ matrix.debug && '1' || '' }}
 
       - name: Browser tests (Playwright)
         run: bun run test:e2e
+        env:
+          DEBUG: ${{ matrix.debug && '1' || '' }}
 
       # An exact tag, not `@v7`, for the same reason as setup-node above.
       - name: Upload the report
