@@ -73,7 +73,7 @@ export default function PaletteSection() {
           <h4 className="text-sm font-semibold">{group.title}</h4>
           <p className="max-w-(--measure) text-sm text-muted-foreground">{group.note}</p>
           <ul className="mt-3 grid grid-cols-[repeat(auto-fill,minmax(13rem,1fr))] gap-3">
-            {group.tokens.map((token) => (
+            {group.colours.map(({ token }) => (
               <PrimitiveSwatch key={token} token={token} />
             ))}
           </ul>
