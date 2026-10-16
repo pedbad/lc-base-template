@@ -113,7 +113,9 @@ If a bookmark looks dead, check the port — Vite quietly takes 5174 (then 5175,
 
 The build emits **one real HTML file per folder in `lo-config/`** (`lo-00-example` →
 `dist/example.html`) plus **`dist/index.html`, the course landing page** — hero copy
-from `src/config/course.config.ts` and one card per LO, linking to that LO's page.
+from `src/config/course.config.ts` and one card per LO, linking to that LO's page. The
+example lesson's card shows only while it is the only LO: a course with lessons of its
+own leaves it out (CONTRIBUTING, "Authoring a Learning Object").
 Each page's body is already rendered, so a course reads and navigates with JavaScript
 disabled, and hydrates into the interactive app when JavaScript runs. Exercises need
 JavaScript and say so on the static page.

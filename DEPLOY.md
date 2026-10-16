@@ -148,7 +148,9 @@ Use your own path in place of `/courses/spanish-1/`.
 
    `0` means the build used a different `BASE_URL` (step 4). Build again.
 
-3. **No internal pages.** This lists `index.html` and one page per lesson:
+3. **No internal pages.** This lists `index.html`, one page per lesson, and
+   `example.html` (the example lesson: built, but not linked from anywhere, which is
+   normal):
 
    ```bash
    ls dist/*.html
@@ -168,7 +170,8 @@ BASE_URL=/courses/spanish-1/ bun run preview
 It prints an address such as `http://localhost:4173/courses/spanish-1/`. Open it and
 go through this list:
 
-- [ ] The home page shows the course title, the banner and a card for every lesson.
+- [ ] The home page shows the course title, the banner and a card for every lesson,
+      and no card for the example lesson.
 - [ ] Headings are in Feijoa. To be sure: right-click a heading, **Inspect**, and under
       **Computed** the rendered font says Feijoa, not Open Sans.
 - [ ] Every lesson card opens its lesson, and the way back to the home page works.

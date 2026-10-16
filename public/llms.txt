@@ -9,7 +9,9 @@
 A build emits a static course: a landing page plus one page per Learning Object.
 
 - [Home](index.html): the course landing page — hero copy plus one card per
-  Learning Object, linking to that LO's page.
+  Learning Object, linking to that LO's page. The template's example lesson has a
+  card only while it is the only LO; a course with lessons of its own leaves it out,
+  though `example.html` is still built.
 - `<slug>.html`: one page per LO folder in `lo-config/`, named after the folder
   with its `lo-NN-` ordinal dropped (`lo-00-example` → `example.html`), beside
   this file. Each

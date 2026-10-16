@@ -62,6 +62,7 @@ bun run format && bun run lint && bun run lint:css && bun run test:coverage && b
 ## Content rules
 
 - **Add an LO by copying `lo-config/lo-00-example/`** to `lo-config/lo-NN-slug/`.
+  Never edit or delete the example; it hides itself (`CONTRIBUTING.md`).
   Never register it anywhere — a folder is a lesson. Zod must pass at load.
 - **Never add an image or audio file the course does not own or may not share**
   (a CD track, a web image without an open licence). Content is published under

@@ -56,7 +56,9 @@ the template for every course. The full rule:
    ```
 
 2. **Write.** A new lesson starts as a copy of `lo-config/lo-00-example/`; copy it, never
-   edit the example itself (it belongs to the template). How a lesson
+   edit or delete the example itself (it belongs to the template, and the checks run on
+   it). Students never see it: once your course has a lesson of its own, the home page
+   leaves the example out by itself. Copy it again for every new lesson. How a lesson
    folder works, and what each block and exercise accepts, is in
    [`CONTRIBUTING.md` → "Authoring a Learning Object"](CONTRIBUTING.md#authoring-a-learning-object).
    `bun run dev` shows the course with hot reload while you write.

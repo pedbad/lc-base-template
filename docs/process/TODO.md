@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-16 · **HEAD:** see `git log` · **Suite:** 167 files · 1734 tests green
+**Last updated:** 2026-10-16 · **HEAD:** see `git log` · **Suite:** 167 files · 1737 tests green
 (Vitest) · 99 Playwright tests (33 × 3 browsers, `bun run test:e2e`) · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -1940,6 +1940,13 @@ rather than the Language Centre's course factory; the maintainer took three smal
   `actions/setup-node` from `.nvmrc`, so local and CI resolve the same runtime.
   **Verified 2026-10-15:** CI's "Set up Node" resolved `.nvmrc` as 22 and ran v22.23.3
   (CI run 38719802857).
+- **E17 — the example lesson in course repos. DONE 2026-10-16.** Decided by the
+  maintainer: authors copy `lo-00-example` for every lesson and never edit or delete it,
+  because ~30 test files and every browser spec run on it and template updates change
+  it. It hides itself, with no switch to remember: `buildLoIndex()` leaves it out once
+  `lo-config/` holds another lesson, so a course's home page never shows it, and its
+  page is still built (unlinked) for the browser tests. CONTRIBUTING, COURSE_GUIDE,
+  README, AGENTS and DEPLOY say so.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that

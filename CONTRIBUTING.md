@@ -92,6 +92,13 @@ page**, with no code change.
 2. Edit `lo.json` and each `blocks/*/block.json` / `exercises/*/exercise.json`.
 3. `bun run build && bun run preview` to click through the whole course.
 
+**Never edit or delete `lo-00-example`.** It is every course's master copy: the test
+suites and browser tests run on it, and template updates change it, so a course that
+edits or deletes it gets red CI and clashing updates. Learners never meet it: once
+`lo-config/` holds a lesson of its own, the landing page leaves the example's card out
+by itself (`EXAMPLE_LO_FOLDER` in `src/lo/lo-index.ts`). Its page is still built, with
+nothing linking to it, so the browser tests keep a page to drive.
+
 > **Only add pictures and audio that we made, or that we are clearly allowed to
 > share. Never upload audio from a textbook CD that is not ours, or an image taken
 > from the web that is not openly licensed.**
