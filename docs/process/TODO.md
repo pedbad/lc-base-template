@@ -43,20 +43,33 @@ is exactly what the paragraph above is about.
 `bun run test` (Vitest), **not** `bun test` — Bun's own runner throws on the
 `import.meta.glob` in `load-lo-glob.ts` and reports a false failure.
 
-**Next (2026-10-15):** for the current commit see `git log main`. Section D is closed.
-Every coding item from the 2026-10-14 handover is done: **E9** (`ec86eb7`), **E12a**
-(`cbda661`), **E15** (`fe43305`), E5's Feijoa-only-when-present (`f6b2f87`), **E10**
-(`fb73545`) and **E11** (`187dadc`). The **graphify review** is done too (2026-10-15,
-output not committed): six spec headers still read "pending" or "building on
-`feat/…`" for shipped work, five specs did not link their plans, and `STRUCTURE.md`
-left out `e2e/` and `docs/ORGANIZATION.md`. All fixed. The import map breaks no rule:
-nothing `vite.config.ts` reaches uses `@/…`, and the two cross-folder imports
-`STRUCTURE.md` does not mention are harmless (engine fixtures import
-`src/showcase/fixture-types.ts`; `src/build/source-negation.ts` reuses
-`src/guards/asset-path.ts`). **E14** (README opener) and **E4** (`COURSE_GUIDE.md`) are
-done (2026-10-15), and so is **E12b** (exercise flows, axe in open states). **E5** (the deploy route, `DEPLOY.md`) is done
-(2026-10-16). What is left, in order: E7, and at the handover E1 and the organisation move (E16 after it); E13
-is done (E13a 2026-10-15, E13b 2026-10-16). Since PR #9, merge a PR by fast-forwarding `main` once its CI is
+**Next (2026-10-16):** for the current commit see `git log main`. Section D is closed.
+Done 2026-10-14 to 2026-10-16: **E9** (`ec86eb7`), **E10** (`fb73545`), **E11**
+(`187dadc`), **E12a** (`cbda661`), **E12b**, **E15** (`fe43305`), **E4**
+(`COURSE_GUIDE.md`), **E14** (README opener), **E5** (`DEPLOY.md`), **E13** (a and b,
+with the follow-ups), **E17** (the example lesson hides itself) and the screen-reader
+verdicts. The **graphify review** (2026-10-15, output not committed) fixed six stale
+spec headers, five missing plan links and two `STRUCTURE.md` gaps; the import map
+breaks no rule (nothing `vite.config.ts` reaches uses `@/…`; the two unmentioned
+cross-folder imports, engine fixtures → `src/showcase/fixture-types.ts` and
+`src/build/source-negation.ts` → `src/guards/asset-path.ts`, are harmless).
+
+**Decided 2026-10-16: finish all template work before the organisation move.** What is
+left, in order:
+
+1. **E7**: Claude skills in `.claude/skills/`, test-first built in. Start in a fresh
+   session with brainstorming. Build it before course repos exist, so every course
+   starts with it.
+2. **Firefox on the work iMac**: `bun run test:e2e` should run all 99 there (the
+   MacBook Pro cannot start Playwright's Firefox; "Browser verification" below).
+3. **E12c**: showcase-only browser cases, audio playing and failing among them; needs a
+   `DEBUG=1` build in CI.
+4. Optional: one build that works in any folder, since addresses keep changing
+   (`DEPLOY.md` says rebuild per address). Investigate before deciding.
+5. **Then the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1 as its
+   step 5, and E16 after.
+
+Since PR #9, merge a PR by fast-forwarding `main` once its CI is
 green (`git merge --ff-only` + push), so the hashes cited here survive; GitHub's
 "rebase" merge rewrote them.
 
