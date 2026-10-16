@@ -50,9 +50,8 @@ Done 2026-10-14 to 2026-10-16: **E9** (`ec86eb7`), **E10** (`fb73545`), **E11**
 with the follow-ups), **E17** (the example lesson hides itself) and the screen-reader
 verdicts, **E7** (the Claude skills, 2026-10-16), **E18** (the palette preview, `fe57694`),
 **E19** (the brand board, `071be35`) and **E20** (the image comparison slider,
-`99d1b68`). **In review, stacked:** **E21** (the flip cue retires, PR #20, branch
-`feat/e21-flip-cue-retire`) and **E22** (the flashcards done card, PR #21, branch
-`feat/e22-flashcards-done-card`, based on E21's branch). The **graphify review** (2026-10-15, output not committed) fixed six stale
+`99d1b68`), **E21** (the flip cue retires, `1eccb86`) and **E22** (the flashcards done
+card, `5f670b8`), both fast-forwarded 2026-10-16. The **graphify review** (2026-10-15, output not committed) fixed six stale
 spec headers, five missing plan links and two `STRUCTURE.md` gaps; the import map
 breaks no rule (nothing `vite.config.ts` reaches uses `@/…`; the two unmentioned
 cross-folder imports, engine fixtures → `src/showcase/fixture-types.ts` and
@@ -61,9 +60,6 @@ cross-folder imports, engine fixtures → `src/showcase/fixture-types.ts` and
 **Decided 2026-10-16: finish all template work before the organisation move.** What is
 left, in order:
 
-0. **Merge E21 then E22** once each one's CI is green: fast-forward `main` to
-   `feat/e21-flip-cue-retire`, push, then to `feat/e22-flashcards-done-card` (the rule
-   below), and close both PRs.
 1. **Firefox on the work iMac**: `bun run test:e2e` should run all 108 there (the
    MacBook Pro cannot start Playwright's Firefox; "Browser verification" below).
 2. **E12c**: showcase-only browser cases, audio playing and failing among them; needs a
@@ -2060,8 +2056,13 @@ rather than the Language Centre's course factory; the maintainer took three smal
   fade, no delay, no sparkles (CSS only, tested in `flip-cue-css.test.ts`, which also
   holds the CSS durations to `FLIP_CUE_EXIT_MS`). Checked by hand in Chromium on the dev
   server's exercise showcase: both memory decks and the flashcards deck, a reload after
-  retiring. The example lesson has no flip exercise, so no browser test plays the turns;
-  reduced motion was not checked in a browser. Design:
+  retiring. The example lesson has no flip exercise, so no browser test plays the turns
+  (E12c will). Checked again 2026-10-16 with Playwright against the dev server, in dark
+  and light: the third flashcards turn plays a random exit (`peel` seen) and fades the
+  pointer glyph (`flip-cue-fade`, 0.9 s), the corner detaches, a reload keeps it gone,
+  and Clear saved progress (then its in-place **Clear**) brings it back; under reduced
+  motion the exit is `flip-cue-fade` at 0.4 s with no delay; a memory grid's third turn
+  retires all eight corners (peel, wave, tuck and pop all seen). Design:
   [`2026-10-16-flip-cue-retire-design.md`](../specs/2026-10-16-flip-cue-retire-design.md);
   plan: [`2026-10-16-flip-cue-retire-plan.md`](2026-10-16-flip-cue-retire-plan.md).
 - **E22 — a finished flashcards deck keeps a card in place. DONE 2026-10-16.** On the
@@ -2071,7 +2072,10 @@ rather than the Language Centre's course factory; the maintainer took three smal
   **Deck complete**, the count and "Select **Reset** to play again". It is not a control
   and has no flip corner. The rating row stays laid out and hidden, and the live region
   says "Deck complete — N cards learned." It eases in, or appears at once under reduced
-  motion. Checked by hand in Chromium: the Reset button does not move.
+  motion. Checked by hand in Chromium: the Reset button does not move. Checked again
+  2026-10-16 with Playwright in dark: the Reset button's top moved 0 px on every turn and
+  at completion, and the done card reads clearly on the dark card surface. The ease-in
+  itself was not measured.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
