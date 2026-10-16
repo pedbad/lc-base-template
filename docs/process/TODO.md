@@ -2000,6 +2000,14 @@ rather than the Language Centre's course factory; the maintainer took three smal
   the team" (`DEBUG=1 BASE_URL=/demo/`, never the live address), the `change-theme`
   skill. Checked by hand in Chromium on a `DEBUG=1` build: sandbox, home, example
   lesson, both showcases, Reset, light and dark. The CI browser case waits for E12c.
+  **Follow-ups, 2026-10-16 (maintainer):** a loud **Z · Test** preset
+  (`tokens-variant-z-test.css`, cherry / crest / purple / indigo from `palette.css`, AA
+  in both themes) so the preview is obvious on every page; `token-presets.test.ts` fails
+  if `tokens.css` ever holds it, and `token-contrast.test.ts` now wants at least four
+  token files, not exactly four, as E18 meant. **Bug found while trying it:** a page
+  that did not know the chosen preset (a tab opened before the file was added) deleted
+  the shared choice, so the drop-down seemed to do nothing in every tab. Now it shows
+  the real colours and leaves the choice (`chosenPreset`, tested).
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that

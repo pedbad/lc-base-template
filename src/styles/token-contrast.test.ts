@@ -64,9 +64,13 @@ describe('the colour maths, calibrated against what Chromium rendered', () => {
 });
 
 describe('every semantic pair clears AA text contrast', () => {
-  it('finds the pairs and the four token files it is meant to check', () => {
+  // tokens.css plus at least the three Cambridge presets. Not an exact count: a
+  // designer's palette (or the Z test card) arrives as another file and is checked
+  // here by itself, as token-presets.test.ts already allows (DESIGNER.md, "Preview a
+  // palette").
+  it('finds the pairs and at least the four token files it is meant to check', () => {
     expect(PAIRS.length).toBeGreaterThan(10);
-    expect(TOKEN_FILES).toHaveLength(4);
+    expect(TOKEN_FILES.length).toBeGreaterThanOrEqual(4);
   });
 
   describe.each(TOKEN_FILES)('%s', (file) => {

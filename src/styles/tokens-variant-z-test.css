@@ -1,0 +1,140 @@
+/* ==========================================================================
+   Layer 2 — Semantic tokens — VARIANT Z: TEST CARD (never the real theme)
+   ==========================================================================
+   A deliberately loud preset, so the sandbox's Preview preset drop-down shows an
+   obvious change on every page (DESIGNER.md, "Preview a palette"). It also shows how
+   far ONE preset file reaches: unlike A, B and C, which change only the button and
+   focus ring, it remaps the page, cards, accents, borders and sidebar.
+
+   NEVER copy this over tokens.css. token-presets.test.ts fails if tokens.css holds
+   its primary. palette.css is SHARED — it picks only from the colours already there
+   (the secondary accents purple, indigo, crest and cherry), so no new hex.
+
+   Every text pair the sandbox shows still clears WCAG AA (token-contrast.test.ts):
+   loud, not unreadable.
+   ========================================================================== */
+
+@layer base {
+  :root {
+    --radius: 0.625rem;
+
+    /* Surfaces — an indigo-tinted page, plain cards */
+    --background: color-mix(in oklab, var(--cam-indigo) 12%, var(--white));
+    --foreground: var(--slate-4);
+    --card: var(--white);
+    --card-foreground: var(--slate-4);
+    --popover: var(--white);
+    --popover-foreground: var(--slate-4);
+
+    /* Primary action — Cambridge Cherry + white text */
+    --primary: var(--cam-cherry);
+    --primary-foreground: var(--white);
+
+    /* Secondary + muted surfaces — a purple tint */
+    --secondary: color-mix(in oklab, var(--cam-purple) 18%, var(--white));
+    --secondary-foreground: var(--slate-4);
+    --muted: color-mix(in oklab, var(--cam-purple) 12%, var(--white));
+    --muted-foreground: var(--slate-3);
+
+    /* Accent — Cambridge Crest orange */
+    --accent: var(--cam-crest);
+    --accent-foreground: var(--slate-4);
+
+    /* Destructive, success, warning — unchanged, so verdicts still read as verdicts */
+    --destructive: var(--cam-dark-crest);
+    --destructive-foreground: var(--white);
+    --destructive-text: color-mix(in oklab, var(--destructive) 70%, var(--foreground));
+    --success: var(--cam-green-deep);
+    --success-foreground: var(--white);
+    --warning: var(--amber-deep);
+    --warning-foreground: var(--white);
+
+    /* Lines + form fields + focus — purple lines, an indigo ring */
+    --border: var(--cam-purple);
+    --input: var(--cam-purple);
+    --ring: var(--cam-indigo);
+    --hover-term: var(--amber-deep);
+    --flip-cue: var(--cam-light-blue);
+    --flip-cue-foreground: var(--cam-dark-blue);
+    --chart-1: var(--cam-crest);
+    --chart-2: var(--cam-indigo);
+    --chart-3: var(--cam-green);
+    --chart-4: var(--cam-cherry);
+    --chart-5: var(--cam-purple);
+
+    /* Sidebar — purple tint, cherry actions, crest hover */
+    --sidebar: color-mix(in oklab, var(--cam-purple) 12%, var(--white));
+    --sidebar-foreground: var(--slate-4);
+    --sidebar-primary: var(--cam-cherry);
+    --sidebar-primary-foreground: var(--white);
+    --sidebar-accent: var(--cam-crest);
+    --sidebar-accent-foreground: var(--slate-4);
+    --sidebar-border: var(--cam-purple);
+    --sidebar-ring: var(--cam-indigo);
+
+    /* Footer band and info callout — crest and purple tints */
+    --footer: color-mix(in oklab, var(--cam-crest) 30%, var(--white));
+    --footer-foreground: var(--slate-4);
+    --callout-info: color-mix(in oklab, var(--cam-purple) 15%, var(--white));
+    --transcript-toggle: var(--amber-soft);
+    --transcript-toggle-foreground: var(--slate-4);
+    --footer-crest-a-start: color-mix(in oklab, var(--footer) 68%, var(--background));
+    --footer-crest-a-mid: color-mix(in oklab, var(--footer) 24%, transparent);
+    --footer-crest-b-start: color-mix(in oklab, var(--footer) 66%, var(--background));
+    --footer-crest-b-mid: color-mix(in oklab, var(--footer) 22%, transparent);
+    --footer-crest-linear-start: color-mix(in oklab, var(--footer) 50%, var(--background));
+    --footer-crest-linear-mid: color-mix(in oklab, var(--footer) 18%, transparent);
+    --hero-band: var(--primary);
+    --hero-title-ink: var(--slate-4);
+    --hero-art-ground: var(--cam-light-blue);
+  }
+
+  .dark {
+    /* Surfaces — an indigo night, purple-tinted cards */
+    --background: color-mix(in oklab, var(--cam-indigo) 25%, var(--slate-4));
+    --foreground: var(--slate-1);
+    --card: color-mix(in oklab, var(--cam-purple) 22%, var(--slate-4));
+    --card-foreground: var(--slate-1);
+    --popover: color-mix(in oklab, var(--cam-purple) 22%, var(--slate-4));
+    --popover-foreground: var(--slate-1);
+
+    /* Primary — Crest orange + dark ink */
+    --primary: var(--cam-crest);
+    --primary-foreground: var(--slate-4);
+    --secondary: color-mix(in oklab, var(--cam-purple) 30%, var(--slate-4));
+    --secondary-foreground: var(--slate-1);
+    --muted: color-mix(in oklab, var(--cam-purple) 30%, var(--slate-4));
+    --muted-foreground: var(--slate-1);
+
+    /* Accent — Cherry + white */
+    --accent: var(--cam-cherry);
+    --accent-foreground: var(--white);
+    --destructive: var(--cam-dark-crest);
+    --destructive-foreground: var(--white);
+    --destructive-text: color-mix(in oklab, var(--destructive) 60%, var(--foreground));
+    --success: var(--cam-green-soft);
+    --success-foreground: var(--cam-dark-blue);
+    --warning: var(--amber-soft);
+    --warning-foreground: var(--cam-dark-blue);
+    --border: color-mix(in oklab, var(--cam-purple) 50%, transparent);
+    --input: color-mix(in oklab, var(--cam-purple) 60%, transparent);
+    --ring: var(--cam-crest);
+    --hover-term: var(--amber-soft);
+    --chart-1: var(--cam-crest);
+    --chart-2: var(--cam-indigo);
+    --chart-3: var(--cam-green);
+    --chart-4: var(--cam-cherry);
+    --chart-5: var(--cam-purple);
+    --sidebar: color-mix(in oklab, var(--cam-purple) 22%, var(--slate-4));
+    --sidebar-foreground: var(--slate-1);
+    --sidebar-primary: var(--cam-crest);
+    --sidebar-primary-foreground: var(--slate-4);
+    --sidebar-accent: var(--cam-cherry);
+    --sidebar-accent-foreground: var(--white);
+    --sidebar-border: color-mix(in oklab, var(--cam-purple) 50%, transparent);
+    --sidebar-ring: var(--cam-crest);
+    --footer: var(--card);
+    --footer-foreground: var(--slate-1);
+    --callout-info: color-mix(in oklab, var(--primary) 15%, transparent);
+  }
+}

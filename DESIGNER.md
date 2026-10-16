@@ -169,6 +169,16 @@ else sees it, and a normal build carries none of it.
 
 It is a **preview only**. Nothing on disk changes; the real switch is still Job 2.
 
+**"Z · Test" is a test card, not a look.** It is deliberately loud (cherry buttons,
+orange accents, purple lines, an indigo page), so you can see at a glance that the
+preview reaches every page. It also shows how far one preset file can go: it remaps
+the page, cards, accents and borders, where A, B and C change only the button and
+focus ring. Never copy it over `tokens.css`; a test fails if you do.
+
+If a tab was open from before a palette file was added, that tab does not know the
+new palette: it shows the real colours, and the other tabs keep previewing. Reload it
+to join in.
+
 **Adding a designer's palette.** A new file appears in the drop-down by itself:
 
 1. New colours go into `palette.css` first, as Job 1 says: raw hex lives only

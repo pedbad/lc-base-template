@@ -91,3 +91,26 @@ describe('token presets', () => {
     );
   });
 });
+
+/** A token's value in the light (`:root`) block, or `undefined` when it is not declared. */
+function rootValue(css: string, name: string): string | undefined {
+  const root = css.slice(0, css.search(/^\s*\.dark\s*\{/m));
+  return new RegExp(`^\\s+${name}\\s*:\\s*([^;]+);`, 'm').exec(root)?.[1]?.trim();
+}
+
+// A deliberately loud preset ships so anyone can see the sandbox's Preview preset
+// drop-down working on every page (DESIGNER.md, "Preview a palette"). It is a test
+// card, not a look: it must never become the real colours.
+describe('the Z test preset', () => {
+  const Z = 'tokens-variant-z-test.css';
+
+  it('ships on disk, so the drop-down always has an obvious choice', () => {
+    expect(PRESETS).toContain(Z);
+  });
+
+  it('is never what tokens.css holds', () => {
+    const zPrimary = rootValue(read(Z), '--primary');
+    expect(zPrimary).toBeDefined();
+    expect(rootValue(active, '--primary')).not.toBe(zPrimary);
+  });
+});
