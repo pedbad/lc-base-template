@@ -113,19 +113,21 @@ It is one page, built from the same files you edit, so it can never be out of da
 Nothing on it is hand-written: every square, specimen and icon is generated from
 `palette.css`, `tokens.css` and `public/icons.svg` as they are **right now**.
 
-| Section        | What it shows                                                                     | Read it when…                                        |
-| -------------- | --------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| **Colour**     | Every colour token as a swatch, in its three layers                               | you need a token's name, or want to check a re-skin  |
-| **Typography** | Both font families as specimens, plus the four sizes the course uses              | you changed fonts, or want to know if Feijoa is live |
-| **Icons**      | Every icon in the sprite, with its id                                             | you need an icon's name                              |
-| **Docs**       | This guide, plus CONTRIBUTING, STRUCTURE and AGENTS, rendered from their markdown | you want the docs without leaving the browser        |
+| Section        | What it shows                                                                                    | Read it when…                                                       |
+| -------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| **Colour**     | The palette at a glance, a card per colour with live values and contrast, and each colour in use | you need a colour's value or token name, or want to check a re-skin |
+| **Typography** | Both font families as specimens, plus the four sizes the course uses                             | you changed fonts, or want to know if Feijoa is live                |
+| **Icons**      | Every icon in the sprite, with its id                                                            | you need an icon's name                                             |
+| **Docs**       | This guide, plus CONTRIBUTING, STRUCTURE and AGENTS, rendered from their markdown                | you want the docs without leaving the browser                       |
 
 A few things worth knowing before you trust it:
 
-- **Layer 1 is what you edit; Layer 2 is what you check.** The primitives come
-  first because they are the one-file re-skin. The semantic pairs below them are
-  the result — a surface with the text colour it guarantees contrast for. Change a
-  primitive, save, and every pair updates in front of you.
+- **The cards are what you edit; "In use" is what you check.** Each card is one
+  primitive in `palette.css` — its name, its job, its live value and its contrast
+  with its partner. "In use" below them is the result: the semantic tokens in
+  `tokens.css` drawn as the buttons, feedback and surfaces they paint. Token names
+  are one click away, in each card's **Token** fold and each panel's **Tokens**
+  fold. Change a primitive, save, and every value and badge updates in front of you.
 - **The page ground is `--paper`, not `--white`, and that is an accessibility
   decision rather than a taste one.** A pure-white page raises visual stress for
   dyslexic readers — the British Dyslexia Association's style guidance asks for an

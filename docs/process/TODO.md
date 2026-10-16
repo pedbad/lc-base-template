@@ -2014,10 +2014,12 @@ rather than the Language Centre's course factory; the maintainer took three smal
   rows: title, page tools and the theme switch (top right again) on the first, the nav
   on its own row below, on all three debug pages (`PresetPicker.test.tsx`,
   `DebugPageHeader.test.tsx`).
-- **E19 — the sandbox's Colour section as a brand board. OPEN** (maintainer, 2026-10-16).
+- **E19 — the sandbox's Colour section as a brand board. DONE 2026-10-16** (`071be35`).
   A proportion bar, a card per primitive (name, job, live HEX/RGB, contrast badge, token
   fold) and each semantic role shown in use, values read live after hydration, names
-  only in the catalog. Design:
+  only in the catalog; the bar runs largest share first (`b1fd540`). Checked by hand in
+  Chromium, light and dark, with presets C and Z; the automated browser check waits for
+  E12c. Design:
   [`2026-10-16-palette-brand-board-design.md`](../specs/2026-10-16-palette-brand-board-design.md).
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
@@ -2271,3 +2273,4 @@ build, so it cannot return. Two remain:
 | 2026-10-15 | `f82ac23` | **WebKit click flake** — the keyboard spec waits for the accordion's open animation before clicking (E9 spec)                                      |
 | 2026-10-15 | `fb73545` | **no control inside a control** — rich text rejects a link, popup, hover term or audio icon nested in another (E10)                                |
 | 2026-10-16 | `fe57694` | **palette preview** — sandbox drop-down over every `tokens-variant-*.css`, kept per viewer on every DEBUG page; none of it in a normal build (E18) |
+| 2026-10-16 | `071be35` | **brand board** — sandbox Colour section: proportion bar, a card per colour with live HEX/RGB and contrast, each role in use (E19)                 |

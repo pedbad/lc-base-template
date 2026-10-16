@@ -1,6 +1,6 @@
 # Debug sandbox — the Colour section as a brand board (E19)
 
-**Date:** 2026-10-16 · **Status:** design approved 2026-10-16, not built
+**Date:** 2026-10-16 · **Status:** built 2026-10-16 (`9bb0f7b`…`b1fd540`)
 **TODO:** §E19 · **Builds on:** the sandbox (buildlist 16) and its palette preview (§E18)
 
 ## 1. Why
@@ -39,7 +39,8 @@ toggle and preset picker change what follows.
 A single horizontal bar, each segment one primitive, its width that primitive's
 **share** of the course's visual weight. Draft shares (a design judgement, tuned by the
 maintainer): Paper 40, Slate 4 22, Cambridge Blue 16, Dark Blue 10, Warm Blue 6, then
-the accents at 2 each. Primitives without a share do not appear in the bar. Plain names
+the accents at 2 each. Segments run largest share first, whatever order the catalog
+lists them in. Primitives without a share do not appear in the bar. Plain names
 sit under the bar. The bar is a `<ul>` with an accessible name; each segment is an
 `<li>` whose text (visually hidden) is "name, share" — a screen reader hears a list,
 not a picture. Segments paint from `var(--token)`, so a preset or an edit repaints them.
@@ -67,7 +68,7 @@ from the real components, so a preset or theme change shows its true effect:
 | ----------------------------- | ------------------------------------------------------- |
 | Page, card, popover           | nested surfaces with a line of body text on each        |
 | Primary, secondary            | the real `Button` variants, with an icon-only one       |
-| Accent, muted                 | a hovered-looking row and helper text                   |
+| Accent, muted                 | button-shaped labels beside the other actions           |
 | Success, destructive, warning | the feedback a learner sees: correct, try again, a note |
 | Border, input, ring           | an input at rest and one drawn with the focus ring      |
 | Chart 1–5                     | a five-bar mini chart, in slot order                    |
@@ -101,7 +102,11 @@ New folder `src/sandbox/palette/`, so no file grows large:
 | File                    | Holds                                                              |
 | ----------------------- | ------------------------------------------------------------------ |
 | `colour-math.ts`        | pure: bytes → HEX / RGB text, WCAG luminance, ratio, verdict       |
-| `useLiveColours.ts`     | the canvas read, the subscriptions, a map token → bytes            |
+| `live-colours.ts`       | the store: reads and subscriptions, reader injected, page-agnostic |
+| `useLiveColours.ts`     | the browser reader and the hook over the store                     |
+| `token-value.ts`        | a token's live value, or "—" before hydration                      |
+| `ContrastBadge.tsx`     | the ratio and verdict badge                                        |
+| `in-use-specimens.tsx`  | the specimens ③ draws for each role                                |
 | `PaletteAtAGlance.tsx`  | ① the proportion bar                                               |
 | `ColourCard.tsx`        | ② one card                                                         |
 | `ColourInUse.tsx`       | ③ the role specimens                                               |
@@ -122,8 +127,10 @@ The semantic groups gain the specimen kind each role renders as. No value appear
   (static render): placeholders "—" before hydration; the bar is a named list with one
   item per shared primitive; a card's name, job, badge slot and token fold; every role
   present with its token fold; no focusable control inside an `aria-hidden` specimen.
-- `useLiveColours.test.ts` (jsdom, canvas stubbed): reads on mount, re-reads on a
-  `class` change on `<html>` and on `PRESET_CHANGE_EVENT`, stays "—" without a canvas.
+- `live-colours.test.ts` (node env, injected reader and an `EventTarget` — the repo
+  adds no DOM library): reads on first snapshot, re-reads on a class change on `<html>`,
+  on `PRESET_CHANGE_EVENT` and on `storage`, stops on unsubscribe, holds nothing without
+  a reader. `useLiveColours.ts` is browser glue, checked by hand.
 - **Browser:** the sandbox is built only under `DEBUG=1`, which CI's browser job does
   not build yet (§E12c). Checked by hand in Chromium, light and dark, with a preset;
   the automated check (real HEX after load, axe clean) is added to E12c's list.
