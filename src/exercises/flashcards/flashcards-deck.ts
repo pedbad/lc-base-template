@@ -107,3 +107,8 @@ export function deckReducer(state: DeckState, action: DeckAction): DeckState {
       return state;
   }
 }
+
+/** The finished deck's count, on the done card and in the live region (TODO §E22). */
+export function learnedText(total: number): string {
+  return `${total} ${total === 1 ? 'card' : 'cards'} learned`;
+}

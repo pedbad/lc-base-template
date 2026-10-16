@@ -2054,6 +2054,14 @@ rather than the Language Centre's course factory; the maintainer took three smal
   reduced motion was not checked in a browser. Design:
   [`2026-10-16-flip-cue-retire-design.md`](../specs/2026-10-16-flip-cue-retire-design.md);
   plan: [`2026-10-16-flip-cue-retire-plan.md`](2026-10-16-flip-cue-retire-plan.md).
+- **E22 — a finished flashcards deck keeps a card in place. DONE 2026-10-16.** On the
+  last rating the deck used to vanish (an early return without the card), and the page
+  jumped up by a card's height (maintainer, 2026-10-16). Now `DoneCard` takes the card's
+  place in the same frame (`flashcards-css.test.ts` holds the size): a success icon,
+  **Deck complete**, the count and "Select **Reset** to play again". It is not a control
+  and has no flip corner. The rating row stays laid out and hidden, and the live region
+  says "Deck complete — N cards learned." It eases in, or appears at once under reduced
+  motion. Checked by hand in Chromium: the Reset button does not move.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that

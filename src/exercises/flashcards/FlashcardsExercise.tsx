@@ -54,6 +54,7 @@ import {
   cardId,
   deckReducer,
   initDeckState,
+  learnedText,
   type DeckCard,
   type DeckGrade,
 } from './flashcards-deck';
@@ -61,6 +62,7 @@ import { initSrsState, gradeCard, dueOrder, type SrsGrade, type SrsState } from 
 import { storageKey, loadSrsState, saveSrsState, clearSrsState } from './flashcards-storage';
 import { RateButtons } from './RateButtons';
 import { ClearProgress } from './ClearProgress';
+import { DoneCard } from './DoneCard';
 import { EXERCISE_BUTTONS } from '@/exercises/lib/exercise-buttons';
 import { FlipCue } from '@/exercises/lib/FlipCue';
 import { FlipCueContext } from '@/exercises/lib/FlipCueContext';
@@ -196,64 +198,27 @@ export default function FlashcardsExercise({ config, progressId }: ExerciseCompo
     </div>
   );
 
-  if (!current) {
-    return (
-      <div className="flashcards">
-        <div className="flashcards-toolbar">{progress}</div>
-        <p className="flashcards-status" role="status" aria-live="polite">
-          Deck complete — {total} {total === 1 ? 'card' : 'cards'} learned.
-        </p>
-        {housekeeping}
-      </div>
-    );
-  }
-
   const targetOnFront = direction === 'target-native';
-  const frontText = targetOnFront ? current.target : current.native;
-  const backText = targetOnFront ? current.native : current.target;
   const faceLang = (isTarget: boolean) => (isTarget ? TARGET_LANG : undefined);
   const langName = (isTarget: boolean) => (isTarget ? TARGET_NAME : NATIVE_NAME);
   // The cards still waiting behind this one, capped at the two drawn (flashcards.css).
   const stack = Math.min(queue.length - 1, 2);
 
-  const speaker = (isTarget: boolean) =>
-    isTarget && current.audio ? (
-      <AudioClip
-        className="super-compact-speaker flashcards-audio"
-        soundFile={current.audio}
-        size={56}
-        inline
-      />
-    ) : null;
+  // The card in play: its front and back, and the transparent flip control beneath.
+  const renderCard = (card: DeckCard) => {
+    const frontText = targetOnFront ? card.target : card.native;
+    const backText = targetOnFront ? card.native : card.target;
+    const speaker = (isTarget: boolean) =>
+      isTarget && card.audio ? (
+        <AudioClip
+          className="super-compact-speaker flashcards-audio"
+          soundFile={card.audio}
+          size={56}
+          inline
+        />
+      ) : null;
 
-  return (
-    <div className="flashcards">
-      <p className="sr-only" role="status" aria-live="polite">
-        {`Card ${known + 1} of ${total}. ${recognised} recognised.`}
-      </p>
-
-      <div className="flashcards-toolbar">
-        {progress}
-        {options.lockDirection ? null : (
-          <div className="flashcards-direction" role="group" aria-label="Card direction">
-            <button
-              type="button"
-              aria-pressed={targetOnFront}
-              onClick={() => setDirection('target-native')}
-            >
-              {`${TARGET_NAME} to ${NATIVE_NAME}`}
-            </button>
-            <button
-              type="button"
-              aria-pressed={!targetOnFront}
-              onClick={() => setDirection('native-target')}
-            >
-              {`${NATIVE_NAME} to ${TARGET_NAME}`}
-            </button>
-          </div>
-        )}
-      </div>
-
+    return (
       <div className="flashcards-card-wrap" data-stack={stack}>
         <div className="flashcards-card" data-flipped={flipped}>
           <span className="flashcards-card-inner">
@@ -289,8 +254,8 @@ export default function FlashcardsExercise({ config, progressId }: ExerciseCompo
                 {backText}
               </span>
               {speaker(!targetOnFront)}
-              {current.image ? (
-                <img className="flashcards-image" src={resolveAsset(current.image)} alt="" />
+              {card.image ? (
+                <img className="flashcards-image" src={resolveAsset(card.image)} alt="" />
               ) : null}
             </span>
           </span>
@@ -305,11 +270,46 @@ export default function FlashcardsExercise({ config, progressId }: ExerciseCompo
           />
         </div>
       </div>
+    );
+  };
+
+  return (
+    <div className="flashcards">
+      <p className="sr-only" role="status" aria-live="polite">
+        {current
+          ? `Card ${known + 1} of ${total}. ${recognised} recognised.`
+          : `Deck complete — ${learnedText(total)}.`}
+      </p>
+
+      <div className="flashcards-toolbar">
+        {progress}
+        {options.lockDirection ? null : (
+          <div className="flashcards-direction" role="group" aria-label="Card direction">
+            <button
+              type="button"
+              aria-pressed={targetOnFront}
+              onClick={() => setDirection('target-native')}
+            >
+              {`${TARGET_NAME} to ${NATIVE_NAME}`}
+            </button>
+            <button
+              type="button"
+              aria-pressed={!targetOnFront}
+              onClick={() => setDirection('native-target')}
+            >
+              {`${NATIVE_NAME} to ${TARGET_NAME}`}
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* A finished deck keeps a card in the card's place, so nothing jumps (§E22). */}
+      {current ? renderCard(current) : <DoneCard total={total} />}
 
       {/* The card is the flip control, so there is no Show answer button (maintainer,
           2026-10-12). The rating row is always laid out and hidden until the flip
           (flashcards.css), so nothing below it jumps. */}
-      <div className="flashcards-actions" data-flipped={flipped}>
+      <div className="flashcards-actions" data-flipped={current ? flipped : false}>
         <RateButtons onRate={handleRate} />
       </div>
 

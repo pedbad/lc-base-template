@@ -51,3 +51,23 @@ describe('flashcards.css progress circles', () => {
     expect(rule(".flashcards-actions[data-flipped='false']")).toMatch(/visibility:\s*hidden/);
   });
 });
+
+// TODO §E22: the done card takes the card's place at the card's size, so finishing the
+// deck moves nothing below it.
+describe('flashcards.css done card', () => {
+  test('has the same frame as the card', () => {
+    const card = rule('.flashcards-card');
+    const done = rule('.flashcards-done');
+    for (const declaration of ['aspect-ratio: 3 / 2;', 'min-height: 13rem;', 'width: 100%;']) {
+      expect(card, declaration).toContain(declaration);
+      expect(done, declaration).toContain(declaration);
+    }
+  });
+
+  test('eases in only when motion is welcome', () => {
+    expect(css).toMatch(
+      /@media \(prefers-reduced-motion: no-preference\)\s*\{\s*\.flashcards-done\s*\{\s*animation:\s*flashcards-done-in/,
+    );
+    expect(css).toContain('@keyframes flashcards-done-in');
+  });
+});
