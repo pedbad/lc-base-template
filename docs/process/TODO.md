@@ -52,7 +52,7 @@ verdicts, **E7** (the Claude skills, 2026-10-16), **E18** (the palette preview, 
 **E19** (the brand board, `071be35`) and **E20** (the image comparison slider,
 `99d1b68`), **E21** (the flip cue retires, `1eccb86`) and **E22** (the flashcards done
 card, `5f670b8`), both fast-forwarded 2026-10-16, and **E12c** (the `DEBUG=1` browser
-suite). The **graphify review** (2026-10-15, output not committed) fixed six stale
+suite, `aa10305`). The **graphify review** (2026-10-15, output not committed) fixed six stale
 spec headers, five missing plan links and two `STRUCTURE.md` gaps; the import map
 breaks no rule (nothing `vite.config.ts` reaches uses `@/…`; the two unmentioned
 cross-folder imports, engine fixtures → `src/showcase/fixture-types.ts` and
@@ -1908,7 +1908,7 @@ never press a key. **Order: E9–E11 before the handover, E12 just before or aft
     only the progress count. `ResultSlot` now adds the verdict in screen-reader-only
     words (the course's `correct` / `incorrect` labels) to every graded row; the icon
     stays decorative. Engines with their own marking (`AnswerFeedback`) already spoke.
-  - **E12c — the debug pages in CI. DONE 2026-10-16.** Specs in `e2e/debug/`, run only
+  - **E12c — the debug pages in CI. DONE 2026-10-16** (`aa10305`). Specs in `e2e/debug/`, run only
     against a `DEBUG=1` build, and a `DEBUG=1` leg per base path in CI's `e2e` job: a
     showcase clip playing and failing, E18's palette preview, E21's flip cue and E22's
     done card. What each covers and how to run it: `docs/TOOLING.md`, "Browser tests".
