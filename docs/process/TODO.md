@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-16 · **HEAD:** see `git log` · **Suite:** 189 files · 1977 tests green
+**Last updated:** 2026-10-16 · **HEAD:** see `git log` · **Suite:** 190 files · 1984 tests green
 (Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -2317,3 +2317,4 @@ build, so it cannot return. Two remain:
 | 2026-10-16 | `071be35` | **brand board** — sandbox Colour section: proportion bar, a card per colour with live HEX/RGB and contrast, each role in use (E19)                 |
 | 2026-10-16 | `99d1b68` | **image comparison slider** — sandbox Images section: each light/dark pair as one slider on theme-fixed grounds (E20)                              |
 | 2026-10-16 | `1eccb86` | **flip cue retires** — three cards turned, the Tap to flip corners leave with a random exit and the instruction glyph fades (E21)                  |
+| 2026-10-16 | `5f670b8` | **flashcards done card** — a finished deck keeps a "Deck complete" card in the card's place, so nothing jumps (E22)                                |

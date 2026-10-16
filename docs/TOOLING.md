@@ -259,9 +259,12 @@ needs the number points here rather than restating it.
 
 | Asset        | Budget (gzipped) | Measured 2026-10-16 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 140 kB**     | 136.92 kB           | 3.08 kB  |
+| `main-*.js`  | **< 140 kB**     | 136.93 kB           | 3.07 kB  |
 | `main-*.css` | **< 19 kB**      | 17.98 kB            | 1.02 kB  |
 
+- **Flashcards done card (2026-10-16, TODO §E22): JS 136.92 → 136.93 kB, CSS
+  unchanged.** The card and its styles live in the lazy flashcards chunk; `main` only
+  carries the sandbox inventory's new icon name.
 - **Flip cue retires (2026-10-16, TODO §E21): JS 136.35 → 136.92 kB, CSS unchanged.**
   `ExerciseHost` is in every LO page's bundle, so its new phase hook, store and context
   ride along; the exits' keyframes sit in the lazy `flip-cue.css`. `main` itself had
