@@ -257,10 +257,15 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
 **This is the one place the budget is written down.** Every other doc and comment that
 needs the number points here rather than restating it.
 
-| Asset        | Budget (gzipped) | Measured 2026-10-15 | Headroom |
+| Asset        | Budget (gzipped) | Measured 2026-10-16 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 140 kB**     | 135.68 kB           | 4.32 kB  |
-| `main-*.css` | **< 19 kB**      | 17.96 kB            | 1.04 kB  |
+| `main-*.js`  | **< 140 kB**     | 136.92 kB           | 3.08 kB  |
+| `main-*.css` | **< 19 kB**      | 17.98 kB            | 1.02 kB  |
+
+- **Flip cue retires (2026-10-16, TODO §E21): JS 136.35 → 136.92 kB, CSS unchanged.**
+  `ExerciseHost` is in every LO page's bundle, so its new phase hook, store and context
+  ride along; the exits' keyframes sit in the lazy `flip-cue.css`. `main` itself had
+  grown 135.68 → 136.35 kB since the last entry, across E13b and E18–E20, unlogged.
 
 - **E9 focus refs and the Feijoa plugin (2026-10-15, TODO §E9, §E5): JS 135.45 →
   135.68 kB, CSS 18.03 → 17.96 kB.** The choice pills gained a ref per pill; Feijoa's
