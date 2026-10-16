@@ -119,10 +119,12 @@ exercise where learners drag words onto a picture"):
 1. Claude checks whether a type that already exists does the job. Often one does, and
    you can use it today.
 2. If not, it asks what learners see and do, how answers are marked (with examples from
-   your lesson) and for a sample of your content.
+   your lesson) and for a short sample.
 3. It shows you a request and, when you say yes, files it as an issue on the template's
    GitHub page. Without Claude: the template repo → **Issues** → **New issue** →
-   **Template request**, and fill in the form yourself.
+   **Template request**, and fill in the form yourself. **Issues there are public**, so
+   the sample is made up for the request: never your unpublished lesson text, nothing
+   copied from a textbook, no images or audio.
 4. The maintainer is emailed, may ask questions on the issue (you are emailed when they
    do), and builds it. When it is done the issue closes, and the new type reaches your
    course with the next template update (above).

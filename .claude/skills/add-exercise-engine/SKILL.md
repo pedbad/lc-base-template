@@ -11,14 +11,12 @@ a new exercise of an existing kind. For a new exercise of an existing kind, use 
 
 ## Step 0 — Where am I
 
-Run `git remote get-url origin`. The repository name is the last part of the address,
-without `.git`.
+Apply the rule in [`.claude/skills/README.md` → "Where am I"](../README.md#where-am-i).
 
-- **`lc-base-template`**: this is the template. Go on to Step 1.
-- **Any other name**: this is a course repo. Engines are built once, in the template,
-  for every course ([`COURSE_GUIDE.md` → "What you may edit"](../../../COURSE_GUIDE.md#what-you-may-edit)).
+- **The template**: go on to Step 1.
+- **A course repo**: engines are built once, in the template, for every course
+  ([`COURSE_GUIDE.md` → "What you may edit"](../../../COURSE_GUIDE.md#what-you-may-edit)).
   Write no code. Go to **Request mode** at the end of this file.
-- **No `origin`, or you cannot tell**: ask the user which it is.
 
 ## Step 1 — Test first
 
@@ -35,21 +33,20 @@ A request issue from a course has them under "How are answers marked?".
 
 ## Step 2 — Build it
 
-Follow the engine recipe: schema, pure grading, colocated tests, thin view, fixture,
-registry entry ([`CONTRIBUTING.md`, the note at the end of "Adding content vs. changing the system"](../../../CONTRIBUTING.md#adding-content-vs-changing-the-system-read-before-a-pr)).
-Copy the shape of [`src/exercises/reading/`](../../../src/exercises/reading/), file for
-file. What must exist for a new type is enforced by guard e
-([`src/guards/registry-completeness.ts`](../../../src/guards/registry-completeness.ts)):
-its key, its registry entry, its fixture and its schema.
-
-Keep to [`AGENTS.md`](../../../AGENTS.md) while you build: tokens only, every CSS rule in
-`@layer`, prerendered markup equal to the first client render, reduced motion through
-`prefersReducedMotion()`. Watch the bundle budget
-([`docs/TOOLING.md` → "Bundle budget"](../../../docs/TOOLING.md)).
-
-Then document it where authors look: the exercise's section in
-[`CONTRIBUTING.md`](../../../CONTRIBUTING.md), and
-[`public/llms.txt`](../../../public/llms.txt) (it lists the engines).
+1. **The key.** Add the type to `EXERCISE_TYPE_KEYS` in
+   [`src/config/exercise-types.ts`](../../../src/config/exercise-types.ts). The file's
+   header says what then fails to compile until its instruction copy is added.
+2. **The engine**, by the recipe: schema, pure grading, colocated tests, thin view,
+   fixture, registry entry ([`CONTRIBUTING.md`, the note at the end of "Adding content vs. changing the system"](../../../CONTRIBUTING.md#adding-content-vs-changing-the-system-read-before-a-pr)).
+   Copy the shape of [`src/exercises/reading/`](../../../src/exercises/reading/), file
+   for file. Guard e ([`src/guards/registry-completeness.ts`](../../../src/guards/registry-completeness.ts))
+   names anything still missing.
+3. **The rules.** Keep to [`AGENTS.md`](../../../AGENTS.md) "Hard constraints" and "Code
+   rules" throughout, and watch the bundle budget
+   ([`docs/TOOLING.md` → "Bundle budget"](../../../docs/TOOLING.md)).
+4. **The docs** authors read: the exercise's section in
+   [`CONTRIBUTING.md`](../../../CONTRIBUTING.md), and
+   [`public/llms.txt`](../../../public/llms.txt) (it lists the engines).
 
 ## Step 3 — Finish
 
@@ -66,23 +63,7 @@ request so merging closes it.
    - what the learner sees and does, with a mouse, a keyboard and on a phone;
    - how answers are marked, as concrete examples, one per line ("_le bras_ on the arm →
      correct", "nothing placed → not marked");
-   - a sample with their real content, in the shape of a lesson's `exercise.json`;
+   - a short, made-up sample in the shape of a lesson's `exercise.json`;
    - feedback, audio, Show answers and Reset;
    - which course and lesson need it.
-3. **Draft the issue** with the fields of the template's request form
-   ([`.github/ISSUE_TEMPLATE/template-request.yml`](../../../.github/ISSUE_TEMPLATE/template-request.yml)),
-   and show it to the user. Write no file in this repo; keep any draft in a temporary
-   file outside it (`mktemp`).
-4. **File it only when the user says yes.** Find the template's address from this repo,
-   never from memory: `git remote get-url upstream` (a linked copy), else
-   `gh repo view --json parent --jq .parent.nameWithOwner` (a fork), else ask. Then:
-
-   ```bash
-   gh issue create --repo <owner/name> --title "[Request] <short name>" \
-     --label "template request" --body-file <draft file>
-   ```
-
-   If `gh` is not installed or not signed in, give the user the text and the link
-   `https://github.com/<owner/name>/issues/new?template=template-request.yml` to paste
-   it into. Tell them the maintainer is emailed, replies on the issue, and that the new
-   type reaches their course with the next template update.
+3. **File it** by [`.claude/skills/README.md` → "Filing a template request"](../README.md#filing-a-template-request).

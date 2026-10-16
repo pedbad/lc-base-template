@@ -62,34 +62,41 @@ reports findings with file and line. It does not edit.
 The three code skills (`add-exercise-engine`, `add-block-type`, `change-theme`) open
 with the same two steps, in this order:
 
-- **Step 0 — Where am I.** Read `git remote get-url origin`. A repository named
-  `lc-base-template` is the template; any other name is a course repo. No `origin`, or
-  unclear: ask the user.
+- **Step 0 — Where am I.** Applies the one rule in `.claude/skills/README.md` (also
+  used by `before-pr`, `sync-from-template` and the reviewer): the template only when
+  `origin` is named `lc-base-template` **and** there is no `upstream` remote **and**
+  `gh` says the repo is not a fork (a fork keeps the template's name until renamed);
+  otherwise a course repo; unclear: ask, never guess "template". (Changed after review:
+  the first rule read the name alone.)
 - **Step 1 — Test first** (template only). Write the test beside the code, run
-  `bun run test`, see it fail for the expected reason, and only then write the code.
+  `bun run test`, see it fail for the expected reason, and only then write the code. For
+  a theme change that only alters existing values there is nothing new to expect: the
+  existing contrast tests are its check, and the skill says so rather than invent a test.
 
 ### 4.2 Request mode (course repo)
 
 1. Check the existing types first (the exercise registry, the block renderers, the
    three presets). If one fits, show the colleague and stop.
 2. Interview: what the learner sees and does (mouse, keyboard, phone), how answers are
-   marked as concrete examples ("X dropped on Y → correct"), a sample in the lesson's
-   JSON shape with their real content, feedback, audio, show answers and reset. The
-   marking examples become the maintainer's first failing tests.
-3. Draft the issue from the form's fields and show it. Write no file in the course
-   repo.
-4. On the colleague's OK, file it with `gh issue create` on the template. The template's
-   address comes from the repo, never a fixed name: the `upstream` remote (linked copy),
-   else `gh repo view --json parent` (fork), else ask. Without a working `gh`, give the
-   text and the template's new-issue link to paste in a browser.
+   marked as concrete examples ("X dropped on Y → correct"), a short made-up sample in
+   the lesson's JSON shape, feedback, audio, show answers and reset. The marking
+   examples become the maintainer's first failing tests.
+3. File it by `.claude/skills/README.md`, "Filing a template request", the one copy of
+   these steps: warn that template issues are **public** (a made-up sample, no
+   unpublished lesson text, nothing from a textbook, no media); draft outside the repo
+   with the form's labels as `###` headings; find the template's address from the repo
+   (`upstream`, else the fork's parent, else ask); file with `gh issue create` only on
+   the colleague's OK, without the label if it does not exist yet; without `gh`, give
+   the text and the new-issue link.
 
 ## 5. The issue form
 
 `.github/ISSUE_TEMPLATE/template-request.yml`: kind (exercise type, block type, theme
 change), the course and lesson that need it, what the learner sees and does, marking
 examples, sample content, keyboard and screen-reader use, and a checkbox "I checked the
-existing types". Label `template request`, created once on the template
-(`gh label create`). Course repos inherit the file; it is harmless there.
+existing types". It opens with a note: file it on the template, not a course repo, and
+issues are public. Label `template request`, created once on the template
+(`gh label create`). Course repos inherit the file; the note keeps it from misleading.
 
 ## 6. The test that keeps the skills' shape
 
@@ -97,8 +104,10 @@ existing types". Label `template request`, created once on the template
 
 - every `.claude/skills/*/SKILL.md` has frontmatter with `name` equal to its folder and
   a non-empty `description`; the agent file has `name` and `description`;
-- the three code skills contain the Step 0 and Step 1 headings, Step 0 first;
-- no skill or agent tells Claude to run `bun test` (only `bun run test`).
+- the three code skills contain the Step 0 and Step 1 headings, Step 0 first; Step 0
+  links the shared rule; Step 1 contains `bun run test` and a check that it fails;
+- no shipped skill, and not the agent, tells Claude to run `bun test` (a course's own
+  skill is not checked for this).
 
 Broken links are already caught: `md-links.test.ts` checks every tracked `.md`.
 

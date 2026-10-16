@@ -15,19 +15,19 @@ description: Use before committing, pushing or opening a pull request, or when s
      ([`AGENTS.md` → "The eight guards"](../../../AGENTS.md#the-eight-guards)).
 2. **Check the scope.** Run `git diff --name-only main...` (and `git status` for files
    not yet committed).
-   - In a **course repo** (`git remote get-url origin` does not end in
-     `lc-base-template`), every file must sit in the folders
+   - In a **course repo** (by [`.claude/skills/README.md` → "Where am I"](../README.md#where-am-i)),
+     every file must sit in the folders
      [`COURSE_GUIDE.md` → "What you may edit"](../../../COURSE_GUIDE.md#what-you-may-edit)
      lists. If one does not, stop and tell the user which file and why it needs the
      maintainer.
-   - Never commit `.claude/tdd-guard/` or Feijoa font files
+   - Check nothing the hard constraints forbid committing is staged
      ([`AGENTS.md` → "Hard constraints"](../../../AGENTS.md)).
 3. **Walk the checklist** in [`.github/pull_request_template.md`](../../../.github/pull_request_template.md)
    with the user. A content-only pull request (lessons and their media) needs only a
    green CI (COURSE_GUIDE, "Every day: the loop"); a change to the machinery needs the
    accessibility boxes too.
-4. **Commit** in small [Conventional Commits](https://www.conventionalcommits.org/), one
-   concern each ([`AGENTS.md` → "Commits"](../../../AGENTS.md#commits)). If the change
-   answers a request issue, put `Closes #N` in the pull request.
-5. Optionally, ask the `lc-reviewer` agent to review the diff before opening the pull
-   request.
+4. **Commit only if the user asks.** Otherwise say it is ready and show the commit
+   message you would use: small [Conventional Commits](https://www.conventionalcommits.org/),
+   one concern each ([`AGENTS.md` → "Commits"](../../../AGENTS.md#commits)). If the
+   change answers a request issue, the pull request says `Closes #N`.
+5. Optionally, ask the `lc-reviewer` agent to review the diff before the pull request.

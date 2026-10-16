@@ -216,12 +216,19 @@ request into the course repo's `main`, CI green before merge).
 When the template changes, each course repo pulls it in:
 
 - **Fork:** course repo page → **Sync fork** → **Update branch**. Then, on each clone:
-  `git pull && bun install`.
-- **Linked copy:** on a clone of the course repo:
+  `git pull && bun install`. If GitHub refuses because the step 6 ruleset requires a pull
+  request on `main`, add the template as `upstream` once
+  (`git remote add upstream <template URL>`) and use the branch route below.
+- **Linked copy** (or a refused fork sync): `main` takes changes only through a pull
+  request (step 6), so merge on a branch, on a clone of the course repo:
 
   ```bash
-  git fetch upstream && git merge upstream/main && bun install && git push
+  git switch main && git pull && git switch -c sync-template
+  git fetch upstream && git merge upstream/main && bun install
+  git push -u origin sync-template
   ```
+
+  Then open a pull request into the course's `main` and merge it once CI is green.
 
 `bun install` is not optional — a template update can add a package, and the hooks and
 tests fail without it.

@@ -7,6 +7,12 @@ description: Ask for a new exercise type, a new block type or a change to the lo
 title: '[Request] '
 labels: ['template request']
 body:
+  - type: markdown
+    attributes:
+      value: >-
+        **File this on the template repo** (lc-base-template), not on your course repo.
+        **Issues here are public.** Use a short sample made up for this request: never
+        your unpublished lesson text, nothing copied from a textbook, no images or audio.
   - type: dropdown
     id: kind
     attributes:
@@ -41,8 +47,10 @@ body:
   - type: textarea
     id: sample
     attributes:
-      label: A sample with your real content
-      description: In the shape of a lesson's exercise.json or block.json, if you can.
+      label: A short, made-up sample
+      description: >-
+        In the shape of a lesson's exercise.json or block.json, if you can. Public: no
+        real lesson text, nothing copied from a textbook.
       render: json
   - type: textarea
     id: access
