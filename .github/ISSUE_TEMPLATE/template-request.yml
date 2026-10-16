@@ -1,0 +1,58 @@
+# A course asks the template for something it does not have yet: a new exercise type,
+# a new block type, or a change to the look. Filed by a colleague, often through the
+# add-exercise-engine / add-block-type / change-theme Claude skills (.claude/skills/).
+# The maintainer builds it in the template; the pull request's "Closes #N" closes it.
+name: Template request
+description: Ask for a new exercise type, a new block type or a change to the look
+title: '[Request] '
+labels: ['template request']
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What do you need?
+      options:
+        - A new exercise type
+        - A new block type
+        - A change to the look
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Which course and lesson need it?
+      placeholder: French 1, lesson 4 (body parts)
+    validations:
+      required: true
+  - type: textarea
+    id: learner
+    attributes:
+      label: What does the learner see and do?
+      description: With a mouse, with a keyboard, and on a phone.
+    validations:
+      required: true
+  - type: textarea
+    id: marking
+    attributes:
+      label: How are answers marked?
+      description: >-
+        For an exercise: concrete examples, one per line, such as "le bras placed on the
+        arm → correct" or "nothing placed → not marked".
+  - type: textarea
+    id: sample
+    attributes:
+      label: A sample with your real content
+      description: In the shape of a lesson's exercise.json or block.json, if you can.
+      render: json
+  - type: textarea
+    id: access
+    attributes:
+      label: Keyboard and screen-reader use
+      description: How someone who cannot use a mouse, or cannot see the screen, does it.
+  - type: checkboxes
+    id: checked
+    attributes:
+      label: Before you send
+      options:
+        - label: I checked the existing types and none of them fits
+          required: true

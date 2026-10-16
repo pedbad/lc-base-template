@@ -217,7 +217,17 @@ as far as the tree is concerned.
 ```text
 .
 ├── .claude/
+│   ├── agents/
+│   └── skills/
+│       ├── add-block-type/
+│       ├── add-exercise-engine/
+│       ├── add-lo/
+│       ├── before-pr/
+│       ├── build-for-upload/
+│       ├── change-theme/
+│       └── sync-from-template/
 ├── .github/
+│   ├── ISSUE_TEMPLATE/
 │   └── workflows/
 ├── .husky/
 ├── .vscode/
