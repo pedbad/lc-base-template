@@ -1,6 +1,6 @@
 /**
  * ContrastBadge — a WCAG verdict and ratio for two live colours (§E19), or a dash
- * while they are unknown (the prerender, a browser with no canvas). The chip's colour
+ * while they are unknown (a server render, a browser with no canvas). The chip's colour
  * says pass or not at a glance; the words say it for everyone else.
  */
 import { contrastRatio, formatRatio, verdictFor, type Rgb, type Verdict } from './colour-math';

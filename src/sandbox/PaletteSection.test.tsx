@@ -1,6 +1,6 @@
 /**
  * PaletteSection.test.tsx — the Colour section as a brand board (§E19), as the
- * prerender writes it: three parts in order, and no colour value before hydration.
+ * a server render writes it: three parts in order, and no colour value it cannot know.
  */
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
@@ -25,8 +25,8 @@ describe('PaletteSection', () => {
     expect(html.match(/<h5/g)).toHaveLength(count);
   });
 
-  // Hard constraint 4: the prerender cannot know a colour, so it must not print one.
-  it('prints no colour value before hydration', () => {
+  // Hard constraint 4: a server render cannot know a colour, so it must not print one.
+  it('prints no colour value in a server render', () => {
     expect(html).not.toMatch(/#[0-9A-F]{6}\b|RGB \d/);
     expect(html).toContain('—');
   });

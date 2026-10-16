@@ -4,7 +4,7 @@
  * RGB, and the contrast with the partner. The token name — what a designer edits — is
  * one fold away, so a stakeholder is not handed `--cam-blue` first.
  *
- * Values are "—" until the page has been read (`live` is null in the prerender).
+ * Values are "—" until the page has been read (`live` is null in a server render).
  */
 import { FOCUS_OUTLINE } from '@/components/shell/focus-outline';
 import type { PrimitiveColour } from '../sandbox-catalog';

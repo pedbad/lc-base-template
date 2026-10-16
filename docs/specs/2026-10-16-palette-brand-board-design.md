@@ -23,7 +23,7 @@ designer.
 - **One theme at a time.** The section follows the header's theme toggle; no light/dark
   side-by-side (maintainer, 2026-10-16: the toggle already does that).
 - **Live values, never stored values.** HEX, RGB and contrast are read from the browser
-  after hydration. The catalog still holds names only, so the page cannot go stale and
+  after the page mounts. The catalog still holds names only, so the page cannot go stale and
   guards f and g need no exception.
 - **Out:** copy-to-clipboard, OKLCH or HSL readouts, a printable/exported brand sheet.
   Each is easy to add later and none was asked for.
@@ -83,12 +83,15 @@ picker's samples are, §E18).
 
 ## 4. How values stay live and honest
 
-- **Reading a colour.** After hydration, a hook paints `var(--token)` onto a 1×1
+- **Reading a colour.** Once the section is mounted, a hook paints `var(--token)` onto a 1×1
   `<canvas>` and reads back the sRGB bytes. One path for a plain HEX, a `color-mix()`
   (tokens.css uses them) or an `oklch()` value, with no CSS colour parser to write.
-- **Before hydration** every value and badge reads "—". The prerendered markup equals
-  the first client render (hard constraint 4) because the values are behind
-  `useIsHydrated` and are read in an effect.
+- **Before the first read** every value and badge reads "—". The sandbox mounts with
+  `createRoot` and is not prerendered; the store reads the page only when React
+  subscribes (after commit, never during render, because the probe is a DOM change),
+  and that first read also catches a preset the boot script applied late. A server
+  render (the tests) shows "—" throughout, so hard constraint 4 would still hold if
+  the page were ever prerendered.
 - **Re-reading.** On a theme change (a `MutationObserver` on `<html>`'s `class`), on
   `PRESET_CHANGE_EVENT`, and on `storage`. One subscription for the section, not one
   per card.
@@ -104,7 +107,7 @@ New folder `src/sandbox/palette/`, so no file grows large:
 | `colour-math.ts`        | pure: bytes → HEX / RGB text, WCAG luminance, ratio, verdict       |
 | `live-colours.ts`       | the store: reads and subscriptions, reader injected, page-agnostic |
 | `useLiveColours.ts`     | the browser reader and the hook over the store                     |
-| `token-value.ts`        | a token's live value, or "—" before hydration                      |
+| `token-value.ts`        | the `var(--token)` helper for inline styles                        |
 | `ContrastBadge.tsx`     | the ratio and verdict badge                                        |
 | `in-use-specimens.tsx`  | the specimens ③ draws for each role                                |
 | `PaletteAtAGlance.tsx`  | ① the proportion bar                                               |
@@ -124,7 +127,7 @@ The semantic groups gain the specimen kind each role renders as. No value appear
   both directions stay; every primitive has a name, a job and a partner that
   `palette.css` declares; shares are positive and the bar's primitives exist.
 - `PaletteAtAGlance.test.tsx`, `ColourCard.test.tsx`, `ColourInUse.test.tsx`
-  (static render): placeholders "—" before hydration; the bar is a named list with one
+  (static render): placeholders "—" in a server render; the bar is a named list with one
   item per shared primitive; a card's name, job, badge slot and token fold; every role
   present with its token fold; no focusable control inside an `aria-hidden` specimen.
 - `live-colours.test.ts` (node env, injected reader and an `EventTarget` — the repo

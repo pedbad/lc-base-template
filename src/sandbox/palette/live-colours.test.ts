@@ -58,21 +58,23 @@ describe('createColourStore', () => {
     const { sources } = stubSources();
     const store = createColourStore(
       ['--cam-blue'],
-      tableReader(new Map([['var(--cam-blue)', BLUE]])),
+      () => tableReader(new Map([['var(--cam-blue)', BLUE]])),
       sources,
     );
+    store.subscribe(() => {});
     expect(store.getSnapshot()).toBe(store.getSnapshot());
   });
 
   it('reads again on a theme flip, a preset change and a storage event', () => {
     const table = new Map([['var(--primary)', BLUE]]);
     const { win, sources, flipTheme } = stubSources();
-    const store = createColourStore(['--primary'], tableReader(table), sources);
+    const store = createColourStore(['--primary'], () => tableReader(table), sources);
     let notified = 0;
     store.subscribe(() => {
       notified += 1;
     });
     expect(store.getSnapshot().get('--primary')).toEqual(BLUE);
+    expect(notified).toBe(0);
 
     table.set('var(--primary)', DARK);
     flipTheme();
@@ -85,7 +87,7 @@ describe('createColourStore', () => {
 
   it('stops listening when unsubscribed', () => {
     const { win, sources, isObserving } = stubSources();
-    const store = createColourStore(['--primary'], tableReader(new Map()), sources);
+    const store = createColourStore(['--primary'], () => tableReader(new Map()), sources);
     let notified = 0;
     const unsubscribe = store.subscribe(() => {
       notified += 1;
@@ -99,6 +101,32 @@ describe('createColourStore', () => {
   // A browser that gives no 2D canvas: the board still renders, its values stay "—".
   it('holds no colours when there is no reader', () => {
     const { sources } = stubSources();
-    expect(createColourStore(['--primary'], null, sources).getSnapshot().size).toBe(0);
+    const store = createColourStore(['--primary'], () => null, sources);
+    store.subscribe(() => {});
+    expect(store.getSnapshot().size).toBe(0);
+  });
+
+  // Review, 2026-10-16: the probe is a DOM change, so nothing reads the page during
+  // render; the first read happens as the store starts listening, which also catches a
+  // colour that changed after the first render (the preset boot script running late).
+  it('reads nothing before it listens, then reads once as it starts', () => {
+    const table = new Map([['var(--primary)', BLUE]]);
+    const { sources } = stubSources();
+    let built = 0;
+    const store = createColourStore(
+      ['--primary'],
+      () => {
+        built += 1;
+        return tableReader(table);
+      },
+      sources,
+    );
+    expect(store.getSnapshot().size).toBe(0);
+    expect(built).toBe(0);
+    table.set('var(--primary)', DARK);
+    store.subscribe(() => {});
+    expect(store.getSnapshot().get('--primary')).toEqual(DARK);
+    store.subscribe(() => {});
+    expect(built).toBe(1);
   });
 });

@@ -8,9 +8,10 @@
  * bytes, so there is no CSS colour parser to write. Alpha is dropped: the board names
  * colours, and no token it shows is translucent.
  *
- * SERVER-SAFE. `getServerSnapshot` is null, and the store is built only when `window`
- * exists, so the prerender and the hydration pass render "—" and the first client
- * render equals the prerendered markup (AGENTS.md hard constraint 4). Nothing touches
+ * SERVER-SAFE. The sandbox mounts with `createRoot` and is never prerendered, but the
+ * hook stays safe if that changes: `getServerSnapshot` is null and the store is built
+ * only when `window` exists, so a server or hydrating render shows "—" (AGENTS.md hard
+ * constraint 4). The probe is added when the store first subscribes, never in render. Nothing touches
  * `window` or `document` at module scope.
  */
 import { useMemo, useSyncExternalStore } from 'react';
@@ -69,14 +70,14 @@ function pageSources(): ChangeSources {
 const noSubscription = () => () => {};
 const noColours = (): LiveColours | null => null;
 
-/** Each token's colour now, or null before hydration (render "—" then). */
+/** Each token's colour now, or null where the page cannot be read (render "—" then). */
 export function useLiveColours(tokens: readonly string[]): LiveColours | null {
   const key = tokens.join(' ');
   const store = useMemo(
     () =>
       typeof window === 'undefined'
         ? null
-        : createColourStore(key.split(' '), pageReader(), pageSources()),
+        : createColourStore(key.split(' '), pageReader, pageSources()),
     [key],
   );
   return useSyncExternalStore(

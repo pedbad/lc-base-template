@@ -2016,8 +2016,10 @@ rather than the Language Centre's course factory; the maintainer took three smal
   `DebugPageHeader.test.tsx`).
 - **E19 — the sandbox's Colour section as a brand board. DONE 2026-10-16** (`071be35`).
   A proportion bar, a card per primitive (name, job, live HEX/RGB, contrast badge, token
-  fold) and each semantic role shown in use, values read live after hydration, names
-  only in the catalog; the bar runs largest share first (`b1fd540`). Checked by hand in
+  fold) and each semantic role shown in use, values read live from the page once
+  mounted, names only in the catalog; the bar runs largest share first (`b1fd540`). After
+  review the first read moved into the store's subscription, so no probe is added during
+  render and a late preset is still caught. Checked by hand in
   Chromium, light and dark, with presets C and Z; the automated browser check waits for
   E12c. Design:
   [`2026-10-16-palette-brand-board-design.md`](../specs/2026-10-16-palette-brand-board-design.md).

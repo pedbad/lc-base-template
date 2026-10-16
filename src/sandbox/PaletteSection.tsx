@@ -9,8 +9,8 @@
  * Token names, which a designer edits, sit in each card's and panel's fold.
  *
  * NAMES HERE, VALUES FROM THE PAGE. The catalog holds names only; one `useLiveColours`
- * call reads every colour the board shows after hydration, and again on a theme or
- * preset change, so nothing on it can be stale. Before that — the prerender — every
+ * call reads every colour the board shows from the page, and again on a theme or
+ * preset change, so nothing on it can be stale. In a server render (the tests) every
  * value reads "—".
  */
 import { ColourCard } from './palette/ColourCard';

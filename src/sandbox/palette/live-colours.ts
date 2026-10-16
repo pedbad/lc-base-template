@@ -49,10 +49,15 @@ export function readColours(tokens: readonly string[], reader: ColourReader): Li
 
 export function createColourStore(
   tokens: readonly string[],
-  reader: ColourReader | null,
+  /** Builds the reader at the first read: the browser's adds a probe to the page. */
+  getReader: () => ColourReader | null,
   sources: ChangeSources,
 ): ColourStore {
-  const read = () => (reader ? readColours(tokens, reader) : NO_COLOURS);
+  let reader: ColourReader | null | undefined;
+  const read = () => {
+    reader ??= getReader();
+    return reader ? readColours(tokens, reader) : NO_COLOURS;
+  };
   let snapshot: LiveColours | null = null;
   return {
     subscribe(onChange) {
@@ -63,15 +68,20 @@ export function createColourStore(
       sources.win.addEventListener(PRESET_CHANGE_EVENT, refresh);
       sources.win.addEventListener('storage', refresh);
       const stopObserving = sources.observeRootClass(refresh);
+      // The first read happens here, as listening starts, never during render: the
+      // browser reader adds a probe to the page. It also catches a colour that changed
+      // after the first render (the preset boot script is a separate module). React
+      // re-checks the snapshot after subscribing, so no onChange is needed.
+      snapshot = read();
       return () => {
         sources.win.removeEventListener(PRESET_CHANGE_EVENT, refresh);
         sources.win.removeEventListener('storage', refresh);
         stopObserving();
       };
     },
+    /** Nothing until the first subscription has read the page: "—" for that render. */
     getSnapshot() {
-      snapshot ??= read();
-      return snapshot;
+      return snapshot ?? NO_COLOURS;
     },
   };
 }
