@@ -51,4 +51,43 @@ describe('ExerciseErrorBoundary', () => {
       expect.stringContaining('Engine'),
     );
   });
+
+  // An engine that crashes under the learner's focus takes the focused element with
+  // it, and focus falls to <body>. Move it to the notice then, so a keyboard or screen
+  // reader user lands on what replaced the exercise; never steal it from elsewhere.
+  describe('focus after a failure', () => {
+    afterEach(() => {
+      delete (globalThis as { document?: unknown }).document;
+    });
+
+    function failedBoundary(activeIsBody: boolean) {
+      const body = {};
+      (globalThis as { document?: unknown }).document = {
+        body,
+        activeElement: activeIsBody ? body : { tagName: 'BUTTON' },
+      };
+      const boundary = new ExerciseErrorBoundary({ children: null });
+      const focus = vi.fn();
+      boundary.alertRef = { current: { focus } as unknown as HTMLDivElement };
+      boundary.state = { failed: true };
+      boundary.componentDidUpdate({ children: null }, { failed: false });
+      return focus;
+    }
+
+    test('moves focus to the notice when the crash dropped it to the page', () => {
+      expect(failedBoundary(true)).toHaveBeenCalledOnce();
+    });
+
+    test('leaves focus alone when the learner is elsewhere on the page', () => {
+      expect(failedBoundary(false)).not.toHaveBeenCalled();
+    });
+
+    test('the notice can take focus from script but is not a Tab stop', () => {
+      const boundary = new ExerciseErrorBoundary({ children: null });
+      boundary.state = { failed: true };
+      expect(renderToStaticMarkup(boundary.render())).toMatch(
+        /<div role="alert"[^>]*tabindex="-1"/,
+      );
+    });
+  });
 });
