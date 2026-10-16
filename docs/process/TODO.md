@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-16 · **HEAD:** see `git log` · **Suite:** 167 files · 1737 tests green
+**Last updated:** 2026-10-16 · **HEAD:** see `git log` · **Suite:** 167 files · 1748 tests green
 (Vitest) · 99 Playwright tests (33 × 3 browsers, `bun run test:e2e`) · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -1865,9 +1865,11 @@ never press a key. **Order: E9–E11 before the handover, E12 just before or aft
     dropdown open and the hover card open, in light and dark, and both pages as loaded
     in dark: no violations. Narrow viewports were left out by decision. **One
     exclusion, WebKit only:** Base UI's focus-guard sentinels (why, and when to remove
-    it: `BASE_UI_FOCUS_GUARD` in `e2e/support.ts`). **Open, for a later decision:** an exercise's
-    per-question tick or cross is `aria-hidden`, so a screen reader hears only the
-    progress count, not which answer was wrong (axe does not flag it).
+    it: `BASE_UI_FOCUS_GUARD` in `e2e/support.ts`). **Decided and done 2026-10-16:** an
+    exercise's per-question tick or cross was `aria-hidden`, so a screen reader heard
+    only the progress count. `ResultSlot` now adds the verdict in screen-reader-only
+    words (the course's `correct` / `incorrect` labels) to every graded row; the icon
+    stays decorative. Engines with their own marking (`AnswerFeedback`) already spoke.
   - **E12c — showcase-only cases** (its own spec; needs a `DEBUG=1` build in CI). From
     a second review (below): **memory-match** — click and resize during the 620 ms
     "Show answers" FLIP reorder, then assert every card is back in the grid with no
@@ -1904,10 +1906,12 @@ never press a key. **Order: E9–E11 before the handover, E12 just before or aft
   boundary, and `resume()` did `play().catch(() => {})` after announcing "playing".
   Proved in a browser for a failed chunk, including Reload bringing the exercise back;
   an engine that throws while rendering relies on the same React boundary, untested.
-  **Not covered, for later:** focus is not moved to the notice if an engine crashes
-  under the learner's focus; a pause from outside the page (media keys, a phone call)
-  still leaves the speaker on "playing"; a missing clip only resets the speaker, with a
-  console warning and no message to the learner; no browser test plays audio (E12c).
+  **Follow-ups, done 2026-10-16:** if a crash drops focus to the page, focus moves to
+  the notice (never stolen from elsewhere); a pause or resume from outside the page
+  (media keys, a phone call) reaches the speaker, which shows paused or playing; a clip
+  that cannot play says "Sound unavailable" and dims, still clickable to retry.
+  **Still open:** no browser test plays audio (E12c); the speaker's hook wiring is
+  browser glue with no DOM test (its pure rule, `clipStatus.ts`, is tested).
 
 **A second review (2026-10-14), checked the same day and mostly not actionable.** Of its
 nine claims: uncaught `play()` promises — false, all six calls catch (the real issue is

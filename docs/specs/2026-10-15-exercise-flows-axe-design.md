@@ -108,7 +108,8 @@ test. A fix larger than a few lines, or one that changes the design, stops the j
 goes to the maintainer. Known and out of scope: the per-question tick or cross is
 `aria-hidden`, so a screen reader hears only the progress line's count, not which
 question was wrong. axe does not flag it (nothing is wrong per WCAG's automated rules);
-it is noted for a later decision, not fixed here.
+it is noted for a later decision, not fixed here. **Since 2026-10-16** each graded row
+also says its verdict in screen-reader-only words (`ResultSlot`; TODO §E12b).
 
 **Found while building (2026-10-15):** in WebKit, with a Base UI popup open (the
 Dialog, a Select's dropdown), Base UI's focus-guard sentinels are nameless
