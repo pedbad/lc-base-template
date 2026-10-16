@@ -4,8 +4,9 @@
  * opens must not contain its code, its preset CSS, or react to a stored choice. The same
  * fail-closed rule as the debug pages themselves (AGENTS.md hard constraint 6).
  *
- * Runs against whatever `dist/` holds, like every spec here. After a `DEBUG=1` build the
- * preview is SUPPOSED to be there, so the file check steps aside rather than fail.
+ * Runs only against a normal build: since TODO §E12c a `DEBUG=1` build runs `e2e/debug/`
+ * instead (playwright.config.ts). So a `dist/` holding the debug pages here fails rather
+ * than skips: either the build leaked them, or the wrong suite is running.
  */
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
@@ -24,8 +25,16 @@ function filesUnder(dir: string): string[] {
   });
 }
 
+/** Fails when `dist/` is a DEBUG=1 build: that is a leak, or the debug suite's to test. */
+function requireNormalBuild(): void {
+  expect(
+    existsSync(path.join(DIST, 'debug-sandbox.html')),
+    'dist/ holds the debug pages: a leak, or run the suite with DEBUG=1',
+  ).toBe(false);
+}
+
 test('the built files hold none of the palette preview', () => {
-  test.skip(existsSync(path.join(DIST, 'debug-sandbox.html')), 'a DEBUG=1 build carries it');
+  requireNormalBuild();
   const textFiles = filesUnder(DIST).filter((file) => /\.(html|js|css)$/.test(file));
   const leaks = textFiles.flatMap((file) => {
     const text = readFileSync(file, 'utf8');
@@ -39,7 +48,7 @@ test('the built files hold none of the palette preview', () => {
 
 for (const pagePath of ['index.html', 'example.html']) {
   test(`${pagePath} ignores a stored preview choice`, async ({ page }) => {
-    test.skip(existsSync(path.join(DIST, 'debug-sandbox.html')), 'a DEBUG=1 build applies it');
+    requireNormalBuild();
     await page.addInitScript(() => {
       localStorage.setItem('lc-debug-palette-preset', 'c-warm-blue');
     });
