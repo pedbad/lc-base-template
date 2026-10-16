@@ -393,6 +393,15 @@ single-maintainer lockout to avoid: [`docs/BRANCH_PROTECTION.md`](docs/BRANCH_PR
 > schema + pure grading + colocated tests + thin view + fixture + registry entry. See a
 > recent engine (`src/exercises/reading/`) as the reference shape.
 
+**Claude skills.** The recurring jobs (a lesson, an engine, a block type, the theme, a
+template sync, the check before a pull request, a build for upload) have recipes in
+[`.claude/skills/`](.claude/skills/), with a reviewer in
+[`.claude/agents/lc-reviewer.md`](.claude/agents/lc-reviewer.md). The code recipes start
+from a failing test. In a course repo they file a **Template request** issue on the
+template instead of writing code ([`COURSE_GUIDE.md`](COURSE_GUIDE.md), "Need a new
+exercise, block or look?"); the maintainer builds it here and the pull request's
+`Closes #N` closes the issue. `src/docs/claude-skills.test.ts` keeps the recipes' shape.
+
 ---
 
 ## Locked spec decisions

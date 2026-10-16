@@ -32,7 +32,8 @@ folder exists.**
 | `scripts/`   | **Build-time Node scripts** run by `bun`, outside the Vite bundle                 |
 | `e2e/`       | **Browser tests** — Playwright specs run against the built site                   |
 | `docs/`      | **Specs, tooling rationale and process history** — the written record             |
-| `.github/`   | **CI and repo policy** — the workflow, CODEOWNERS, PR template                    |
+| `.github/`   | **CI and repo policy** — the workflow, CODEOWNERS, PR template, request form      |
+| `.claude/`   | **Claude Code** — settings, task recipes (`skills/`), the reviewer (`agents/`)    |
 | `dist/`      | Build output. Generated, git-ignored, never edited.                               |
 
 ---

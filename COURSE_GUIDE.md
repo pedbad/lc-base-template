@@ -97,6 +97,38 @@ git switch main && git pull && bun install
 it. An update clashes with your work only where it changes a file you also changed, so
 add your own lesson folders and media and leave the template's own files alone.
 
+## Claude can help
+
+The repo comes with recipes that Claude Code follows, in
+[`.claude/skills/`](.claude/skills/). Ask in your own words; Claude picks the matching
+recipe and keeps to this guide's rules.
+
+| Say something like                  | Claude follows       | It                                                  |
+| ----------------------------------- | -------------------- | --------------------------------------------------- |
+| "Add a lesson about food"           | `add-lo`             | copies the example lesson, fills it in, checks it   |
+| "Is this ready for a pull request?" | `before-pr`          | runs every check and walks the pull request form    |
+| "Build the course for the server"   | `build-for-upload`   | goes through [`DEPLOY.md`](DEPLOY.md) step by step  |
+| "I need a new kind of exercise"     | see the next section | asks the maintainer for it, rather than building it |
+
+## Need a new exercise, block or look?
+
+Exercise types, block types and the look are shared by every course, so they are built
+once, in the template, never in your course repo. Ask Claude anyway (say, "I need an
+exercise where learners drag words onto a picture"):
+
+1. Claude checks whether a type that already exists does the job. Often one does, and
+   you can use it today.
+2. If not, it asks what learners see and do, how answers are marked (with examples from
+   your lesson) and for a sample of your content.
+3. It shows you a request and, when you say yes, files it as an issue on the template's
+   GitHub page. Without Claude: the template repo → **Issues** → **New issue** →
+   **Template request**, and fill in the form yourself.
+4. The maintainer is emailed, may ask questions on the issue (you are emailed when they
+   do), and builds it. When it is done the issue closes, and the new type reaches your
+   course with the next template update (above).
+
+Meanwhile, keep writing the lesson with the types that exist.
+
 ## When you are stuck
 
 - **The build or CI fails** and names a file in `lo-config/`: the message says what is

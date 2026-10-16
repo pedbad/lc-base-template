@@ -48,7 +48,7 @@ Done 2026-10-14 to 2026-10-16: **E9** (`ec86eb7`), **E10** (`fb73545`), **E11**
 (`187dadc`), **E12a** (`cbda661`), **E12b**, **E15** (`fe43305`), **E4**
 (`COURSE_GUIDE.md`), **E14** (README opener), **E5** (`DEPLOY.md`), **E13** (a and b,
 with the follow-ups), **E17** (the example lesson hides itself) and the screen-reader
-verdicts. The **graphify review** (2026-10-15, output not committed) fixed six stale
+verdicts, and **E7** (the Claude skills, 2026-10-16). The **graphify review** (2026-10-15, output not committed) fixed six stale
 spec headers, five missing plan links and two `STRUCTURE.md` gaps; the import map
 breaks no rule (nothing `vite.config.ts` reaches uses `@/…`; the two unmentioned
 cross-folder imports, engine fixtures → `src/showcase/fixture-types.ts` and
@@ -57,9 +57,7 @@ cross-folder imports, engine fixtures → `src/showcase/fixture-types.ts` and
 **Decided 2026-10-16: finish all template work before the organisation move.** What is
 left, in order:
 
-1. **E7**: Claude skills in `.claude/skills/`, test-first built in. Start in a fresh
-   session with brainstorming. Build it before course repos exist, so every course
-   starts with it.
+1. **E18**: a palette drop-down in `debug-sandbox.html` (decided 2026-10-16, §E18).
 2. **Firefox on the work iMac**: `bun run test:e2e` should run all 99 there (the
    MacBook Pro cannot start Playwright's Firefox; "Browser verification" below).
 3. **E12c**: showcase-only browser cases, audio playing and failing among them; needs a
@@ -1776,9 +1774,27 @@ no-preference` only.
   with no owner (`ORGANIZATION.md` step 5), so a content-only PR needs no approval once
   branch protection requires code-owner review (E1); CI still validates it. CONTRIBUTING's
   green path now says which content skips review. Course repos inherit the file.
-- **E7 — Claude skills that ship with the repo, test-first built in** (maintainer,
-  2026-10-14; the idea is handover §3 item 3). Task recipes in `.claude/skills/`, so
-  every course repo inherits them and a template sync updates them: `add-lo`,
+- **E7 — Claude skills that ship with the repo. DONE 2026-10-16** (spec
+  `docs/specs/2026-10-16-claude-skills-design.md`, plan in `docs/process/`). Seven
+  skills (the five below plus `change-theme` and `build-for-upload`), `lc-reviewer`,
+  and a **Template request** issue form. Decided with the maintainer: the three code
+  skills open with "Where am I" (the `origin` name: `lc-base-template` or a course
+  repo) and then "Test first"; in a course repo they switch to request mode, check the
+  existing types, interview the colleague and, on their OK, file the issue on the
+  template (address from `upstream` or the fork's parent, never fixed). One look for all
+  courses. COURSE_GUIDE tells colleagues how to ask. `src/docs/claude-skills.test.ts`
+  keeps the frontmatter and the two opening steps (seen failing first, 11 of 15);
+  `md-links` checks their links. **Proved by hand in a scratch clone** (the maintainer
+  chose this over helper agents): at the first red `bun run test`, the engine skill
+  (a true/false engine) and the block skill (a `note` block) had only a new test file,
+  the theme skill (a fourth preset) only a changed `token-presets.test.ts`; with
+  `origin` renamed to `french-1`, the engine skill drafted the issue outside the repo
+  and `git status` stayed empty (not filed). **Still to do once:** create the
+  `template request` label on the template (`gh label create`). **Keep the template's
+  repo name `lc-base-template` in the organisation move** (E2): Step 0 reads it.
+  Was: (maintainer, 2026-10-14; the idea is handover §3 item 3). Task recipes in
+  `.claude/skills/`, so every course repo inherits them and a template sync updates
+  them: `add-lo`,
   `add-exercise-engine`, `add-block-type` (a new content component, like `tabs` or
   `sources`), `sync-from-template`, `before-pr`; plus a reviewer in
   `.claude/agents/lc-reviewer.md`. **Every skill that writes code opens with the
@@ -1964,6 +1980,13 @@ rather than the Language Centre's course factory; the maintainer took three smal
   `lo-config/` holds another lesson, so a course's home page never shows it, and its
   page is still built (unlinked) for the browser tests. CONTRIBUTING, COURSE_GUIDE,
   README, AGENTS and DEPLOY say so.
+- **E18 — a palette drop-down in the debug sandbox** (maintainer, 2026-10-16, next after
+  E7). In `debug-sandbox.html`, a drop-down listing the `tokens-variant-*.css` presets
+  (A · Cambridge Blue, B · Dark Blue, C · Warm Blue); choosing one recolours the whole
+  sandbox at once, light and dark, with no rebuild. Preview only: the real switch stays
+  `DESIGNER.md` Job 2. A new preset file appears in the list by itself. Debug-only, so
+  the bundle budget does not apply. Starts from a failing test; document it in
+  `DESIGNER.md` ("How to read the sandbox") and point the `change-theme` skill at it.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that

@@ -1,7 +1,7 @@
 # Claude skills that ship with the repo — E7 design
 
-**Date:** 2026-10-16 · **Status:** agreed 2026-10-16, not built
-**TODO:** §E7 · **Plan:** to follow in `docs/process/`
+**Date:** 2026-10-16 · **Status:** built 2026-10-16 (`31b3ce7`), proved in a scratch clone (TODO §E7)
+**TODO:** §E7 · **Plan:** [`2026-10-16-claude-skills-plan.md`](../process/2026-10-16-claude-skills-plan.md)
 
 ## 1. Why
 
