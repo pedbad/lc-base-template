@@ -1789,8 +1789,12 @@ no-preference` only.
   (a true/false engine) and the block skill (a `note` block) had only a new test file,
   the theme skill (a fourth preset) only a changed `token-presets.test.ts`; with
   `origin` renamed to `french-1`, the engine skill drafted the issue outside the repo
-  and `git status` stayed empty (not filed). **Still to do once:** create the
-  `template request` label on the template (`gh label create`). **Keep the template's
+  and `git status` stayed empty (not filed). Merged as PR #15 (`e8785a2`), after one
+  review: the "Where am I" rule now also needs no `upstream` remote and not a fork
+  (`.claude/skills/README.md`), and request issues carry a made-up sample because
+  template issues are public. The `template request` label was created 2026-10-16.
+  `lc-reviewer` keeps `Bash` (for `git diff`); only its instructions and the usual
+  permission prompts keep it read-only (the maintainer's choice). **Keep the template's
   repo name `lc-base-template` in the organisation move** (E2): Step 0 reads it.
   Was: (maintainer, 2026-10-14; the idea is handover §3 item 3). Task recipes in
   `.claude/skills/`, so every course repo inherits them and a template sync updates
