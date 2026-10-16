@@ -54,8 +54,8 @@ nothing `vite.config.ts` reaches uses `@/…`, and the two cross-folder imports
 `STRUCTURE.md` does not mention are harmless (engine fixtures import
 `src/showcase/fixture-types.ts`; `src/build/source-negation.ts` reuses
 `src/guards/asset-path.ts`). **E14** (README opener) and **E4** (`COURSE_GUIDE.md`) are
-done (2026-10-15), and so is **E12b** (exercise flows, axe in open states). What is left, in order: E5's
-deploy route, E7, and at the handover E1 and the organisation move (E16 after it); E13
+done (2026-10-15), and so is **E12b** (exercise flows, axe in open states). **E5** (the deploy route, `DEPLOY.md`) is done
+(2026-10-16). What is left, in order: E7, and at the handover E1 and the organisation move (E16 after it); E13
 is done (E13a 2026-10-15, E13b 2026-10-16). Since PR #9, merge a PR by fast-forwarding `main` once its CI is
 green (`git merge --ff-only` + push), so the hashes cited here survive; GitHub's
 "rebase" merge rewrote them.
@@ -1707,7 +1707,8 @@ no-preference` only.
   collaborator — GitHub forbids self-approval and the merge button locks permanently.
 - **E2 — team workflow and the `lc-elearn` organisation.** Decided 2026-10-12: one public
   repo per course inside the organisation, colleagues write to their own course only,
-  code needs the maintainer's approval and content does not, the maintainer deploys. The
+  code needs the maintainer's approval and content does not, the maintainer deploys (since 2026-10-16 a colleague builds and
+  uploads, by `DEPLOY.md`: E5). The
   move is **deferred by decision**. Plan: `docs/ORGANIZATION.md`. Context, the ordered
   next steps (coverage rule in CI first) and open questions:
   `2026-10-12-team-workflow-handover.md`.
@@ -1735,7 +1736,16 @@ no-preference` only.
   CONTRIBUTING is linked, not copied. Repo URLs are placeholders
   (`<organisation>/<course-repo>`) until the organisation move (E2) names them. Was:
   a short page for the course-repo colleague (handover §3 item 2).
-- **E5 — deploy route, and Feijoa.** "Release → zip in CI" is the preferred route
+- **E5 — deploy route, and Feijoa. DONE 2026-10-16.** Decided by the maintainer: a
+  colleague builds each course on their own machine from `main`, with their own licensed
+  Feijoa files and `BASE_URL` set to the course's folder, and uploads what is inside
+  `dist/`. Addresses change between servers, so no target is fixed in the repo; one build
+  fits one address. `DEPLOY.md` is the step-by-step, with the checks before going live
+  (fonts in, path in, no debug pages, a browser checklist, the optional full test run).
+  Checked while writing it: a `/courses/spanish-1/` build with all three files puts
+  Feijoa and the path in every page, `vite preview` under the same `BASE_URL` serves it,
+  and with one file missing the build warns `Feijoa: … missing`. CI's zip route was not
+  taken. Was: "Release → zip in CI" is the preferred route
   (handover §3 item 4), but Feijoa is not committed (licence), so a CI-built zip ships
   the fallback font. Decide: build on the maintainer's machine, or give CI the fonts
   from a private place. Deploy targets per course are still open too (handover §4).
@@ -1747,7 +1757,7 @@ no-preference` only.
   plugin (`src/build/feijoa-fonts.ts`) adds the rules as an inline `<style>` only when
   all three files exist, URLs under the real base. The spec's allowance shrank to the
   Bold cut's Firefox "table discarded" notice, which only appears where the files
-  exist; fixing that file is optional. Still open here: the deploy route.
+  exist; fixing that file is optional. The deploy route closed with `DEPLOY.md` (above).
 - **E6 — content folders ownerless in `CODEOWNERS`. DONE 2026-10-14.**
   `/lo-config/`, `/public/images/` and `/public/audio/` sit after the `* @pedbad` line
   with no owner (`ORGANIZATION.md` step 5), so a content-only PR needs no approval once

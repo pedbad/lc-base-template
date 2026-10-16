@@ -40,8 +40,9 @@ branch rules on every course repo, and nobody else can switch them off.
 - **Course content never enters the template.** Only engine changes go to the template, by
   pull request. The rule for what counts as engine is in
   [`CONTRIBUTING.md` → "Adding content vs. changing the system"](../CONTRIBUTING.md).
-- **Colleagues do not deploy.** They merge into their course repo's `main` through a
-  pull request; the maintainer builds and deploys.
+- **Authors do not deploy.** They merge into their course repo's `main` through a pull
+  request; the colleague who publishes courses builds and uploads them by
+  [`DEPLOY.md`](../DEPLOY.md) (decided 2026-10-16; it was the maintainer).
 - **Review covers code, not content** (decided 2026-10-12). A pull request that only
   changes content (`lo-config/`, `public/images/`, `public/audio/`) merges on green CI. A
   pull request that touches anything else waits for the maintainer's approval. Enforced
@@ -55,7 +56,9 @@ branch rules on every course repo, and nobody else can switch them off.
 
 ## Still to decide before starting
 
-- [ ] **Deploy targets** for each course (CONTRIBUTING mentions two).
+- [x] **Deploy targets.** None fixed in the repo: addresses change between servers, so
+      each build is given its course's folder as `BASE_URL` ([`DEPLOY.md`](../DEPLOY.md)).
+      Decided by the maintainer 2026-10-16.
 - [x] **Content licence variant.** CC BY-NC 4.0 (no commercial reuse), as `LICENSE`
       says. Confirmed by the maintainer 2026-10-14.
 

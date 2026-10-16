@@ -70,13 +70,16 @@ nothing should: a deployed build contains neither file, so an in-course link wou
 locally and 404 for every reader. (Vite takes 5174 when 5173 is busy; it prints the port
 it chose.)
 
-Serving from a sub-path (both deploy targets do) is one env var — it feeds the bundle
+Serving from a sub-path (courses usually are) is one env var — it feeds the bundle
 and the prerender pass together, so hashed assets, the favicon and runtime audio/image
 URLs all resolve against the same base:
 
 ```bash
 BASE_URL=/course/ bun run build
 ```
+
+Publishing a course (fonts, the address, the checks before it goes live, the upload) is
+[`DEPLOY.md`](DEPLOY.md).
 
 ## Authoring a Learning Object
 

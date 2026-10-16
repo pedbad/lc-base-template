@@ -153,6 +153,7 @@ BASE_URL=/course/ bun run build
 | File                                           | For                                                        |
 | ---------------------------------------------- | ---------------------------------------------------------- |
 | [`COURSE_GUIDE.md`](COURSE_GUIDE.md)           | colleagues writing a course in its own repo                |
+| [`DEPLOY.md`](DEPLOY.md)                       | whoever publishes a course — build, check, upload          |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md)           | developers — setup, authoring loop, the commit gate        |
 | [`DESIGNER.md`](DESIGNER.md)                   | designers — change colours and fonts without touching code |
 | [`STRUCTURE.md`](STRUCTURE.md)                 | anyone new — what every folder is for                      |

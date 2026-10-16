@@ -1,7 +1,8 @@
 # COURSE_GUIDE.md — writing a course
 
 **For a colleague writing a course in its own repo** (one repo per course, such as
-`lc-french`). You write lessons; the maintainer looks after the machinery and deploys.
+`lc-french`). You write lessons; the maintainer looks after the machinery, and the
+course is published by following [`DEPLOY.md`](DEPLOY.md).
 If you are changing the template itself, this is the wrong page: see
 [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
@@ -78,7 +79,8 @@ the template for every course. The full rule:
 5. **Open a pull request into your course repo's `main`.** CI runs every check, browser
    tests included; the checklist in the pull request form is for changes to the
    machinery, so for a content-only pull request a green CI is enough, and it can be
-   merged. You do not deploy: the maintainer builds and publishes the course.
+   merged. Merging does not publish it: the course goes live when it is next built and
+   uploaded ([`DEPLOY.md`](DEPLOY.md)).
 
 ## When the template changes
 
