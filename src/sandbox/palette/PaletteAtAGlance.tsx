@@ -8,10 +8,9 @@
  * under the bar repeats the names for sighted readers, so it is hidden from the
  * accessibility tree to avoid reading them twice.
  *
- * SLANTED SEGMENTS (maintainer, 2026-10-16): each segment is a parallelogram with a
- * small gap, as a KWL chart draws its panels, so even a 2% accent reads as its own
- * shape. The skew pushes each segment's corners out by half its slant, so the bar has
- * side padding to keep the outer corners inside the page frame.
+ * ONE SLANTED BAR (maintainer, 2026-10-16): the whole bar is a parallelogram, as a KWL
+ * chart's panels are drawn, with its segments touching. The skew pushes the outer
+ * corners out by half the slant, so side margins keep them inside the page frame.
  */
 import type { PrimitiveColour } from '../sandbox-catalog';
 import { tokenValue } from './token-value';
@@ -31,13 +30,13 @@ export function PaletteAtAGlance({ colours }: PaletteAtAGlanceProps) {
     <figure className="mt-4">
       <ul
         aria-label="The palette at a glance, by share of the page"
-        className="flex h-28 gap-1 px-4"
+        className="mx-4 flex h-28 -skew-x-12 overflow-hidden rounded-xl border border-border"
       >
         {shared.map((colour) => (
           <li
             key={colour.token}
             title={`${colour.name}, ${percent(colour)}%`}
-            className="min-w-2 -skew-x-12 rounded-md border border-border"
+            className="min-w-2"
             style={{ flexGrow: colour.share, background: tokenValue(colour.token) }}
           >
             <span className="sr-only">
@@ -51,9 +50,9 @@ export function PaletteAtAGlance({ colours }: PaletteAtAGlanceProps) {
         className="mt-4 flex flex-wrap gap-x-6 gap-y-3 text-base text-muted-foreground"
       >
         {shared.map((colour) => (
-          <span key={colour.token} className="inline-flex items-center gap-2.5">
+          <span key={colour.token} className="inline-flex items-center gap-3">
             <span
-              className="size-5 shrink-0 rounded-full border border-border"
+              className="size-8 shrink-0 rounded-full border border-border"
               style={{ background: tokenValue(colour.token) }}
             />
             {colour.name} <span className="tabular-nums">{percent(colour)}%</span>

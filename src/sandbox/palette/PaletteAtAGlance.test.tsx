@@ -56,8 +56,8 @@ describe('PaletteAtAGlance order', () => {
   });
 });
 
-// Maintainer, 2026-10-16: a taller bar of slanted segments with gaps between them, as
-// a KWL chart's panels are drawn, and legend dots big enough to match by eye.
+// Maintainer, 2026-10-16: one tall slanted bar, its segments touching, and legend
+// dots big enough to match by eye.
 describe('PaletteAtAGlance look', () => {
   const look = renderToStaticMarkup(
     <PaletteAtAGlance
@@ -68,17 +68,19 @@ describe('PaletteAtAGlance look', () => {
     />,
   );
 
-  it('is a tall bar of separate, slanted segments', () => {
+  it('is one tall slanted bar whose segments touch', () => {
     const bar = /<ul[^>]*class="([^"]*)"/.exec(look)?.[1] ?? '';
     expect(bar).toMatch(/\bh-28\b/);
-    expect(bar).toMatch(/\bgap-1\b/);
-    const segments = [...look.matchAll(/<li[^>]*class="([^"]*)"/g)].map((m) => m[1]);
-    expect(segments.every((c) => /(^|\s)-skew-x-12(\s|$)/.test(c ?? ''))).toBe(true);
+    expect(bar).toMatch(/(^|\s)-skew-x-12(\s|$)/);
+    expect(bar).toMatch(/\boverflow-hidden\b/);
+    expect(bar).not.toMatch(/\bgap-/);
+    const segments = [...look.matchAll(/<li[^>]*class="([^"]*)"/g)].map((m) => m[1] ?? '');
+    expect(segments.filter((c) => /skew|border|rounded/.test(c))).toEqual([]);
   });
 
-  it('draws legend dots at size-5', () => {
+  it('draws legend dots at size-8', () => {
     const dots = [...look.matchAll(/<span class="([^"]*\brounded-full\b[^"]*)"/g)].map((m) => m[1]);
     expect(dots).toHaveLength(2);
-    expect(dots.every((c) => /\bsize-5\b/.test(c ?? ''))).toBe(true);
+    expect(dots.every((c) => /\bsize-8\b/.test(c ?? ''))).toBe(true);
   });
 });
