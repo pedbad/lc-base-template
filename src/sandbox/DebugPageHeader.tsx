@@ -13,6 +13,7 @@
  * path, so they survive a non-root base. The repo link is absolute and external, so it
  * opens in a new tab and says so, as a rich-text link does.
  */
+import type { ReactNode } from 'react';
 import { Menu as MenuPrimitive } from '@base-ui/react/menu';
 import { ChevronDownIcon, ExternalLink } from 'lucide-react';
 import { resolveLabel } from '@/config/ui-strings';
@@ -57,6 +58,8 @@ interface DebugPageHeaderProps {
   jumpLabel: string;
   /** Which page this is, so the nav links to the others and not to itself. */
   current: DebugPage;
+  /** Controls only this page has, shown just before the theme switch (§E18). */
+  tools?: ReactNode;
 }
 
 const LINK_CLASS = `rounded-sm underline underline-offset-4 hover:no-underline ${FOCUS_OUTLINE}`;
@@ -76,6 +79,7 @@ export function DebugPageHeader({
   sections,
   jumpLabel,
   current,
+  tools,
 }: DebugPageHeaderProps) {
   const others = DEBUG_PAGES.filter((entry) => entry.page !== current);
   return (
@@ -125,6 +129,7 @@ export function DebugPageHeader({
             <span className="sr-only"> {resolveLabel('opensInNewTab')}</span>
           </a>
         </nav>
+        {tools}
         <ThemeToggle />
       </div>
     </header>

@@ -57,9 +57,11 @@ const PRESETS = readdirSync(STYLES_DIR)
 const active = read('tokens.css');
 
 describe('token presets', () => {
-  // A rename or a new preset should not quietly reduce what is checked.
-  it('finds all three presets on disk', () => {
-    expect(PRESETS.length).toBe(3);
+  // A rename should not quietly reduce what is checked. At least, not exactly: a
+  // designer's palette arrives as a fourth file (DESIGNER.md, "How to read the
+  // sandbox"), and a new file is checked here and in token-contrast by itself.
+  it('finds at least the three shipped presets on disk', () => {
+    expect(PRESETS.length).toBeGreaterThanOrEqual(3);
   });
 
   describe.each(PRESETS)('%s', (preset) => {

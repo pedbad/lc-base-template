@@ -22,6 +22,8 @@
  * docs hub into it would leave a folder whose name describes a quarter of its contents.
  */
 import { DebugPageHeader } from './DebugPageHeader';
+import { PresetPicker } from './PresetPicker';
+import { ACTIVE_TOKENS_CSS, TOKEN_PRESETS } from './preset-preview';
 import PaletteSection from './PaletteSection';
 import TypographySection from './TypographySection';
 import IconsSection from './IconsSection';
@@ -51,6 +53,7 @@ export default function Sandbox() {
         sections={SECTIONS}
         jumpLabel="Jump to section"
         current="sandbox"
+        tools={<PresetPicker presets={TOKEN_PRESETS} activeCss={ACTIVE_TOKENS_CSS} />}
       />
 
       <main className="page-frame flex flex-col gap-14 py-10">

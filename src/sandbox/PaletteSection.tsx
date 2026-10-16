@@ -61,7 +61,8 @@ export default function PaletteSection() {
       <p className="mt-2 max-w-(--measure) text-muted-foreground">
         Three layers, and only the first holds real values. Edit a primitive and every semantic
         token, component and page below it follows — that is the one-file re-skin DESIGNER.md
-        describes. Toggle the theme above to see the semantic layer flip.
+        describes. Toggle the theme above to see the semantic layer flip, or preview another preset
+        to see Layer 2 change while Layer 1 stays put.
       </p>
 
       <h3 className="mt-8 font-heading text-lg font-semibold">

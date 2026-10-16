@@ -63,6 +63,26 @@ describe('DebugPageHeader', () => {
     expect(html).toContain('role="switch"');
   });
 
+  // §E18: the sandbox puts its preset drop-down beside the theme switch; the
+  // showcases pass nothing and render nothing extra.
+  test('renders page-specific tools just before the theme switch, outside the nav', () => {
+    const withTools = renderToStaticMarkup(
+      <DebugPageHeader
+        title="Debug page"
+        description="What this page is for."
+        navLabel="Debug page sections"
+        sections={[]}
+        jumpLabel="Jump to section"
+        current="sandbox"
+        tools={<p id="tool">A tool</p>}
+      />,
+    );
+    const tool = withTools.indexOf('id="tool"');
+    expect(tool).toBeGreaterThan(withTools.indexOf('</nav>'));
+    expect(tool).toBeLessThan(withTools.indexOf('role="switch"'));
+    expect(html).not.toContain('id="tool"');
+  });
+
   // §D11: the header's inner row and the page's <main> are both `.page-frame`, so the
   // title and the first line of content share one left edge at every width.
   test('its inner row is the shared page frame, with no width or gutter of its own', () => {

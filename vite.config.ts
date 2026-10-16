@@ -7,6 +7,7 @@ import { loDevPages } from './src/build/lo-dev-pages';
 import { sandboxDocs } from './src/build/sandbox-docs-plugin';
 import { debugEntries } from './src/build/build-entries';
 import { feijoaFonts } from './src/build/feijoa-fonts';
+import { presetPreview } from './src/build/preset-preview-plugin';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -34,7 +35,16 @@ export default defineConfig({
   // feijoaFonts() adds Feijoa's @font-face rules to each page only when the licensed
   // files are in public/fonts/feijoa/, so a clone or deploy without them requests no
   // missing font (TODO §E5).
-  plugins: [react(), tailwindcss(), loDevPages(), sandboxDocs(import.meta.dirname), feijoaFonts()],
+  // presetPreview() adds the sandbox's palette preview to every page in dev and in a
+  // DEBUG=1 build, and to no page of a normal build (TODO §E18).
+  plugins: [
+    react(),
+    tailwindcss(),
+    loDevPages(),
+    sandboxDocs(import.meta.dirname),
+    feijoaFonts(),
+    presetPreview(),
+  ],
   // `@` → ./src so shadcn component imports resolve (e.g. `@/components/ui/button`).
   resolve: {
     alias: {
@@ -67,6 +77,10 @@ export default defineConfig({
     // DOM) and the two storage tests stub `window`/`localStorage` themselves, so
     // no jsdom/happy-dom is needed. Add one here only if a real DOM test appears.
     environment: 'node',
+    // Vitest hands every CSS import back as '' unless it is listed here — `?raw` too.
+    // The sandbox's preset preview reads the token files as text (src/sandbox/
+    // preset-preview.ts), so its tests need the real text of these files alone.
+    css: { include: [/src\/styles\/tokens[^/]*\.css/] },
     include: ['src/**/*.test.{ts,tsx}'],
     // Explicit imports in every test (no globals) — keep it that way for clarity.
     globals: false,

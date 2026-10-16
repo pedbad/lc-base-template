@@ -1,0 +1,46 @@
+/* ==========================================================================
+   preset-banner.css — the "Previewing palette" label (TODO §E18)
+   ==========================================================================
+   Loaded only by preset-preview-boot.ts, which only dev and DEBUG=1 builds
+   carry. Fixed to the bottom corner so it sits over no page's layout; every
+   colour a token, every length rem, all in @layer components.
+   ========================================================================== */
+
+@layer components {
+  .preset-banner {
+    position: fixed;
+    inset-block-end: 1rem;
+    inset-inline-start: 1rem;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.5rem 0.5rem 0.875rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--popover);
+    color: var(--popover-foreground);
+    font-size: 0.875rem;
+    box-shadow: 0 4px 16px color-mix(in oklab, var(--foreground) 18%, transparent);
+  }
+
+  .preset-banner-reset {
+    padding: 0.25rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - 0.25rem);
+    background: var(--secondary);
+    color: var(--secondary-foreground);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .preset-banner-reset:hover {
+    background: var(--muted);
+  }
+
+  .preset-banner-reset:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
