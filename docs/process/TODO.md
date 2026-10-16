@@ -2023,6 +2023,13 @@ rather than the Language Centre's course factory; the maintainer took three smal
   Chromium, light and dark, with presets C and Z; the automated browser check waits for
   E12c. Design:
   [`2026-10-16-palette-brand-board-design.md`](../specs/2026-10-16-palette-brand-board-design.md).
+- **E20 — the sandbox's light/dark image pairs as a comparison slider. OPEN.** Each
+  `-black`/`-white` and `-light`/`-dark` pair in the Images section becomes one tile: the
+  two images stacked, a handle to drag between them, a native range input underneath for
+  keyboard and screen readers. Also fixes the dark theme putting every footer mark on the
+  wrong ground. Design:
+  [`2026-10-16-image-compare-slider-design.md`](../specs/2026-10-16-image-compare-slider-design.md);
+  plan: [`2026-10-16-image-compare-slider-plan.md`](2026-10-16-image-compare-slider-plan.md).
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
