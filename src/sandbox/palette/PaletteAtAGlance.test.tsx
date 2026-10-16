@@ -55,3 +55,30 @@ describe('PaletteAtAGlance order', () => {
     expect(sorted.indexOf('>Paper, ')).toBeLessThan(sorted.indexOf('>Cambridge Blue, '));
   });
 });
+
+// Maintainer, 2026-10-16: a taller bar of slanted segments with gaps between them, as
+// a KWL chart's panels are drawn, and legend dots big enough to match by eye.
+describe('PaletteAtAGlance look', () => {
+  const look = renderToStaticMarkup(
+    <PaletteAtAGlance
+      colours={[
+        { token: '--paper', name: 'Paper', job: 'Ground.', partner: '--slate-4', share: 3 },
+        { token: '--slate-4', name: 'Slate 4', job: 'Text.', partner: '--paper', share: 1 },
+      ]}
+    />,
+  );
+
+  it('is a tall bar of separate, slanted segments', () => {
+    const bar = /<ul[^>]*class="([^"]*)"/.exec(look)?.[1] ?? '';
+    expect(bar).toMatch(/\bh-28\b/);
+    expect(bar).toMatch(/\bgap-1\b/);
+    const segments = [...look.matchAll(/<li[^>]*class="([^"]*)"/g)].map((m) => m[1]);
+    expect(segments.every((c) => /(^|\s)-skew-x-12(\s|$)/.test(c ?? ''))).toBe(true);
+  });
+
+  it('draws legend dots at size-5', () => {
+    const dots = [...look.matchAll(/<span class="([^"]*\brounded-full\b[^"]*)"/g)].map((m) => m[1]);
+    expect(dots).toHaveLength(2);
+    expect(dots.every((c) => /\bsize-5\b/.test(c ?? ''))).toBe(true);
+  });
+});
