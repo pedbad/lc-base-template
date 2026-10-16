@@ -2,7 +2,7 @@
  * PaletteAtAGlance — ① of the brand board (§E19): the palette in proportion, one
  * segment per primitive sized by its share, so a client sees how the course FEELS —
  * mostly paper and slate, Cambridge Blue prominent, accents as slivers — before any
- * single colour. Shares are catalog data, a design judgement.
+ * single colour. Largest share first. Shares are catalog data, a design judgement.
  *
  * A list, not a picture: a screen reader hears "Paper, 39%" per segment. The legend
  * under the bar repeats the names for sighted readers, so it is hidden from the
@@ -16,7 +16,10 @@ interface PaletteAtAGlanceProps {
 }
 
 export function PaletteAtAGlance({ colours }: PaletteAtAGlanceProps) {
-  const shared = colours.filter((colour) => colour.share !== undefined);
+  // Largest share first: a brand board leads with what dominates the page.
+  const shared = colours
+    .filter((colour) => colour.share !== undefined)
+    .toSorted((a, b) => (b.share ?? 0) - (a.share ?? 0));
   const total = shared.reduce((sum, colour) => sum + (colour.share ?? 0), 0);
   const percent = (colour: PrimitiveColour) => Math.round(((colour.share ?? 0) / total) * 100);
   return (

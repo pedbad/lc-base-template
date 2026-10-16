@@ -33,3 +33,25 @@ describe('PaletteAtAGlance', () => {
     expect(html).toMatch(/style="[^"]*flex-grow:3;[^"]*background:var\(--paper\)/);
   });
 });
+
+// Hand check, 2026-10-16: in catalog order Paper, the largest share, sat mid-bar. A
+// brand board leads with what dominates, so the bar runs largest share first.
+describe('PaletteAtAGlance order', () => {
+  it('runs from the largest share to the smallest, whatever the catalog order', () => {
+    const sorted = renderToStaticMarkup(
+      <PaletteAtAGlance
+        colours={[
+          {
+            token: '--cam-blue',
+            name: 'Cambridge Blue',
+            job: 'Brand.',
+            partner: '--paper',
+            share: 2,
+          },
+          { token: '--paper', name: 'Paper', job: 'Ground.', partner: '--slate-4', share: 5 },
+        ]}
+      />,
+    );
+    expect(sorted.indexOf('>Paper, ')).toBeLessThan(sorted.indexOf('>Cambridge Blue, '));
+  });
+});
