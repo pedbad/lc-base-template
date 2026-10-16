@@ -30,7 +30,7 @@ export function CircularAudioProgressAnimatedSpeaker({
   title,
   onStatusChange,
 }: AnimatedSpeakerProps) {
-  const { status, progress, duration, handleClick } = useAudioClip(soundFile, {
+  const { status, progress, duration, unavailable, handleClick } = useAudioClip(soundFile, {
     id,
     onStatusChange,
   });
@@ -45,6 +45,7 @@ export function CircularAudioProgressAnimatedSpeaker({
         progress={progress}
         duration={duration}
         handleClick={handleClick}
+        unavailable={unavailable}
         title={title}
       />
     </span>

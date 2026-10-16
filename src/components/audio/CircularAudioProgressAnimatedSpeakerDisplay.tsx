@@ -45,6 +45,11 @@ interface SpeakerDisplayProps {
   title?: string;
   /** When false, render a non-interactive, aria-hidden decoration. */
   interactive?: boolean;
+  /**
+   * The clip could not play (a missing or broken file): say "Sound unavailable" and
+   * dim the speaker, but keep it a button so a click can try again (TODO §E13b).
+   */
+  unavailable?: boolean;
   handleClick?: (event?: SyntheticEvent) => void;
 }
 
@@ -118,13 +123,18 @@ function SpeakerDisplay({
   className = '',
   title,
   interactive = true,
+  unavailable = false,
   handleClick,
 }: SpeakerDisplayProps) {
   const ratio = duration > 0 ? progress / duration : 0;
   const offset = CIRCUMFERENCE * (1 - ratio);
-  const label = title || (status === 'playing' ? 'Click to pause' : 'Click to play');
+  const label = unavailable
+    ? 'Sound unavailable'
+    : title || (status === 'playing' ? 'Click to pause' : 'Click to play');
   const baseClass =
-    `audio-container super-compact-speaker circular-audio-progress-speaker ${status} ${inline ? 'inline' : ''} ${className}`.trim();
+    `audio-container super-compact-speaker circular-audio-progress-speaker ${status} ${inline ? 'inline' : ''} ${unavailable ? 'opacity-50' : ''} ${className}`
+      .replace(/\s+/g, ' ')
+      .trim();
   const sizeStyle = { width: `${size}px`, height: `${size}px` };
   const targetSize = Math.max(size, MIN_TARGET_SIZE);
   const targetStyle = { width: `${targetSize}px`, height: `${targetSize}px` };

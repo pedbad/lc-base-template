@@ -26,3 +26,7 @@ test('nothing changes while this clip plays, or for a stopped clip', () => {
   expect(statusAfterManagerChange(state('a', false), 'a', 'paused')).toBeNull();
   expect(statusAfterManagerChange(state('b', true), 'a', 'stopped')).toBeNull();
 });
+
+test('this clip resumed from outside the page (a media key) shows playing again', () => {
+  expect(statusAfterManagerChange(state('a', true), 'a', 'paused')).toBe('playing');
+});

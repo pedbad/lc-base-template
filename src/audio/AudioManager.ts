@@ -72,6 +72,14 @@ class AudioManager {
 
     audio.addEventListener('error', fail, { once: true });
 
+    // A pause or resume from outside the page (media keys, a phone call, the OS) does
+    // not come through pause()/resume(); tell subscribers anyway, while still active.
+    const followOutside = () => {
+      if (this.activeAudio === audio) this.notify();
+    };
+    audio.addEventListener('pause', followOutside);
+    audio.addEventListener('play', followOutside);
+
     this.activeAudio = audio;
     this.activeId = id;
 

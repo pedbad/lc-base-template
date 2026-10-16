@@ -39,3 +39,26 @@ describe('speaker hit target (SC 2.5.8)', () => {
     expect(html).toContain('style="width:20px;height:20px"');
   });
 });
+
+// TODO §E13b, 2026-10-16: a clip that cannot play (a missing or broken file) used to
+// reset to "Click to play" with only a console warning, so the learner kept clicking a
+// silent speaker. It now says so, and looks dimmed, while staying clickable to retry.
+describe('speaker whose sound could not play', () => {
+  const html = renderToStaticMarkup(<CircularAudioProgressAnimatedSpeakerDisplay unavailable />);
+
+  test('says "Sound unavailable" to a screen reader and on hover', () => {
+    expect(html).toMatch(/<button[^>]*aria-label="Sound unavailable"/);
+    expect(html).toMatch(/<button[^>]*title="Sound unavailable"/);
+  });
+
+  test('looks dimmed, and stays a button so a click can try again', () => {
+    expect(html).toMatch(/<button[^>]*class="[^"]*\bopacity-50\b/);
+    expect(html).not.toMatch(/<button[^>]*disabled/);
+  });
+
+  test('a playable speaker is not dimmed', () => {
+    const playable = renderToStaticMarkup(<CircularAudioProgressAnimatedSpeakerDisplay />);
+    expect(playable).not.toContain('opacity-50');
+    expect(playable).toContain('aria-label="Click to play"');
+  });
+});

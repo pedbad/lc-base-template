@@ -1,8 +1,8 @@
 /**
  * useAudioClip — playback state + a single click handler for an AudioManager-driven
  * clip (the animated-speaker variant). Holds status / progress / duration, wires the
- * AudioManager subscription (another clip starting resets this one; a refused resume
- * shows paused, via clipStatus.ts),
+ * AudioManager subscription (another clip starting resets this one; a refused resume or
+ * an outside pause shows paused, an outside resume playing, via clipStatus.ts),
  * attaches media listeners to the off-DOM Audio element, and toggles play/pause.
  *
  * Ported from french-lo-1's components/AudioClip/useAudioClip.js (typed).
@@ -25,6 +25,8 @@ export interface UseAudioClipResult {
   status: ClipStatus;
   progress: number;
   duration: number;
+  /** The last play failed (a missing or broken file); cleared by the next try. */
+  unavailable: boolean;
   handleClick: (event?: SyntheticEvent) => void;
 }
 
@@ -43,6 +45,7 @@ export function useAudioClip(
   const [status, setStatusState] = useState<ClipStatus>('stopped');
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [unavailable, setUnavailable] = useState(false);
   const [soundFileAudio, setSoundFileAudio] = useState<HTMLAudioElement | null>(null);
 
   // Latest status for the subscribe callback / click switch, without re-subscribing
@@ -62,8 +65,9 @@ export function useAudioClip(
   );
 
   // Follow the manager (statusAfterManagerChange): another clip starting stops this
-  // one, otherwise the next click would pause instead of replay; a refused resume
-  // shows paused rather than a stuck "playing".
+  // one, otherwise the next click would pause instead of replay; a refused resume or
+  // an outside pause shows paused rather than a stuck "playing", and an outside resume
+  // shows playing.
   useEffect(() => {
     const unsubscribe = AudioManager.subscribe((managerState) => {
       const next = statusAfterManagerChange(managerState, clipId, statusRef.current);
@@ -90,12 +94,16 @@ export function useAudioClip(
   const playSound = useCallback(
     (event?: SyntheticEvent) => {
       stopEvent(event);
+      setUnavailable(false);
       const audio = AudioManager.play(resolveAsset(soundFile), {
         id: clipId,
         onEnded: () => {
           setStatus('stopped');
           setProgress(0);
         },
+        // The manager has already cleared the clip, so status follows to 'stopped';
+        // this tells the learner why nothing played (TODO §E13b).
+        onError: () => setUnavailable(true),
       });
       setSoundFileAudio(audio);
       setStatus('playing');
@@ -137,5 +145,5 @@ export function useAudioClip(
     [playSound, pause, soundFileAudio, clipId, setStatus],
   );
 
-  return { status, progress, duration, handleClick };
+  return { status, progress, duration, unavailable, handleClick };
 }

@@ -172,4 +172,21 @@ describe('AudioManager when the browser refuses to play', () => {
     expect(onError).not.toHaveBeenCalled();
     expect(warn).not.toHaveBeenCalled();
   });
+
+  // Media keys, a phone call or the OS can pause or resume a clip without going
+  // through AudioManager; subscribers must still hear about it.
+  test('a pause or resume from outside the page reaches subscribers', async () => {
+    const { states, unsubscribe } = setUp();
+    const audio = AudioManager.play('a.mp3', { id: 'a' }) as unknown as FakeAudio;
+    await settle();
+
+    audio.paused = true;
+    audio.dispatch('pause');
+    expect(states.at(-1)).toMatchObject({ activeId: 'a', isPlaying: false });
+
+    audio.paused = false;
+    audio.dispatch('play');
+    expect(states.at(-1)).toMatchObject({ activeId: 'a', isPlaying: true });
+    unsubscribe();
+  });
 });
