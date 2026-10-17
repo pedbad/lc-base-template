@@ -5,7 +5,7 @@
  */
 import { expect, test, type Locator } from '@playwright/test';
 
-import { card, openShowcase } from './debug-support';
+import { card, flipCard, openShowcase } from './debug-support';
 
 const CARDS = 4;
 
@@ -29,7 +29,7 @@ test('"Got it" on every card shows the done card, and Reset stays put', async ({
   const resetTop = await offsetInCard(reset);
 
   for (let turn = 1; turn <= CARDS; turn += 1) {
-    await deck.locator('.flashcards-flip-hit').click();
+    await flipCard(deck);
     expect(await offsetInCard(reset), `after turning card ${turn}`).toBe(resetTop);
     await deck.getByRole('button', { name: 'Got it', exact: true }).click();
     expect(await offsetInCard(reset), `after rating card ${turn}`).toBe(resetTop);

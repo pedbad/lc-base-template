@@ -230,7 +230,9 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
   Reset restores it; the flip cue retires after three turns, stays retired after a
   reload, comes back with flashcards' Clear saved progress, and fades under reduced
   motion; a finished flashcards deck shows its done card and Reset does not move.
-  Helpers: `e2e/debug/debug-support.ts`. Still to come (E12d): memory-match resized
+  Firefox on the Linux CI runner skips only the clip-plays test: it has no audio output
+  there, so the clip errors (why: the test's comment). Helpers:
+  `e2e/debug/debug-support.ts`. Still to come (E12d): memory-match resized
   during "Show answers", sequence-audio scrubbing, the brand board.
 - **One exclusion, WebKit only** (maintainer's decision, 2026-10-15): Base UI's
   focus-guard sentinels are left out of axe. Why, the upstream issue and when to remove

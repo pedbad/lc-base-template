@@ -33,7 +33,14 @@ function mediaLog(page: Page): Promise<string[]> {
   return page.evaluate(() => (window as unknown as { mediaLog: string[] }).mediaLog);
 }
 
-test('a showcase clip plays to its end', async ({ page }) => {
+test('a showcase clip plays to its end', async ({ page, browserName }) => {
+  // On the Linux CI runner Firefox has no audio output: the element fires `error`, never
+  // `playing` (seen 2026-10-16), and the course would honestly say "Sound unavailable".
+  // The failure test below still runs there; Chromium and WebKit play the clip.
+  test.skip(
+    browserName === 'firefox' && process.platform === 'linux',
+    'no audio output for Firefox on the Linux runner',
+  );
   await recordPlayback(page);
   await openShowcase(page);
   // Pinned by position, not name: the name changes while it plays.

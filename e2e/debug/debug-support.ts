@@ -7,6 +7,8 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { expect, type Locator, type Page } from '@playwright/test';
 
+import { animationsInside } from '../support';
+
 const DIST = path.resolve(import.meta.dirname, '../../dist');
 
 /** The base the build was made for, ending in a slash as `resolveHomeHref()` gives it. */
@@ -40,6 +42,19 @@ export async function openShowcase(page: Page): Promise<void> {
   requireDebugBuild();
   await page.goto('exercise-showcase.html');
   await showcaseReady(page);
+}
+
+/**
+ * Turns a flashcards deck's current card to its back. Waits for the deck's animations
+ * first: in WebKit on CI a click landing while the next card eases in was sometimes
+ * lost (the same cause as `openExercise`'s note in e2e/support.ts), and the rating
+ * buttons then never showed. The aria-pressed check names that failure if it recurs.
+ */
+export async function flipCard(deck: Locator): Promise<void> {
+  await animationsInside(deck);
+  const flip = deck.locator('.flashcards-flip-hit');
+  await flip.click();
+  await expect(flip).toHaveAttribute('aria-pressed', 'true');
 }
 
 /** A showcase card: its `<article>`, whose id is the fixture id. */
