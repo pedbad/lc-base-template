@@ -9,8 +9,8 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-16 · **HEAD:** see `git log` · **Suite:** 190 files · 1984 tests green
-(Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 27 on a `DEBUG=1` build (9 × 3, `e2e/debug/`) · CI green · `main` unprotected by decision (job E1).
+**Last updated:** 2026-10-20 · **HEAD:** see `git log` · **Suite:** 191 files · 1986 tests green
+(Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 48 on a `DEBUG=1` build (16 × 3, `e2e/debug/`) · CI green · `main` unprotected by decision (job E1).
 
 Non-negotiable constraints for every job below live in
 `2026-08-06-post-phase-d-handover.md` §3. Read them before touching the build. In short:
@@ -68,12 +68,11 @@ left, in order:
 2. **E12d — DONE 2026-10-20** (`7295a12`): memory-match resized during "Show
    answers", sequence audio scrubbed while playing, and E19's brand board. It found
    **E23** (below), a Firefox scrubber bug, now next.
-3. **E23 — next**: the Firefox sequence-scrubber freeze (below). The fix is test-first
-   in Vitest, so it can be built anywhere. **On the MacBook Pro** Playwright's Firefox
-   will not start, so the local debug suite runs Chromium and WebKit only; remove the
-   Firefox `test.fixme` and let CI's Ubuntu Firefox leg prove it, or recheck on the
-   work iMac.
-4. Optional: one build that works in any folder, since addresses keep changing
+3. **E23 — DONE 2026-10-20** (`3e18c52`, on the MacBook Pro): the Firefox
+   sequence-scrubber freeze, the Chromium two-drag race and a third bug the new test
+   found (below). Firefox was not run locally (it will not start there); CI's Ubuntu
+   Firefox leg is its check, or recheck on the work iMac.
+4. **Next** — optional: one build that works in any folder, since addresses keep changing
    (`DEPLOY.md` says rebuild per address). Investigate before deciding.
 5. **Then the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1 as its
    step 5, and E16 after.
@@ -116,7 +115,9 @@ transitions stall): drive the installed Playwright browsers from a throwaway spe
 is not installed. **Known, 2026-10-16:** on the MacBook Pro (macOS 27.0.1) Playwright's
 Firefox 155 (`@playwright/test` 1.63) will not start, "Could not find profile folder",
 even by hand and outside the sandbox, so the local suite runs 72 of 108 there and CI's
-Ubuntu run is the Firefox check. Recheck on the next Playwright upgrade. The work iMac
+Ubuntu run is the Firefox check. Still so on 2026-10-20 after
+`bunx playwright install --force firefox` (a fresh v1543 download), both inside a
+Claude Code session and from the maintainer's own Terminal. Recheck on the next Playwright upgrade. The work iMac
 runs Firefox fine (all 108, and the 27 debug specs, 2026-10-20).
 
 ---
@@ -2102,14 +2103,22 @@ rather than the Language Centre's course factory; the maintainer took three smal
   2026-10-16 with Playwright in dark: the Reset button's top moved 0 px on every turn and
   at completion, and the done card reads clearly on the dark card surface. The ease-in
   itself was not measured. In CI since E12c (`e2e/debug/flashcards-done.spec.ts`).
-- **E23 — the sequence scrubber freezes after a drag in Firefox. OPEN** (found by E12d,
-  2026-10-20). Firefox sends one more `input` event after `pointerup` (order seen:
-  `pointerup`, `lostpointercapture`, `input`, `change`), so `changeScrub` in
-  `SequenceAudioController.tsx` sets `scrubTime` again after `endScrub` cleared it: the
-  readout and thumb stay at the drop point while the audio plays on. Fix test-first,
-  then remove the Firefox `test.fixme` in `e2e/debug/sequence-scrub.spec.ts`. Minor,
-  same area: two drags a few milliseconds apart leave the old time on the scrubber in
-  Chromium (the spec waits two frames between drags to avoid it).
+- **E23 — the sequence scrubber freezes after a drag in Firefox. DONE 2026-10-20**
+  (`3e18c52`; found by E12d). Firefox sends one more `input` event after `pointerup`
+  (order seen: `pointerup`, `lostpointercapture`, `input`, `change`), so `changeScrub`
+  in `SequenceAudioController.tsx` set `scrubTime` again after `endScrub` cleared it:
+  the readout and thumb stayed at the drop point while the audio played on. Now an
+  `input` outside a drag is ignored. Same area, also fixed: (1) two drags a few
+  milliseconds apart left the old time on the scrubber in Chromium — a seek still
+  waiting on metadata kept its listener, so both seeks' starts ran on the newer clip
+  (the wait-free spec failed 3 of 3 on the old code, passes 5 of 5 in Chromium and
+  WebKit now; the spec's two-frame wait is gone); (2) `handleLoadedMetadata` credited
+  the previous clip with a new clip's length after every cross-clip seek, skewing the
+  timeline whenever clips differ in length — invisible in e2e because the three
+  showcase clips are all 0.7 s. Pinned by `SequenceAudioController.test.tsx`, the
+  suite's one happy-dom test (`docs/TOOLING.md`, "Config"). **Left open:** arrow keys
+  on the focused scrubber did not seek before and now do nothing (the guard ignores
+  `input` outside a drag); keyboard seeking is a separate change.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
@@ -2367,3 +2376,4 @@ build, so it cannot return. Two remain:
 | 2026-10-16 | `1eccb86` | **flip cue retires** — three cards turned, the Tap to flip corners leave with a random exit and the instruction glyph fades (E21)                  |
 | 2026-10-16 | `5f670b8` | **flashcards done card** — a finished deck keeps a "Deck complete" card in the card's place, so nothing jumps (E22)                                |
 | 2026-10-20 | `7295a12` | **debug browser cases** — memory-match reveal under resize, sequence scrub, the brand board's live values and axe (E12d)                           |
+| 2026-10-20 | `3e18c52` | **sequence scrubber follows the audio** — Firefox's late input, the two-drag race and a clip-length mix-up after seeks; first happy-dom test (E23) |
