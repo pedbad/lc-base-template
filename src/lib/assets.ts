@@ -13,11 +13,16 @@
  * Ported from french-lo-1's utils/assets.js (typed; `resolveAssetHTML` dropped —
  * the template renders no rich-HTML content, so nothing needs it).
  */
+import { buildBase } from '@/build/build-base';
 
-/** Read Vite's BASE_URL defensively (undefined under non-Vite runners like `bun test`). */
+/**
+ * Read Vite's BASE_URL defensively. Under the Bun prerender `import.meta.env` is
+ * process.env, which holds BASE_URL only when it was set; the fallback is the build's
+ * own default, so the prerendered markup matches the bundle (src/build/build-base.ts).
+ */
 const readBaseUrl = (): string => {
   const env = (import.meta as { env?: { BASE_URL?: string } }).env;
-  return env?.BASE_URL ?? '/';
+  return buildBase(env ?? {});
 };
 
 /**

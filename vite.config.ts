@@ -5,18 +5,19 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { loDevPages } from './src/build/lo-dev-pages';
 import { sandboxDocs } from './src/build/sandbox-docs-plugin';
+import { buildBase } from './src/build/build-base';
 import { debugEntries } from './src/build/build-entries';
 import { feijoaFonts } from './src/build/feijoa-fonts';
 import { presetPreview } from './src/build/preset-preview-plugin';
 
 // https://vite.dev/config/
 export default defineConfig({
-  // Serve-from-a-sub-path support, e.g. `BASE_URL=/course/ bun run build`. Read from
-  // the environment rather than hardcoded because the post-build prerender pass needs
-  // the SAME value: Bun exposes process.env as `import.meta.env`, so resolveAsset()
-  // resolves audio/image URLs against this base while rendering static pages. One
-  // knob, both steps — set it via CLI `--base` and the prerender would not see it.
-  base: process.env.BASE_URL ?? '/',
+  // `./` by default: one build that works copied into any folder. A fixed address is
+  // still `BASE_URL=/course/ bun run build`. Read from the environment rather than the
+  // CLI `--base` because the post-build prerender pass needs the SAME value: Bun exposes
+  // process.env as `import.meta.env`, and resolveAsset() falls back to the same default
+  // when BASE_URL is unset (src/build/build-base.ts). One knob, both steps.
+  base: buildBase(process.env),
   // tailwindcss() is Tailwind v4's first-party Vite plugin — it compiles the
   // `@import "tailwindcss"` in src/index.css and generates utilities on demand.
   // Faster than the v3 PostCSS path; no postcss.config / tailwind.config needed
