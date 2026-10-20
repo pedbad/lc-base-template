@@ -144,9 +144,14 @@ export async function openExercise(page: Page, headingId: string): Promise<Locat
   return details;
 }
 
-/** Runs axe with the WCAG tags above and fails listing every violation. */
-export async function expectNoAxeViolations(page: Page): Promise<void> {
+/**
+ * Runs axe with the WCAG tags above and fails listing every violation. `scope` is a CSS
+ * selector that limits the run to one part of the page (the debug sandbox's `#palette`
+ * section); left out, axe checks the whole page.
+ */
+export async function expectNoAxeViolations(page: Page, scope?: string): Promise<void> {
   const builder = new AxeBuilder({ page }).withTags(WCAG_TAGS);
+  if (scope) builder.include(scope);
   if (page.context().browser()?.browserType().name() === 'webkit') {
     builder.exclude(BASE_UI_FOCUS_GUARD);
   }
