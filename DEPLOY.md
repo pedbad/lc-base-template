@@ -1,9 +1,9 @@
 # DEPLOY.md — building and publishing a course
 
 **For whoever puts a course on a web server.** You build the site on your own machine
-from the repo's `main` branch, with the licensed Feijoa fonts added and the web address
-it will live at, check it, then copy the finished files to the server. The site is plain
-files: no database, no server code, nothing to run on the server.
+from the repo's `main` branch, with the licensed Feijoa fonts added, check it, then copy
+the finished files into a folder on the server. The site is plain files: no database, no
+server code, nothing to run on the server. One build works in any folder.
 
 If you write lessons rather than publish them, see [`COURSE_GUIDE.md`](COURSE_GUIDE.md).
 
@@ -13,9 +13,9 @@ If you write lessons rather than publish them, see [`COURSE_GUIDE.md`](COURSE_GU
 git switch main && git pull --ff-only
 bun install
 # once per checkout: the three Feijoa files into public/fonts/feijoa/
-BASE_URL=/courses/spanish-1/ bun run build
-BASE_URL=/courses/spanish-1/ bun run preview   # check it, then Ctrl+C
-# copy everything INSIDE dist/ into the server folder for /courses/spanish-1/
+bun run build
+bun run preview   # check it, then Ctrl+C
+# copy everything INSIDE dist/ into the course's folder on the server
 ```
 
 Every step, and the checks before it goes live, are below.
@@ -28,7 +28,7 @@ Every step, and the checks before it goes live, are below.
 | **Bun** 1.3 or later | `bun --version`             | runs every command in this guide (`bun install`, `bun run build`, …) |
 | **Node** 22          | `node --version` → `v22.…`  | the build tools run on Node; `.nvmrc` pins 22, and CI uses the same  |
 | **Feijoa** fonts     | the three files below       | the Cambridge heading font; licensed, so never in the repo           |
-| The **web address**  | ask whoever runs the server | the build writes it into every page (step 4)                         |
+| The **web address**  | ask whoever runs the server | which server folder to copy into (step 4)                            |
 
 Install Bun from [bun.sh](https://bun.sh). For Node, [nvm](https://github.com/nvm-sh/nvm)
 is easiest: in the repo folder, `nvm install` reads `.nvmrc` and installs 22. In each
@@ -85,35 +85,31 @@ does not allow sharing them. More: [`public/fonts/feijoa/README.md`](public/font
 
 Without the fonts the site still works, but every heading falls back to Open Sans.
 
-## 4. Work out the folder path
+## 4. Any folder, by default
 
-The build writes the site's folder path into every page, so each page can find its
-styles, pictures, sounds and fonts. You give it as `BASE_URL`: the part of the address
-after the server name, starting and ending with `/`.
+Every page finds its styles, pictures, sounds and fonts **relative to itself** (`./…`),
+so you do not tell the build where the course will live. The same `dist/` works copied
+into `https://server.cam.ac.uk/`, `https://server.cam.ac.uk/courses/spanish-1/` or any
+other folder, on any server, and moving it later needs no new build.
 
-| The course will be at                         | `BASE_URL`               |
-| --------------------------------------------- | ------------------------ |
-| `https://server.cam.ac.uk/`                   | leave it out (it is `/`) |
-| `https://server.cam.ac.uk/courses/spanish-1/` | `/courses/spanish-1/`    |
-| `https://other.cam.ac.uk/lc/spanish/level-1/` | `/lc/spanish/level-1/`   |
+One thing the server must do, and nearly every server does by default: send a visit to
+`…/spanish-1` (no final slash) on to `…/spanish-1/`. Without the slash, the browser looks
+one folder too high. Step 8 checks it.
 
-Keep the slashes at both ends, and match the server's spelling and capitals exactly.
-
-**One build fits one address.** Copy the files to a different folder or server and the
-pages look in the old place: no styling, no pictures, no sound. To move a course, build
-again with the new path.
+**A fixed address instead (optional).** If you want the build tied to one address, give
+it as `BASE_URL`: the part of the address after the server name, starting and ending
+with `/`, spelt exactly as the server spells it (`BASE_URL=/courses/spanish-1/`). That
+build then works **only** at that address, as every build did before 2026-10. There is
+rarely a reason to.
 
 ## 5. Build
 
 ```bash
-BASE_URL=/courses/spanish-1/ bun run build
+bun run build
 ```
 
-On Windows PowerShell, set the variable first:
-
-```powershell
-$env:BASE_URL = "/courses/spanish-1/"; bun run build
-```
+For a fixed address (step 4), `BASE_URL=/courses/spanish-1/ bun run build`; on Windows
+PowerShell, `$env:BASE_URL = "/courses/spanish-1/"; bun run build`.
 
 It takes under a minute and writes the finished site into `dist/`. A good build:
 
@@ -132,8 +128,6 @@ pages and the palette preview to `dist/`; they belong only on a
 
 ### Quick checks in the terminal
 
-Use your own path in place of `/courses/spanish-1/`.
-
 1. **The fonts are in.** This prints a number above 0:
 
    ```bash
@@ -142,13 +136,15 @@ Use your own path in place of `/courses/spanish-1/`.
 
    `0` means the fonts were not found at build time (step 3).
 
-2. **The right folder path is in.** This prints a number above 0:
+2. **The addresses are relative.** This prints a number above 0:
 
    ```bash
-   grep -c '/courses/spanish-1/assets/' dist/index.html
+   grep -c '"./assets/' dist/index.html
    ```
 
-   `0` means the build used a different `BASE_URL` (step 4). Build again.
+   `0` means `BASE_URL` was set in this terminal (step 4). Open a new terminal and build
+   again. (For a deliberate fixed-address build, look for your path instead:
+   `grep -c '/courses/spanish-1/assets/' dist/index.html`.)
 
 3. **No internal pages.** This lists `index.html`, one page per lesson, and
    `example.html` (the example lesson: built, but not linked from anywhere, which is
@@ -163,10 +159,11 @@ Use your own path in place of `/courses/spanish-1/`.
 
 ### Look at it in a browser
 
-Serve the build on your own machine, under the same path:
+Serve the build on your own machine, from the folder it will live in on the server (or
+any folder: that is the point):
 
 ```bash
-BASE_URL=/courses/spanish-1/ bun run preview
+bun run preview --base /courses/spanish-1/
 ```
 
 It prints an address such as `http://localhost:4173/courses/spanish-1/`. Open it and
@@ -195,12 +192,13 @@ The same tests CI runs, against your build. Two to three minutes in all:
 ```bash
 bun run test
 bunx playwright install chromium firefox webkit   # once per machine
-BASE_URL=/courses/spanish-1/ bun run test:e2e
+SERVE_PATH=/courses/spanish-1/ bun run test:e2e
 ```
 
-`test:e2e` drives Chromium, Firefox and WebKit through the built pages and checks
-loading, keyboard use and accessibility. Run it straight after the build, with the same
-`BASE_URL`. Every test should pass.
+`test:e2e` drives Chromium, Firefox and WebKit through the built pages, served from the
+folder you name, and checks loading, keyboard use and accessibility. Run it straight
+after the build (for a fixed-address build, with the same `BASE_URL` instead of
+`SERVE_PATH`). Every test should pass.
 
 ## 7. Upload
 
@@ -232,6 +230,9 @@ Open the real address and go through the browser checklist in step 6 again. Relo
 browser's saved copy. Also:
 
 - [ ] In **Network**, filter for `Feijoa`: the font files load with status `200`.
+- [ ] Type the address **without** its final slash (`…/spanish-1`): the browser ends up
+      at `…/spanish-1/` and the page has its styling. If not, ask whoever runs the
+      server to redirect folders to their slash (step 4).
 - [ ] Open the site on a phone.
 
 ## 9. Write it down
@@ -241,33 +242,35 @@ Tell the maintainer the date, the address and the version from step 1
 
 ## When something is wrong
 
-| What you see                                      | Most likely cause                          | Fix                                                       |
-| ------------------------------------------------- | ------------------------------------------ | --------------------------------------------------------- |
-| No styling, broken pictures, no sound             | built for a different address              | build again with the right `BASE_URL` (step 4), re-upload |
-| Headings in a plain font                          | fonts missing or misnamed when you built   | step 3, build again; check 1 of step 6 must print above 0 |
-| Fonts fine in preview, `404` or blocked when live | the server does not serve `.otf` files     | ask whoever runs the server to allow `font/otf`           |
-| Audio or video plays in preview, not live         | the server's media types or range requests | ask whoever runs the server (step 7)                      |
-| A lesson page is "not found"                      | not every file was copied                  | copy the whole of `dist/` again                           |
-| The old version still shows                       | your browser's saved copy                  | Cmd+Shift+R / Ctrl+F5, or a private window                |
+| What you see                                      | Most likely cause                                                     | Fix                                                        |
+| ------------------------------------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------- |
+| No styling, broken pictures, no sound             | address missing its final `/`, or a `BASE_URL` build copied elsewhere | step 8's slash check; or build without `BASE_URL` (step 4) |
+| Headings in a plain font                          | fonts missing or misnamed when you built                              | step 3, build again; check 1 of step 6 must print above 0  |
+| Fonts fine in preview, `404` or blocked when live | the server does not serve `.otf` files                                | ask whoever runs the server to allow `font/otf`            |
+| Audio or video plays in preview, not live         | the server's media types or range requests                            | ask whoever runs the server (step 7)                       |
+| A lesson page is "not found"                      | not every file was copied                                             | copy the whole of `dist/` again                            |
+| The old version still shows                       | your browser's saved copy                                             | Cmd+Shift+R / Ctrl+F5, or a private window                 |
 
 **Going back:** put the copy you kept in step 7 back in place. Or rebuild an earlier
 version: `git switch --detach <version>`, then steps 2, 5, 6 and 7, then
 `git switch main` to return.
 
-**Moving a course to a new address** is a new build (step 4). Learners' saved flashcard
-progress stays behind at the old address: it is kept per address in their browser.
+**Moving a course to a new folder** needs no new build: copy the same files (step 7).
+Learners' saved flashcard progress stays behind at the old folder: their browser keeps
+it per folder, so two courses on one server never mix. A fixed-address build (step 4)
+does need building again.
 
 ## Demo build for the team
 
 To let the team try a palette a designer sent (`DESIGNER.md` → "Preview a palette"),
-build a **separate demo site** with the debug pages in it, at its own address:
+build a **separate demo site** with the debug pages in it:
 
 ```bash
-DEBUG=1 BASE_URL=/demo/ bun run build
+DEBUG=1 bun run build
 ```
 
-Upload `dist/` to the team-only folder for `/demo/`, **never** to the course's live
-address: the demo carries internal test pages. On the demo site, open
+Upload `dist/` to a team-only folder such as `/demo/`, **never** to the course's live
+folder: the demo carries internal test pages. On the demo site, open
 `debug-sandbox.html`, pick the palette, then browse the course home, the example lesson,
 `exercise-showcase.html` and `ui-showcase.html` in those colours. The choice is kept in
 each viewer's own browser; "Reset" in the corner label undoes it. A new palette file
@@ -278,5 +281,5 @@ needs a new demo build.
 - commit the Feijoa files, or put them anywhere public other than the built site;
 - build with `DEBUG=1` for the course's address (only for the
   [team demo](#demo-build-for-the-team));
-- copy a build to an address it was not built for;
+- copy a fixed-address (`BASE_URL`) build anywhere but its own address;
 - deploy from a branch other than `main`, or when `main`'s CI is red.

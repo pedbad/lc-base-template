@@ -50,8 +50,12 @@ bun run format && bun run lint && bun run lint:css && bun run test:coverage && b
    root-absolute path. A CSS `url()` to a `public/` file is no exception: Vite
    rewrites it against the base only when the file exists at build time, so a
    git-ignored file (Feijoa) escapes the base. Build-time URLs come from a plugin
-   that knows the base instead (`src/build/feijoa-fonts.ts`). Verify under a
-   sub-path: `BASE_URL=/course/ bun run build`, and `bun run test:e2e` under the same.
+   that knows the base instead (`src/build/feijoa-fonts.ts`). The default base is
+   `./` (one build for any folder, `src/build/build-base.ts`), so a relative `url()`
+   inside a CSS custom property is out too: it resolves against the stylesheet, not
+   the page (`src/lib/mask-image.ts`); and a key two courses must not share takes
+   `storageScope()`. Verify from a folder: `bun run build && SERVE_PATH=/any/folder/
+bun run test:e2e`; and a fixed address: `BASE_URL=/course/` on both commands.
 4. **Prerendered markup must equal the first client render.** Anything that
    cannot exist server-side goes behind `useIsHydrated`.
 5. **Never commit `.claude/tdd-guard/`** or `public/fonts/feijoa/*`.

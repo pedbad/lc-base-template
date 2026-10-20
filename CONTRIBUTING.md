@@ -70,9 +70,9 @@ nothing should: a deployed build contains neither file, so an in-course link wou
 locally and 404 for every reader. (Vite takes 5174 when 5173 is busy; it prints the port
 it chose.)
 
-Serving from a sub-path (courses usually are) is one env var — it feeds the bundle
-and the prerender pass together, so hashed assets, the favicon and runtime audio/image
-URLs all resolve against the same base:
+A build works from any folder: every address it writes is relative (`./`), so the same
+`dist/` can be copied into `/`, `/courses/spanish-1/` or anywhere else. To tie a build to
+one address instead, one env var feeds the bundle and the prerender pass together:
 
 ```bash
 BASE_URL=/course/ bun run build

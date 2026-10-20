@@ -143,8 +143,8 @@ bun run build && bun run preview   # the real static pages, before you ship
 proves content, layout and behaviour — not the no-JS static page. Check that with
 `build && preview`, which is what actually deploys.
 
-Serving from a sub-path takes one env var, which feeds both the bundle and the
-prerender pass:
+A build works copied into any folder (its addresses are relative). To tie it to one
+address instead, one env var feeds both the bundle and the prerender pass:
 
 ```bash
 BASE_URL=/course/ bun run build

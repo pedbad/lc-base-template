@@ -229,8 +229,9 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
   has the showcases and the sandbox (AGENTS.md hard constraint 6), so these specs run
   only against one, and the course specs only against a normal build.
   `playwright.config.ts` picks the suite from the same `DEBUG` the build reads:
-  `DEBUG=1 bun run build && DEBUG=1 bun run test:e2e` (add `BASE_URL=/course/` to both
-  for the sub-path). Covered: a showcase clip plays, and a clip that cannot load says
+  `DEBUG=1 bun run build && DEBUG=1 bun run test:e2e` (add `SERVE_PATH=/any/folder/` to
+  the second to serve it from a folder, or `BASE_URL=/course/` to both for a fixed
+  address). Covered: a showcase clip plays, and a clip that cannot load says
   "Sound unavailable"; the palette preview recolours another page in both themes and
   Reset restores it; the flip cue retires after three turns, stays retired after a
   reload, comes back with flashcards' Clear saved progress, and fades under reduced
@@ -1122,10 +1123,14 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   (`node:fs`), never `load-lo-glob.ts` — `import.meta.glob` is Vite-only syntax and
   throws under Bun. Both readers feed `assembleLo`, so validation and ordering are
   defined once.
-- **One `BASE_URL` knob:** `vite.config.ts` reads `base` from `process.env.BASE_URL`, and
-  Bun exposes `process.env` as `import.meta.env`, so `resolveAsset()` resolves audio and
-  image URLs against the same base while prerendering. `vite build --base=…` would not
-  reach the prerender pass — `BASE_URL=/course/ bun run build` is the supported form.
+- **One `BASE_URL` knob, `./` when unset:** `vite.config.ts` takes `base` from
+  `buildBase(process.env)` (`src/build/build-base.ts`), and Bun exposes `process.env` as
+  `import.meta.env`, so `resolveAsset()` resolves audio and image URLs against the same
+  base while prerendering; unset, both fall back to the same `./` (one build for any
+  folder, 2026-10-20). `vite build --base=…` would not reach the prerender pass —
+  `BASE_URL=/course/ bun run build` is the supported form of a fixed address. The browser
+  tests serve a `./` build from `SERVE_PATH` (`servePath()`, same file), with
+  `vite preview --base`; CI serves it from `/any/folder/`.
 - **Hydration cost it imposed:** prerendered markup must equal the first client render.
   `useTheme` therefore reads through `useSyncExternalStore` with a separate server
   snapshot (localStorage and the `.dark` class are the truth, and an inline pre-paint

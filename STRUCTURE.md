@@ -90,8 +90,9 @@ names the config uses, so an asset's path is derivable from the page.
 
 **Never write a bare relative or root-absolute URL to any of this.** Runtime
 paths go through `resolveAsset()`; static `<head>` paths go through
-`%BASE_URL%`. A course can deploy under a sub-path, and that is what makes it
-work. **Guard c** checks the form; **guard d** checks the file is actually there.
+`%BASE_URL%`. One build deploys in any folder (the default base is `./`), or at a
+fixed `BASE_URL`, and that is what makes it work. **Guard c** checks the form;
+**guard d** checks the file is actually there.
 
 ## `src/` — the application
 
