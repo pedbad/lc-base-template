@@ -9,6 +9,8 @@ How to work in this repo: setup, everyday commands, the commit gate, and convent
 > `docs/specs/2026-06-15-lc-base-template-design.md` remains the full planned scope.
 >
 > For **why** each tool was chosen (not how to use it), see [`docs/TOOLING.md`](docs/TOOLING.md).
+> For **how the code is written** (names, types, comments, the habits no tool checks), see
+> [`docs/STYLE.md`](docs/STYLE.md).
 >
 > Four sibling docs cover the audiences this one does not:
 > [`COURSE_GUIDE.md`](COURSE_GUIDE.md) (colleagues writing a course in its own repo),

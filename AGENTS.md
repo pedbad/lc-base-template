@@ -6,6 +6,7 @@ read by Cursor, Codex, Claude Code and similar.
 Rule-first and deliberately short. It does not restate the human docs — it points
 at them. For depth: [`CONTRIBUTING.md`](CONTRIBUTING.md) (workflow),
 [`STRUCTURE.md`](STRUCTURE.md) (layout), [`DESIGNER.md`](DESIGNER.md) (theming),
+[`docs/STYLE.md`](docs/STYLE.md) (how the code is written),
 [`docs/TOOLING.md`](docs/TOOLING.md) (why each tool). Start any session at
 [`docs/process/TODO.md`](docs/process/TODO.md).
 
