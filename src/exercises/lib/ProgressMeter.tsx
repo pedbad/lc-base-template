@@ -16,6 +16,7 @@ import type { CSSProperties } from 'react';
 import { courseConfig } from '@/config/course.config';
 import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
 import { resolveAsset } from '@/lib/assets';
+import { maskImageStyle } from '@/lib/mask-image';
 import { progressText } from './progress-text';
 import './progress-meter.css';
 
@@ -38,19 +39,17 @@ export function ProgressMeter({
   if (safeTotal === 0) return null;
   const safeCorrect = Math.min(safeTotal, Math.max(0, Math.floor(correct)));
   const isComplete = safeCorrect === safeTotal;
-  const iconStyle =
-    iconSrc === undefined
-      ? undefined
-      : ({ '--progress-icon': `url("${resolveAsset(iconSrc)}")` } as CSSProperties);
+  // Set on each slot, not inherited through a custom property (src/lib/mask-image.ts).
+  const iconStyle = iconSrc === undefined ? undefined : maskImageStyle(resolveAsset(iconSrc));
 
   return (
     <div className="progress-meter" data-complete={isComplete ? 'true' : undefined}>
-      <span className="progress-meter-slots" aria-hidden="true" style={iconStyle}>
+      <span className="progress-meter-slots" aria-hidden="true">
         {Array.from({ length: safeTotal }, (_, index) => (
           <span
             key={index}
             className={`progress-meter-slot${index < safeCorrect ? ' is-filled' : ''}${iconSrc === undefined ? '' : ' is-icon'}`}
-            style={{ '--slot-index': index } as CSSProperties}
+            style={{ ...iconStyle, '--slot-index': index } as CSSProperties}
           />
         ))}
       </span>

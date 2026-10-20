@@ -45,7 +45,11 @@
     border: 0;
     border-radius: 0;
     background-color: var(--muted-foreground);
-    mask: var(--progress-icon) center / contain no-repeat;
+
+    /* The image is set inline on each slot (src/lib/mask-image.ts). */
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: contain;
   }
 
   .progress-meter-slot.is-icon.is-filled {

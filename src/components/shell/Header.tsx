@@ -27,9 +27,10 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import { Menu } from 'lucide-react';
-import type { CSSProperties, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { courseConfig } from '@/config/course.config';
 import { resolveAsset, resolveHomeHref } from '@/lib/assets';
+import { maskImageStyle } from '@/lib/mask-image';
 import type { NavSection } from './nav-section';
 import './header.css';
 
@@ -132,10 +133,11 @@ export default function Header({
               inside that box without distortion.
               Masked, not <img>: `currentColor` inside an <img>-loaded SVG resolves
               against that file's own document and comes out black in both themes.
-              See the .course-mark rule in shell.css. */}
+              See the .course-mark rule in shell.css; the image itself is set here,
+              on the element (src/lib/mask-image.ts says why). */}
           <span
             className="course-mark site-header-mark"
-            style={{ '--course-mark': `url(${resolveAsset(courseConfig.logo)})` } as CSSProperties}
+            style={maskImageStyle(resolveAsset(courseConfig.logo))}
             aria-hidden="true"
           />
           {siteTitle}

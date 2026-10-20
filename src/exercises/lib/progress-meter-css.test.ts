@@ -20,7 +20,9 @@ describe('progress-meter.css', () => {
   });
 
   test('a course icon is a mask, so it takes the same two colours', () => {
-    expect(css).toMatch(/\.progress-meter-slot\.is-icon\s*\{[^}]*mask:[^;]*var\(--progress-icon\)/);
+    // The image itself is inline on each slot (ProgressMeter.test.tsx); the rest is here.
+    expect(css).toMatch(/\.progress-meter-slot\.is-icon\s*\{[^}]*mask-size:\s*contain/);
+    expect(css).not.toContain('--progress-icon');
   });
 
   test('the celebration runs only for readers who have not asked for less motion', () => {

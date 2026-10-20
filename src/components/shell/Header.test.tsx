@@ -127,7 +127,12 @@ describe('Header', () => {
     // dark header, which is the bug this replaced. An <img> reappearing here is that
     // bug coming back.
     expect(html).not.toMatch(/<a[^>]*>[^<]*<img/);
-    expect(html).toContain('--course-mark:url(/logo.svg)');
+    // On the element itself, prefixed as the build prefixes the rest of the mask. Never
+    // through a custom property: a relative url() in one resolves against the stylesheet
+    // that reads it (assets/), not the page, so a `./` build asked for assets/logo.svg.
+    const url = 'url(&quot;/logo.svg&quot;)';
+    expect(html).toContain(`-webkit-mask-image:${url};mask-image:${url}`);
+    expect(html).not.toContain('--course-mark');
     // Through resolveAsset: a bare `logo.svg` resolves against the CURRENT page URL,
     // which breaks on an LO page under a sub-path base. The leading slash is the only
     // visible proof it was resolved at all.

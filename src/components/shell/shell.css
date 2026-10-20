@@ -17,8 +17,10 @@
      monochrome mark that is free. A full-colour logo needs the footer's pattern
      instead — a light/dark pair with `dark:hidden` (see FooterMarks.tsx).
 
-     The URL arrives as `--course-mark`, set inline from `courseConfig.logo` through
-     resolveAsset(), because the path is config and cannot be written here. */
+     The image is set inline as `mask-image`, from `courseConfig.logo` through
+     resolveAsset(), because the path is config and cannot be written here. Not through
+     a custom property: a relative url() in one resolves against this stylesheet, not
+     the page (src/lib/mask-image.ts). */
   .course-mark {
     display: inline-block;
     flex: none;
@@ -26,7 +28,6 @@
 
     /* Unprefixed only — stylelint bans vendor prefixes here and the build adds what
        the browser targets need. Unprefixed `mask-*` is Safari 15.4+. */
-    mask-image: var(--course-mark);
     mask-position: center;
     mask-repeat: no-repeat;
     mask-size: contain;

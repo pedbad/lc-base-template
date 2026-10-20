@@ -71,6 +71,14 @@ describe('ProgressMeter', () => {
       <ProgressMeter correct={1} total={2} iconSrc="images/progress/tortoise.svg" />,
     );
     expect(slots(icon).every((slot) => slot.includes('is-icon'))).toBe(true);
-    expect(icon).toMatch(/--progress-icon:url\(&quot;\/?images\/progress\/tortoise\.svg&quot;\)/);
+    // On each slot, not through a custom property: a relative url() in one resolves
+    // against the stylesheet that reads it, not the page (see Header.test.tsx).
+    const url = 'url(&quot;/images/progress/tortoise.svg&quot;)';
+    const slotTags = icon.match(/<span class="progress-meter-slot[ "][^>]*>/g) ?? [];
+    expect(slotTags).toHaveLength(2);
+    expect(
+      slotTags.every((tag) => tag.includes(`-webkit-mask-image:${url};mask-image:${url}`)),
+    ).toBe(true);
+    expect(icon).not.toContain('--progress-icon');
   });
 });
