@@ -32,6 +32,25 @@ export const resolveHomeHref = (): string => {
   return base.endsWith('/') ? base : `${base}/`;
 };
 
+/** The page's own address, or undefined where there is no page (the prerender). */
+const currentPageUrl = (): string | undefined =>
+  typeof document === 'undefined' ? undefined : document.baseURI;
+
+/**
+ * The course's folder as a path, for keys two courses on one server must not share
+ * (saved progress). An absolute base is that path already. A `./` build (the default:
+ * one build for any folder) learns it from the page's address in the browser, and stays
+ * `./` in the prerender, which has no address. The key it builds is never rendered, so
+ * that difference cannot reach the markup.
+ */
+export const storageScope = (
+  home: string = resolveHomeHref(),
+  pageUrl: string | undefined = currentPageUrl(),
+): string => {
+  if (home.startsWith('/') || pageUrl === undefined) return home;
+  return new URL(home, pageUrl).pathname;
+};
+
 /**
  * Resolve `path` to a URL served under the app's base path.
  * @param path Project-relative ("audio/q1.mp3") or root-relative ("/audio/q1.mp3")

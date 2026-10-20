@@ -9,7 +9,7 @@
  * synchronously inside the engine's click handler.
  */
 import { useMemo, useRef, useState, useSyncExternalStore } from 'react';
-import { resolveHomeHref } from '@/lib/assets';
+import { storageScope } from '@/lib/assets';
 import type { FlipCueControl } from './FlipCueContext';
 import {
   INITIAL_FLIP_CUE_SESSION,
@@ -29,7 +29,7 @@ import {
 const notRetiredOnServer = () => false;
 
 export function useFlipCue(progressId: string | undefined): FlipCueControl {
-  const key = progressId ? flipCueKey(resolveHomeHref(), progressId) : null;
+  const key = progressId ? flipCueKey(storageScope(), progressId) : null;
   const isStoredRetired = useSyncExternalStore(
     subscribeFlipCue,
     () => isFlipCueRetired(key),

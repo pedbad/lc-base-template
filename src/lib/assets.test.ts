@@ -3,7 +3,7 @@
  * BASE_URL falls back to "/" — these assert the root-served behaviour.
  */
 import { expect, test } from 'vitest';
-import { resolveAsset, resolveHomeHref } from './assets';
+import { resolveAsset, resolveHomeHref, storageScope } from './assets';
 
 test('resolveHomeHref: is the base path itself, ending in a slash', () => {
   // Root-served base under the test runner; the guarantee being locked is that it is
@@ -31,4 +31,24 @@ test('resolveAsset: spaces and accents are URI-encoded', () => {
   expect(resolveAsset('audio/à bientôt.mp3')).toBe(
     encodeURI('/audio/à bientôt.mp3'.normalize('NFD')),
   );
+});
+
+test('storageScope: an absolute base is the scope already, browser or not', () => {
+  expect(storageScope('/courses/spanish-1/', undefined)).toBe('/courses/spanish-1/');
+  expect(storageScope('/courses/spanish-1/', 'https://x.test/elsewhere/page.html')).toBe(
+    '/courses/spanish-1/',
+  );
+});
+
+test('storageScope: a ./ build takes the folder the page is served from', () => {
+  // Two courses from one build on one server must not share saved progress: the
+  // scope is the folder of the page, which only the browser knows.
+  expect(storageScope('./', 'https://x.test/courses/spanish-1/example.html')).toBe(
+    '/courses/spanish-1/',
+  );
+  expect(storageScope('./', 'https://x.test/courses/french-1/')).toBe('/courses/french-1/');
+});
+
+test('storageScope: a ./ build with no page address (the prerender) stays ./', () => {
+  expect(storageScope('./', undefined)).toBe('./');
 });

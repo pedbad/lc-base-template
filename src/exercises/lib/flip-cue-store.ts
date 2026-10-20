@@ -16,7 +16,7 @@ const RETIRED = 'retired';
 
 const listeners = new Set<() => void>();
 
-/** An exercise's key: the course `base` path (ending in `/`) plus its `progressId`. */
+/** An exercise's key: the course's folder (`storageScope()`, ending in `/`) plus its `progressId`. */
 export function flipCueKey(base: string, progressId: string): string {
   return `${STORAGE_PREFIX}${base}${progressId}`;
 }

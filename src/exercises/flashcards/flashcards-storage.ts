@@ -55,7 +55,7 @@ const StoredSrsStateSchema = z.object({
 });
 
 /**
- * A deck's storage key: the course `base` path (ending in `/`) plus its `progressId`
+ * A deck's storage key: the course's folder (`storageScope()`, ending in `/`) plus its `progressId`
  * (see file header).
  */
 export function storageKey(base: string, progressId: string): string {

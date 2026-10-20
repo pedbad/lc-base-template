@@ -41,7 +41,7 @@ import { useContext, useReducer, useState, type CSSProperties } from 'react';
 import { Frown, RotateCcw, Smile } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AudioClip } from '@/components/audio/AudioClip';
-import { resolveAsset, resolveHomeHref } from '@/lib/assets';
+import { resolveAsset, storageScope } from '@/lib/assets';
 import { TARGET_LANG } from '@/lib/lang';
 import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
 import {
@@ -109,7 +109,7 @@ export default function FlashcardsExercise({ config, progressId }: ExerciseCompo
   // scheduler still orders this visit's deck, in memory.
   const srsEnabled = Boolean(options?.srs) && content !== null;
   const cardIds = content ? content.cards.map((card) => cardId(card.target)) : [];
-  const storeKey = srsEnabled && progressId ? storageKey(resolveHomeHref(), progressId) : null;
+  const storeKey = srsEnabled && progressId ? storageKey(storageScope(), progressId) : null;
 
   const [srs, setSrs] = useState<SrsState>(() =>
     storeKey ? loadSrsState(storeKey, cardIds) : initSrsState(cardIds),

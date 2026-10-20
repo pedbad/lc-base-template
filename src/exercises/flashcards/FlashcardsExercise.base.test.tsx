@@ -1,8 +1,8 @@
 /**
  * The engine keys a deck's save under the course's base path (E13a), so two courses
- * on one site keep apart. Its own file because it mocks `resolveHomeHref` for the
- * module: this suite has no Vite `import.meta.env`, so the base is always "/" here
- * (as `src/lib/sprite.test.ts` notes).
+ * on one site keep apart. Its own file because it mocks `storageScope` (the folder the
+ * course is served from; src/lib/assets.ts) for the module: this suite has no page
+ * address and no Vite `import.meta.env`, so the scope is always "/" here.
  */
 import { afterEach, expect, test, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -10,7 +10,7 @@ import FlashcardsExercise from './FlashcardsExercise';
 
 vi.mock('@/lib/assets', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/lib/assets')>()),
-  resolveHomeHref: () => '/course/',
+  storageScope: () => '/course/',
 }));
 
 afterEach(() => {
