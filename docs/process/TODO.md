@@ -43,7 +43,7 @@ is exactly what the paragraph above is about.
 `bun run test` (Vitest), **not** `bun test` — Bun's own runner throws on the
 `import.meta.glob` in `load-lo-glob.ts` and reports a false failure.
 
-**Next (2026-10-16):** for the current commit see `git log main`. Section D is closed.
+**Next (2026-10-20):** for the current commit see `git log main`. Section D is closed.
 Done 2026-10-14 to 2026-10-16: **E9** (`ec86eb7`), **E10** (`fb73545`), **E11**
 (`187dadc`), **E12a** (`cbda661`), **E12b**, **E15** (`fe43305`), **E4**
 (`COURSE_GUIDE.md`), **E14** (README opener), **E5** (`DEPLOY.md`), **E13** (a and b,
@@ -68,10 +68,21 @@ left, in order:
 2. **E12d — DONE 2026-10-20** (`7295a12`): memory-match resized during "Show
    answers", sequence audio scrubbed while playing, and E19's brand board. It found
    **E23** (below), a Firefox scrubber bug, now next.
-3. Optional: one build that works in any folder, since addresses keep changing
+3. **E23 — next**: the Firefox sequence-scrubber freeze (below). The fix is test-first
+   in Vitest, so it can be built anywhere. **On the MacBook Pro** Playwright's Firefox
+   will not start, so the local debug suite runs Chromium and WebKit only; remove the
+   Firefox `test.fixme` and let CI's Ubuntu Firefox leg prove it, or recheck on the
+   work iMac.
+4. Optional: one build that works in any folder, since addresses keep changing
    (`DEPLOY.md` says rebuild per address). Investigate before deciding.
-4. **Then the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1 as its
+5. **Then the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1 as its
    step 5, and E16 after.
+
+**Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
+GitHub; CI is green there; no open PRs, and only `main` exists on GitHub. The one
+leftover local branch on the iMac, `claude/e20-compare-slider-d7384f`, is already
+squash-merged (PR #19) and holds nothing unsaved. On the MacBook: `git switch main && git
+pull --ff-only`, then `bun install` only if `package.json` or `bun.lock` changed.
 
 Since PR #9, merge a PR by fast-forwarding `main` once its CI is
 green (`git merge --ff-only` + push), so the hashes cited here survive; GitHub's
