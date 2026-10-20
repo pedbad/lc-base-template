@@ -61,9 +61,10 @@ cross-folder imports, engine fixtures → `src/showcase/fixture-types.ts` and
 **Decided 2026-10-16: finish all template work before the organisation move.** What is
 left, in order:
 
-1. **Firefox on the work iMac**: `bun run test:e2e` should run all 108 there, and the
-   27 of the debug suite after a `DEBUG=1` build (the
-   MacBook Pro cannot start Playwright's Firefox; "Browser verification" below).
+1. **Firefox on the work iMac — DONE 2026-10-20** at `e136469`: `bun run test:e2e`
+   ran all 108 (36 in Firefox) and, after a `DEBUG=1` build, the debug suite ran all
+   27 (9 in Firefox). Firefox is checked locally again; the MacBook Pro still cannot
+   start it ("Browser verification" below).
 2. **E12d**: the debug-build cases E12c left (below): memory-match resized during
    "Show answers", sequence audio scrubbed while playing, and E19's brand board (real
    HEX after load, axe clean). `e2e/debug/` and the `DEBUG=1` CI legs are in place.
@@ -104,7 +105,8 @@ transitions stall): drive the installed Playwright browsers from a throwaway spe
 is not installed. **Known, 2026-10-16:** on the MacBook Pro (macOS 27.0.1) Playwright's
 Firefox 155 (`@playwright/test` 1.63) will not start, "Could not find profile folder",
 even by hand and outside the sandbox, so the local suite runs 72 of 108 there and CI's
-Ubuntu run is the Firefox check. Recheck on the next Playwright upgrade.
+Ubuntu run is the Firefox check. Recheck on the next Playwright upgrade. The work iMac
+runs Firefox fine (all 108, and the 27 debug specs, 2026-10-20).
 
 ---
 
