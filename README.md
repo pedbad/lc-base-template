@@ -161,6 +161,7 @@ BASE_URL=/course/ bun run build
 | [`STRUCTURE.md`](STRUCTURE.md)                 | anyone new — what every folder is for                      |
 | [`AGENTS.md`](AGENTS.md)                       | AI coding agents working in this repo                      |
 | [`.claude/skills/`](.claude/skills/)           | Claude Code's recipes for the recurring jobs, test-first   |
+| [`docs/STYLE.md`](docs/STYLE.md)               | developers — how the code is written, and what tools check |
 | [`docs/TOOLING.md`](docs/TOOLING.md)           | why each tool was chosen, and every build decision         |
 | [`docs/ORGANIZATION.md`](docs/ORGANIZATION.md) | maintainer — the planned move to the team organisation     |
 | [`docs/process/TODO.md`](docs/process/TODO.md) | what is still open — start here in a new session           |
