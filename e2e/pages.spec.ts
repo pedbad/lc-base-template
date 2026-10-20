@@ -3,9 +3,9 @@
  *
  * "Clean" is three checks in one: no console error and no uncaught error (React 19
  * reports a hydration mismatch as an error, so this is also the hydration check,
- * AGENTS.md hard constraint 4), and no request that failed or answered 4xx/5xx (under
- * BASE_URL=/course/ a root-absolute URL 404s, so this is the base-path check, hard
- * constraint 3).
+ * AGENTS.md hard constraint 4), and no request that failed or answered 4xx/5xx (served
+ * from a folder, a root-absolute URL 404s, and so does a relative one resolved against
+ * the wrong file, so this is the base-path check, hard constraint 3).
  */
 import { expect, test, type Page } from '@playwright/test';
 

@@ -7,12 +7,13 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { expect, type Locator, type Page } from '@playwright/test';
 
+import { servePath } from '../../src/build/build-base';
 import { animationsInside } from '../support';
 
 const DIST = path.resolve(import.meta.dirname, '../../dist');
 
-/** The base the build was made for, ending in a slash as `resolveHomeHref()` gives it. */
-const BASE_PATH = (process.env.BASE_URL ?? '/').replace(/\/?$/, '/');
+/** The folder the site is served from, ending in a slash, as storageScope() keys it. */
+const BASE_PATH = servePath(process.env);
 
 /**
  * Fails with the fix spelled out when `dist/` is a normal build. Without this, a debug

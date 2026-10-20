@@ -1,8 +1,9 @@
 /**
  * playwright.config.ts — the browser suite (TODO §E12, spec
  * docs/specs/2026-10-14-browser-tests-design.md). Runs against the BUILT site: build
- * first, then `bun run test:e2e`. `vite preview` reads the same BASE_URL as the build
- * (vite.config.ts), so `BASE_URL=/course/` on both gives the sub-path run.
+ * first, then `bun run test:e2e`. A default build is `./` and works in any folder:
+ * `SERVE_PATH=/any/folder/ bun run test:e2e` serves the same files from a nested folder.
+ * A fixed address is `BASE_URL=/course/` on both commands, and is served there.
  *
  * Two suites, one per build (TODO §E12c). A normal build runs every spec except
  * `e2e/debug/`; a `DEBUG=1` build runs ONLY `e2e/debug/`, the specs for the debug pages
@@ -15,10 +16,12 @@
  */
 import { defineConfig, devices } from '@playwright/test';
 
+import { servePath } from './src/build/build-base';
 import { isDebugRequested } from './src/build/build-entries';
 
 const PORT = 4173;
-const BASE_PATH = process.env.BASE_URL ?? '/';
+/** Where the built site is served: a fixed BASE_URL, or SERVE_PATH for a `./` build. */
+const BASE_PATH = servePath(process.env);
 const SITE_URL = `http://localhost:${PORT}${BASE_PATH}`;
 const IS_CI = Boolean(process.env.CI);
 /** `e2e/debug/`, anchored: a bare 'debug/**' would also match a checkout's own path. */
@@ -44,7 +47,9 @@ export default defineConfig({
     { name: 'webkit', use: { ...devices['Desktop Safari'] } },
   ],
   webServer: {
-    command: `bun run preview --port ${PORT} --strictPort`,
+    // `--base` serves dist/ from BASE_PATH whatever it was built with: a `./` build is
+    // the same files in any folder, which is what serving it from SERVE_PATH proves.
+    command: `bun run preview --port ${PORT} --strictPort --base ${BASE_PATH}`,
     url: SITE_URL,
     // Always a fresh preview: a left-running one may serve another base or an old build.
     reuseExistingServer: false,

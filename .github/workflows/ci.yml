@@ -58,23 +58,28 @@ jobs:
         run: bun run build
 
   # The browser suite (TODO §E12, docs/TOOLING.md "Browser tests"): the BUILT site in
-  # Chromium, Firefox and WebKit, once per base path so a root-absolute URL that only
-  # works at / fails here. Beside `verify`, not after it, so both report at once.
+  # Chromium, Firefox and WebKit, once per kind of build. The default `./` build is built
+  # once and served from a nested folder it knows nothing about, so an address that works
+  # only at / (or resolves against the wrong file) fails here; a fixed BASE_URL build is
+  # served at its own address. Beside `verify`, not after it, so both report at once.
   # Once per build too (§E12c): the course build runs every spec but e2e/debug/, the
   # DEBUG=1 build only e2e/debug/ (the debug pages' own cases); playwright.config.ts
   # picks the suite from the same DEBUG the build reads. Set on those two steps only (the
   # `debug` npm convention reads DEBUG too); an empty DEBUG is off.
   e2e:
-    name: Browser tests (${{ matrix.base }}${{ matrix.debug && ', DEBUG=1' || '' }})
+    name: Browser tests (${{ matrix.site.name }}${{ matrix.debug && ', DEBUG=1' || '' }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
-        base: ['/', '/course/']
+        site:
+          - { name: './ from /any/folder/', base: '', serve: '/any/folder/' }
+          - { name: '/course/', base: '/course/', serve: '' }
         debug: [false, true]
     env:
-      BASE_URL: ${{ matrix.base }}
+      BASE_URL: ${{ matrix.site.base }}
+      SERVE_PATH: ${{ matrix.site.serve }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5

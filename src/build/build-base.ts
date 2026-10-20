@@ -18,3 +18,14 @@ export const DEFAULT_BASE = './';
 export function buildBase(env: { BASE_URL?: string }): string {
   return env.BASE_URL || DEFAULT_BASE;
 }
+
+/**
+ * The folder the browser tests serve the built site from (playwright.config.ts). A
+ * fixed BASE_URL works only at that address, so it is served there. A `./` build works
+ * anywhere, so SERVE_PATH picks the folder (CI uses a nested one), or `/`.
+ */
+export function servePath(env: { BASE_URL?: string; SERVE_PATH?: string }): string {
+  const base = buildBase(env);
+  const folder = base.startsWith('/') ? base : env.SERVE_PATH || '/';
+  return folder.endsWith('/') ? folder : `${folder}/`;
+}
