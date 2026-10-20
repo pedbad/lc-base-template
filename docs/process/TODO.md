@@ -117,8 +117,12 @@ Firefox 155 (`@playwright/test` 1.63) will not start, "Could not find profile fo
 even by hand and outside the sandbox, so the local suite runs 72 of 108 there and CI's
 Ubuntu run is the Firefox check. Still so on 2026-10-20 after
 `bunx playwright install --force firefox` (a fresh v1543 download), both inside a
-Claude Code session and from the maintainer's own Terminal. Recheck on the next Playwright upgrade. The work iMac
-runs Firefox fine (all 108, and the 27 debug specs, 2026-10-20).
+Claude Code session and from the maintainer's own Terminal. Not the temp folder either:
+with `TMPDIR` pointed at a folder under `~` or under `/private/tmp`, Playwright made the
+profile there and Firefox still could not find it, while `firefox --version` runs. The
+work iMac runs Firefox fine (all 108, and the 27 debug specs, 2026-10-20) on macOS
+26.6.2, the same arm64 and the same Playwright, so macOS 27 is the likely cause (both
+versions from the maintainer's machine audit). Recheck on the next Playwright upgrade.
 
 ---
 
