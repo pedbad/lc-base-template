@@ -232,8 +232,11 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
   motion; a finished flashcards deck shows its done card and Reset does not move.
   Firefox on the Linux CI runner skips only the clip-plays test: it has no audio output
   there, so the clip errors (why: the test's comment). Helpers:
-  `e2e/debug/debug-support.ts`. Still to come (E12d): memory-match resized
-  during "Show answers", sequence-audio scrubbing, the brand board.
+  `e2e/debug/debug-support.ts`. Also (E12d): memory-match resized during "Show
+  answers" leaves every card in the grid with no stray transform; sequence audio
+  scrubbed while playing shows the time it plays (fixme in Firefox, TODO §E23); and
+  the brand board shows real HEX values, holds its tokens in the folds and passes axe
+  in both themes.
 - **One exclusion, WebKit only** (maintainer's decision, 2026-10-15): Base UI's
   focus-guard sentinels are left out of axe. Why, the upstream issue and when to remove
   it: the comment on `BASE_UI_FOCUS_GUARD` in `e2e/support.ts`.

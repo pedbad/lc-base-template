@@ -65,9 +65,9 @@ left, in order:
    ran all 108 (36 in Firefox) and, after a `DEBUG=1` build, the debug suite ran all
    27 (9 in Firefox). Firefox is checked locally again; the MacBook Pro still cannot
    start it ("Browser verification" below).
-2. **E12d**: the debug-build cases E12c left (below): memory-match resized during
-   "Show answers", sequence audio scrubbed while playing, and E19's brand board (real
-   HEX after load, axe clean). `e2e/debug/` and the `DEBUG=1` CI legs are in place.
+2. **E12d — DONE 2026-10-20** (`7295a12`): memory-match resized during "Show
+   answers", sequence audio scrubbed while playing, and E19's brand board. It found
+   **E23** (below), a Firefox scrubber bug, now next.
 3. Optional: one build that works in any folder, since addresses keep changing
    (`DEPLOY.md` says rebuild per address). Investigate before deciding.
 4. **Then the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1 as its
@@ -1859,7 +1859,7 @@ the code the same day. Four hold; its claim that strict TypeScript is off does n
 implicit `any` and `null` as a `number`). Its central point stands: 1689 passing tests
 coexisted with a broken keyboard flow, because component tests render static markup and
 never press a key. **Order: E9–E11 before the handover, E12 just before or after it
-(E12a done 2026-10-14, E12b 2026-10-15, E12c 2026-10-16; E12d remains), E13 before real learners.**
+(E12a done 2026-10-14, E12b 2026-10-15, E12c 2026-10-16, E12d 2026-10-20), E13 before real learners.**
 
 - **E9 — radio keyboard: arrows changed the answer, focus stayed put. DONE 2026-10-14**
   (`ec86eb7`). `src/exercises/lib/ChoicePillGroup.tsx` `handleKeyDown` called
@@ -1920,7 +1920,10 @@ never press a key. **Order: E9–E11 before the handover, E12 just before or aft
     now fails, instead of skipping, if a normal-suite run finds the debug pages in
     `dist/`. Passes in Chromium and WebKit at `/` and `/course/`; Firefox runs in CI
     (the MacBook cannot start it).
-  - **E12d — the rest of the debug-page cases.** From a second review (below):
+  - **E12d — the rest of the debug-page cases. DONE 2026-10-20** (`7295a12`), in
+    `e2e/debug/`: `memory-match-reveal`, `sequence-scrub` and `palette-board`; each
+    seen failing against a planted break; 47 passed and 1 fixme at `/` and
+    `/course/`. As planned, from a second review (below):
     **memory-match** — click and resize during the 620 ms "Show answers" FLIP reorder,
     then assert every card is back in the grid with no stray inline transform;
     **sequence audio** — scrub quickly while playing, then assert the shown time and
@@ -2038,8 +2041,8 @@ rather than the Language Centre's course factory; the maintainer took three smal
   mounted, names only in the catalog; the bar runs largest share first (`b1fd540`). After
   review the first read moved into the store's subscription, so no probe is added during
   render and a late preset is still caught. Checked by hand in
-  Chromium, light and dark, with presets C and Z; the automated browser check waits for
-  E12d. Design:
+  Chromium, light and dark, with presets C and Z; automated since E12d
+  (`palette-board.spec.ts`). Design:
   [`2026-10-16-palette-brand-board-design.md`](../specs/2026-10-16-palette-brand-board-design.md).
 - **E20 — the sandbox's light/dark image pairs as a comparison slider. DONE 2026-10-16**
   (`99d1b68`). Each `-black`/`-white` and `-light`/`-dark` pair in the Images section is one
@@ -2088,6 +2091,14 @@ rather than the Language Centre's course factory; the maintainer took three smal
   2026-10-16 with Playwright in dark: the Reset button's top moved 0 px on every turn and
   at completion, and the done card reads clearly on the dark card surface. The ease-in
   itself was not measured. In CI since E12c (`e2e/debug/flashcards-done.spec.ts`).
+- **E23 — the sequence scrubber freezes after a drag in Firefox. OPEN** (found by E12d,
+  2026-10-20). Firefox sends one more `input` event after `pointerup` (order seen:
+  `pointerup`, `lostpointercapture`, `input`, `change`), so `changeScrub` in
+  `SequenceAudioController.tsx` sets `scrubTime` again after `endScrub` cleared it: the
+  readout and thumb stay at the drop point while the audio plays on. Fix test-first,
+  then remove the Firefox `test.fixme` in `e2e/debug/sequence-scrub.spec.ts`. Minor,
+  same area: two drags a few milliseconds apart leave the old time on the scrubber in
+  Chromium (the spec waits two frames between drags to avoid it).
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
@@ -2344,3 +2355,4 @@ build, so it cannot return. Two remain:
 | 2026-10-16 | `99d1b68` | **image comparison slider** — sandbox Images section: each light/dark pair as one slider on theme-fixed grounds (E20)                              |
 | 2026-10-16 | `1eccb86` | **flip cue retires** — three cards turned, the Tap to flip corners leave with a random exit and the instruction glyph fades (E21)                  |
 | 2026-10-16 | `5f670b8` | **flashcards done card** — a finished deck keeps a "Deck complete" card in the card's place, so nothing jumps (E22)                                |
+| 2026-10-20 | `7295a12` | **debug browser cases** — memory-match reveal under resize, sequence scrub, the brand board's live values and axe (E12d)                           |
