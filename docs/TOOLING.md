@@ -105,7 +105,12 @@ Layer 1 is the carrot; layers 2–4 are the stick.
      travels with the repo matters.
 - **Config:** `vite.config.ts` → `test` block (node env — the suite renders via
   `renderToStaticMarkup`, and the two storage tests stub `window`/`localStorage`
-  themselves, so no jsdom). Current suite size: the header of `docs/process/TODO.md`.
+  themselves, so no jsdom). **One exception, per file:**
+  `SequenceAudioController.test.tsx` opts in to happy-dom (a dev dependency) with a
+  `// @vitest-environment happy-dom` comment, because the bug it pins is an order of
+  pointer and `input` events that only a mounted component sees (TODO §E23). Copy that
+  comment only for the same need; the suite's environment stays `node`. Current suite
+  size: the header of `docs/process/TODO.md`.
 - **`bun run guards` — the fast subset** (`vitest run src/guards`). The guards are
   ordinary Vitest tests, so `bun run test` already enforces every one of them; this is
   the quick check you run before committing when you only want to know whether you broke a repo-wide
@@ -249,7 +254,7 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
 - **Needs Node** (≥ 22.12, `.nvmrc`): Playwright's runner does not run on Bun.
 - **Once per machine:** `bunx playwright install chromium firefox webkit`.
 - **"No jsdom" still stands** (§A-h): this suite runs in real browsers, and Vitest stays
-  `environment: 'node'`.
+  `environment: 'node'` (one file opts in to happy-dom; see "Config" above).
 - **Rules:** navigate with relative paths (`'example.html'`, never `'/example.html'`) so
   the base applies; no fixed sleeps, only auto-waiting assertions.
 - **One allowance:** where the licensed Feijoa files exist (never in CI), Firefox

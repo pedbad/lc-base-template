@@ -86,39 +86,18 @@ async function drag(page: Page, scrubber: Locator, share: number): Promise<numbe
   return dropped;
 }
 
-/**
- * Two animation frames: the quickest a person can start another drag. Two drags with
- * nothing between them (a few milliseconds apart, which fingers cannot do) left the first
- * drag's time on the scrubber while the audio followed the second, in Chromium, on every
- * run (2026-10-20). Probably the controller's state mirror, which is copied into a ref in
- * an effect and so is stale until React has committed. Not what this spec is about.
- */
-function nextFrames(page: Page): Promise<void> {
-  return page.evaluate(
-    () =>
-      new Promise<void>((resolve) =>
-        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
-      ),
-  );
-}
-
 /** m:ss, as the controller writes it (formatTime in SequenceAudioController.tsx). */
 function formatTime(seconds: number): string {
   const whole = Math.floor(seconds);
   return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}`;
 }
 
-test('after quick drags while playing, the shown time is where the audio is', async ({
-  page,
-  browserName,
-}) => {
-  // A REAL APP BUG, found by this spec (2026-10-20), not fixed here: in Firefox the range
-  // input fires one more `input` event AFTER `pointerup` (the order seen: pointerup,
-  // lostpointercapture, input, change). changeScrub() answers it with
-  // setState({ scrubTime }), after endScrub() has cleared scrubTime, so the readout and
-  // the thumb stay at the drop point while the audio plays on. Remove this skip when
-  // SequenceAudioController ignores an `input` that arrives outside a drag.
-  test.fixme(browserName === 'firefox', 'readout freezes after a drag: late input event');
+test('after quick drags while playing, the shown time is where the audio is', async ({ page }) => {
+  // Firefox fires one more `input` after `pointerup`, which once pinned the readout to
+  // the drop point; and drags a few milliseconds apart once left the first drag's time
+  // on the scrubber. Both are fixed and replayed event by event in
+  // SequenceAudioController.test.tsx (TODO §E23), so the drags here follow each other
+  // with nothing between them.
   await recordPlayedElements(page);
   await openShowcase(page);
   const player = card(page, 'inline-gap-master').locator('.sequence-audio-controller');
@@ -133,7 +112,6 @@ test('after quick drags while playing, the shown time is where the audio is', as
   let target = 0;
   for (const share of DRAGS) {
     target = await drag(page, scrubber, share);
-    await nextFrames(page);
   }
 
   // The last drop took effect, and the audio has played on from it.

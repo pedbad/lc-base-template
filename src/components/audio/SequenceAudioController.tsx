@@ -129,6 +129,11 @@ export function SequenceAudioController({
   // Per-track durations; kept out of state to avoid rerenders while filling.
   const durationsRef = useRef<number[]>([]);
   const isScrubbingRef = useRef(false);
+  // The clip the element holds, set as playItem loads it. Its metadata belongs to this
+  // clip, not to state.currentIndex, which still names the clip before it (TODO §E23).
+  const loadedIndexRef = useRef(0);
+  // The seek waiting on metadata, so a newer seek can replace it instead of both running.
+  const pendingStartRef = useRef<(() => void) | null>(null);
 
   /* ---------- Events up to the parent ---------- */
 
@@ -222,8 +227,10 @@ export function SequenceAudioController({
     const { playSequence = false, offset = 0, autoplay } = opts;
     audio.src = src;
     audio.load();
+    loadedIndexRef.current = index;
 
     const start = () => {
+      pendingStartRef.current = null;
       try {
         audio.currentTime = offset || 0;
       } catch {
@@ -253,9 +260,16 @@ export function SequenceAudioController({
       emitTrackChange(index);
     };
 
+    // A seek still waiting lost its clip to this one: its start would run on this clip's
+    // metadata, with its own index and offset.
+    if (pendingStartRef.current) {
+      audio.removeEventListener('loadedmetadata', pendingStartRef.current);
+      pendingStartRef.current = null;
+    }
     if (Number.isFinite(audio.duration) && audio.duration > 0) {
       start();
     } else {
+      pendingStartRef.current = start;
       audio.addEventListener('loadedmetadata', start, { once: true });
     }
   };
@@ -318,13 +332,13 @@ export function SequenceAudioController({
   const handleLoadedMetadata = () => {
     const audio = audioRef.current;
     if (!audio) return;
-    const { currentIndex } = stateRef.current;
+    const index = loadedIndexRef.current;
     const d = Number.isFinite(audio.duration) ? audio.duration : 0;
-    durationsRef.current[currentIndex] = d;
+    durationsRef.current[index] = d;
     setState({
       clipDuration: d,
       masterDuration: getSafeMasterDuration(),
-      masterTime: getMasterTime(currentIndex, audio.currentTime),
+      masterTime: getMasterTime(index, audio.currentTime),
     });
   };
 
@@ -385,6 +399,9 @@ export function SequenceAudioController({
 
   const changeScrub = (e: ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
+    // Firefox fires one more `input` after pointerup (TODO §E23). Outside a drag it would
+    // set scrubTime again after endScrub cleared it, pinning the thumb to the drop point.
+    if (!isScrubbingRef.current) return;
     const t = parseFloat(e.target.value);
     if (!Number.isFinite(t)) return;
     setState({ scrubTime: t }); // UI-only while dragging

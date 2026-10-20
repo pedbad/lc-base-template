@@ -74,8 +74,9 @@ export default defineConfig({
   // can watch a Vitest reporter but has no Bun-test reporter. See docs/TOOLING.md.
   test: {
     // node env: the suite renders via `renderToStaticMarkup` (string output, no
-    // DOM) and the two storage tests stub `window`/`localStorage` themselves, so
-    // no jsdom/happy-dom is needed. Add one here only if a real DOM test appears.
+    // DOM) and the two storage tests stub `window`/`localStorage` themselves. The one
+    // test that replays real DOM events (SequenceAudioController.test.tsx, TODO §E23)
+    // opts in to happy-dom with a `@vitest-environment` comment; nothing else does.
     environment: 'node',
     // Vitest hands every CSS import back as '' unless it is listed here — `?raw` too.
     // The sandbox's preset preview reads the token files as text (src/sandbox/
