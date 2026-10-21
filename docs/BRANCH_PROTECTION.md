@@ -5,15 +5,17 @@ piece that makes the in-repo guardrails (`.github/CODEOWNERS`, the PR template, 
 **block** a bad merge instead of merely _suggesting_ review. Nothing in the repo can enable
 this for you — branch protection is a GitHub repo setting, not a file.
 
-> Status: ⬜ **NOT enabled — deliberately, for now.**
+> Status: ✅ **Enabled 2026-10-21, solo-maintainer version** (classic protection, set
+> with the [gh CLI command below](#alternative--gh-cli-classic-protection)): pull request
+> required, **0 approvals**, all five CI checks green and up to date, admins included,
+> linear history, no force-push or deletion of `main`. Proved the same day: a direct
+> `git push origin main` was refused (`GH006: Protected branch update failed … Changes must
+be made through a pull request`).
 >
-> **Decided 2026-09-03:** while this is a single-maintainer build, `main` accepts direct
-> pushes and the verify gate (`format · lint · lint:css · test · build`) is run by hand
-> before each commit. This is a considered choice, not a missed step — CONTRIBUTING says
-> the same. Since then a pre-push hook also runs `guards` and `test` locally, which
-> catches a red suite before it reaches `main` but is bypassable with `--no-verify`. **The trigger to switch it on is a second person getting push access.**
->
-> Tick to ✅ once configured.
+> **Why now, not at the second collaborator as first planned (2026-09-03):** the second
+> external review found that with `main` open, a direct push lands before CI has looked
+> at it, and the local pre-push hook can be skipped. The approval and code-owner rows stay
+> off until there is a second person to approve ([below](#-do-not-enable-approvals-while-there-is-only-one-collaborator)).
 
 ---
 
@@ -40,14 +42,19 @@ so the merge button stays disabled forever, waiting on an approval that cannot a
 As of 2026-09-03 the only collaborator is `pedbad` — re-verified 2026-09-09, still one
 (`gh api repos/pedbad/lc-base-template/collaborators --jq '.[].login'`). So:
 
-| If the repo has…          | Enable                                                  |
-| ------------------------- | ------------------------------------------------------- |
-| one collaborator          | PR required + **status checks only** — no approval rows |
-| two or more collaborators | the full table below, approvals included                |
+| If the repo has…          | Enable                                                                                              |
+| ------------------------- | --------------------------------------------------------------------------------------------------- |
+| one collaborator          | PR required with **0 approvals** + status checks + admins included — no approval or code-owner rows |
+| two or more collaborators | the full table below, approvals included                                                            |
 
 The status-check half is what actually protects `main` (nothing red can merge). The
-approval half only becomes meaningful once there is someone else to do the approving —
-which is exactly the "sharing with other developers" moment this checklist is gated on.
+approval half only becomes meaningful once there is someone else to do the approving.
+
+**Admins included is safe at 0 approvals.** With no approval to wait for, the only thing
+that can block a merge is a red check, which the author can fix. Leaving admins out
+instead would let the one maintainer — an admin — push straight to `main`, which is the
+gap protection exists to close. And no setting here is a permanent lockout: an admin can
+always change or remove the rule under **Settings → Branches**.
 
 ### ⚠ `CODEOWNERS` is a SECOND lockout, by a different route
 
@@ -114,24 +121,45 @@ change and this doc go in the same commit.
 
 If you prefer the terminal (requires `gh auth login` with admin on the repo).
 
-**Do not paste this as-is with one collaborator** — the two
-`required_pull_request_reviews` lines and `enforce_admins=true` are the lockout combination
-described above. Drop those three lines for the solo-maintainer version.
+**The solo-maintainer version** — what is set on this repo (2026-10-21):
 
 ```bash
 gh api -X PUT repos/pedbad/lc-base-template/branches/main/protection \
-  -H "Accept: application/vnd.github+json" \
-  -f 'required_status_checks[strict]=true' \
-  -f 'required_status_checks[contexts][]=Lint, test, build' \
-  -f 'required_status_checks[contexts][]=Browser tests (./ from /any/folder/)' \
-  -f 'required_status_checks[contexts][]=Browser tests (./ from /any/folder/, DEBUG=1)' \
-  -f 'required_status_checks[contexts][]=Browser tests (/course/)' \
-  -f 'required_status_checks[contexts][]=Browser tests (/course/, DEBUG=1)' \
-  -f 'required_pull_request_reviews[required_approving_review_count]=1' \
-  -f 'required_pull_request_reviews[require_code_owner_reviews]=true' \
-  -f 'enforce_admins=true' \
-  -f 'restrictions=' \
-  -f 'required_linear_history=true'
+  -H "Accept: application/vnd.github+json" --input - <<'JSON'
+{
+  "required_status_checks": {
+    "strict": true,
+    "contexts": [
+      "Lint, test, build",
+      "Browser tests (./ from /any/folder/)",
+      "Browser tests (./ from /any/folder/, DEBUG=1)",
+      "Browser tests (/course/)",
+      "Browser tests (/course/, DEBUG=1)"
+    ]
+  },
+  "enforce_admins": true,
+  "required_pull_request_reviews": {
+    "required_approving_review_count": 0,
+    "dismiss_stale_reviews": false,
+    "require_code_owner_reviews": false
+  },
+  "restrictions": null,
+  "required_linear_history": true,
+  "allow_force_pushes": false,
+  "allow_deletions": false
+}
+JSON
+```
+
+**With a second collaborator**, and only after `CODEOWNERS` names a reviewer who is not
+the author ([above](#-codeowners-is-a-second-lockout-by-a-different-route)): run it again
+with `"required_approving_review_count": 1`, `"require_code_owner_reviews": true` and
+`"dismiss_stale_reviews": true`. Running it with those while solo is the lockout above.
+
+Read back what is set:
+
+```bash
+gh api repos/pedbad/lc-base-template/branches/main/protection
 ```
 
 (Confirm the check names match the CI jobs listed above. If you rename a job or change
@@ -141,10 +169,10 @@ the matrix, update them here too.)
 
 ## Verify it worked
 
-1. On a scratch branch, push a trivial change and open a PR.
-2. Confirm: merge is **blocked** until CI is green **and** an approval exists.
-3. Edit a file under `src/styles/` or `src/config/` in that PR → confirm a **code-owner
-   review** is requested automatically.
-4. Try `git push origin main` directly → it should be **rejected**.
-
-Once all four behave, flip the status line at the top of this file to ✅ and you're done.
+1. Try `git push origin main` directly → it should be **rejected** (`GH006`). Then drop
+   the test commit: `git reset --hard origin/main`. **Done 2026-10-21.**
+2. On a branch, push a change and open a PR. Confirm merge is **blocked** until all five
+   checks are green. **Done 2026-10-21**, by the PR that added this line.
+3. Solo version: confirm you can then merge your own PR with no approval. With a second
+   collaborator: confirm merge also waits for an approval, and that editing a file under
+   `src/styles/` or `src/config/` requests a **code-owner review** automatically.

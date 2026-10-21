@@ -9,8 +9,8 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-20 · **HEAD:** see `git log` · **Suite:** 192 files · 1996 tests green
-(Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 48 on a `DEBUG=1` build (16 × 3, `e2e/debug/`) · CI green · `main` unprotected by decision (job E1).
+**Last updated:** 2026-10-21 · **HEAD:** see `git log` · **Suite:** 192 files · 2000 tests green
+(Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 51 on a `DEBUG=1` build (17 × 3, `e2e/debug/`) · CI green · `main` protected since 2026-10-21 (job E1).
 
 Non-negotiable constraints for every job below live in
 `2026-08-06-post-phase-d-handover.md` §3. Read them before touching the build. In short:
@@ -75,11 +75,11 @@ left, in order:
 4. **E24 — DONE 2026-10-20** (`216fa11`, on the MacBook Pro): one build works in any
    folder. Investigated first (below), then built: `./` is the default base, `BASE_URL`
    still fixes an address.
-5. **E25 — DONE 2026-10-21** (branch `fix/audio-controller-state`, on the MacBook Pro):
-   the second external review's three audio bugs and its stale CI check names (below).
-   Branch protection waits until it merges.
-6. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1 as its
-   step 5, and E16 after.
+5. **E25 — DONE 2026-10-21** (PR 26, on the MacBook Pro): the second external review's
+   three audio bugs and its stale CI check names (below).
+6. **E1 — DONE 2026-10-21**: `main` is protected, the review's last point (below).
+7. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
+   rules carried into each course repo at its step 3, and E16 after.
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
 GitHub; CI is green there; no open PRs, and only `main` exists on GitHub. The one
@@ -1743,6 +1743,12 @@ no-preference` only.
   gets push access. Setup and the solo-lockout to avoid: `docs/BRANCH_PROTECTION.md`.
   Do **not** enable `Require approvals: 1` + `Do not allow bypassing` with one
   collaborator — GitHub forbids self-approval and the merge button locks permanently.
+  **DONE 2026-10-21, brought forward** by the second external review (E25): with `main`
+  open, a direct push landed before CI looked at it. Solo version: PR required with **0
+  approvals**, the five checks green and up to date, admins included, linear history, no
+  force-push or deletion. A direct push was refused (`GH006`) the same day. The workflow
+  is in `CONTRIBUTING.md` ("How a change reaches `main`"). Raise approvals to 1 and turn
+  on code-owner review only after a second collaborator and a `CODEOWNERS` naming them.
 - **E2 — team workflow and the `lc-elearn` organisation.** Decided 2026-10-12: one public
   repo per course inside the organisation, colleagues write to their own course only,
   code needs the maintainer's approval and content does not, the maintainer deploys (since 2026-10-16 a colleague builds and
@@ -2162,8 +2168,8 @@ rather than the Language Centre's course factory; the maintainer took three smal
   the `pause` a browser fires as a clip ends, which `handleEnded` answers. Also fixed:
   `docs/BRANCH_PROTECTION.md` and `docs/ORGANIZATION.md` named three checks, two of them
   gone since E24's matrix; CI reports five. **Not verified locally:** Firefox (it will
-  not start on the MacBook Pro); CI's Firefox leg is its check. **Next:** branch
-  protection with the five names, after this merges.
+  not start on the MacBook Pro); CI's Firefox leg is its check, and it passed on PR 26.
+  Branch protection followed with the five names (E1).
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that

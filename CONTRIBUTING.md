@@ -382,12 +382,31 @@ and ask** — usually the content model needs extending, not the component patch
 the checks CI runs, plus the keyboard / landmark / contrast / screenshot checks CI can't
 fully judge.
 
-**`main` is NOT protected yet.** While the template is a single-maintainer build, changes
-go straight to `main` and the verify gate (`AGENTS.md`, "Verify before you claim done")
-is run by hand before each commit. Branch
-protection — PR required, CI required to merge — goes on **before the repo is shared with
-other developers**; it is a pre-share checklist item, not an oversight. Setup steps and the
-single-maintainer lockout to avoid: [`docs/BRANCH_PROTECTION.md`](docs/BRANCH_PROTECTION.md).
+### How a change reaches `main`
+
+**`main` is protected: nobody pushes to it, the maintainer included.** Every change goes
+through a pull request, and the PR merges only when all five CI checks are green and the
+branch is up to date with `main`. A direct `git push origin main` is refused by GitHub.
+The settings and why they are safe for one maintainer:
+[`docs/BRANCH_PROTECTION.md`](docs/BRANCH_PROTECTION.md).
+
+1. **Branch first:** `git switch main && git pull`, then `git switch -c fix/short-name`
+   (`feat/…`, `fix/…`, `docs/…`).
+2. **Commit** on the branch, running the verify gate (`AGENTS.md`, "Verify before you
+   claim done") before each commit.
+3. **Push the branch** (`git push -u origin fix/short-name`) and **open a PR** to `main`.
+4. **Wait for green.** If `main` moved meanwhile, update the branch (GitHub's "Update
+   branch" button, or `gh pr update-branch --rebase`) and let CI run again.
+5. **Merge** with "Rebase and merge" (`main` keeps a straight-line history), then
+   `git switch main && git pull`.
+
+**Forgot to branch?** Nothing breaks: the push is refused. Move the work onto a branch:
+
+- **Not committed yet:** `git switch -c fix/short-name` — your changes come with you.
+- **Already committed on `main`:** `git switch -c fix/short-name` (the branch keeps the
+  commits), then `git switch main` and `git reset --hard origin/main`. **Only in that
+  order:** `reset --hard` throws away whatever on your `main` is not on GitHub, and the
+  new branch is what saved it.
 
 > Note: adding a new **exercise engine** (not just content) follows the engine recipe —
 > schema + pure grading + colocated tests + thin view + fixture + registry entry. See a
