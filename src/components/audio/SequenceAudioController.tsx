@@ -129,6 +129,8 @@ export function SequenceAudioController({
   // Per-track durations; kept out of state to avoid rerenders while filling.
   const durationsRef = useRef<number[]>([]);
   const isScrubbingRef = useRef(false);
+  // Where the last drag dropped the thumb, until the next `input` reads it (TODO §E23).
+  const dropTimeRef = useRef<number | null>(null);
   // The clip the element holds, set as playItem loads it. Its metadata belongs to this
   // clip, not to state.currentIndex, which still names the clip before it (TODO §E23).
   const loadedIndexRef = useRef(0);
@@ -217,6 +219,22 @@ export function SequenceAudioController({
     });
   };
 
+  /* ---------- Playback ---------- */
+
+  /**
+   * play() is a request the browser may refuse (autoplay blocked, a clip it cannot
+   * decode); a refusal puts the button back to play. An AbortError only means a newer
+   * load() or pause() replaced the request, and that call sets the state itself.
+   */
+  const startPlayback = (audio: HTMLAudioElement) => {
+    AudioManager.stopAll({ except: audio });
+    audio.play().catch((error: unknown) => {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
+      setState({ playState: 'paused' });
+      emitPlayState('paused');
+    });
+  };
+
   /* ---------- Public API (via ref) ---------- */
 
   const playItem = (index: number, opts: PlayItemOptions = {}) => {
@@ -238,10 +256,7 @@ export function SequenceAudioController({
       }
 
       const shouldPlay = autoplay !== false;
-      if (shouldPlay) {
-        AudioManager.stopAll({ except: audio });
-        audio.play().catch(() => {});
-      }
+      if (shouldPlay) startPlayback(audio);
 
       const d = Number.isFinite(audio.duration) ? audio.duration : durationsRef.current[index] || 0;
       durationsRef.current[index] = d;
@@ -293,8 +308,7 @@ export function SequenceAudioController({
     const { playState } = stateRef.current;
 
     if (playState === 'paused') {
-      AudioManager.stopAll({ except: audio });
-      audio.play().catch(() => {});
+      startPlayback(audio);
       setState({ playSequence: true, playState: 'playing' });
       emitPlayState('playing');
       return;
@@ -318,8 +332,7 @@ export function SequenceAudioController({
       setState({ playState: 'paused' });
       emitPlayState('paused');
     } else if (playState === 'paused') {
-      AudioManager.stopAll({ except: audio });
-      audio.play().catch(() => {});
+      startPlayback(audio);
       setState({ playState: 'playing' });
       emitPlayState('playing');
     } else {
@@ -361,6 +374,22 @@ export function SequenceAudioController({
     );
   };
 
+  // Pauses and resumes from outside: a media key, or another player stopping this one
+  // through AudioManager. At a clip's end the element pauses too, just before `ended`;
+  // handleEnded answers that one (the next clip, or stopped), so it is skipped here.
+  const handlePause = () => {
+    const audio = audioRef.current;
+    if (!audio || audio.ended || stateRef.current.playState !== 'playing') return;
+    setState({ playState: 'paused' });
+    emitPlayState('paused');
+  };
+
+  const handlePlay = () => {
+    if (stateRef.current.playState === 'playing') return;
+    setState({ playState: 'playing' });
+    emitPlayState('playing');
+  };
+
   const handleEnded = () => {
     const { pauseSeconds: gap = 0, sources: srcs } = propsRef.current;
     const { currentIndex, playSequence } = stateRef.current;
@@ -385,6 +414,7 @@ export function SequenceAudioController({
   const startScrub = (e: ReactPointerEvent<HTMLInputElement>) => {
     e.stopPropagation();
     isScrubbingRef.current = true;
+    dropTimeRef.current = null;
     try {
       e.currentTarget.setPointerCapture(e.pointerId);
     } catch {
@@ -399,12 +429,19 @@ export function SequenceAudioController({
 
   const changeScrub = (e: ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
-    // Firefox fires one more `input` after pointerup (TODO §E23). Outside a drag it would
-    // set scrubTime again after endScrub cleared it, pinning the thumb to the drop point.
-    if (!isScrubbingRef.current) return;
     const t = parseFloat(e.target.value);
     if (!Number.isFinite(t)) return;
-    setState({ scrubTime: t }); // UI-only while dragging
+    if (isScrubbingRef.current) {
+      setState({ scrubTime: t }); // UI-only while dragging
+      return;
+    }
+    // Firefox fires one more `input` after pointerup (TODO §E23), at the drop point the
+    // drag already committed: seeking there again would race the drag's own seek.
+    const dropTime = dropTimeRef.current;
+    dropTimeRef.current = null;
+    if (t === dropTime) return;
+    // An arrow key, Home or End, or assistive tech: no drag to wait for, so seek now.
+    seekMaster(t);
   };
 
   const endScrub = (e: ReactPointerEvent<HTMLInputElement>) => {
@@ -416,6 +453,7 @@ export function SequenceAudioController({
     }
     isScrubbingRef.current = false;
     const commitTime = stateRef.current.scrubTime;
+    dropTimeRef.current = commitTime;
     setState({ scrubTime: null });
     // Commit after state clears scrubTime.
     queueMicrotask(() => {
@@ -431,6 +469,8 @@ export function SequenceAudioController({
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('ended', handleEnded);
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+    audio.addEventListener('pause', handlePause);
+    audio.addEventListener('play', handlePlay);
     AudioManager.registerElement(audio);
     preloadDurations();
 
@@ -438,6 +478,8 @@ export function SequenceAudioController({
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      audio.removeEventListener('pause', handlePause);
+      audio.removeEventListener('play', handlePlay);
       AudioManager.unregisterElement(audio);
       audio.pause();
       audio.src = '';
@@ -498,7 +540,7 @@ export function SequenceAudioController({
         type="range"
         min="0"
         max={masterDuration || 0}
-        step="0.01"
+        step="any"
         value={displayTime}
         onPointerDown={startScrub}
         onPointerMove={moveScrub}

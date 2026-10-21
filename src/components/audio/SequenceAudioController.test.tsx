@@ -143,4 +143,68 @@ describe('SequenceAudioController scrubber', () => {
     expect(slider.value).toBe('38');
     expect(readout.textContent).toBe('0:38 / 1:00');
   });
+
+  it('seeks from the keyboard, which moves the thumb with no pointer down', async () => {
+    const { audio, slider, readout } = await mount();
+
+    // An arrow key, Home or End (or assistive tech) sets the value and fires `input`.
+    await act(async () => input(slider, 12));
+    await metadataArrives(audio);
+
+    expect(audio.currentTime).toBe(2);
+    expect(readout.textContent).toBe('0:12 / 1:00');
+    // `any`, not a fixed step: an arrow key then moves 1% of the timeline, not 10 ms.
+    expect(slider.step).toBe('any');
+  });
+});
+
+describe('SequenceAudioController play button', () => {
+  function playButton() {
+    const button = container.querySelector('button');
+    if (!button) throw new Error('the controller rendered no play button');
+    return button;
+  }
+
+  /** Clicks play and lets the first clip load, so its play() call runs. */
+  async function clickPlay(audio: HTMLAudioElement) {
+    await act(async () => playButton().click());
+    await metadataArrives(audio);
+  }
+
+  it('offers play again when the browser blocks playback', async () => {
+    vi.spyOn(HTMLMediaElement.prototype, 'play').mockRejectedValue(
+      new DOMException('play() needs a user gesture', 'NotAllowedError'),
+    );
+    const { audio } = await mount();
+
+    await clickPlay(audio);
+
+    expect(playButton().getAttribute('aria-label')).toBe('Play audio');
+  });
+
+  it('follows a pause and a resume that came from outside the controller', async () => {
+    vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue();
+    const { audio } = await mount();
+    await clickPlay(audio);
+    expect(playButton().getAttribute('aria-label')).toBe('Pause audio');
+
+    // A media key, or another player stopping this one through AudioManager.
+    await act(async () => audio.dispatchEvent(new Event('pause')));
+    expect(playButton().getAttribute('aria-label')).toBe('Play audio');
+
+    await act(async () => audio.dispatchEvent(new Event('play')));
+    expect(playButton().getAttribute('aria-label')).toBe('Pause audio');
+  });
+
+  it('stays on pause through the pause a browser fires as each clip ends', async () => {
+    vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue();
+    const { audio } = await mount();
+    await clickPlay(audio);
+
+    // At a clip's end the element fires `pause`, then `ended`; the next clip follows.
+    vi.spyOn(HTMLMediaElement.prototype, 'ended', 'get').mockReturnValue(true);
+    await act(async () => audio.dispatchEvent(new Event('pause')));
+
+    expect(playButton().getAttribute('aria-label')).toBe('Pause audio');
+  });
 });
