@@ -10,18 +10,19 @@
  * is Vite-only syntax and throws outside a Vite transform. Same assembler either way,
  * so validation and ordering are defined once.
  *
- * Fails the build loudly: any malformed LO, missing dist, or reshaped template throws
- * with the offending path named. A half-rendered page is never written.
+ * Fails the build loudly: any malformed LO, missing dist, reshaped template or page
+ * collision throws with the offending path named, before any page is written.
  *
  * Every folder under `lo-config/` gets one file, and the landing page lists them all.
  * Nothing here enumerates LOs by hand — an LO exists because its folder exists, and
  * `dist/index.html` gains a card for it with no code change.
  */
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { StrictMode } from 'react';
 import { renderToString } from 'react-dom/server';
 import App from '@/App';
+import { findPageCollisions } from '@/build/page-names';
 import { buildPrerenderedHtml } from '@/build/prerender-html';
 import CourseHome from '@/components/home/CourseHome';
 import { courseConfig } from '@/config/course.config';
@@ -83,20 +84,42 @@ try {
   throw new Error(`prerender: ${TEMPLATE_PATH} not found — run \`vite build\` first`);
 }
 
-// Slug the whole set BEFORE rendering anything, so a malformed folder name or a slug
-// collision fails before any file is written. Course order (the folder ordinal) is
-// applied here too, so the cards and the lesson nav follow the course.
+// Slug the whole set BEFORE rendering anything, so a malformed folder name, a slug
+// collision or a reserved slug (`index`, a debug page) fails before any file is written.
+// Course order (the folder ordinal) is applied here too, so the cards and the lesson nav
+// follow the course.
 const loFolders = sortLoFolders(listLoSlugs());
 const slugsByFolder = loSlugsByFolder(loFolders);
 if (slugsByFolder.size === 0) throw new Error('prerender: no LO folders found under lo-config/');
 
-for (const [loFolder, slug] of slugsByFolder) {
-  writeFileSync(path.join(DIST_DIR, `${slug}.html`), renderLoPage(template, loFolder), 'utf-8');
-  // The build's only progress output — one line per generated page.
-  process.stdout.write(`prerendered ${loFolder} → dist/${slug}.html\n`);
+// Every page is rendered in memory first, so an invalid LO anywhere in the course stops
+// the build with nothing written: no lesson page beside a stale one (review 2026-10-21).
+const lessonPages = [...slugsByFolder].map(([loFolder, slug]) => ({
+  loFolder,
+  file: `${slug}.html`,
+  html: renderLoPage(template, loFolder),
+}));
+const landingHtml = renderLandingPage(template, loFolders);
+
+// The complete output list, checked against what Vite already wrote (a debug page, a
+// public/*.html), before the first write.
+const collisions = findPageCollisions(
+  lessonPages.map((page) => page.file),
+  readdirSync(DIST_DIR),
+);
+if (collisions.length > 0) {
+  throw new Error(
+    `prerender: a lesson page would overwrite dist/${collisions.join(', dist/')}, which the build already wrote. Rename the lesson folder.`,
+  );
 }
 
-// LAST, deliberately: it replaces the template file, so every LO page is written
-// from the untouched original first.
-writeFileSync(TEMPLATE_PATH, renderLandingPage(template, loFolders), 'utf-8');
+for (const { loFolder, file, html } of lessonPages) {
+  writeFileSync(path.join(DIST_DIR, file), html, 'utf-8');
+  // The build's only progress output — one line per generated page.
+  process.stdout.write(`prerendered ${loFolder} → dist/${file}\n`);
+}
+
+// LAST, deliberately: it replaces the template file, which every LO page was rendered
+// from.
+writeFileSync(TEMPLATE_PATH, landingHtml, 'utf-8');
 process.stdout.write(`prerendered course landing page → dist/index.html\n`);

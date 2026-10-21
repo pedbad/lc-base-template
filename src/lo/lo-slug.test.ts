@@ -92,4 +92,25 @@ describe('loSlugsByFolder', () => {
   it('propagates a malformed folder name', () => {
     expect(() => loSlugsByFolder(['lo-00-example', 'stray'])).toThrow(/stray/);
   });
+
+  // Review 2026-10-21, concern 2: lo-01-index wrote dist/index.html, which the course
+  // home then overwrote. Git saw nothing: the collision was in the output, not the source.
+  it('rejects a lesson that would write the course home page, naming the folder', () => {
+    expect(() => loSlugsByFolder(['lo-00-example', 'lo-01-index'])).toThrow(
+      /lo-config\/lo-01-index derives the slug "index".*dist\/index\.html/,
+    );
+  });
+
+  it.each(['exercise-showcase', 'debug-sandbox', 'ui-showcase', 'code-style'])(
+    'rejects a lesson that would write the %s debug page',
+    (slug) => {
+      expect(() => loSlugsByFolder([`lo-03-${slug}`])).toThrow(
+        new RegExp(`lo-03-${slug} derives the slug "${slug}"`),
+      );
+    },
+  );
+
+  it('accepts a slug that only contains a reserved name', () => {
+    expect([...loSlugsByFolder(['lo-01-index-cards']).values()]).toEqual(['index-cards']);
+  });
 });
