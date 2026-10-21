@@ -415,8 +415,10 @@ export function SequenceAudioController({
   };
 
   // Pauses and resumes from outside: a media key, or another player stopping this one
-  // through AudioManager. At a clip's end the element pauses too, just before `ended`;
-  // handleEnded answers that one (the next clip, or stopped), so it is skipped here.
+  // through AudioManager — except in the gap between clips, where the element is
+  // already paused, fires nothing, and the next clip still starts (TODO §E28). At a
+  // clip's end the element pauses too, just before `ended`; handleEnded answers that one
+  // (the next clip, or stopped), so it is skipped here.
   const handlePause = () => {
     const audio = audioRef.current;
     if (!audio || audio.ended || stateRef.current.playState !== 'playing') return;

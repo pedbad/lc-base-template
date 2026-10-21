@@ -116,7 +116,9 @@ export async function animationsInside(scope: Locator): Promise<void> {
 /**
  * Any lesson page is ready: hydrated, every lazy engine chunk rendered, and none failed.
  * Before hydration each exercise shows ExerciseHost's "needs JavaScript" line, so none
- * left proves the page hydrated whatever exercises it holds, or none at all.
+ * left proves the page hydrated. A lesson with no exercises has no such line, so for
+ * it this proves only that the page loaded with no engine error; `watchForProblems`
+ * in the spec still catches a hydration mismatch, which React reports as an error.
  */
 export async function lessonReady(page: Page): Promise<void> {
   await expect(page.locator('main')).toBeAttached();
