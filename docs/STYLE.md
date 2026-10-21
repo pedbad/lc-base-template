@@ -6,20 +6,20 @@ lints what you stage, and CI fails what slips through. This page says what the t
 check, points at the repo's own rules instead of copying them, and writes down the
 habits nothing enforces.
 
-Measured against `src/` on 2026-10-21 (226 source files, the vendored
+Measured against `src/` on 2026-10-21 (232 source files, the vendored
 `src/components/ui/` left out). When this page and the code disagree, the code wins:
 fix the page.
 
 ## What the tools enforce
 
-| Tool           | Owns                                           | Config                                                         | Run                |
-| -------------- | ---------------------------------------------- | -------------------------------------------------------------- | ------------------ |
-| **Prettier**   | layout: every `.ts`, `.tsx`, `.css`, `.md`     | [`prettier.config.mjs`](../prettier.config.mjs)                | `bun run format`   |
-| **ESLint**     | correctness, React hooks, accessibility in JSX | [`eslint.config.js`](../eslint.config.js)                      | `bun run lint`     |
-| **TypeScript** | types, strictly                                | [`tsconfig.app.json`](../tsconfig.app.json) and its neighbours | `bun run build`    |
-| **Stylelint**  | CSS: tokens, `@layer`, no vendor prefixes      | [`stylelint.config.mjs`](../stylelint.config.mjs)              | `bun run lint:css` |
-| **The guards** | repo-wide invariants (a–h)                     | `src/guards/`                                                  | `bun run guards`   |
-| **File names** | every file and folder name in `src/`           | `src/build/file-names.ts` ([below](#files-and-names))          | `bun run test`     |
+| Tool           | Owns                                                                                | Config                                                         | Run                |
+| -------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------------ |
+| **Prettier**   | layout: every `.ts`, `.tsx`, `.css`, `.md`                                          | [`prettier.config.mjs`](../prettier.config.mjs)                | `bun run format`   |
+| **ESLint**     | correctness, React hooks, accessibility in JSX                                      | [`eslint.config.js`](../eslint.config.js)                      | `bun run lint`     |
+| **TypeScript** | types, strictly                                                                     | [`tsconfig.app.json`](../tsconfig.app.json) and its neighbours | `bun run build`    |
+| **Stylelint**  | CSS errors and notation, no vendor prefixes; tokens and `@layer` are guards f and g | [`stylelint.config.mjs`](../stylelint.config.mjs)              | `bun run lint:css` |
+| **The guards** | repo-wide invariants b–h (guard a, the Zod schemas, runs in `bun run test`)         | `src/guards/`                                                  | `bun run guards`   |
+| **File names** | every file and folder name in `src/`                                                | `src/build/file-names.ts` ([below](#files-and-names))          | `bun run test`     |
 
 In practice that means: single quotes, semicolons, trailing commas, lines up to 100
 characters; no unused variables or parameters; no `any` (there is none in `src/`); no
@@ -44,9 +44,12 @@ These are rules, not habits, and each has one home. Read them there:
 
 ## Files and names
 
-**Enforced.** `src/build/file-names.test.ts` checks every file and folder in `src/`
-(the vendored `src/components/ui/` aside), so a name outside these shapes fails
-`bun run test` and CI.
+**Partly enforced.** `src/build/file-names.test.ts` checks every file and folder in
+`src/` (the vendored `src/components/ui/` aside): a file's name is kebab-case, `use` +
+PascalCase or PascalCase, and a folder's is kebab-case. Any other name, camelCase or
+snake_case, fails `bun run test` and CI. The test cannot tell a component from a module,
+so which of the three a file takes, its extension and where it sits stay a habit: follow
+the table.
 
 | What                        | Name                                                      | Example                                      |
 | --------------------------- | --------------------------------------------------------- | -------------------------------------------- |
@@ -72,7 +75,7 @@ churn costs more than consistency gains.
 
 ### Exports and functions
 
-- **`export function`, not `export const x = () =>`** (279 to 18). Arrow functions are
+- **`export function`, not `export const x = () =>`** (284 to 18). Arrow functions are
   for callbacks and small values inside a function.
 - **Exercise engines are default exports**: `src/exercises/lazy-registry.ts` loads each
   with `lazy()`, which needs one. Other components use either; match the files around
@@ -89,7 +92,7 @@ export const progressText = (template: string, correct: number, total: number): 
 
 ### Types
 
-- **An object shape is an `interface`** (205 to 2); a union, a tuple or an alias is a
+- **An object shape is an `interface`** (206 to 2); a union, a tuple or an alias is a
   `type`.
 - **Props are `interface <Component>Props`**, destructured in the parameter list.
 - Types parsed from content come from the Zod schema (`z.infer`), not a second
@@ -137,7 +140,7 @@ import './progress-meter.css';
 
 ### Comments
 
-Almost every file (221 of 226) opens with a header comment: what the file is, and
+Almost every file (226 of 232) opens with a header comment: what the file is, and
 **why** it is shaped the way it is. Keep that up:
 
 - Say why, not what. The code already says what.
@@ -164,7 +167,8 @@ obvious way:
 
 ### Errors and logging
 
-- No `console.log` in committed code (there is none).
+- No `console.log` in `src/` (there is none). A command-line script in `scripts/` may
+  print its result with it, as `scripts/docs-tree.ts` does.
 - `console.warn` for something that went wrong and was recovered from, saying what
   happened and what the code did instead (`flip cue: could not read …; showing the cue`).
 - Fail loudly at build time: a bad lesson, a missing file or a reshaped template throws

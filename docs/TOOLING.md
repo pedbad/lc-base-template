@@ -125,9 +125,9 @@ Layer 1 is the carrot; layers 2–4 are the stick.
     tests of the schemas (`src/config/lo-schema.test.ts`), and every LO on disk is
     parsed end-to-end by `lo-rich-text.test.ts`, which loads them all through
     `loadLo`. `bun run test` covers both; `bun run guards` covers the seven sweeps.
-  - **No separate CI step, on purpose.** CI runs `bun run test`, which is a strict
-    superset — a `guards` step would run the same tests a second time for no extra
-    signal.
+  - **No separate CI step, on purpose.** CI runs `bun run test:coverage`, the whole
+    suite and a strict superset — a `guards` step would run the same tests a second time
+    for no extra signal.
 - **Migration note (2026-07-12):** moved off `bun test`. Purely mechanical — every
   test imported only `test/expect/describe/afterEach` (zero Bun-specific mock/spy
   APIs), so only the import source changed (`bun:test` → `vitest`).
@@ -148,8 +148,8 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
   Claude Code works. Whether a given account pays for headless calls is a billing
   question for its admin.
 - **The rule still stands without it:** `AGENTS.md` tells agents to start new code from
-  a failing test, and CI is the enforcement that costs nothing — the planned coverage
-  rule (TODO §E) fails a pull request whose new code has no tests. The guard checks
+  a failing test, and CI is the enforcement that costs nothing — the coverage bars
+  ("Coverage", below) fail a pull request whose new code has no tests. The guard checks
   edits as they happen, so it cannot audit finished code before a deploy.
 - **Opting in** (a session where you want the lock and have credit): add the hook to
   `.claude/settings.local.json`, which is gitignored, then restart Claude Code.
@@ -620,14 +620,16 @@ needs the number points here rather than restating it.
   _there_, no manual `git config`. lint-staged keeps it fast by never scanning the
   whole repo. Config lives in `lint-staged.config.mjs` (commented, per-tool globs).
 - **Glob scoping:** each tool only sees files it understands — ESLint on `js/jsx/ts/tsx`,
-  Stylelint on `css`, Prettier on everything formattable (incl. `mjs/cjs` config files).
+  Stylelint on `css`, Prettier on those plus `json/md/html/mjs/cjs`. Not YAML: a staged
+  `.yml` is left as it is, and CI's `format:check` catches it.
   `--fix`/`--write` mutate files and lint-staged re-stages the result automatically.
 - **Auto-fix vs block:** formatting issues are silently auto-fixed (commit succeeds with
   the cleaned file); a problem with no autofix (e.g. `no-unused-vars`) **fails the commit**.
   Verified Step 7: a staged file with an unused var was blocked
   (`husky - pre-commit script failed (code 1)`) and never entered history.
 - **pre-commit = lint-staged only (no tests):** kept fast and focused on format/lint.
-  The full test suite runs on **pre-push** and in **CI** (`bun run test`), not on every
+  The full test suite runs on **pre-push** (`bun run test`) and in **CI**
+  (`bun run test:coverage`), not on every
   commit — the standard split: pre-commit = cheap fast checks, push and CI = full validation.
 - **Bypass reality:** `git commit --no-verify` skips the hook. That's expected — the
   hook is a fast local helper, **CI is the unbypassable wall** (enforcement layer 4).
@@ -759,10 +761,11 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   `tokens.css` swapped to Cambridge brand, and **stripped** the leftover
   Vite-demo CSS (`#root` width, demo `h1/h2/p/code`, `--text/--bg/--accent`,
   `prefers-color-scheme` block).
-- **Switchable primary presets:** three `tokens-variant-*.css` files ship
+- **Switchable primary presets:** three `tokens-variant-*.css` presets ship
   (A Cambridge Blue, B Dark Blue [default], C Warm Blue) — identical except
   `--primary`/`--ring`. Switch by copying one over `tokens.css` (see `DESIGNER.md` →
-  Job 2).
+  Job 2). A fourth file, `tokens-variant-z-test.css`, is the palette preview's test
+  card, never a choice (`DESIGNER.md` → "Preview a palette").
   Default = **B**: the only candidate both AAA-accessible **and** a strong CTA on
   white (button-vs-page 12.5:1; A=1.43, C=2.35). Dark mode flips B's primary to
   Cambridge Blue (dark-blue would vanish on the Slate-4 base).
@@ -839,7 +842,9 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   (`CourseConfigSchema`); `schema.parse(raw)` checks real data against it and either
   returns clean, typed data or throws a precise `ZodError`. First use:
   `src/config/course.config.ts` — the single source of course identity (title,
-  language, deploy `basePath`, landing copy, logo/favicon, LO order).
+  language, landing copy, logo/favicon). Its `basePath` field is read by nothing: the
+  deploy address is `BASE_URL` ("Static prerender", below). LO order is the folders'
+  `lo-NN-` ordinal, not a config field (decision B, below).
 - **Second use — `src/config/ui-strings.ts` (Step 12, spec §9, two-layer):** the
   exercise chrome words ("Check", "Next", "Correct!", audio controls), seeded in
   English from french-lo-1's real strings. _Layer 1_ — global `uiStrings`: a
@@ -1242,16 +1247,16 @@ lives in `src/build/build-entries.ts` (`isDebugRequested`, `debugEntries`) and f
 CLOSED: absent, empty, `0`, `false` or anything unrecognised all mean "do not build
 them". 10 tests cover the edges.
 
-- **Why one flag and not two.** The dev server serves both pages regardless of
+- **Why one flag and not two.** The dev server serves every debug page regardless of
   `rollupOptions.input`, so nobody needs a deploy carrying one debug page and not the
-  other. Two flags would be two fail-closed rules to keep in step for no gain. One name,
+  others. Two flags would be two fail-closed rules to keep in step for no gain. One name,
   one decision, one place a mistake can be made — and the mistake this guards against
   publishes a debug page on a live course, so the surface is worth minimising.
 - **Why `SHOWCASE` still works.** It was the flag's name before the sandbox existed and
   it is documented in dated handover records and in the spec. Rewriting historical
   records to match a renamed variable is worse than accepting an alias, so both names go
   through the same list and the same check: `DEBUG_ENV_VARS = ['DEBUG', 'SHOWCASE']`. It
-  is an alias, not a second code path, and either name turning on emits both entries.
+  is an alias, not a second code path, and either name turning on emits every entry.
 - **What did not change:** the fail-closed reasoning from 2026-09-03 (see
   `2026-08-06-post-phase-d-handover.md` §5.2) or the dev server. This extends the rule
   to a second artifact; it does not revisit it.
@@ -1272,14 +1277,17 @@ dependency the debug sandbox introduces, and it never reaches a bundle — verif
 - **A virtual module, not a prerender step.** `scripts/prerender.tsx` runs only after
   `vite build`, so a prerender-based hub would be blank in dev — and dev is where a
   designer reads it. `src/build/sandbox-docs-plugin.ts` serves `virtual:sandbox-docs`
-  instead, registers the four `.md` files with `addWatchFile`, and watches them so a
-  saved doc reaches the page on the next reload rather than after a server restart.
+  instead, registers the five `.md` files (the hub's four, and `docs/STYLE.md` for
+  `code-style.html`) with `addWatchFile`, and watches them so a saved doc reaches the
+  page on the next reload rather than after a server restart.
 - **`html: false` — sanitised by default.** markdown-it ESCAPES raw HTML at that setting,
   which is sanitising in the parser rather than a second dependency: no DOM-based
   sanitiser, no post-pass. The docs are repo-authored so today's risk is nil, but
   provenance is an argument about today's content and markdown permits raw HTML by spec.
-  It costs almost nothing — across the four rendered docs the only raw HTML is
-  `STRUCTURE.md`'s two `docs:tree` marker comments, which therefore show as escaped text.
+  It costs almost nothing — across the five rendered docs the only raw HTML is
+  `STRUCTURE.md`'s two `docs:tree` marker comments, and a paragraph that is only
+  comments is dropped, as GitHub hides it (`drop_comment_paragraphs` in
+  `docs-markdown.ts`).
 - **Why markdown-it over `marked`.** `marked` deprecated its own sanitise option and
   points at DOMPurify, which needs a DOM — awkward in a Node build step and a second
   dependency for a promise markdown-it keeps with a flag. markdown-it's default preset

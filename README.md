@@ -163,7 +163,7 @@ BASE_URL=/course/ bun run build
 | [`DESIGNER.md`](DESIGNER.md)                   | designers — change colours and fonts without touching code |
 | [`STRUCTURE.md`](STRUCTURE.md)                 | anyone new — what every folder is for                      |
 | [`AGENTS.md`](AGENTS.md)                       | AI coding agents working in this repo                      |
-| [`.claude/skills/`](.claude/skills/)           | Claude Code's recipes for the recurring jobs, test-first   |
+| [`.claude/skills/`](.claude/skills/)           | Claude Code's recipes; the code ones start from a test     |
 | [`docs/STYLE.md`](docs/STYLE.md)               | developers — how the code is written, and what tools check |
 | [`docs/TOOLING.md`](docs/TOOLING.md)           | why each tool was chosen, and every build decision         |
 | [`docs/ORGANIZATION.md`](docs/ORGANIZATION.md) | maintainer — the planned move to the team organisation     |

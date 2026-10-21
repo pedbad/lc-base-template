@@ -63,7 +63,8 @@ the template for every course. The full rule:
    [`CONTRIBUTING.md` → "Authoring a Learning Object"](CONTRIBUTING.md#authoring-a-learning-object).
    `bun run dev` shows the course with hot reload while you write.
 3. **Check the real pages** before you open a pull request. If a lesson file is wrong,
-   the build stops and names the file.
+   the build stops and names the file; for a block's `content`, it names the block type
+   and the field instead.
 
    ```bash
    bun run build && bun run preview
@@ -134,7 +135,9 @@ Meanwhile, keep writing the lesson with the types that exist.
 ## When you are stuck
 
 - **The build or CI fails** and names a file in `lo-config/`: the message says what is
-  wrong with it. Compare with the same kind of file in `lo-config/lo-00-example/`.
+  wrong with it. Compare with the same kind of file in `lo-config/lo-00-example/`. If it
+  says a block type "has invalid content" instead, it names no file: look in the
+  `block.json` files of that type in your lesson's `blocks/` folder.
 - **It fails anywhere else**, or the message does not make sense: ask the maintainer
   rather than changing files outside your folders.
 - **What a folder is for:** [`STRUCTURE.md`](STRUCTURE.md).

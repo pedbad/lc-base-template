@@ -16,6 +16,7 @@ the drift the guards exist to prevent, so there is only ever one.
 | `tokens-variant-a-cambridge-blue.css` | preset                | switching `--primary` / `--ring`                                                                |
 | `tokens-variant-b-dark-blue.css`      | preset (default)      | switching `--primary` / `--ring`                                                                |
 | `tokens-variant-c-warm-blue.css`      | preset                | switching `--primary` / `--ring`                                                                |
+| `tokens-variant-z-test.css`           | preview test card     | never — not a preset; see [`DESIGNER.md`](../../DESIGNER.md#preview-a-palette)                  |
 | `layout.css`                          | layout, not colour    | changing the page frame, gutter or measure                                                      |
 | `app.css`                             | global, shared sheet  | font imports or the `@theme inline` bridge (Feijoa's `@font-face`: `src/build/feijoa-fonts.ts`) |
 

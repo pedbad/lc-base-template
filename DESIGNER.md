@@ -116,6 +116,8 @@ Nothing on it is hand-written: every square, specimen and icon is generated from
 | Section        | What it shows                                                                                             | Read it when…                                                       |
 | -------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | **Colour**     | The palette at a glance, a card per colour with live values and contrast, and each colour in use          | you need a colour's value or token name, or want to check a re-skin |
+| **Buttons**    | Every button variant and size, with and without an icon, and the exercise footer's actions                | you changed `--primary` or a button colour                          |
+| **Alerts**     | The info, success, warning and danger boxes lessons use for instructions                                  | you changed a feedback or warning colour                            |
 | **Typography** | Both font families as specimens, plus the four sizes the course uses                                      | you changed fonts, or want to know if Feijoa is live                |
 | **Icons**      | Every icon in the sprite, with its id                                                                     | you need an icon's name                                             |
 | **Images**     | Every image with its path and pixel size; a mark drawn for both grounds as one slider, light against dark | you replace an image, or check a light/dark pair lines up           |
@@ -238,8 +240,9 @@ over `tokens.css`. See "Preview a palette".)
 | B · Dark Blue (default) | #133844 + white text   | 12.5:1 shape (strong) | classic, high-emphasis CTA |
 | C · Warm Blue           | #00BDB6 + Slate-4 text | 2.35:1 shape (medium) | saturated, energetic       |
 
-"shape" is the button-against-the-white-page contrast (WCAG 1.4.11, target ≥ 3:1
-so the button's _edge_ is visible, not just its label). **Preset A is below that
+"shape" is the button-against-white contrast (WCAG 1.4.11, target ≥ 3:1
+so the button's _edge_ is visible, not just its label); against the `--paper` page
+ground each figure is slightly lower. **Preset A is below that
 threshold** — it is brand-accurate but the button outline is faint, so choose it
 knowingly. Text contrast passes comfortably in all three.
 
@@ -368,10 +371,12 @@ These are guards **f** (token integrity) and **g** (CSS layer discipline), in
 
 ## Before you commit — the verify gate
 
-Run this one line. It formats, checks and builds everything. All five must pass.
+Run this one line, the gate from [`AGENTS.md`](AGENTS.md#verify-before-you-claim-done).
+It formats, checks, builds and browser-tests everything. All six must pass. The last
+step needs a one-time setup, described there.
 
 ```bash
-bun run format && bun run lint && bun run lint:css && bun run test && bun run build
+bun run format && bun run lint && bun run lint:css && bun run test:coverage && bun run build && bun run test:e2e
 ```
 
 If you only changed CSS and want a fast answer first:
