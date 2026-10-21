@@ -2247,9 +2247,10 @@ rather than the Language Centre's course factory; the maintainer took three smal
   statements across the living docs no longer matched the code: names from before E27,
   branch hashes the merge replaced, the old fast-forward rule, and "open" or "next"
   lines for work since done. Found by a path/script scan of every doc plus a read of
-  each doc against the code, and fixed in one docs PR. Dated records were left as
-  written, by rule. The Firefox audio skip in `e2e/debug/showcase-audio.spec.ts` was
-  checked in CI now that it has a sound device (outcome: see PR). **Still so:** block
+  each doc against the code, and fixed in one docs PR (PR 32). Dated records were left
+  as written, by rule. The Firefox skip on the clip-plays test in
+  `e2e/debug/showcase-audio.spec.ts` is gone: with the CI sound device (E28), Firefox
+  plays the clip, and both `DEBUG=1` jobs ran all 60 tests with none skipped. **Still so:** block
   content is checked at render, not at load; only exercises are checked at load (E28).
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
