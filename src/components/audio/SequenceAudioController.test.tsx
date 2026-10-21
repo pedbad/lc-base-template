@@ -203,6 +203,24 @@ describe('SequenceAudioController play button', () => {
     expect(playButton().getAttribute('aria-label')).toBe('Pause audio');
   });
 
+  // CI Firefox, 2026-10-21 (PR 31): load() on a playing element fires `pause`. Read as an
+  // outside pause, it made the next quick seek load its clip paused, so the audio sat at
+  // the drop point. The stale gap timer had hidden this by restarting playback.
+  it('keeps playing through quick seeks when each load fires a pause', async () => {
+    vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue();
+    const { audio, slider } = await mount();
+    await clickPlay(audio);
+
+    await act(async () => input(slider, 12));
+    await act(async () => audio.dispatchEvent(new Event('pause')));
+    await act(async () => input(slider, 35));
+    await act(async () => audio.dispatchEvent(new Event('pause')));
+    await metadataArrives(audio);
+
+    expect(audio.src).toMatch(/q3\.wav$/);
+    expect(playButton().getAttribute('aria-label')).toBe('Pause audio');
+  });
+
   it('stays on pause through the pause a browser fires as each clip ends', async () => {
     vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue();
     const { audio } = await mount();
