@@ -251,7 +251,9 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
 - **CI:** the `e2e` job runs four ways, beside `verify`: the course suite and the
   `DEBUG=1` suite, each from a `./` build served at `/any/folder/` and from a `/course/`
   build (E24). A failure uploads the HTML report and
-  traces as an artifact. The gate in AGENTS.md runs the course suite only; run the
+  traces as an artifact. Each job first starts a PulseAudio null sink: the runner has no
+  sound device, and without one Firefox cannot play a clip at all
+  (`NS_ERROR_DOM_MEDIA_MEDIASINK_ERR`), so an audio test there checks nothing (TODO §E28). The gate in AGENTS.md runs the course suite only; run the
   debug suite by hand when a change touches a debug page or what it shows.
 - **Not in the pre-push hook**, which stays fast. **In the verify gate**, after `build`.
 - **Needs Node** (≥ 22.12, `.nvmrc`): Playwright's runner does not run on Bun.
@@ -896,7 +898,9 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   cluster-by-cluster from Step 14, when `type` resolves to an engine via
   `lazy-registry`. Refs are validated structurally (`z.string().min(1)`); the
   folder↔config render-mirror _match_ is guard **b**'s job (Steps 19–26), not pulled
-  into the schema.
+  into the schema. **Since 2026-10-21** the envelope stays loose, but the Node LO reader
+  also checks each exercise against its engine's full schema at load
+  (`src/exercises/exercise-schemas.ts`, TODO §E28), so bad content fails the build.
 - **No slug field:** the folder name is the single source of truth; the URL slug
   strips the `lo-NN-` ordinal prefix (`lo-01-salutations` → `/salutations.html`).
   The schema neither stores nor derives it — `src/lo/lo-slug.ts` does, at build time.
@@ -1169,7 +1173,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 
 ### Dev-server LO pages — `loDevPages()` _(Phase D, decision A revised)_
 
-- **What:** a serve-only Vite plugin (`src/build/lo-dev-pages.ts`). A GET for
+- **What:** a Vite plugin (`src/build/lo-dev-pages.ts`), mostly for the dev server. A GET for
   `/<slug>.html`, where `<slug>` is one an LO folder actually derives, is answered with
   the dev `index.html` — run through `server.transformIndexHtml`, so HMR and the React
   refresh preamble are intact — with that LO's folder stamped on the root div.
@@ -1191,7 +1195,13 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   would be a list to keep in sync, and it is exactly what was rejected.
 - **Registered directly in `configureServer`, not in a returned function:** that runs
   the middleware BEFORE Vite's internal ones, so the SPA fallback cannot take the
-  request first. `apply: 'serve'` keeps it out of the build entirely.
+  request first. Under `vite build` the middleware never runs; the plugin only checks the
+  lesson names in `buildStart`, before any output (TODO §E28).
+- **It validates, too (TODO §E28):** before stamping, the middleware loads the LO with
+  `load-lo-disk.ts` through `server.ssrLoadModule` (by path, so the `@/…` imports it
+  needs never reach `vite.config.ts`). A bad exercise, or a lesson slug that is reserved
+  (`src/build/page-names.ts`) or taken, fails the request naming the file or folder,
+  as it fails the build. A hot update to an `exercise.json` is not checked until reload.
 - **`src/lo/lo-folders.ts` exists because of this:** `vite.config.ts` imports the
   plugin, and the config is bundled before its own `resolve.alias` exists, so anything
   it reaches must be free of `@/…` imports. `load-lo-disk` is not (`assembleLo` pulls

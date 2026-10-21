@@ -16,7 +16,8 @@ schemas check every lesson file when it loads, and `bun run test` runs them.
 ## Steps
 
 1. **Pick the folder name.** List `lo-config/`. The new lesson takes the next free
-   `lo-NN-` number and a short slug, for example `lo-03-food`. The number is the course
+   `lo-NN-` number and a short slug, for example `lo-03-food`; the slug may not be a
+   reserved page name or another lesson's ([`CONTRIBUTING.md`, step 1](../../../CONTRIBUTING.md)). The number is the course
    order and nothing else ([`CONTRIBUTING.md` → "Course order has one source"](../../../CONTRIBUTING.md#course-order-has-one-source-the-folder-ordinal)).
 2. **Copy the example.** Copy `lo-config/lo-00-example/` to the new folder. **Never edit
    or delete `lo-00-example`**: it belongs to the template, the tests run on it, and it

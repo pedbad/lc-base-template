@@ -300,11 +300,14 @@ bun run build && bun run preview   # the real static pages, before you ship
 ```
 
 `bun run dev` serves the landing page at `/` and each LO at `/<slug>.html`. Those files
-are written by the prerender pass and so do not exist during `dev`; a serve-only Vite
-plugin (`src/build/lo-dev-pages.ts`) answers those URLs instead, stamping the LO's
-folder onto the dev `index.html` through the same `injectRootDiv()` the prerender pass
-uses. It renders nothing of its own, and reads the LO list from `lo-config/` per
-request — so a new folder is live on the next reload, with nothing to register.
+are written by the prerender pass and so do not exist during `dev`; a Vite plugin
+(`src/build/lo-dev-pages.ts`) answers those URLs instead, stamping the LO's folder onto
+the dev `index.html` through the same `injectRootDiv()` the prerender pass uses. It
+renders nothing of its own, but loads the LO first with the build's own reader, so a bad
+exercise or a reserved or duplicate lesson name fails the page, naming the file. It reads
+the LO list from `lo-config/` per request — so a new folder is live on the next reload,
+with nothing to register. On `vite build` the same plugin checks the lesson names before
+any output is written.
 
 **Dev does not prerender.** An LO page there is client-rendered, so `dev` proves
 content, layout and behaviour, while the no-JS static page — the thing that deploys —
