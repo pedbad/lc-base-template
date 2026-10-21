@@ -37,16 +37,19 @@ A request issue from a course has them under "How are answers marked?".
    [`src/config/exercise-types.ts`](../../../src/config/exercise-types.ts). The file's
    header says what then fails to compile until its instruction copy is added.
 2. **The engine**, by the recipe: schema, pure grading, colocated tests, thin view,
-   fixture, registry entry ([`CONTRIBUTING.md`, the note at the end of "Adding content vs. changing the system"](../../../CONTRIBUTING.md#adding-content-vs-changing-the-system-read-before-a-pr)).
+   fixture, and both registry entries, view and schema ([`CONTRIBUTING.md`, the note at the end of "Adding content vs. changing the system"](../../../CONTRIBUTING.md#adding-content-vs-changing-the-system-read-before-a-pr)).
    Copy the shape of [`src/exercises/reading/`](../../../src/exercises/reading/), file
    for file. Guard e ([`src/guards/registry-completeness.ts`](../../../src/guards/registry-completeness.ts))
    names anything still missing.
 3. **The rules.** Keep to [`AGENTS.md`](../../../AGENTS.md) "Hard constraints" and "Code
    rules" throughout, and watch the bundle budget
    ([`docs/TOOLING.md` → "Bundle budget"](../../../docs/TOOLING.md)).
-4. **The docs** authors read: the exercise's section in
-   [`CONTRIBUTING.md`](../../../CONTRIBUTING.md), and
-   [`public/llms.txt`](../../../public/llms.txt) (it lists the engines).
+4. **The docs** authors read: [`public/llms.txt`](../../../public/llms.txt) (it lists
+   the engines). CONTRIBUTING has no section per exercise, because the schema and the
+   fixture are an engine's reference. Update
+   [`CONTRIBUTING.md` → "Exercise options"](../../../CONTRIBUTING.md#exercise-options)
+   only if the engine changes what that section says (its `showAnswersAfter` default,
+   say).
 
 ## Step 3 — Finish
 

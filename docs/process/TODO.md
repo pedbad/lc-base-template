@@ -49,8 +49,8 @@ Done 2026-10-14 to 2026-10-16: **E9** (`ec86eb7`), **E10** (`fb73545`), **E11**
 (`COURSE_GUIDE.md`), **E14** (README opener), **E5** (`DEPLOY.md`), **E13** (a and b,
 with the follow-ups), **E17** (the example lesson hides itself) and the screen-reader
 verdicts, **E7** (the Claude skills, 2026-10-16), **E18** (the palette preview, `fe57694`),
-**E19** (the brand board, `071be35`) and **E20** (the image comparison slider,
-`99d1b68`), **E21** (the flip cue retires, `1eccb86`) and **E22** (the flashcards done
+**E19** (the brand board, `2e2d828`) and **E20** (the image comparison slider,
+`9498ab1`), **E21** (the flip cue retires, `1eccb86`) and **E22** (the flashcards done
 card, `5f670b8`), both fast-forwarded 2026-10-16, and **E12c** (the `DEBUG=1` browser
 suite, `aa10305`). The **graphify review** (2026-10-15, output not committed) fixed six stale
 spec headers, five missing plan links and two `STRUCTURE.md` gaps; the import map
@@ -84,8 +84,10 @@ left, in order:
    camelCase modules renamed to kebab-case (below).
 9. **E28 — DONE 2026-10-21**: the third external review's three defects, each kept as
    a regression test (below).
-10. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
-    rules carried into each course repo at its step 3, and E16 after.
+10. **E29 — DONE 2026-10-21**: a docs drift sweep; about 45 statements in the living
+    docs brought back in line with the code (below).
+11. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
+    rules carried into each course repo at its step 6 (item 3), and E16 after.
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
 GitHub; CI is green there; no open PRs, and only `main` exists on GitHub. The one
@@ -93,9 +95,10 @@ leftover local branch on the iMac, `claude/e20-compare-slider-d7384f`, is alread
 squash-merged (PR #19) and holds nothing unsaved. On the MacBook: `git switch main && git
 pull --ff-only`, then `bun install` only if `package.json` or `bun.lock` changed.
 
-Since PR #9, merge a PR by fast-forwarding `main` once its CI is
-green (`git merge --ff-only` + push), so the hashes cited here survive; GitHub's
-"rebase" merge rewrote them.
+`main` is protected, so a PR merges by "Rebase and merge" once its CI is green
+(`CONTRIBUTING.md`, "How a change reaches `main`"). The rebase gives every commit a new
+hash on `main`, so cite the hash on `main` (`git log --oneline origin/main`) or the PR,
+never the branch's.
 
 - **`sources` block (§F5) is DONE** (2026-10-12, late): renderer, schema, example in
   `lo-00-example`'s new Sources section, CONTRIBUTING and llms.txt. Built with the
@@ -108,10 +111,10 @@ green (`git merge --ff-only` + push), so the hashes cited here survive; GitHub's
 - **Tabs on phones (§F3) is DONE** (2026-10-13): below the block's `@3xl` width the tab
   row gives way to the shadcn `Select`. It cost 21.8 kB of JS, and the maintainer
   raised the JS cap to 140 kB (`docs/TOOLING.md`, "Bundle budget").
-- **Then ask the maintainer what is next.** Candidates: §F2 (the remaining tabs-panel
-  entries), §F6 (further components), the §E2 queue (the
-  ordered list in `2026-10-12-team-workflow-handover.md` §3, "Next, in order"; coverage
-  rule in CI first), or a Deferred item.
+- **After the organisation move (item 11 above), ask the maintainer what is next.**
+  Candidates: §F2 (the remaining tabs-panel entries), §F6 (further components), or a
+  Deferred item. The §E2 queue (`2026-10-12-team-workflow-handover.md` §3, "Next, in
+  order") is done up to its last item, the move itself (E8, E4, E7, E5).
   **Budget first:** the headroom is in `docs/TOOLING.md`, "Bundle budget" (about 1 kB of
   CSS on 2026-10-16), so any new rule in `main-*.css` needs a lever before it lands (a
   lazy per-feature sheet imported by the component that needs it).
@@ -456,7 +459,7 @@ course, and adding collaborators does not fix it. Branch protection is now §E.
   JS off, no observer or reduced motion all leave a plainly VISIBLE button.
 
   Also fixed: the unguarded smooth
-  `scrollTo` (now `src/lib/scrollToTop.ts`, `behavior: 'auto'` under reduced motion),
+  `scrollTo` (now `src/lib/scroll-to-top.ts`, `behavior: 'auto'` under reduced motion),
   duplicate accessible names across ~5 buttons per LO (a **required** `sectionId` prop
   feeds `aria-describedby` — guard h does not compare button names, but it DOES fail on
   a dangling reference), the missing `:focus-visible` ring once you leave
@@ -1760,10 +1763,10 @@ no-preference` only.
   code needs the maintainer's approval and content does not, the maintainer deploys (since 2026-10-16 a colleague builds and
   uploads, by `DEPLOY.md`: E5). The
   move is **deferred by decision**. Plan: `docs/ORGANIZATION.md`. Context, the ordered
-  next steps (coverage rule in CI first) and open questions:
+  next steps (all done but the move: E8, E4, E7, E5) and open questions:
   `2026-10-12-team-workflow-handover.md`.
 
-**Found in the pre-handover check (2026-10-13). Do E5 before colleagues get access** (E3, E4, E6 done).
+**Found in the pre-handover check (2026-10-13).** E3, E4, E5 and E6 are done.
 
 - **E3 — TDD guard off by default. DONE 2026-10-14** (maintainer's decision). The
   committed `.claude/settings.json` ran `bunx tdd-guard` before every Claude
@@ -2067,7 +2070,7 @@ rather than the Language Centre's course factory; the maintainer took three smal
   rows: title, page tools and the theme switch (top right again) on the first, the nav
   on its own row below, on all three debug pages (`PresetPicker.test.tsx`,
   `DebugPageHeader.test.tsx`).
-- **E19 — the sandbox's Colour section as a brand board. DONE 2026-10-16** (`071be35`).
+- **E19 — the sandbox's Colour section as a brand board. DONE 2026-10-16** (`2e2d828`).
   A proportion bar, a card per primitive (name, job, live HEX/RGB, contrast badge, token
   fold) and each semantic role shown in use, values read live from the page once
   mounted, names only in the catalog; the bar runs largest share first (`b1fd540`). After
@@ -2077,7 +2080,7 @@ rather than the Language Centre's course factory; the maintainer took three smal
   (`palette-board.spec.ts`). Design:
   [`2026-10-16-palette-brand-board-design.md`](../specs/2026-10-16-palette-brand-board-design.md).
 - **E20 — the sandbox's light/dark image pairs as a comparison slider. DONE 2026-10-16**
-  (`99d1b68`). Each `-black`/`-white` and `-light`/`-dark` pair in the Images section is one
+  (`9498ab1`). Each `-black`/`-white` and `-light`/`-dark` pair in the Images section is one
   wide tile: the dark-ground image underneath, the light-ground one clipped over it with
   `clip-path`, a handle that starts at 50%, "Light" and "Dark" chips, and a native range
   input (named "Compare light and dark: <name>") that pointer drag also sets. Pairs come
@@ -2240,13 +2243,21 @@ rather than the Language Centre's course factory; the maintainer took three smal
      to a later clip. CI now starts a PulseAudio null sink first (`docs/TOOLING.md`,
      "Browser tests"). A first guess, that Firefox fires `pause` on `load()`, was
      committed and reverted: the trace never showed it.
+- **E29 — docs drift sweep. DONE 2026-10-21** (one docs PR, before the move). About 45
+  statements across the living docs no longer matched the code: names from before E27,
+  branch hashes the merge replaced, the old fast-forward rule, and "open" or "next"
+  lines for work since done. Found by a path/script scan of every doc plus a read of
+  each doc against the code, and fixed in one docs PR. Dated records were left as
+  written, by rule. The Firefox audio skip in `e2e/debug/showcase-audio.spec.ts` was
+  checked in CI now that it has a sound device (outcome: see PR). **Still so:** block
+  content is checked at render, not at load; only exercises are checked at load (E28).
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
   point to it (`md-links` will name them).
 
-Still open from the same check, already tracked elsewhere: the coverage rule in CI
-(E8, done 2026-10-14), E1 (fires at handover). **CC BY-NC 4.0 confirmed** as the content
+Tracked elsewhere from the same check, both since done: the coverage rule in CI
+(E8, done 2026-10-14) and E1 (done 2026-10-21). **CC BY-NC 4.0 confirmed** as the content
 licence by the maintainer, 2026-10-14 (handover §4). The same day, CONTRIBUTING gained a
 bold rule (pointed to from LICENSE and AGENTS.md): only media we made or may share —
 no textbook-CD audio, no web images without an open licence. E4's guide leads with it.
@@ -2272,7 +2283,7 @@ read 92 / LCP 2.9 s: noise, so average several. **Re-run on the first real cours
 
 ---
 
-## F. Composite UI blocks — F1, F2a, F4 and F5 done
+## F. Composite UI blocks — F1, F2a, F3, F4 and F5 done
 
 Reusable components authors drop into LO pages through config. Brainstorm decisions,
 the slice-1 scope and the open list live in
@@ -2492,11 +2503,17 @@ build, so it cannot return. Two remain:
 | 2026-10-15 | `f82ac23` | **WebKit click flake** — the keyboard spec waits for the accordion's open animation before clicking (E9 spec)                                                       |
 | 2026-10-15 | `fb73545` | **no control inside a control** — rich text rejects a link, popup, hover term or audio icon nested in another (E10)                                                 |
 | 2026-10-16 | `fe57694` | **palette preview** — sandbox drop-down over every `tokens-variant-*.css`, kept per viewer on every DEBUG page; none of it in a normal build (E18)                  |
-| 2026-10-16 | `071be35` | **brand board** — sandbox Colour section: proportion bar, a card per colour with live HEX/RGB and contrast, each role in use (E19)                                  |
-| 2026-10-16 | `99d1b68` | **image comparison slider** — sandbox Images section: each light/dark pair as one slider on theme-fixed grounds (E20)                                               |
+| 2026-10-16 | `2e2d828` | **brand board** — sandbox Colour section: proportion bar, a card per colour with live HEX/RGB and contrast, each role in use (E19)                                  |
+| 2026-10-16 | `9498ab1` | **image comparison slider** — sandbox Images section: each light/dark pair as one slider on theme-fixed grounds (E20)                                               |
 | 2026-10-16 | `1eccb86` | **flip cue retires** — three cards turned, the Tap to flip corners leave with a random exit and the instruction glyph fades (E21)                                   |
 | 2026-10-16 | `5f670b8` | **flashcards done card** — a finished deck keeps a "Deck complete" card in the card's place, so nothing jumps (E22)                                                 |
+| 2026-10-16 | `aa10305` | **debug pages in the browser suite** — specs on a `DEBUG=1` build, run in CI on that build too (E12c)                                                               |
 | 2026-10-20 | `7295a12` | **debug browser cases** — memory-match reveal under resize, sequence scrub, the brand board's live values and axe (E12d)                                            |
 | 2026-10-20 | `3e18c52` | **sequence scrubber follows the audio** — Firefox's late input, the two-drag race and a clip-length mix-up after seeks; first happy-dom test (E23)                  |
 | 2026-10-20 | `216fa11` | **one build for any folder** — `./` by default; logo/icon masks inline, saves keyed by the served folder, CI serves a build from `/any/folder/` (E24)               |
-| 2026-10-21 | `c1485fa` | **code style guide** — `docs/STYLE.md`: what the tools enforce, links to the rules, and the unenforced habits measured against `src/`, before the organisation move |
+| 2026-10-21 | `ca73c0c` | **audio controller follows the element** — keyboard seeking, a refused play, an outside pause (E25)                                                                 |
+| 2026-10-21 | `b89a9e4` | **`main` protected** — PR only, five checks green and up to date, admins included, linear history (E1)                                                              |
+| 2026-10-21 | `467a90d` | **code style guide** — `docs/STYLE.md`: what the tools enforce, links to the rules, and the unenforced habits measured against `src/`, before the organisation move |
+| 2026-10-21 | `f56d9d0` | **Code style debug page** — `code-style.html` renders `docs/STYLE.md`, with real examples from `src/` (E26)                                                         |
+| 2026-10-21 | `e573fdd` | **kebab-case module names** — eleven camelCase modules renamed; `file-names.test.ts` enforces the shapes (E27)                                                      |
+| 2026-10-21 | `35b36d6` | **third review's defects** — exercises checked at load, reserved page names, the playlist's gap; PR 31 (E28)                                                        |

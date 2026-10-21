@@ -19,17 +19,22 @@ Apply the rule in [`.claude/skills/README.md` → "Where am I"](../README.md#whe
 
 ## Step 1 — Test first
 
-1. Write the expectation the change adds:
-   - a **new colour pairing** (text on a new surface, say): its text contrast, in
-     [`src/styles/token-contrast.test.ts`](../../../src/styles/token-contrast.test.ts);
-   - a **new preset or a new token**: in
-     [`src/styles/token-presets.test.ts`](../../../src/styles/token-presets.test.ts).
+1. Write the expectation the change adds. Both theme tests read their cases from data,
+   so the expectation goes in the data, not in the test file:
+   - a **new colour pairing** (text on a new surface, say): add the pair to
+     `SEMANTIC_SWATCHES` in [`src/sandbox/sandbox-catalog.ts`](../../../src/sandbox/sandbox-catalog.ts).
+     [`src/styles/token-contrast.test.ts`](../../../src/styles/token-contrast.test.ts)
+     checks the text contrast of every pair there, in every token file;
+   - a **new token**: add it to `tokens.css` first.
+     [`src/styles/token-presets.test.ts`](../../../src/styles/token-presets.test.ts)
+     then fails for every preset that does not declare it yet.
 2. Run `bun run test`, and show the user the failure.
 3. Check it fails for the expected reason, not a typo.
-4. Only then change the CSS, and run `bun run test` again until it passes.
+4. Only then change the rest of the CSS, and run `bun run test` again until it passes.
 
 A change that only alters existing values (a different blue, a swapped preset) adds
-nothing new to expect: the existing contrast tests are its check. Say so to the user and
+nothing new to expect: the existing contrast tests are its check. So does a new preset
+file: both tests find a new `tokens-variant-*.css` by themselves. Say so to the user and
 run them; do not invent a test to see red. If the change does not fit either case, stop
 and ask the user.
 

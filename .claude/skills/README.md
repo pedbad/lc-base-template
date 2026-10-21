@@ -34,7 +34,8 @@ interviewed the user.
    user.
 3. **Find the template's address** from this repo, never from memory:
    `git remote get-url upstream` (a linked copy), else
-   `gh repo view --json parent --jq .parent.nameWithOwner` (a fork), else ask.
+   `gh repo view --json parent --jq '.parent.owner.login + "/" + .parent.name'` (a
+   fork), else ask.
 4. **File it only when the user says yes:**
 
    ```bash

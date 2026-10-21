@@ -1,7 +1,8 @@
 # GitHub Organisation — `lc-elearn` (planned move)
 
 **The plan for moving this template into a GitHub organisation and giving each course its
-own repo.** Follow it top to bottom on the day. Nothing here has been done yet.
+own repo.** Follow it top to bottom on the day. Only step 5's template-side work is done
+already (the `CODEOWNERS` content rule, and `main`'s protection); the move itself is not.
 
 > Status: ⬜ **NOT started — deferred by decision.**
 >
@@ -19,7 +20,7 @@ own repo.** Follow it top to bottom on the day. Nothing here has been done yet.
 | Who owns it      | the `pedbad` account                 | the `lc-elearn` organisation                    |
 | Who maintains it | `pedbad`                             | `pedbad` (as organisation **Owner**)            |
 | Copies on GitHub | one                                  | still one — a transfer **moves**, never copies  |
-| Local clones     | iMac + PowerBook                     | same folders, same history, one-line URL update |
+| Local clones     | work iMac + MacBook Pro              | same folders, same history, one-line URL update |
 | Courses          | —                                    | one repo per course inside `lc-elearn`          |
 
 The maintainer keeps logging in as `pedbad`. An organisation has no login of its own; people
@@ -93,7 +94,7 @@ take over the old address and break the redirect.
 
 ## Step 3 — Point each local clone at the new address
 
-Once on every machine with a clone (iMac, PowerBook):
+Once on every machine with a clone (work iMac, MacBook Pro):
 
 ```bash
 git remote set-url origin https://github.com/lc-elearn/lc-base-template.git
@@ -110,14 +111,15 @@ pulls and pushes correctly — this step just stops relying on it.
 
 ## Step 4 — Update the old address inside the repo
 
-One commit (`docs: template moved to lc-elearn`). As of 2026-10-12 these name the old
+One commit (`docs: template moved to lc-elearn`). As of 2026-10-21 these name the old
 address:
 
-| File                        | What to change                                                                |
-| --------------------------- | ----------------------------------------------------------------------------- |
-| `CONTRIBUTING.md`           | the `git clone` line under "Getting started"                                  |
-| `docs/BRANCH_PROTECTION.md` | the collaborators `gh api` line, the UI path, the `gh api` protection command |
-| this file                   | the "Today" column becomes history; flip the status to ✅                     |
+| File                              | What to change                                                                  |
+| --------------------------------- | ------------------------------------------------------------------------------- |
+| `CONTRIBUTING.md`                 | the `git clone` line under "Getting started"                                    |
+| `docs/BRANCH_PROTECTION.md`       | the collaborators `gh api` line, the UI path, both `gh api` protection commands |
+| `src/sandbox/DebugPageHeader.tsx` | `REPO_URL`, the source link in every debug page's nav                           |
+| this file                         | the "Today" column becomes history; flip the status to ✅                       |
 
 Re-check before committing — the list goes stale:
 

@@ -28,9 +28,10 @@ How to work in this repo: setup, everyday commands, the commit gate, and convent
 
 - **[Bun](https://bun.com)** ≥ 1.3 — package manager and script runner. Tests run on
   **Vitest** (via `bun run test`), not Bun's built-in `bun test` — see [docs/TOOLING.md](docs/TOOLING.md).
-  Install: `curl -fsSL https://bun.com/install | bash`. No separate Node/npm needed —
-  if Node is installed, though, `bun run` uses it for the Vite, Vitest, ESLint and
-  Prettier CLIs, so it must meet the minimum in the README's toolchain table.
+  Install: `curl -fsSL https://bun.com/install | bash`. No npm needed, and Node only
+  for the browser tests (`bun run test:e2e`: Playwright's runner is Node). If Node is
+  installed, though, `bun run` uses it for the Vite, Vitest, ESLint and Prettier CLIs,
+  so it must meet the minimum in the README's toolchain table.
 
 ## Getting started
 
@@ -69,7 +70,7 @@ Once per machine, for the browser tests:
 `bun run dev` serves `/debug-sandbox.html`, `/exercise-showcase.html`,
 `/ui-showcase.html` and `/code-style.html` whether or not that flag is set — **bookmark
 the four URLs**. Nothing in the course links to them and
-nothing should: a deployed build contains neither file, so an in-course link would work
+nothing should: a deployed build contains none of them, so an in-course link would work
 locally and 404 for every reader. (Vite takes 5174 when 5173 is busy; it prints the port
 it chose.)
 
@@ -421,8 +422,10 @@ The settings and why they are safe for one maintainer:
   new branch is what saved it.
 
 > Note: adding a new **exercise engine** (not just content) follows the engine recipe —
-> schema + pure grading + colocated tests + thin view + fixture + registry entry. See a
-> recent engine (`src/exercises/reading/`) as the reference shape.
+> schema + pure grading + colocated tests + thin view + fixture + two registry entries:
+> the view in `EXERCISE_REGISTRY` (`src/exercises/lazy-registry.ts`) and the schema in
+> `EXERCISE_CONFIG_SCHEMAS` (`src/exercises/exercise-schemas.ts`). See a recent engine
+> (`src/exercises/reading/`) as the reference shape.
 
 **Claude skills.** The recurring jobs (a lesson, an engine, a block type, the theme, a
 template sync, the check before a pull request, a build for upload) have recipes in
@@ -452,7 +455,9 @@ doc it links:
   (no raw hex/px bypassing the token chain), **g** CSS layer discipline (every rule in
   `@layer`, no `!important`) and **h** semantic DOM (the spec §17 contract over rendered
   output). **b–h** are the seven sweeps in `src/guards/`; **a** is not a sweep — the Zod
-  schemas run on every load, and their contract tests sit beside them in `src/config/`.
+  schemas run on every load, and their contract tests sit beside them: the LO schemas in
+  `src/config/`, each engine's exercise schema in `src/exercises/<type>/`, and the map
+  the loader checks exercises with in `src/exercises/exercise-schemas.ts`.
   All are Vitest tests, so `bun run test` already enforces them, and `bun run guards`
   runs the seven sweeps on their own in about a second. Guard h has a second half that is not in `src/guards/` at all:
   `eslint-plugin-jsx-a11y` in `eslint.config.js`, which lints the JSX as you write it —

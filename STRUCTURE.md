@@ -69,8 +69,13 @@ Two naming rules carry real weight:
   and went unnoticed while every section happened to hold exactly one block.)
   **Guard b** fails if a folder name stops matching the config.
 
-Every file here is validated by Zod at load (**guard a**). A malformed LO fails
-the build with the offending file named — it never emits a half-rendered page.
+Every file here is validated by Zod (**guard a**), in two places. At load: the
+manifest, modals and hover cards, every block and exercise envelope, and each
+exercise's full content against its engine's schema
+(`src/exercises/exercise-schemas.ts`); a failure there names the file. At render: a
+block's `content`, against its type's schema (`parseBlockContent`); that failure
+names the block type and the field, not the file. Either way the build stops before
+it writes a lesson page, so it never emits a half-rendered one.
 
 ## `public/` — static assets
 
@@ -184,15 +189,15 @@ is the single source of truth for what is still open.
 
 ## Where does my change go?
 
-| I want to…                             | Touch                                                       |
-| -------------------------------------- | ----------------------------------------------------------- |
-| add a lesson                           | a new `lo-config/lo-NN-slug/` folder — nothing else         |
-| reorder lessons                        | rename the LO folders                                       |
-| change a colour or font                | `src/styles/palette.css` — see [`DESIGNER.md`](DESIGNER.md) |
-| add an exercise engine                 | a new `src/exercises/<type>/` + a registry entry            |
-| change what an exercise config accepts | `src/config/` (schema) — a **contract** change              |
-| add audio or images                    | `public/`, mirroring the config's ordinal-type names        |
-| change the page chrome                 | `src/components/shell/`                                     |
+| I want to…                             | Touch                                                                                             |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| add a lesson                           | a new `lo-config/lo-NN-slug/` folder — nothing else                                               |
+| reorder lessons                        | rename the LO folders                                                                             |
+| change a colour or font                | `src/styles/palette.css` — see [`DESIGNER.md`](DESIGNER.md)                                       |
+| add an exercise engine                 | a new `src/exercises/<type>/` + a registry entry                                                  |
+| change what an exercise config accepts | the engine's `<type>-schema.ts`, or `src/config/` for the shared envelope — a **contract** change |
+| add audio or images                    | `public/`, mirroring the config's ordinal-type names                                              |
+| change the page chrome                 | `src/components/shell/`                                                                           |
 
 Anything in the second half of that table re-skins or re-shapes **every** course
 built from this template. Those paths are owned in

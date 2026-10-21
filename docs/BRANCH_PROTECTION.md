@@ -59,7 +59,8 @@ always change or remove the rule under **Settings → Branches**.
 ### ⚠ `CODEOWNERS` is a SECOND lockout, by a different route
 
 **Adding a collaborator is not enough. Fix `.github/CODEOWNERS` first.** Every one of its
-15 rules currently names `@pedbad` and nobody else, so **Require review from Code Owners**
+15 owner rules currently names `@pedbad` and nobody else (the three content folders have
+no owner), so **Require review from Code Owners**
 demands a code-owner review on your own PR — which, being your own, you cannot give. That
 is the same dead merge button as the approvals trap above, reached without ever touching
 the approvals row, and it survives adding a second collaborator because CODEOWNERS still
@@ -93,7 +94,7 @@ next to what it buys: nothing red reaches `main`.
 | ☐ &nbsp;&nbsp;→ **Require branches to be up to date before merging**    | CI ran against latest `main`                                                                                                |
 | ☐ **Require conversation resolution before merging**                    | no merging over unresolved comments                                                                                         |
 | ☐ **Do not allow bypassing the above settings**                         | rule applies to admins too (recommended for handoff)                                                                        |
-| ☐ **Require linear history** _(optional)_                               | matches the fast-forward-merge workflow                                                                                     |
+| ☐ **Require linear history** _(optional)_                               | matches the rebase-merge workflow                                                                                           |
 
 **Gotcha — already cleared here.** The status-check picker only lists a check **after CI
 has run at least once**, so on a fresh repo you would open a throwaway PR, let CI run, then

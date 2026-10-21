@@ -155,7 +155,11 @@ against a semantic-structure audit of the french-lo-1 reference implementation
 **Grounding status:** every shape below is REAL and shipped — `src/config/lo-schema.ts`
 for the manifest and part envelopes, `src/lo/blocks/*-schema.ts` for block `content`,
 `src/exercises/select/select-schema.ts` for the select exercise. The loader
-(`src/lo/`) validates all of it at load and the adapter
+(`src/lo/`) validates the manifest, the part envelopes and, in the Node reader
+(`load-lo-disk.ts`), each exercise's full content (`src/exercises/exercise-schemas.ts`)
+at load, naming the file on failure. Block `content` is validated at render, by
+`parseBlockContent`, which names the block type and the field, not the file; the build
+still fails, before any lesson page is written. The adapter
 (`src/lo/lo-page-sections.tsx`) is what turns it into the DOM in §1.
 
 A folder-per-LO (spec §6/§9) drives the skeleton in §1 like this:
@@ -231,13 +235,14 @@ lo-config/lo-01-salutations/
 
 - `type` → which body renderer fills the accordion, resolved through
   `getBlockRenderer()` (`src/lo/blocks/block-renderers.ts`) — the block-side
-  counterpart of the exercise `lazyRegistry`, not the same map: blocks are content,
+  counterpart of the exercise registry (`src/exercises/lazy-registry.ts`), not the same map: blocks are content,
   not engines. Shipped types (amended 2026-10-13 — seven, not three): `prose`
   (UI-language commentary), `intro` (UI-language page copy), `grammar`
   (target-language prose), `vocabulary` (term/gloss `<dl>`), `outcomes`, `tabs` and
   `sources`. An unregistered `type` renders a visible error, never silence.
-- `title` → the accordion's `<h3>` inside `<summary>`. Required, same reasoning as
-  `label` above.
+- `title` → the accordion's `<h3>` inside `<summary>`. Required for a `card` block,
+  same reasoning as `label` above; a `plain` block has no accordion, so Zod rejects a
+  `title` on one.
 - `defaultOpen` (optional, `prose`/blocks only) → the accordion starts open. For an
   introduction the learner should not have to unfold. Exercises have no equivalent: a
   page of pre-opened exercises is a wall of controls.
@@ -274,7 +279,7 @@ the UI language — `lang` is per-part, not per-block.
 }
 ```
 
-- `type: "select"` → `lazyRegistry` resolves this to `SelectExercise.tsx`
+- `type: "select"` → `getExercise()` (`src/exercises/lazy-registry.ts`) resolves this to `SelectExercise.tsx`
   (guard e enforces every `type` used here has a registry entry + showcase
   fixture). The exercise mounts through `ExerciseHost`, which also renders the
   instruction box — so the accordion's own `instructions` slot stays empty for

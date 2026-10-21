@@ -10,7 +10,7 @@ in popups AND page prose — see §14, which amends R4 and R7.
 popup link. The reference implementation (`pedbad/French-Basic-2026`) solves this with
 inline HTML plus a modal launched from `<a class="modal-link">` — but it does so via
 `dangerouslySetInnerHTML`, which this repo has deliberately never used (see the note in
-`src/exercises/lib/charDiff.ts`).
+`src/exercises/lib/char-diff.ts`).
 
 **This spec** adds inline rich text and modal popups **without** injecting raw HTML:
 authors write HTML, the loader parses it into a typed node tree, and React renders that
@@ -138,10 +138,13 @@ As shipped in the example LO:
 
 ```
 lo-config/lo-00-example/
-  lo.json                              ← sections[] + modals: ["example-popup"]
+  lo.json                              ← sections[] + modals: ["example-popup", "conjugation"]
+                                         + hovers: ["lo-json"]
   blocks/01-grammar/block.json         ← prose containing the modal link + an audio icon
   exercises/01-select/exercise.json
   modals/example-popup/modal.json      ← NEW
+  modals/conjugation/modal.json        ← block entries (§14)
+  hovers/lo-json/hover.json            ← a hover card (§2)
 public/audio/lo-00-example/
   placeholder.m4a                      ← NEW (a placeholder clip, not real course audio)
 ```
@@ -326,13 +329,19 @@ As built:
 src/lo/rich-text/
   rich-text-nodes.ts       ← RichTextNode union (§4) + collectModalTargets / collectAudioPaths
   parse-rich-text.ts       ← HTML string → RichTextNode[], throws on anything off-allowlist
+  parse-rich-text-entry.ts ← one entry → a paragraph or one block (§14)
   RichText.tsx             ← RichTextNode[] → React
+  RichTextEntries.tsx      ← RichTextEntry[] → React (§14)
+  hover/                   ← hover terms and cards (§2)
+    hover-context.ts       ← HoverContent + HoverProvider + useHoverCard
+    hover-card.ts          ← the path tree and the open/close rules, view-free
+    HoverTerm.tsx          ← the button that opens a hover card
   modal/
     modal-context.ts       ← ModalContent + context + useModal (a .ts file, so the
                              react-refresh lint rule stays satisfied)
     ModalLink.tsx          ← <button> that opens a modal
     ModalProvider.tsx      ← open-id state + the single dialog host
-src/config/lo-schema.ts    ← ModalConfigSchema + manifest `modals[]`
+src/config/lo-schema.ts    ← ModalConfigSchema + manifest `modals[]` (and HoverConfigSchema + `hovers[]`)
 ```
 
 Two deviations from the first draft of this spec, both for consistency with what was
@@ -481,7 +490,7 @@ type TableCell = { header: boolean; scope?: 'col' | 'row'; children: RichTextNod
 
 §9 named `htmlparser2` as the swap point once block content arrived. Not taken: JS has
 ~2.3 kB of headroom against the < 100 kB budget (`docs/TOOLING.md`; amended 2026-10-13: the
-budget has since been raised to < 120 kB), and the block grammar is
+budget has since been raised; its "Bundle budget" section holds the current figure), and the block grammar is
 still closed and tiny (seven structural tags, no attributes). The entry parser reuses the
 inline tokenizer; the node types stay the stable interface, so the swap remains available.
 
