@@ -80,7 +80,9 @@ left, in order:
 6. **E1 — DONE 2026-10-21**: `main` is protected, the review's last point (below).
 7. **E26 — DONE 2026-10-21**: a fourth debug page, Code style, renders `docs/STYLE.md`
    with real code examples (below).
-8. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
+8. **E27 — DONE 2026-10-21**: one file-naming rule in `src/`, enforced; the eleven
+   camelCase modules renamed to kebab-case (below).
+9. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
    rules carried into each course repo at its step 3, and E16 after.
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
@@ -2186,6 +2188,20 @@ rather than the Language Centre's course factory; the maintainer took three smal
   `.doc-page-prose`. Same fail-closed `DEBUG=1` entry as the other three; DEPLOY.md's
   upload check now names it. **Left as is:** the example lesson's intro still says
   "All three" debug pages, since AGENTS.md forbids editing `lo-00-example`.
+- **E27 — consistent file names before the move. DONE 2026-10-21** (maintainer's
+  request: be consistent before the organisation move, when no course repo yet has to
+  absorb a rename). STYLE.md had said to leave "about twenty" camelCase modules; there
+  were eleven. All renamed with `git mv` (history follows), tests beside them:
+  `clip-status`, `lazy-registry`, `heading-id`, `jump-hold`, `prefers-reduced-motion`,
+  `scroll-to-top`, `section-in-view`, `char-diff`, `exercise-scaffold`,
+  `prepare-choice-items`, `reorder-animation`. Functions keep their names. Two misses a
+  path-only rewrite would have left: `.github/CODEOWNERS` (its `lazyRegistry.ts` rule
+  would have stopped matching) and the coverage glob `!(use*|reorderAnimation)` in
+  `vite.config.ts`, caught by `test:coverage`. **Enforced:** `src/build/file-names.test.ts`
+  fails any file or folder in `src/` (vendored `components/ui/` aside) that is not
+  kebab-case, a `use…` hook or PascalCase, with optional lowercase dot qualifiers
+  (`course.config.ts`). Not a ninth guard: like docs-tree, it runs in `bun run test`,
+  and the locked list stays the eight spec guards.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
