@@ -132,9 +132,10 @@ drift from the folders. Move a lesson by renaming its folder.
 `bun run dev` serves the whole course with hot reload — the landing page at `/`, and
 each LO at `/<slug>.html`, so lesson cards and the lesson nav work as they do in
 production. `<slug>.html` files themselves only exist after a build, so a small
-serve-only Vite plugin answers those URLs by stamping the LO's folder onto the dev
-`index.html`; the LO list is read from `lo-config/` per request, so a new folder is
-live on the next reload with nothing to register.
+Vite plugin answers those URLs by stamping the LO's folder onto the dev `index.html`,
+after loading the LO exactly as the build does, so a bad exercise or lesson name fails
+the page as it would fail the build. The LO list is read from `lo-config/` per request,
+so a new folder is live on the next reload with nothing to register.
 
 ```bash
 bun run dev                        # author content, hot reload, cards work

@@ -9,7 +9,7 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-21 · **HEAD:** see `git log` · **Suite:** 196 files · 2112 tests green
+**Last updated:** 2026-10-21 · **HEAD:** see `git log` · **Suite:** 196 files · 2118 tests green
 (Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 60 on a `DEBUG=1` build (20 × 3, `e2e/debug/`) · CI green · `main` protected since 2026-10-21 (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -2204,9 +2204,10 @@ rather than the Language Centre's course factory; the maintainer took three smal
   kebab-case, a `use…` hook or PascalCase, with optional lowercase dot qualifiers
   (`course.config.ts`). Not a ninth guard: like docs-tree, it runs in `bun run test`,
   and the locked list stays the eight spec guards.
-- **E28 — the third external review, before the move. DONE 2026-10-21**, three
-  commits, fixed in the review's priority order, each reproduced first and kept as a
-  regression test.
+- **E28 — the third external review, before the move. DONE 2026-10-21**, PR 31 (merged
+  by rebase, so look the commits up by title in `git log`, not by the hashes below, which
+  are the branch's), fixed in the review's priority order, each reproduced first and kept
+  as a regression test.
   1. **Broken exercises passed the checks** (`714e1cb`). The loader checked only the
      loose envelope; content waited for the engine, at render. `src/exercises/exercise-schemas.ts`
      maps every type to its full schema (an exhaustive Record, so a new engine fails to
@@ -2233,6 +2234,12 @@ rather than the Language Centre's course factory; the maintainer took three smal
      another player starting during the gap (`AudioManager.stopAll`) pauses an element
      that is already paused, so no event reaches the controller and the next clip
      still starts after the gap. Fixing it needs an `AudioManager` change.
+  4. **Found by CI on the way (PR 31):** the runner has no sound device, so Firefox there
+     never played a clip (`NS_ERROR_DOM_MEDIA_MEDIASINK_ERR`). `e2e/debug/sequence-scrub.spec.ts`
+     had passed on `main` only because the stale gap timer from item 3 jumped the player
+     to a later clip. CI now starts a PulseAudio null sink first (`docs/TOOLING.md`,
+     "Browser tests"). A first guess, that Firefox fires `pause` on `load()`, was
+     committed and reverted: the trace never showed it.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that

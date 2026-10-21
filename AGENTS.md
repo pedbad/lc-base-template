@@ -63,7 +63,7 @@ bun run test:e2e`; and a fixed address: `BASE_URL=/course/` on both commands.
 6. **Debug pages are opt-in and fail closed.** `exercise-showcase.html`,
    `ui-showcase.html`, `debug-sandbox.html` and `code-style.html` build only under
    `DEBUG=1 bun run build`. Add a debug
-   artifact to `DEBUG_ENTRY_FILES` in `src/build/build-entries.ts`; never as an
+   artifact to `DEBUG_ENTRY_FILES` in `src/build/page-names.ts`; never as an
    unconditional `rollupOptions.input` entry.
 
 ## Content rules
