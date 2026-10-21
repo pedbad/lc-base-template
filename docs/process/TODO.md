@@ -75,7 +75,10 @@ left, in order:
 4. **E24 — DONE 2026-10-20** (`216fa11`, on the MacBook Pro): one build works in any
    folder. Investigated first (below), then built: `./` is the default base, `BASE_URL`
    still fixes an address.
-5. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1 as its
+5. **E25 — DONE 2026-10-21** (branch `fix/audio-controller-state`, on the MacBook Pro):
+   the second external review's three audio bugs and its stale CI check names (below).
+   Branch protection waits until it merges.
+6. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1 as its
    step 5, and E16 after.
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
@@ -2123,7 +2126,7 @@ rather than the Language Centre's course factory; the maintainer took three smal
   showcase clips are all 0.7 s. Pinned by `SequenceAudioController.test.tsx`, the
   suite's one happy-dom test (`docs/TOOLING.md`, "Config"). **Left open:** arrow keys
   on the focused scrubber did not seek before and now do nothing (the guard ignores
-  `input` outside a drag); keyboard seeking is a separate change.
+  `input` outside a drag); keyboard seeking is a separate change. **Done in E25.**
 - **E24 — one build that works in any folder. DONE 2026-10-20** (`925f850`..`bc556bc`).
   Addresses keep changing, and every build used to fit one address. The investigation
   built once with `BASE_URL=./`, copied that build into `/a/` and `/deep/b/` and ran the
@@ -2142,6 +2145,25 @@ rather than the Language Centre's course factory; the maintainer took three smal
   MacBook Pro; its rule sits in the page, so `./fonts/…` should resolve correctly), and a
   real server's redirect of `…/folder` to `…/folder/`, which a `./` build needs (DEPLOY.md
   step 8 checks it after upload).
+- **E25 — the second external review: three audio bugs and stale check names. DONE
+  2026-10-21** (branch `fix/audio-controller-state`). The review ran the 1,996 unit tests
+  (all pass, 78.46 % line coverage) and reproduced three bugs in
+  `SequenceAudioController.tsx`, each now pinned by a failing-first test. (1) Keyboard
+  seeking did nothing: E23's guard dropped every `input` outside a drag. Now only
+  Firefox's late `input` is dropped, recognised by carrying the exact drop value; any
+  other `input` (a key, assistive tech) seeks at once. The step went from `0.01` to
+  `any`, so an arrow moves 1 % of the timeline and PageUp 10 % (measured in Chromium and
+  WebKit), not 10 ms. A new case in `e2e/debug/sequence-scrub.spec.ts` presses PageUp
+  and an arrow; it failed on the old code. (2) A refused `play()` (autoplay blocked)
+  left the button on "Pause audio": the rejection was swallowed. `startPlayback` now
+  puts it back to play, except on an `AbortError` (a newer load or pause replaced the
+  request). (3) A pause from outside (a media key, `AudioManager.stopAll`) left the
+  label stale: the element's own `pause` and `play` events now set the state, skipping
+  the `pause` a browser fires as a clip ends, which `handleEnded` answers. Also fixed:
+  `docs/BRANCH_PROTECTION.md` and `docs/ORGANIZATION.md` named three checks, two of them
+  gone since E24's matrix; CI reports five. **Not verified locally:** Firefox (it will
+  not start on the MacBook Pro); CI's Firefox leg is its check. **Next:** branch
+  protection with the five names, after this merges.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
