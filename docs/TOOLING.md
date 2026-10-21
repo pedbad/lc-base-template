@@ -236,8 +236,8 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
   Reset restores it; the flip cue retires after three turns, stays retired after a
   reload, comes back with flashcards' Clear saved progress, and fades under reduced
   motion; a finished flashcards deck shows its done card and Reset does not move.
-  Firefox on the Linux CI runner skips only the clip-plays test: it has no audio output
-  there, so the clip errors (why: the test's comment). Helpers:
+  The clip-plays test runs in all three browsers: Firefox on the Linux CI runner skipped
+  it until the job got a sound device (below; the test's comment). Helpers:
   `e2e/debug/debug-support.ts`. Also (E12d): memory-match resized during "Show
   answers" leaves every card in the grid with no stray transform; sequence audio
   scrubbed while playing shows the time it plays (TODO §E23), and its scrubber seeks
