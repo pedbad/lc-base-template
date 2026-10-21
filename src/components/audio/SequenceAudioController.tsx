@@ -418,10 +418,14 @@ export function SequenceAudioController({
   // through AudioManager — except in the gap between clips, where the element is
   // already paused, fires nothing, and the next clip still starts (TODO §E28). At a
   // clip's end the element pauses too, just before `ended`; handleEnded answers that one
-  // (the next clip, or stopped), so it is skipped here.
+  // (the next clip, or stopped), so it is skipped here. So is the pause Firefox fires when
+  // playItem's load() replaces a playing clip: while that load waits on metadata the pause
+  // is the controller's own, and reading it as the learner's left the next quick seek
+  // paused at the drop point (CI Firefox, PR 31).
   const handlePause = () => {
     const audio = audioRef.current;
-    if (!audio || audio.ended || stateRef.current.playState !== 'playing') return;
+    if (!audio || audio.ended || pendingStartRef.current) return;
+    if (stateRef.current.playState !== 'playing') return;
     changePlayState('paused');
   };
 
