@@ -240,7 +240,8 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
   there, so the clip errors (why: the test's comment). Helpers:
   `e2e/debug/debug-support.ts`. Also (E12d): memory-match resized during "Show
   answers" leaves every card in the grid with no stray transform; sequence audio
-  scrubbed while playing shows the time it plays (fixme in Firefox, TODO §E23); and
+  scrubbed while playing shows the time it plays (TODO §E23), and its scrubber seeks
+  from the keyboard (E25); and
   the brand board shows real HEX values, holds its tokens in the folds and passes axe
   in both themes.
 - **One exclusion, WebKit only** (maintainer's decision, 2026-10-15): Base UI's
@@ -248,7 +249,8 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
   it: the comment on `BASE_UI_FOCUS_GUARD` in `e2e/support.ts`.
 - **Three browsers, not one** (maintainer's choice): WebKit stands in for Safari.
 - **CI:** the `e2e` job runs four ways, beside `verify`: the course suite and the
-  `DEBUG=1` suite, each at `/` and at `/course/`. A failure uploads the HTML report and
+  `DEBUG=1` suite, each from a `./` build served at `/any/folder/` and from a `/course/`
+  build (E24). A failure uploads the HTML report and
   traces as an artifact. The gate in AGENTS.md runs the course suite only; run the
   debug suite by hand when a change touches a debug page or what it shows.
 - **Not in the pre-push hook**, which stays fast. **In the verify gate**, after `build`.
