@@ -1,5 +1,11 @@
 # Future Projects Blueprint (React + Bun + Tailwind + shadcn + Lucide)
 
+> **Historical — not a plan.** This is the blueprint carried over from `french-lo-1` in
+> June 2026, which this template was built from. It describes that project's shape, not
+> this repo's, and is kept as written because code comments and specs cite its items by
+> number. For what the template could become next, see
+> [`docs/ROADMAP.md`](../ROADMAP.md); for what is next now, [`TODO.md`](TODO.md).
+
 ## Reusable Master Prompt
 
 Use this prompt when starting a new project:
