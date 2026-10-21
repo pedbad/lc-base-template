@@ -168,6 +168,7 @@ BASE_URL=/course/ bun run build
 | [`docs/TOOLING.md`](docs/TOOLING.md)           | why each tool was chosen, and every build decision         |
 | [`docs/ORGANIZATION.md`](docs/ORGANIZATION.md) | maintainer — the planned move to the team organisation     |
 | [`docs/process/TODO.md`](docs/process/TODO.md) | what is still open — start here in a new session           |
+| [`docs/ROADMAP.md`](docs/ROADMAP.md)           | larger work beyond the queue, and what starts each         |
 
 ## License
 

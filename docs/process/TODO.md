@@ -8,6 +8,7 @@ session, on either machine.
 | **this file**                         | what is still open, ordered, with a verify line each       |
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
+| [`../ROADMAP.md`](../ROADMAP.md)      | larger work beyond this queue, each with its trigger       |
 
 **Last updated:** 2026-10-21 · **HEAD:** see `git log` · **Suite:** 196 files · 2118 tests green
 (Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 60 on a `DEBUG=1` build (20 × 3, `e2e/debug/`) · CI green · `main` protected since 2026-10-21 (job E1).
@@ -2252,6 +2253,13 @@ rather than the Language Centre's course factory; the maintainer took three smal
   `e2e/debug/showcase-audio.spec.ts` is gone: with the CI sound device (E28), Firefox
   plays the clip, and both `DEBUG=1` jobs ran all 60 tests with none skipped. **Still so:** block
   content is checked at render, not at load; only exercises are checked at load (E28).
+- **E30 — a roadmap beyond the queue. DONE 2026-10-21** (maintainer's request).
+  [`docs/ROADMAP.md`](../ROADMAP.md) holds the larger work, each item with why, where
+  it stands, what it touches and its trigger: right-to-left languages first (Persian
+  and Arabic have no `dir`, font or grading support yet), then other scripts, template
+  releases, a Moodle package, per-lesson chunking and speech or AI exercises.
+  `FUTURE_PROJECTS.md` stays where it is with a "historical" banner, because code
+  comments and specs cite its items by number.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
@@ -2347,7 +2355,8 @@ Not forgotten. Decided.
 | Reading short-answer questions | Someone wants typed answers in a reading passage. v1 shipped MCQ + true/false only; short-answer parked (`2026-07-03-exercise-engines-buildlist.md` §3).                                                                                                                                                                                            |
 
 Exercise types not yet in any queue are parked, tiered by the infrastructure each
-needs, in [`FUTURE_EXERCISE_IDEAS.md`](FUTURE_EXERCISE_IDEAS.md).
+needs, in [`FUTURE_EXERCISE_IDEAS.md`](FUTURE_EXERCISE_IDEAS.md). Larger work beyond this
+queue, right-to-left languages first, is in [`docs/ROADMAP.md`](../ROADMAP.md).
 
 ### Two small known edges (§5.7)
 
