@@ -76,30 +76,37 @@ so speed is **not** an argument against enabling them.
 **github.com/pedbad/lc-base-template → Settings → Branches → Add branch ruleset**
 (or classic "Add rule"). Target branch: **`main`**. Enable:
 
-| Toggle                                                                 | Why                                                                                                                         |
-| ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| ☐ **Require a pull request before merging**                            | kills direct pushes to `main`                                                                                               |
-| ☐ &nbsp;&nbsp;→ **Require approvals: 1**                               | a human reviews every change                                                                                                |
-| ☐ &nbsp;&nbsp;→ **Require review from Code Owners**                    | activates `.github/CODEOWNERS` enforcement (else it only requests). **Fix CODEOWNERS first** — see the second warning above |
-| ☐ &nbsp;&nbsp;→ **Dismiss stale approvals on new commits**             | re-review after changes                                                                                                     |
-| ☐ **Require status checks to pass** → select all three CI jobs (below) | no merge on red CI                                                                                                          |
-| ☐ &nbsp;&nbsp;→ **Require branches to be up to date before merging**   | CI ran against latest `main`                                                                                                |
-| ☐ **Require conversation resolution before merging**                   | no merging over unresolved comments                                                                                         |
-| ☐ **Do not allow bypassing the above settings**                        | rule applies to admins too (recommended for handoff)                                                                        |
-| ☐ **Require linear history** _(optional)_                              | matches the fast-forward-merge workflow                                                                                     |
+| Toggle                                                                  | Why                                                                                                                         |
+| ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| ☐ **Require a pull request before merging**                             | kills direct pushes to `main`                                                                                               |
+| ☐ &nbsp;&nbsp;→ **Require approvals: 1**                                | a human reviews every change                                                                                                |
+| ☐ &nbsp;&nbsp;→ **Require review from Code Owners**                     | activates `.github/CODEOWNERS` enforcement (else it only requests). **Fix CODEOWNERS first** — see the second warning above |
+| ☐ &nbsp;&nbsp;→ **Dismiss stale approvals on new commits**              | re-review after changes                                                                                                     |
+| ☐ **Require status checks to pass** → select all five CI checks (below) | no merge on red CI                                                                                                          |
+| ☐ &nbsp;&nbsp;→ **Require branches to be up to date before merging**    | CI ran against latest `main`                                                                                                |
+| ☐ **Require conversation resolution before merging**                    | no merging over unresolved comments                                                                                         |
+| ☐ **Do not allow bypassing the above settings**                         | rule applies to admins too (recommended for handoff)                                                                        |
+| ☐ **Require linear history** _(optional)_                               | matches the fast-forward-merge workflow                                                                                     |
 
 **Gotcha — already cleared here.** The status-check picker only lists a check **after CI
 has run at least once**, so on a fresh repo you would open a throwaway PR, let CI run, then
-find it. Not needed on this repo: all three jobs have run many times on `main`
+find it. Not needed on this repo: all five checks have run many times on `main`
 (`gh run list`), so they appear in the picker straight away. The step is kept only for
 whoever clones this template into a repo whose CI has never run.
 
-The names in the picker must match the job names in `.github/workflows/ci.yml` — currently
-**`Lint, test, build`** (the `verify` job) and **`Browser tests (/)`** and
-**`Browser tests (/course/)`** (the `e2e` job, one name per `matrix.base`, since
-2026-10-14). Require all three: the verify gate includes the browser tests, so CI should
-too. **Rename a job, or change the matrix, and every merge blocks forever** on a
-required check that no longer reports, so the change and this doc go in the same commit.
+The names in the picker must match the check names `.github/workflows/ci.yml` reports —
+currently five: **`Lint, test, build`** (the `verify` job), and four from the `e2e` job, one
+per `matrix.site` × `matrix.debug` (since 2026-10-20):
+
+- **`Browser tests (./ from /any/folder/)`**
+- **`Browser tests (./ from /any/folder/, DEBUG=1)`**
+- **`Browser tests (/course/)`**
+- **`Browser tests (/course/, DEBUG=1)`**
+
+Require all five: the verify gate includes the browser tests, so CI should too. To read
+the live names, run `gh pr checks <number>` on any open PR. **Rename a job, or change the
+matrix, and every merge blocks forever** on a required check that no longer reports, so the
+change and this doc go in the same commit.
 
 ---
 
@@ -116,8 +123,10 @@ gh api -X PUT repos/pedbad/lc-base-template/branches/main/protection \
   -H "Accept: application/vnd.github+json" \
   -f 'required_status_checks[strict]=true' \
   -f 'required_status_checks[contexts][]=Lint, test, build' \
-  -f 'required_status_checks[contexts][]=Browser tests (/)' \
+  -f 'required_status_checks[contexts][]=Browser tests (./ from /any/folder/)' \
+  -f 'required_status_checks[contexts][]=Browser tests (./ from /any/folder/, DEBUG=1)' \
   -f 'required_status_checks[contexts][]=Browser tests (/course/)' \
+  -f 'required_status_checks[contexts][]=Browser tests (/course/, DEBUG=1)' \
   -f 'required_pull_request_reviews[required_approving_review_count]=1' \
   -f 'required_pull_request_reviews[require_code_owner_reviews]=true' \
   -f 'enforce_admins=true' \

@@ -170,8 +170,8 @@ Right after creating it, in the new course repo:
 2. **Settings → General:** untick "Template repository" if it was carried over — a course
    is not a template.
 3. **Settings → Rules → New branch ruleset** on `main`: require a pull request,
-   **required approvals 0**, **require review from Code Owners**, and the three CI status
-   checks (`Lint, test, build`, `Browser tests (/)`, `Browser tests (/course/)`; names
+   **required approvals 0**, **require review from Code Owners**, and all five CI status
+   checks (`Lint, test, build` and four `Browser tests (…)`; the exact names are
    in [`BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md)). Content-only PRs then merge on green CI; any PR
    touching code waits for the maintainer (the code owner). With a colleague as the author
    and the maintainer as the reviewer, nobody is locked out. **Verify on the first course**
