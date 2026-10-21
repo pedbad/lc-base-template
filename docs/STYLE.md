@@ -19,6 +19,7 @@ fix the page.
 | **TypeScript** | types, strictly                                | [`tsconfig.app.json`](../tsconfig.app.json) and its neighbours | `bun run build`    |
 | **Stylelint**  | CSS: tokens, `@layer`, no vendor prefixes      | [`stylelint.config.mjs`](../stylelint.config.mjs)              | `bun run lint:css` |
 | **The guards** | repo-wide invariants (a–h)                     | `src/guards/`                                                  | `bun run guards`   |
+| **File names** | every file and folder name in `src/`           | `src/build/file-names.ts` ([below](#files-and-names))          | `bun run test`     |
 
 In practice that means: single quotes, semicolons, trailing commas, lines up to 100
 characters; no unused variables or parameters; no `any` (there is none in `src/`); no
@@ -41,12 +42,11 @@ These are rules, not habits, and each has one home. Read them there:
 - [`CONTRIBUTING.md`](../CONTRIBUTING.md) — the commit gate and the eight guards.
 - [`DESIGNER.md`](../DESIGNER.md) — how the theme tokens are organised.
 
-## Habits nothing enforces
+## Files and names
 
-Follow these in new code. Do not rename or reshape existing files just to match them:
-churn costs more than consistency gains.
-
-### Files and names
+**Enforced.** `src/build/file-names.test.ts` checks every file and folder in `src/`
+(the vendored `src/components/ui/` aside), so a name outside these shapes fails
+`bun run test` and CI.
 
 | What                        | Name                                                      | Example                                      |
 | --------------------------- | --------------------------------------------------------- | -------------------------------------------- |
@@ -56,16 +56,25 @@ churn costs more than consistency gains.
 | A component's own styles    | kebab-case `.css`, beside it                              | `progress-meter.css`, imported by the `.tsx` |
 | A test                      | the file's name + `.test.ts(x)`                           | `flip-cue-store.test.ts`, beside it          |
 | An exercise engine's pieces | `<engine>-schema`, `<engine>-grading`, `<Engine>Exercise` | `src/exercises/reading/`                     |
+| A class or a React context  | PascalCase, `.ts`                                         | `AudioManager.ts`, `FlipCueContext.ts`       |
+| A folder                    | kebab-case                                                | `ui-showcase/`, `rich-text/`                 |
 
-Kebab-case is the rule for plain modules (103 of 137). About twenty older modules are
-camelCase, named after the one function they export (`prefersReducedMotion.ts`,
-`charDiff.ts`); leave them, but name a new one in kebab-case.
+A module named after the one function it exports is still kebab-case: the file is
+`prefers-reduced-motion.ts`, the function stays `prefersReducedMotion()`. A lowercase
+qualifier may follow the name after a dot (`course.config.ts`,
+`ExerciseHost.progress.test.tsx`). Eleven camelCase modules were renamed to this rule
+on 2026-10-21, before the organisation move.
+
+## Habits nothing enforces
+
+Follow these in new code. Do not rename or reshape existing files just to match them:
+churn costs more than consistency gains.
 
 ### Exports and functions
 
 - **`export function`, not `export const x = () =>`** (279 to 18). Arrow functions are
   for callbacks and small values inside a function.
-- **Exercise engines are default exports**: `src/exercises/lazyRegistry.ts` loads each
+- **Exercise engines are default exports**: `src/exercises/lazy-registry.ts` loads each
   with `lazy()`, which needs one. Other components use either; match the files around
   yours.
 - One component per file, plus its small private helpers.
