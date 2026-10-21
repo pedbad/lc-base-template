@@ -109,6 +109,7 @@ export default defineConfig({
         'src/sandbox/**',
         'src/showcase/**',
         'src/ui-showcase/**',
+        'src/code-style/**',
         // Wiring, not logic. lazyRegistry is a table of lazy() imports that only a
         // browser resolves; its keys are checked by registry-completeness.
         'src/exercises/lazyRegistry.ts',

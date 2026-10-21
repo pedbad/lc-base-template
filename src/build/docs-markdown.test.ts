@@ -11,11 +11,14 @@
 import { describe, expect, it } from 'vitest';
 import { findHeadingViolations } from '../guards/semantic-dom';
 import {
+  CODE_STYLE_DOC,
   SANDBOX_DOCS,
   docAnchorId,
+  readCodeStyleDoc,
   readSandboxDocs,
   renderDoc,
   renderDocMarkdown,
+  sandboxDocPaths,
   slugify,
 } from './docs-markdown';
 
@@ -223,6 +226,38 @@ describe('renderDocMarkdown — tables are keyboard-scrollable regions', () => {
     const html = render(`${table}\ntext\n\n${table}`);
     expect(html).toContain('aria-label="DESIGNER.md table 1"');
     expect(html).toContain('aria-label="DESIGNER.md table 2"');
+  });
+});
+
+// The Code style debug page (code-style.html) renders docs/STYLE.md on a page of its
+// own, so links between it and the hub docs cross pages instead of staying in one.
+describe('the Code style page', () => {
+  it('renders docs/STYLE.md itself, code examples included', () => {
+    const page = readCodeStyleDoc();
+    expect(page.file).toBe('docs/STYLE.md');
+    expect(page.headings.map((heading) => heading.text)).toContain('Habits nothing enforces');
+    expect(page.html).toContain('aria-label="docs/STYLE.md code sample 1');
+  });
+
+  it('sends its links to a hub doc back to the sandbox, where that doc renders', () => {
+    const { html } = renderDoc('[rules](../AGENTS.md#code-rules)', CODE_STYLE_DOC.id);
+    expect(html).toContain('href="debug-sandbox.html#agents--code-rules"');
+  });
+
+  it('keeps its own anchor links on its own page', () => {
+    const { html } = renderDoc('[types](#types)', CODE_STYLE_DOC.id);
+    expect(html).toContain('href="#style--types"');
+  });
+
+  it('lets a hub doc link to docs/STYLE.md open the Code style page', () => {
+    expect(render('[`docs/STYLE.md`](docs/STYLE.md)')).toContain('href="code-style.html"');
+    expect(render('[imports](docs/STYLE.md#imports)')).toContain(
+      'href="code-style.html#style--imports"',
+    );
+  });
+
+  it('is watched like the hub docs, so an edit reloads the page', () => {
+    expect(sandboxDocPaths().some((file) => file.endsWith('docs/STYLE.md'))).toBe(true);
   });
 });
 

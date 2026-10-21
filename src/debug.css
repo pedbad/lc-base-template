@@ -1,7 +1,8 @@
-/* debug.css — the stylesheet for the three debug pages, and only them.
+/* debug.css — the stylesheet for the four debug pages, and only them.
 
    The same base as index.css (Tailwind + styles/app.css) but a different SCAN: it keeps
-   the classes written in src/sandbox/, src/showcase/ and src/ui-showcase/, which index.css deliberately
+   the classes written in src/sandbox/, src/showcase/, src/ui-showcase/ and src/code-style/,
+   which index.css deliberately
    excludes so they never reach the `main-*.css` a deployed course ships. It does not
    import index.css, because an imported `@source not` cannot be undone by a later
    `@source` (measured 2026-10-07: the alert utilities came out missing).

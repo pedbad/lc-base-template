@@ -64,6 +64,41 @@
     margin-top: 2rem;
   }
 
+  /* A doc on a page of its own (the Code style page, src/code-style/) renders one
+     level below its markdown (`#` → h2, PAGE_HEADING_OFFSET in docs-markdown.ts), so
+     the same three sizes sit two levels higher. Same specificity as the hub's rules,
+     and later, so h4 here is the smallest size, not the hub's doc title. */
+  .doc-page-prose > h2,
+  .doc-page-prose > h3,
+  .doc-page-prose > h4 {
+    max-inline-size: var(--measure);
+  }
+
+  .doc-page-prose h2,
+  .doc-page-prose h3 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    line-height: 1.25;
+    scroll-margin-top: 1.5rem;
+  }
+
+  .doc-page-prose h2 {
+    font-size: 1.6rem;
+  }
+
+  .doc-page-prose h3 {
+    font-size: 1.3rem;
+  }
+
+  .doc-page-prose h4 {
+    font-size: 1.1rem;
+  }
+
+  .doc-page-prose > h3,
+  .doc-page-prose > h4 {
+    margin-top: 2rem;
+  }
+
   .doc-prose a {
     color: var(--color-primary);
     text-decoration: underline;

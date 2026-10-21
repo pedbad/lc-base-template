@@ -21,9 +21,12 @@ const BASE_PATH = servePath(process.env);
  * e2e/support.ts) and every spec fails on a missing element instead.
  */
 export function requireDebugBuild(): void {
-  const missing = ['exercise-showcase.html', 'debug-sandbox.html'].filter(
-    (file) => !existsSync(path.join(DIST, file)),
-  );
+  const missing = [
+    'exercise-showcase.html',
+    'debug-sandbox.html',
+    'ui-showcase.html',
+    'code-style.html',
+  ].filter((file) => !existsSync(path.join(DIST, file)));
   expect(missing, 'dist/ is a normal build: run `DEBUG=1 bun run build` first').toEqual([]);
 }
 

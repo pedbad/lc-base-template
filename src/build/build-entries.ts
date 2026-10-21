@@ -14,7 +14,8 @@
  * deploy runs — emits the course only. `DEBUG=1 bun run build` adds both back.
  *
  * A third joined on 2026-10-13: `ui-showcase.html`, every block type rendered through
- * the course page's own renderers (TODO §F4). Same rule, same flag, same list.
+ * the course page's own renderers (TODO §F4). A fourth on 2026-10-21: `code-style.html`,
+ * docs/STYLE.md with its examples. Same rule, same flag, same list.
  *
  * WHY ONE FLAG AND NOT TWO. Two flags would be two fail-closed rules to keep in step for
  * no gain: the dev server serves BOTH pages regardless of this list, so nobody needs a
@@ -55,6 +56,7 @@ export const DEBUG_ENTRY_FILES = {
   showcase: 'exercise-showcase.html',
   sandbox: 'debug-sandbox.html',
   ui: 'ui-showcase.html',
+  style: 'code-style.html',
 } as const;
 
 /** Whether one env value reads as an explicit yes. */

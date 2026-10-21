@@ -72,11 +72,12 @@ describe('debugEntries', () => {
       showcase: path.resolve(root, 'exercise-showcase.html'),
       sandbox: path.resolve(root, 'debug-sandbox.html'),
       ui: path.resolve(root, 'ui-showcase.html'),
+      style: path.resolve(root, 'code-style.html'),
     });
   });
 
   it('names one root-level html file per entry', () => {
     expect(Object.values(DEBUG_ENTRY_FILES).every((file) => file.endsWith('.html'))).toBe(true);
-    expect(Object.keys(DEBUG_ENTRY_FILES)).toEqual(['showcase', 'sandbox', 'ui']);
+    expect(Object.keys(DEBUG_ENTRY_FILES)).toEqual(['showcase', 'sandbox', 'ui', 'style']);
   });
 });
