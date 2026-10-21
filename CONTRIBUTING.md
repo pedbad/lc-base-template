@@ -92,7 +92,13 @@ page**, with no code change.
 
 1. Copy `lo-config/lo-00-example/` to `lo-config/lo-NN-your-slug/` — the `lo-NN-`
    ordinal is the course order (see below), and the URL drops it (`your-slug.html`).
-2. Edit `lo.json` and each `blocks/*/block.json` / `exercises/*/exercise.json`.
+   The slug may not be one of the course's own pages, `index` or a debug page's name
+   (`RESERVED_PAGE_SLUGS` in `src/build/page-names.ts`), nor another lesson's slug:
+   the build and the dev server both stop, naming the folder.
+2. Edit `lo.json` and each `blocks/*/block.json` / `exercises/*/exercise.json`. Every
+   exercise is checked against its engine's schema when the lesson loads, so a mistake
+   stops `bun run build` (and the lesson's page in `bun run dev`), naming the file and
+   the field.
 3. `bun run build && bun run preview` to click through the whole course.
 
 **Never edit or delete `lo-00-example`.** It is every course's master copy: the test

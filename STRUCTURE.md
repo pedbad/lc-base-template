@@ -136,7 +136,9 @@ inside `@layer` (`flashcards/flashcards.css`). `lib/` holds what all engines sha
 footer, the instructions callout, the blank-grading scaffold). `lazy-registry.ts`
 maps an exercise `type` string to its component — **guard e** fails if a canonical
 type lacks a registry entry, a showcase fixture or a `<type>-schema.ts`, or if an
-authored `type` resolves to no engine.
+authored `type` resolves to no engine. `exercise-schemas.ts` is its schema-only twin:
+`type` → full config schema, which the Node LO reader checks every authored exercise
+against at load.
 
 ### Tests live next to the code
 
