@@ -3,12 +3,17 @@
  * SequenceAudioController.test.tsx — the master scrubber's drag, replayed event by event
  * (TODO §E23). The suite's only DOM test: a drag is pointer and `input` events in an
  * order that differs between browsers, which static markup cannot show. The component is
- * mounted for real on happy-dom's audio, whose clips are given the lengths below.
+ * mounted for real on happy-dom's audio, whose clips are given the lengths below. The
+ * playlist's gap between clips is replayed the same way, on fake timers (review
+ * 2026-10-21): pause, resume, a track switch and an unmount during the gap, and the end.
  */
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { SequenceAudioController } from './SequenceAudioController';
+import {
+  SequenceAudioController,
+  type SequenceAudioControllerHandle,
+} from './SequenceAudioController';
 
 /** Unequal on purpose: a seek that credits one clip with another's length shows up. */
 const CLIP_SECONDS: Record<string, number> = { 'q1.wav': 10, 'q2.wav': 20, 'q3.wav': 30 };
@@ -58,9 +63,11 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
+type ControllerProps = Omit<Parameters<typeof SequenceAudioController>[0], 'sources'>;
+
 /** Mounts the controller and lets the clip lengths load, so the scrubber has a range. */
-async function mount() {
-  await act(async () => root.render(<SequenceAudioController sources={SOURCES} />));
+async function mount(props: ControllerProps = {}) {
+  await act(async () => root.render(<SequenceAudioController sources={SOURCES} {...props} />));
   // created[0] is the player; the rest are the preload probes, one per clip.
   await act(async () => {
     for (const probe of created.slice(1)) probe.dispatchEvent(new Event('loadedmetadata'));
@@ -206,5 +213,141 @@ describe('SequenceAudioController play button', () => {
     await act(async () => audio.dispatchEvent(new Event('pause')));
 
     expect(playButton().getAttribute('aria-label')).toBe('Pause audio');
+  });
+});
+
+// Review 2026-10-21, concern 3: the gap between clips was an untracked setTimeout, so a
+// pause during it did not stop the next clip, and the last clip ending told the parent
+// nothing, leaving it on "playing".
+describe('SequenceAudioController playlist lifecycle', () => {
+  const GAP_SECONDS = 2;
+  const GAP_MS = GAP_SECONDS * 1000;
+
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  function playButton() {
+    const button = container.querySelector('button');
+    if (!button) throw new Error('the controller rendered no play button');
+    return button;
+  }
+
+  /** Mounts with a gap, presses play and lets the first clip load. */
+  async function playingFirstClip() {
+    const onPlayStateChange = vi.fn();
+    const onTrackChange = vi.fn();
+    const { audio } = await mount({ pauseSeconds: GAP_SECONDS, onPlayStateChange, onTrackChange });
+    await act(async () => playButton().click());
+    await metadataArrives(audio);
+    return { audio, onPlayStateChange, onTrackChange };
+  }
+
+  /** The clip playing ends, as a browser reports it: the gap timer starts. */
+  async function clipEnds(audio: HTMLAudioElement) {
+    await act(async () => audio.dispatchEvent(new Event('ended')));
+  }
+
+  async function advance(ms: number) {
+    await act(async () => {
+      vi.advanceTimersByTime(ms);
+    });
+  }
+
+  it('keeps the next clip silent when paused during the gap', async () => {
+    const { audio, onTrackChange } = await playingFirstClip();
+    await clipEnds(audio);
+
+    await act(async () => playButton().click());
+    await advance(GAP_MS * 2);
+
+    expect(audio.src).toMatch(/q1\.wav$/);
+    expect(onTrackChange).toHaveBeenLastCalledWith(0);
+    expect(playButton().getAttribute('aria-label')).toBe('Play audio');
+  });
+
+  it('plays the next clip once when resumed after a pause in the gap', async () => {
+    const { audio, onTrackChange } = await playingFirstClip();
+    await clipEnds(audio);
+    await act(async () => playButton().click());
+
+    await act(async () => playButton().click());
+    await metadataArrives(audio);
+    await advance(GAP_MS * 2);
+
+    expect(audio.src).toMatch(/q2\.wav$/);
+    expect(onTrackChange.mock.calls.map(([index]) => index)).toEqual([0, 1]);
+    expect(playButton().getAttribute('aria-label')).toBe('Pause audio');
+  });
+
+  it('schedules one advance however many times the clip reports its end', async () => {
+    const { audio, onTrackChange } = await playingFirstClip();
+    const load = vi.mocked(HTMLMediaElement.prototype.load);
+    const loadsBefore = load.mock.calls.length;
+    await clipEnds(audio);
+    await clipEnds(audio);
+    await advance(GAP_MS);
+    await metadataArrives(audio);
+    await advance(GAP_MS * 2);
+
+    // One timer, so the next clip is loaded once, not once per `ended`.
+    expect(load.mock.calls.length - loadsBefore).toBe(1);
+    expect(onTrackChange.mock.calls.map(([index]) => index)).toEqual([0, 1]);
+  });
+
+  it('reports stopped to the parent when the last clip finishes', async () => {
+    const onStopped = vi.fn();
+    const onPlayStateChange = vi.fn();
+    const { audio } = await mount({ onPlayStateChange, onStopped });
+    await act(async () => playButton().click());
+    await metadataArrives(audio);
+    // Play through to the last clip: each one but the last ends and the next loads.
+    for (let clip = 1; clip < SOURCES.length; clip += 1) {
+      await clipEnds(audio);
+      await advance(0);
+      await metadataArrives(audio);
+    }
+    expect(audio.src).toMatch(/q3\.wav$/);
+
+    await clipEnds(audio);
+
+    expect(onPlayStateChange).toHaveBeenLastCalledWith('stopped');
+    expect(onStopped).toHaveBeenCalledWith(SOURCES.length - 1);
+    expect(playButton().getAttribute('aria-label')).toBe('Play audio');
+  });
+
+  it('starts nothing stale when the parent switches track during the gap', async () => {
+    const ref = { current: null as SequenceAudioControllerHandle | null };
+    const onTrackChange = vi.fn();
+    const { audio } = await mount({ pauseSeconds: GAP_SECONDS, onTrackChange, ref });
+    await act(async () => playButton().click());
+    await metadataArrives(audio);
+    await clipEnds(audio);
+
+    await act(async () => ref.current?.playItem(2));
+    await metadataArrives(audio);
+    await advance(GAP_MS * 2);
+
+    expect(audio.src).toMatch(/q3\.wav$/);
+    expect(onTrackChange.mock.calls.map(([index]) => index)).toEqual([0, 2]);
+  });
+
+  it('starts nothing once unmounted during the gap', async () => {
+    const { audio, onTrackChange } = await playingFirstClip();
+    await clipEnds(audio);
+    const load = vi.mocked(HTMLMediaElement.prototype.load);
+    const loadsBefore = load.mock.calls.length;
+
+    act(() => root.unmount());
+    root = createRoot(container);
+    await advance(GAP_MS * 2);
+
+    expect(load.mock.calls.length).toBe(loadsBefore);
+    expect(onTrackChange).toHaveBeenLastCalledWith(0);
   });
 });
