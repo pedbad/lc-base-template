@@ -136,12 +136,24 @@ export function SequenceAudioController({
   const loadedIndexRef = useRef(0);
   // The seek waiting on metadata, so a newer seek can replace it instead of both running.
   const pendingStartRef = useRef<(() => void) | null>(null);
+  // The move to the next clip after the gap: which clip, and the timer that starts it.
+  // A pause clears the timer and keeps the index, so play resumes there; a stop, a new
+  // clip or an unmount drops both (review 2026-10-21).
+  const advanceRef = useRef<{ index: number; timer: ReturnType<typeof setTimeout> | null } | null>(
+    null,
+  );
 
   /* ---------- Events up to the parent ---------- */
 
   const emitPlayState = (value: PlayState) => propsRef.current.onPlayStateChange?.(value);
   const emitTrackChange = (index: number) => propsRef.current.onTrackChange?.(index);
   const emitStopped = () => propsRef.current.onStopped?.(stateRef.current.currentIndex);
+
+  /** Every play-state change goes through here, so the controller and its parent agree. */
+  const changePlayState = (value: PlayState, patch: StatePatch = {}) => {
+    setState({ ...patch, playState: value });
+    emitPlayState(value);
+  };
 
   /* ---------- Master timeline helpers ---------- */
 
@@ -230,9 +242,28 @@ export function SequenceAudioController({
     AudioManager.stopAll({ except: audio });
     audio.play().catch((error: unknown) => {
       if (error instanceof DOMException && error.name === 'AbortError') return;
-      setState({ playState: 'paused' });
-      emitPlayState('paused');
+      changePlayState('paused');
     });
+  };
+
+  /* ---------- The gap between clips ---------- */
+
+  /** Drops the pending move to the next clip, timer and all. */
+  const cancelAdvance = () => {
+    const advance = advanceRef.current;
+    if (advance?.timer != null) clearTimeout(advance.timer);
+    advanceRef.current = null;
+  };
+
+  /** Starts the gap before clip `index`; a gap already running is replaced, not doubled. */
+  const scheduleAdvance = (index: number) => {
+    cancelAdvance();
+    const timer = setTimeout(() => {
+      // Only if this is still the move wanted, and the learner still wants it to play.
+      if (advanceRef.current?.index !== index || stateRef.current.playState !== 'playing') return;
+      playItem(index, { playSequence: true });
+    }, propsRef.current.pauseSeconds * MS_PER_SECOND);
+    advanceRef.current = { index, timer };
   };
 
   /* ---------- Public API (via ref) ---------- */
@@ -243,6 +274,8 @@ export function SequenceAudioController({
     if (!audio || !src) return;
 
     const { playSequence = false, offset = 0, autoplay } = opts;
+    // A new clip replaces whatever the gap was going to start.
+    cancelAdvance();
     audio.src = src;
     audio.load();
     loadedIndexRef.current = index;
@@ -261,17 +294,14 @@ export function SequenceAudioController({
       const d = Number.isFinite(audio.duration) ? audio.duration : durationsRef.current[index] || 0;
       durationsRef.current[index] = d;
 
-      const playState: PlayState = shouldPlay ? 'playing' : 'paused';
-      setState({
+      changePlayState(shouldPlay ? 'playing' : 'paused', {
         clipDuration: d,
         clipTime: audio.currentTime,
         currentIndex: index,
         masterDuration: getSafeMasterDuration(),
         masterTime: getMasterTime(index, audio.currentTime),
         playSequence,
-        playState,
       });
-      emitPlayState(playState);
       emitTrackChange(index);
     };
 
@@ -302,24 +332,42 @@ export function SequenceAudioController({
 
   /* ---------- Master control ---------- */
 
+  /** Pauses, in a clip or in the gap after one: the next clip waits for a resume. */
+  const pause = (audio: HTMLAudioElement) => {
+    const advance = advanceRef.current;
+    if (advance?.timer != null) {
+      clearTimeout(advance.timer);
+      advanceRef.current = { index: advance.index, timer: null };
+    }
+    audio.pause();
+    changePlayState('paused');
+  };
+
+  /** Resumes where the pause left off: the paused clip, or the clip the gap was for. */
+  const resume = (audio: HTMLAudioElement, patch: StatePatch = {}) => {
+    const advance = advanceRef.current;
+    if (advance) {
+      playItem(advance.index, { playSequence: true });
+      return;
+    }
+    startPlayback(audio);
+    changePlayState('playing', patch);
+  };
+
   const toggleMasterPlay = () => {
     const audio = audioRef.current;
     if (!audio) return;
     const { playState } = stateRef.current;
 
     if (playState === 'paused') {
-      startPlayback(audio);
-      setState({ playSequence: true, playState: 'playing' });
-      emitPlayState('playing');
+      resume(audio, { playSequence: true });
       return;
     }
     if (playState === 'stopped') {
       playItem(0, { playSequence: true });
       return;
     }
-    audio.pause();
-    setState({ playState: 'paused' });
-    emitPlayState('paused');
+    pause(audio);
   };
 
   const toggle = () => {
@@ -327,17 +375,9 @@ export function SequenceAudioController({
     if (!audio) return;
     const { playState } = stateRef.current;
 
-    if (playState === 'playing') {
-      audio.pause();
-      setState({ playState: 'paused' });
-      emitPlayState('paused');
-    } else if (playState === 'paused') {
-      startPlayback(audio);
-      setState({ playState: 'playing' });
-      emitPlayState('playing');
-    } else {
-      toggleMasterPlay();
-    }
+    if (playState === 'playing') pause(audio);
+    else if (playState === 'paused') resume(audio);
+    else toggleMasterPlay();
   };
 
   /* ---------- Internal media handlers ---------- */
@@ -380,33 +420,28 @@ export function SequenceAudioController({
   const handlePause = () => {
     const audio = audioRef.current;
     if (!audio || audio.ended || stateRef.current.playState !== 'playing') return;
-    setState({ playState: 'paused' });
-    emitPlayState('paused');
+    changePlayState('paused');
   };
 
   const handlePlay = () => {
     if (stateRef.current.playState === 'playing') return;
-    setState({ playState: 'playing' });
-    emitPlayState('playing');
+    changePlayState('playing');
   };
 
   const handleEnded = () => {
-    const { pauseSeconds: gap = 0, sources: srcs } = propsRef.current;
+    const { sources: srcs } = propsRef.current;
     const { currentIndex, playSequence } = stateRef.current;
-
-    if (!playSequence) {
-      setState({ playState: 'stopped' });
-      emitPlayState('stopped');
-      emitStopped();
-      return;
-    }
     const nextIndex = currentIndex + 1;
-    if (nextIndex >= srcs.length) {
-      setState({ playState: 'stopped' });
-      emitStopped();
+
+    if (playSequence && nextIndex < srcs.length) {
+      scheduleAdvance(nextIndex);
       return;
     }
-    setTimeout(() => playItem(nextIndex, { playSequence: true }), gap * MS_PER_SECOND);
+    // One clip played on its own, or the last clip of the sequence: both stop, and the
+    // parent hears it, so it is never left showing "playing".
+    cancelAdvance();
+    changePlayState('stopped');
+    emitStopped();
   };
 
   /* ---------- Scrubber (pointer events: mouse + touch) ---------- */
@@ -475,6 +510,7 @@ export function SequenceAudioController({
     preloadDurations();
 
     return () => {
+      cancelAdvance();
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
