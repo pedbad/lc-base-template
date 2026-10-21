@@ -154,8 +154,8 @@ pages and the palette preview to `dist/`; they belong only on a
    ls dist/*.html
    ```
 
-   If you see `exercise-showcase.html`, `ui-showcase.html` or `debug-sandbox.html`, the
-   build ran with `DEBUG` set. Open a new terminal and build again.
+   If you see `exercise-showcase.html`, `ui-showcase.html`, `debug-sandbox.html` or
+   `code-style.html`, the build ran with `DEBUG` set. Open a new terminal and build again.
 
 ### Look at it in a browser
 

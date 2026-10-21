@@ -78,7 +78,9 @@ left, in order:
 5. **E25 — DONE 2026-10-21** (PR 26, on the MacBook Pro): the second external review's
    three audio bugs and its stale CI check names (below).
 6. **E1 — DONE 2026-10-21**: `main` is protected, the review's last point (below).
-7. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
+7. **E26 — DONE 2026-10-21**: a fourth debug page, Code style, renders `docs/STYLE.md`
+   with real code examples (below).
+8. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
    rules carried into each course repo at its step 3, and E16 after.
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
@@ -2170,6 +2172,20 @@ rather than the Language Centre's course factory; the maintainer took three smal
   gone since E24's matrix; CI reports five. **Not verified locally:** Firefox (it will
   not start on the MacBook Pro); CI's Firefox leg is its check, and it passed on PR 26.
   Branch protection followed with the five names (E1).
+- **E26 — a Code style debug page. DONE 2026-10-21** (maintainer's request). The style
+  guide (`docs/STYLE.md`, PR 25) gained real code examples taken from `src/` — named
+  functions, props interfaces and `z.infer`, import order, a header comment, a recovered
+  `console.warn`, a browser read in an effect, test names — and a fourth debug page,
+  `code-style.html` (`src/code-style/`), renders it, linked after "UI showcase" in the
+  nav every debug page shares. Rendered, not copied: `virtual:sandbox-docs` now also
+  exports `CODE_STYLE_DOC_PAGE`, so the markdown stays the one source. Because the
+  guide sits on its own page, `docs-markdown.ts` learned that links cross pages: the
+  guide's links to a hub doc open `debug-sandbox.html#…`, and a hub doc's link to
+  `docs/STYLE.md` (AGENTS.md has one) now opens the page instead of rendering as dead
+  text. Its headings render one level down (`#` → `h2`) under the page's `h1`, styled by
+  `.doc-page-prose`. Same fail-closed `DEBUG=1` entry as the other three; DEPLOY.md's
+  upload check now names it. **Left as is:** the example lesson's intro still says
+  "All three" debug pages, since AGENTS.md forbids editing `lo-00-example`.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that

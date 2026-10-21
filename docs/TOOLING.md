@@ -1219,7 +1219,8 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 ### Debug artifacts — one `DEBUG` flag, not two _(buildlist 16, spec §4)_
 
 **Decision:** the repo has debug pages — `exercise-showcase.html` and
-`debug-sandbox.html`, joined by `ui-showcase.html` on 2026-10-13 — and ONE env flag emits all of them: `DEBUG=1 bun run build`. The rule
+`debug-sandbox.html`, joined by `ui-showcase.html` on 2026-10-13 and `code-style.html` on
+2026-10-21 — and ONE env flag emits all of them: `DEBUG=1 bun run build`. The rule
 lives in `src/build/build-entries.ts` (`isDebugRequested`, `debugEntries`) and fails
 CLOSED: absent, empty, `0`, `false` or anything unrecognised all mean "do not build
 them". 10 tests cover the edges.
