@@ -10,7 +10,7 @@
  *     original for desktop/large screens. Mouse-only by nature (no keyboard path),
  *     which is exactly why the click path exists alongside it rather than instead
  *     of it.
- * The FLIP swap animation is unchanged from the original (reorderAnimation, "ported
+ * The FLIP swap animation is unchanged from the original (reorder-animation, "ported
  * once" per spec §8).
  *
  * `options.shuffle` is N/A (§5.2): the deck always scrambles, on mount AND on Reset.
@@ -23,11 +23,11 @@
 import { useLayoutEffect, useReducer, useRef, type DragEvent } from 'react';
 import { AudioClip } from '@/components/audio/AudioClip';
 import { ExerciseOptionsSchema } from '@/config/lo-schema';
-import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
+import type { ExerciseComponentProps } from '@/exercises/lazy-registry';
 import { ExerciseFooter } from '../lib/ExerciseFooter';
 import { ProgressMeter } from '../lib/ProgressMeter';
 import { canRevealAnswers, SHOW_ANSWERS_AFTER_SEQUENCE } from '../lib/reveal';
-import { captureFlipPositions, playFlipAnimation } from '../lib/reorderAnimation';
+import { captureFlipPositions, playFlipAnimation } from '../lib/reorder-animation';
 import { TARGET_LANG } from '@/lib/lang';
 import { WordOrderExerciseConfigSchema, type WordOrderContent } from './word-order-schema';
 import {

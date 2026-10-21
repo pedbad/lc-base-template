@@ -1,7 +1,7 @@
 /**
  * block-renderers.ts — maps a block `type` to the component that renders its body.
  *
- * The block-side counterpart of `lazyRegistry`: the single place that says "this
+ * The block-side counterpart of `lazy-registry`: the single place that says "this
  * block `type` is rendered by this component". Blocks are NOT in the exercise
  * registry (they are content, not engines), so they need their own map — but the same
  * contract: a `type` with no entry resolves to `undefined` and the caller handles it

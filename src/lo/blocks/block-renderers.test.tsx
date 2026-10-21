@@ -1,7 +1,7 @@
 /**
  * block-renderers.test.tsx — the block body renderers and the `type` → renderer map.
  *
- * Exercises resolve through `lazyRegistry`; blocks resolve through this map. The
+ * Exercises resolve through `lazy-registry`; blocks resolve through this map. The
  * checks that matter are the same two: the right body markup, and the right `lang`
  * on target-language content only (WCAG 3.1.2, spec §3).
  */

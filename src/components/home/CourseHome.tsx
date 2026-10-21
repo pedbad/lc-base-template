@@ -41,7 +41,7 @@
  * instead of leaving two floating styled paragraphs for a checker to guess at.
  */
 import { courseConfig } from '@/config/course.config';
-import { headingId } from '@/lib/headingId';
+import { headingId } from '@/lib/heading-id';
 import BackToTopButton from '@/components/shell/BackToTopButton';
 import Footer from '@/components/shell/Footer';
 import type { LoIndexEntry } from '@/lo/lo-index';

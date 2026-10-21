@@ -13,7 +13,7 @@
  * test in the run believe it has a browser.
  */
 import { afterEach, describe, expect, test } from 'vitest';
-import { prefersReducedMotion } from './prefersReducedMotion';
+import { prefersReducedMotion } from './prefers-reduced-motion';
 
 /** Install a `window` exposing `matchMedia`, recording the query it was asked. */
 function stubWindow(matchMedia: unknown): void {

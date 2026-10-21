@@ -30,7 +30,7 @@ import { useReducer, type DragEvent } from 'react';
 import { AudioClip } from '@/components/audio/AudioClip';
 import { ExerciseOptionsSchema } from '@/config/lo-schema';
 import { resolveLabel } from '@/config/ui-strings';
-import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
+import type { ExerciseComponentProps } from '@/exercises/lazy-registry';
 import { ExerciseFooter } from '../lib/ExerciseFooter';
 import { ProgressMeter } from '../lib/ProgressMeter';
 import { canRevealAnswers, SHOW_ANSWERS_AFTER_SEQUENCE } from '../lib/reveal';

@@ -7,7 +7,7 @@
  */
 import { describe, expect, test } from 'vitest';
 import { mulberry32 } from '@/exercises/lib/shuffle';
-import { prepareChoiceItems, shuffleItemChoices } from './prepareChoiceItems';
+import { prepareChoiceItems, shuffleItemChoices } from './prepare-choice-items';
 
 interface TextItem {
   text: string;

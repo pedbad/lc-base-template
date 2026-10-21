@@ -1,5 +1,5 @@
 /**
- * sectionInView — the scroll-spy's selection rules, kept pure so they are tested
+ * section-in-view — the scroll-spy's selection rules, kept pure so they are tested
  * without a DOM (header scroll-spy spec §3). `useScrollSpy` measures; this decides.
  */
 

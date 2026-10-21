@@ -46,7 +46,7 @@ meaning is also given as screen-reader text.
 ## Engines
 
 Fifteen engines ship. Each lives under `src/exercises/<engine>/` as pure logic
-plus a thin React view, and is registered in `src/exercises/lazyRegistry.ts`.
+plus a thin React view, and is registered in `src/exercises/lazy-registry.ts`.
 Most have their own pure grader; dictation and typed-transform share one in
 `src/exercises/text-entry/`, and flashcards has a spaced-repetition scheduler
 instead.

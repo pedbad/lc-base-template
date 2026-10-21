@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { createExerciseReducer, seedFromId, type ExercisePatch } from './exerciseScaffold';
+import { createExerciseReducer, seedFromId, type ExercisePatch } from './exercise-scaffold';
 
 describe('seedFromId', () => {
   test('is deterministic — the same id always yields the same seed', () => {

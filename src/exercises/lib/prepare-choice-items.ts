@@ -1,5 +1,5 @@
 /**
- * prepareChoiceItems.ts — the pure ordering layer shared by the choice-blank
+ * prepare-choice-items.ts — the pure ordering layer shared by the choice-blank
  * engines (select, inline-choice; spec §5.2, §6). Promoted from the select
  * engine's prepareItems.ts and made generic over the item shape, since every
  * choice engine carries `[a|*b|c]` blanks inside a `text` field.

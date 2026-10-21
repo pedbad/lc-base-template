@@ -8,7 +8,7 @@
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { EXERCISE_TYPE_KEYS } from '@/config/exercise-types';
-import { EXERCISE_REGISTRY } from '@/exercises/lazyRegistry';
+import { EXERCISE_REGISTRY } from '@/exercises/lazy-registry';
 import { BLOCK_RENDERERS } from '@/lo/blocks/block-renderers';
 import { SHOWCASE_FIXTURES } from '@/showcase/fixtures';
 import {
@@ -40,7 +40,7 @@ describe('findContractGaps — the three-step authoring contract', () => {
     expect(found).toHaveLength(1);
     expect(found[0]?.type).toBe('reading');
     expect(found[0]?.step).toBe('engine');
-    expect(found[0]?.detail).toContain('lazyRegistry');
+    expect(found[0]?.detail).toContain('lazy-registry');
   });
 
   it('flags a registered engine nobody can see — no showcase fixture', () => {

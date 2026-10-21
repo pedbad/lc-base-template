@@ -190,14 +190,14 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
   | ----------------------------------------------------------------------------------- | ---- | ----- |
   | Logic — every `.ts` outside the glue below                                          | 80%  | 96.4% |
   | Views — every `.tsx` (the suite renders static markup, so event handlers never run) | 20%  | 54.8% |
-  | Browser glue — `src/hooks/`, `src/audio/`, `use*.ts`, `reorderAnimation.ts`         | none | 25.9% |
+  | Browser glue — `src/hooks/`, `src/audio/`, `use*.ts`, `reorder-animation.ts`        | none | 25.9% |
 
   Glue needs a DOM to test, so it is counted and reported with no bar until a DOM
   test environment is decided. Raise the views floor as their tests grow.
 
 - **Left out, each with its reason in the config:** tests, `.d.ts`, fixtures,
   vendored `src/components/ui/`, `src/main.tsx`, the debug pages, and three files of
-  wiring — `lazyRegistry.ts` (lazy imports only a browser resolves; guard e checks
+  wiring — `lazy-registry.ts` (lazy imports only a browser resolves; guard e checks
   its keys), `src/build/lo-dev-pages.ts` and `src/build/sandbox-docs-plugin.ts` (Vite
   plugin glue).
 - **Two Vitest traps, both met while building it:** every file is checked against
@@ -887,7 +887,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 - **Deliberately loose now:** `content` is `z.looseObject({})` — an open object.
   Exact per-exercise-type content shapes are **deferred** (spec §19) and land
   cluster-by-cluster from Step 14, when `type` resolves to an engine via
-  `lazyRegistry`. Refs are validated structurally (`z.string().min(1)`); the
+  `lazy-registry`. Refs are validated structurally (`z.string().min(1)`); the
   folder↔config render-mirror _match_ is guard **b**'s job (Steps 19–26), not pulled
   into the schema.
 - **No slug field:** the folder name is the single source of truth; the URL slug
@@ -931,8 +931,8 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   scoring family (§7). Lives in `src/exercises/select/` —
   `select-schema.ts` (per-type `content` Zod contract) and `SelectExercise.tsx`
   (the engine). The pure shuffle/sample layer started here as `prepareItems.ts` and
-  was promoted to the shared shell (`lib/prepareChoiceItems.ts`) when engine #2
-  landed (see "shared exercise shell" below). Registered in `lazyRegistry.ts`; two
+  was promoted to the shared shell (`lib/prepare-choice-items.ts`) when engine #2
+  landed (see "shared exercise shell" below). Registered in `lazy-registry.ts`; two
   showcase fixtures (`select-rows`, `select-inline`) prove both `layoutMode`s.
 - **Shared helpers ported alongside** (`src/exercises/lib/`, "ported once" §8):
   `html.ts` (`decodeHtmlEntities`) and `parsing.ts` (`parseSentence` +
@@ -963,7 +963,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 ### Shared exercise shell — extracted at engine #2 _(Phase B, spec 2026-06-19 §5/§7/§8)_
 
 - **What:** the reusable pieces lifted out of `select` once a second engine needed
-  them, all in `src/exercises/lib/`: `prepareChoiceItems.ts` (the shuffle/sample
+  them, all in `src/exercises/lib/`: `prepare-choice-items.ts` (the shuffle/sample
   layer, now generic over `<T extends { text: string }>`), `ExerciseFooter.tsx`
   (the Check/Reset/Show-answers button row, all text via `resolveLabel`), and
   `ResultSlot.tsx` (the far-right tick/cross; the verdict is computed by each
@@ -986,7 +986,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   blank-grading scoring family as `select` (§7) — only the per-blank renderer
   differs (pills vs dropdown). Lives in `src/exercises/inline-choice/` —
   `inline-choice-schema.ts` (per-type `content` contract) and
-  `InlineChoiceExercise.tsx` (the engine). Registered in `lazyRegistry.ts`; one
+  `InlineChoiceExercise.tsx` (the engine). Registered in `lazy-registry.ts`; one
   showcase fixture (`inline-choice`).
 - **Shares the shell:** consumes `prepareChoiceItems`, `ExerciseFooter`, and
   `ResultSlot`, and mirrors select's reducer / `buildState` / `seedFromId` pattern
@@ -1018,7 +1018,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   blank-grading scoring family as select/inline-choice (§7): one gradeable "blank"
   per question, `checkedResults` keyed by question index. Lives in
   `src/exercises/radio-quiz/` — `radio-quiz-schema.ts` (per-type `content` contract)
-  and `RadioQuizExercise.tsx` (the engine). Registered in `lazyRegistry.ts`; one
+  and `RadioQuizExercise.tsx` (the engine). Registered in `lazy-registry.ts`; one
   showcase fixture (`radio-quiz`).
 - **`*`-on-array convention + fail-loud single-correct:** the correct option carries
   a leading `*` (the same marker as `[a|*b|c]`, but on a plain option array). A Zod
@@ -1078,11 +1078,11 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 
 ---
 
-### Shared blank-grading scaffold — `lib/exerciseScaffold.ts` _(finding M1)_
+### Shared blank-grading scaffold — `lib/exercise-scaffold.ts` _(finding M1)_
 
 - **What:** the repeated, non-engine-specific wiring that every blank-grading engine
   was hand-rolling around its grader + render, extracted **once** into
-  `src/exercises/lib/exerciseScaffold.ts` (+ `exerciseScaffold.test.ts`). Three
+  `src/exercises/lib/exercise-scaffold.ts` (+ `exercise-scaffold.test.ts`). Three
   exports: `seedFromId` (FNV-1a `useId` → stable uint32 seed, was copy-pasted verbatim
   into 4 engines), `createExerciseReducer` (the merge-patch reducer with a null-patch
   no-op that returns the same ref — line-match's measure-after-render settle — was
@@ -1099,7 +1099,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   `useExerciseScaffold` — `select`, `inline-choice`, `radio-quiz`, `line-match` (one
   commit each). `seedFromId` local defs: **0 left** (was 4). `inline-gap` and
   `text-entry` keep a local merge reducer only (no `seed`, so out of scope for the hook).
-- **Verified:** pure logic covered by `exerciseScaffold.test.ts` (10 tests); after each
+- **Verified:** pure logic covered by `exercise-scaffold.test.ts` (10 tests); after each
   engine `test · lint · build` green (313 tests). Scaffold merged via PR #2
   (`7ff7e55`); adoption via the `feat/scaffold-adoption` branch.
 

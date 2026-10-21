@@ -180,7 +180,7 @@
      The `reduce` override shape, matching footer.css, home.css and shell.css. The
      reveal needs nothing here — index.html never arms it under reduced motion, so
      the button is simply visible from the start. The scroll is guarded in JS
-     (src/lib/scrollToTop.ts) because `scrollTo`'s behaviour is not a CSS property.
+     (src/lib/scroll-to-top.ts) because `scrollTo`'s behaviour is not a CSS property.
      This covers the hover, and the reveal transition that would otherwise linger on
      a button that was never hidden. */
   @media (prefers-reduced-motion: reduce) {

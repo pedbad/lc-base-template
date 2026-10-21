@@ -12,7 +12,7 @@ import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { courseConfig } from '@/config/course.config';
 import type { LoIndexEntry } from '@/lo/lo-index';
-import { headingId } from '@/lib/headingId';
+import { headingId } from '@/lib/heading-id';
 import CourseHome from './CourseHome';
 
 const LESSONS: readonly LoIndexEntry[] = [

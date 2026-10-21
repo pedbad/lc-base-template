@@ -9,7 +9,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import PageLayout from './PageLayout';
-import { headingId } from '@/lib/headingId';
+import { headingId } from '@/lib/heading-id';
 import type { NavSection } from './nav-section';
 /** Local section fixture. Sections come from an LO's lo.json in the real app; these
  *  tests exercise the FRAME, so they own a small list rather than importing one

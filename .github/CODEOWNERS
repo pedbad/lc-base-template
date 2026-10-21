@@ -26,7 +26,7 @@
 /src/config/            @pedbad
 
 # --- Core engine plumbing: registry + shared scaffold (not individual engines) ---
-/src/exercises/lazyRegistry.ts   @pedbad
+/src/exercises/lazy-registry.ts   @pedbad
 /src/exercises/lib/              @pedbad
 
 # --- Build, tooling, CI, and the repo's Claude Code settings ---

@@ -8,7 +8,7 @@
 import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import LoAccordion from './LoAccordion';
-import { headingId } from '@/lib/headingId';
+import { headingId } from '@/lib/heading-id';
 
 describe('LoAccordion', () => {
   test('nests article > details > summary > h3 with the shared heading id', () => {

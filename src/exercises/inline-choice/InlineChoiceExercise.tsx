@@ -54,13 +54,16 @@ import {
   type ChoiceSegment,
   type TextSegment,
 } from '@/exercises/lib/parsing';
-import { prepareChoiceItems, type PrepareChoiceOptions } from '@/exercises/lib/prepareChoiceItems';
+import {
+  prepareChoiceItems,
+  type PrepareChoiceOptions,
+} from '@/exercises/lib/prepare-choice-items';
 import { ChoicePillGroup } from '@/exercises/lib/ChoicePillGroup';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
-import { useExerciseScaffold } from '@/exercises/lib/exerciseScaffold';
+import { useExerciseScaffold } from '@/exercises/lib/exercise-scaffold';
 import { ProgressMeter } from '@/exercises/lib/ProgressMeter';
-import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
+import type { ExerciseComponentProps } from '@/exercises/lazy-registry';
 import { TARGET_LANG } from '@/lib/lang';
 import {
   InlineChoiceExerciseConfigSchema,

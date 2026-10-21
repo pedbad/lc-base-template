@@ -20,7 +20,7 @@ import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { LoHero as LoHeroConfig } from '@/config/lo-schema';
 import { useScrollSpy } from '@/hooks/useScrollSpy';
-import { headingId } from '@/lib/headingId';
+import { headingId } from '@/lib/heading-id';
 import BackToTopButton from './BackToTopButton';
 import Header from './Header';
 import Footer from './Footer';

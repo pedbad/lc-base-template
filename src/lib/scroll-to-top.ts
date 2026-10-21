@@ -16,7 +16,7 @@
  * The `prefersReducedMotion()` call happens HERE, inside the handler, never at module
  * scope: a module-scope `matchMedia` read breaks the Bun prerender.
  */
-import { prefersReducedMotion } from './prefersReducedMotion';
+import { prefersReducedMotion } from './prefers-reduced-motion';
 
 /** Scroll the window to the document top, instantly if the reader prefers that. */
 export function scrollToTop(): void {

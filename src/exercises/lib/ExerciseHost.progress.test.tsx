@@ -5,11 +5,11 @@
  */
 import { describe, expect, test, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
+import type { ExerciseComponentProps } from '@/exercises/lazy-registry';
 import { ExerciseHost } from './ExerciseHost';
 
 vi.mock('@/hooks/useIsHydrated', () => ({ useIsHydrated: () => true }));
-vi.mock('@/exercises/lazyRegistry', () => ({
+vi.mock('@/exercises/lazy-registry', () => ({
   getExercise: () =>
     function Echo({ progressId }: ExerciseComponentProps) {
       return <output>{progressId ?? 'none'}</output>;

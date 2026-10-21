@@ -4,7 +4,7 @@
  * (empty inputs, pure insert, pure delete).
  */
 import { expect, test } from 'vitest';
-import { diffChars, type DiffKind } from './charDiff';
+import { diffChars, type DiffKind } from './char-diff';
 
 const kinds = (actual: string, expected: string): DiffKind[] =>
   diffChars(actual, expected).parts.map((p) => p.kind);

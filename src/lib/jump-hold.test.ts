@@ -3,7 +3,7 @@
  * (header scroll-spy spec §3, S5).
  */
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { SETTLE_MS, createJumpHold } from './jumpHold';
+import { SETTLE_MS, createJumpHold } from './jump-hold';
 
 describe('createJumpHold', () => {
   beforeEach(() => {

@@ -43,8 +43,8 @@
  */
 import { ArrowUpIcon } from 'lucide-react';
 import { useRevealWhileInView } from '@/hooks/useRevealWhileInView';
-import { headingId } from '@/lib/headingId';
-import { scrollToTop } from '@/lib/scrollToTop';
+import { headingId } from '@/lib/heading-id';
+import { scrollToTop } from '@/lib/scroll-to-top';
 import './back-to-top.css';
 
 interface BackToTopButtonProps {

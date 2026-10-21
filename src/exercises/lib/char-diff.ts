@@ -1,5 +1,5 @@
 /**
- * charDiff.ts — character-level diff between a typed answer and the expected text
+ * char-diff.ts — character-level diff between a typed answer and the expected text
  * (spec §8, "ported once"). Pure data, no rendering, no side effects. The renderer
  * is <TextDiff> (TextDiff.tsx); kept in a separate file so the component module
  * exports only a component (react-refresh) and to avoid a case-insensitive filename

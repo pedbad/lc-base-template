@@ -2,7 +2,7 @@
  * Tests for the scroll-spy's pure selection rules (header scroll-spy spec §3).
  */
 import { describe, expect, test } from 'vitest';
-import { isScrolledToBottom, pickSectionInView } from './sectionInView';
+import { isScrolledToBottom, pickSectionInView } from './section-in-view';
 
 const LINE = 88;
 
