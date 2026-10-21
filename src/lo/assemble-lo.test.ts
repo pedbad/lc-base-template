@@ -4,6 +4,7 @@
  * exercised with hand-built trees.
  */
 import { test, expect } from 'vitest';
+import { exerciseConfigSchema } from '@/exercises/exercise-schemas';
 import { assembleLo, type LoFileTree } from './assemble-lo';
 
 /** A valid two-section tree used as the base for the cases below. */
@@ -26,7 +27,11 @@ function validTree(): LoFileTree {
         title: 'Pick one',
         content: { items: [{ text: 'a [*b|c]' }] },
       },
-      '02-radio-quiz': { type: 'radio-quiz', title: 'Quiz', content: { questions: [] } },
+      '02-radio-quiz': {
+        type: 'radio-quiz',
+        title: 'Quiz',
+        content: { questions: [{ prompt: '¿Hola?', options: ['*sí', 'no'] }] },
+      },
     },
   };
 }
@@ -147,4 +152,48 @@ test('assembleLo: an unknown exercise type is rejected at load', () => {
       },
     }),
   ).toThrow(/exercises\/01-select\/exercise\.json/);
+});
+
+// Review 2026-10-21, concern 1: an exercise's content was only checked by its engine at
+// render, so `"content": {}` passed tests and the build and failed in front of a learner.
+test('assembleLo: rejects exercise content its engine schema refuses, naming file and field', () => {
+  const tree = validTree();
+  const exercises = {
+    ...tree.exercises,
+    '01-select': { type: 'select', title: 'Pick', content: {} },
+  };
+
+  expect(() =>
+    assembleLo('lo-01-salutations', { ...tree, exercises }, exerciseConfigSchema),
+  ).toThrow(
+    /lo-config\/lo-01-salutations\/exercises\/01-select\/exercise\.json is invalid[\s\S]*content\.items/,
+  );
+});
+
+test('assembleLo: checks every exercise type against its own engine schema', () => {
+  const tree = validTree();
+  const exercises = {
+    ...tree.exercises,
+    '02-radio-quiz': { type: 'radio-quiz', title: 'Quiz', content: { items: [{ text: 'x' }] } },
+  };
+
+  expect(() =>
+    assembleLo('lo-01-salutations', { ...tree, exercises }, exerciseConfigSchema),
+  ).toThrow(/exercises\/02-radio-quiz\/exercise\.json is invalid/);
+});
+
+test('assembleLo: leaves content to the engine when no schema lookup is passed', () => {
+  const tree = validTree();
+  const exercises = {
+    ...tree.exercises,
+    '01-select': { type: 'select', title: 'Pick', content: {} },
+  };
+
+  expect(() => assembleLo('lo-01-salutations', { ...tree, exercises })).not.toThrow();
+});
+
+test('assembleLo: passes a valid tree through the engine schemas unchanged', () => {
+  expect(assembleLo('lo-01-salutations', validTree(), exerciseConfigSchema)).toEqual(
+    assembleLo('lo-01-salutations', validTree()),
+  );
 });

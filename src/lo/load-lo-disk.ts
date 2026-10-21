@@ -6,12 +6,13 @@
  * 2026-08-04 — see assemble-lo.ts): `import.meta.glob` is Vite-only syntax, and
  * `node:fs` is absent from a browser bundle.
  *
- * This reader is for Node contexts: the on-disk tests, and Part D's post-build
- * `renderToStaticMarkup` pass over every LO folder. NEVER import it from anything the
+ * This reader is for Node contexts: the on-disk tests, Part D's post-build
+ * `renderToStaticMarkup` pass over every LO folder, and the dev server's lesson pages. NEVER import it from anything the
  * browser bundle reaches — `load-lo-glob.ts` is the app's reader.
  */
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import path from 'node:path';
+import { exerciseConfigSchema } from '@/exercises/exercise-schemas';
 import { assembleLo, type AssembledLo, type LoFileTree } from './assemble-lo';
 import { LO_CONFIG_DIR, listLoSlugs } from './lo-folders';
 
@@ -73,5 +74,8 @@ export function loadLo(slug: string): AssembledLo {
     modals: readParts(loDir, 'modals'),
     hovers: readParts(loDir, 'hovers'),
   };
-  return assembleLo(slug, tree);
+  // Every exercise checked against its engine's schema: this reader feeds the prerender
+  // and the dev pages, so a bad exercise stops both (assembleLo's header says why the
+  // browser reader skips it).
+  return assembleLo(slug, tree, exerciseConfigSchema);
 }

@@ -65,7 +65,9 @@
  *   - Whether a fixture's or an author's `content` actually PARSES against its
  *     engine's schema. That is content validity, guard a's family; guard e checks
  *     that the schema EXISTS. Mixing the two would mean this guard failing for
- *     reasons that have nothing to do with a registry.
+ *     reasons that have nothing to do with a registry. Since 2026-10-21 the Node
+ *     LO reader parses every authored exercise through `exercise-schemas.ts`, and
+ *     that module's test parses every showcase fixture.
  *   - A block renderer no LO uses. Dead code, not a broken page — a cleanup concern,
  *     not a correctness one.
  *

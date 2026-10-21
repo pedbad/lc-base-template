@@ -9,10 +9,13 @@
  */
 import { expect, test, type Page } from '@playwright/test';
 
+import { listLoSlugs } from '../src/lo/lo-folders';
+import { loSlugsByFolder, sortLoFolders } from '../src/lo/lo-slug';
 import {
   animationsSettled,
   exampleReady,
   expectNoAxeViolations,
+  lessonReady,
   watchForProblems,
 } from './support';
 
@@ -23,10 +26,17 @@ interface PageCase {
   ready: (page: Page) => Promise<void>;
 }
 
-const PAGES: PageCase[] = [
-  { path: 'index.html', ready: async () => {} },
-  { path: 'example.html', ready: exampleReady },
-];
+/**
+ * Every lesson page the build wrote, found the way the prerender finds them: one per
+ * folder under lo-config/. A hand-written list checked only the example, so a broken
+ * lesson of a course's own passed (review 2026-10-21). The example keeps its stricter
+ * check; every other lesson gets the generic one.
+ */
+const LESSON_PAGES: PageCase[] = [...loSlugsByFolder(sortLoFolders(listLoSlugs())).values()].map(
+  (slug) => ({ path: `${slug}.html`, ready: slug === 'example' ? exampleReady : lessonReady }),
+);
+
+const PAGES: PageCase[] = [{ path: 'index.html', ready: async () => {} }, ...LESSON_PAGES];
 
 for (const { path, ready } of PAGES) {
   test.describe(path, () => {

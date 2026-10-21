@@ -21,6 +21,12 @@
  * about it. The list of LOs is read from disk PER REQUEST, so there is no entry list
  * to keep in sync: add a folder and its page is live on the next reload.
  *
+ * IT DOES VALIDATE (review 2026-10-21, concern 1). Before stamping, the middleware loads
+ * the LO through `load-lo-disk.ts`, the reader the prerender uses, so a bad exercise
+ * fails the dev page with the same message, naming the file and the field, that fails
+ * the build. It is loaded through `server.ssrLoadModule`, by path, never imported: that
+ * reader reaches the schemas by `@/…` alias, which this file cannot import (below).
+ *
  * WHAT DEV STILL DOES NOT DO: it does not prerender. A dev LO page arrives with an
  * empty root div and is client-rendered, so the dev server proves content, layout and
  * behaviour — not the no-JS static page. That is what `bun run build && bun run
@@ -40,6 +46,14 @@ import { injectRootDiv } from './prerender-html';
 // schemas in by alias — hence `lo-folders.ts`, which it re-exports from.
 import { listLoSlugs } from '../lo/lo-folders';
 import { loSlug } from '../lo/lo-slug';
+
+/** The Node LO reader, by its project path: loaded by Vite, so its `@/…` imports resolve. */
+const LOAD_LO_DISK_MODULE = '/src/lo/load-lo-disk.ts';
+
+/** The one export the middleware calls on that module. */
+interface LoDiskReader {
+  loadLo: (folder: string) => unknown;
+}
 
 /** A page lives at the root of the site: `/example.html`, never `/nested/example.html`. */
 const LO_PAGE_PATH_PATTERN = /^\/([a-z0-9]+(?:-[a-z0-9]+)*)\.html$/;
@@ -101,14 +115,20 @@ export function loDevPages(): Plugin {
           return next(error);
         }
         if (loFolder === undefined) return next();
+        const folder = loFolder;
 
         const template = readFileSync(path.resolve(server.config.root, 'index.html'), 'utf-8');
         server
-          .transformIndexHtml(url, template, req.originalUrl)
+          .ssrLoadModule(LOAD_LO_DISK_MODULE)
+          .then((reader) => {
+            // Throws naming the file on any invalid part, exactly as the build would.
+            (reader as LoDiskReader).loadLo(folder);
+            return server.transformIndexHtml(url, template, req.originalUrl);
+          })
           .then((transformed) => {
             res.statusCode = 200;
             res.setHeader('Content-Type', 'text/html');
-            res.end(injectRootDiv(transformed, { loFolder }));
+            res.end(injectRootDiv(transformed, { loFolder: folder }));
           })
           .catch(next);
       });

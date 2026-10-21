@@ -114,6 +114,19 @@ export async function animationsInside(scope: Locator): Promise<void> {
 }
 
 /**
+ * Any lesson page is ready: hydrated, every lazy engine chunk rendered, and none failed.
+ * Before hydration each exercise shows ExerciseHost's "needs JavaScript" line, so none
+ * left proves the page hydrated whatever exercises it holds, or none at all.
+ */
+export async function lessonReady(page: Page): Promise<void> {
+  await expect(page.locator('main')).toBeAttached();
+  await expect(page.getByText('This exercise needs JavaScript to run.')).toHaveCount(0);
+  await expect(page.getByText('Loading…', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('No engine registered for type')).toHaveCount(0);
+  await expect(page.getByRole('alert')).toHaveCount(0);
+}
+
+/**
  * example.html is ready: hydrated, and every lazy engine chunk rendered. The engines
  * render only after hydration (ExerciseHost), so a radiogroup in the DOM proves both
  * happened; no "Loading…" Suspense fallback left proves EVERY engine's chunk rendered
