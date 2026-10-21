@@ -521,12 +521,12 @@ DOCS + CI + DEPLOY
     two, so a new author's pull requests would have defaulted to targeting here.
     Reversible, and changes nothing about this repo — it only adds an option.
 BEFORE SHARING WITH OTHER DEVELOPERS (pre-share gate — none of these block solo work)
-[ ] 34 Enable branch protection on main — docs/BRANCH_PROTECTION.md. DEFERRED BY DECISION
-    2026-09-03: main takes direct pushes while this is a single-maintainer build; the
-    verify gate is run by hand per commit. Trigger to enable = a second person gets push
-    access. Do NOT enable `Require approvals: 1` + `Do not allow bypassing` with one
-    collaborator — GitHub forbids self-approval, so the merge button locks forever.
-    Solo-safe subset if wanted early: PR required + status checks only.
+[x] 34 Enable branch protection on main — docs/BRANCH_PROTECTION.md. DONE 2026-10-21,
+    solo version: PR required with 0 approvals, the five CI checks, admins included (an
+    admin left out could still push straight to main). First deferred 2026-09-03 until a
+    second collaborator; brought forward by the second external review. Do NOT enable
+    `Require approvals: 1` or code-owner review while there is one collaborator — GitHub
+    forbids self-approval, so the merge button stays disabled.
 ```
 
 ---
