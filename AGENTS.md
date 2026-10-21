@@ -121,6 +121,8 @@ Do not fork a second copy of it.
 - [Conventional Commits](https://www.conventionalcommits.org/):
   `feat` · `fix` · `refactor` · `docs` · `test` · `chore` · `perf` · `ci`.
 - **One concern per commit.**
+- **`main` is protected: never push to it.** Branch first, then a pull request that
+  merges on green CI (`CONTRIBUTING.md`, "How a change reaches `main`").
 - Prose docs are not exempt from the gate: Prettier formats markdown and CI runs
   `format:check`.
 

@@ -70,11 +70,11 @@ that names a reviewer who is not the author on every protected path, **(3)** onl
 enable the approval and code-owner rows. Noted 2026-09-09, when all 15 rules were still
 sole-owner.
 
-Cost to know before flipping it: every merge waits for CI. That wait is **~45s** — the
-last five runs on `main` took 42s, 45s, 47s, 48s and 49s (`gh run list`). An earlier
-version of this file said ~8m30s, which was never measured against this repo's CI and is
-corrected here on 2026-09-09: the real cost of requiring status checks is under a minute,
-so speed is **not** an argument against enabling them.
+Cost to know: every merge waits for CI. That wait is **about 4 minutes** — the jobs run
+side by side, and the slowest (a browser-test row) took 229s, 235s and 236s in the last
+three runs on `main` (measured 2026-10-21 from `gh run view <id> --json jobs`). It was
+~45s on 2026-09-09, before the browser tests joined CI (E12a, 2026-10-14). Still short
+next to what it buys: nothing red reaches `main`.
 
 ---
 

@@ -131,10 +131,12 @@ a second maintainer approve later, replace it with an organisation team such as
 
 ## Step 5 — Protect the template's `main`
 
-Follow [`docs/BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md). Its UI path changes to
-`github.com/lc-elearn/lc-base-template → Settings → Branches`. Its warnings about
-single-maintainer lockout still apply: moving into an organisation does not add a second
-reviewer.
+**Already protected in the personal repo since 2026-10-21**
+([`docs/BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md)), so after the move this step is a
+check: read the rule back with that file's `gh api …/protection` line, with the repo path
+changed to `lc-elearn/lc-base-template`. If it did not come across, run the doc's
+solo-maintainer command against the new path. Its warnings about single-maintainer
+lockout still apply: moving into an organisation does not add a second reviewer.
 
 **Done 2026-10-14.** **Before the first course repo exists**, make the content folders ownerless in the
 template's `.github/CODEOWNERS`, so a content-only pull request needs no approval. Course

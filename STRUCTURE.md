@@ -171,7 +171,7 @@ Run by `bun`, outside the Vite bundle. Two rules apply here, and equally to
 | `docs/TOOLING.md`           | **Why** each tool was chosen, and every build decision, dated |
 | `docs/specs/`               | The canonical designs authors build against                   |
 | `docs/process/`             | Handovers, buildlist, and `TODO.md` — the live worklist       |
-| `docs/BRANCH_PROTECTION.md` | Setup steps for when `main` gets protected                    |
+| `docs/BRANCH_PROTECTION.md` | How `main` is protected, and what changes for a team          |
 | `docs/ORGANIZATION.md`      | The planned move to the team organisation (maintainer)        |
 
 **Start at [`docs/process/TODO.md`](docs/process/TODO.md)** in a new session — it
