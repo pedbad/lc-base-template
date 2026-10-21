@@ -43,6 +43,14 @@
  *      DE-LINKED to its path as text. It must not be a dead click, and it deliberately
  *      does NOT become a GitHub URL: this repo is a TEMPLATE, so a hardcoded upstream
  *      URL would send every clone's designer to somebody else's repository.
+ *
+ * ── ONE DOC ON A PAGE OF ITS OWN ────────────────────────────────────────────────────
+ * `docs/STYLE.md` renders on the Code style debug page (`code-style.html`), not in the
+ * hub, so case 1 crosses pages for it: a hub doc's link to it opens that page, and its
+ * links to a hub doc open the sandbox at that doc. The page name is relative on purpose:
+ * every debug page sits in the one folder the build is served from, so a sibling name
+ * resolves correctly under a `./` build and a fixed `BASE_URL` alike, and this
+ * build-time HTML never sees the runtime base helpers.
  */
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -109,8 +117,23 @@ export const SANDBOX_DOCS: readonly SandboxDoc[] = [
   },
 ] as const;
 
-const DOC_BY_FILE = new Map(SANDBOX_DOCS.map((doc) => [doc.file, doc]));
-const DOC_BY_ID = new Map(SANDBOX_DOCS.map((doc) => [doc.id, doc]));
+/** The code style guide, rendered on its own debug page rather than in the hub. */
+export const CODE_STYLE_DOC: SandboxDoc = {
+  id: 'style',
+  file: 'docs/STYLE.md',
+  audience: 'developer',
+  blurb: 'How the code is written: what the tools enforce, and the habits they do not.',
+};
+
+/** The debug page each doc renders on: the hub's four share the sandbox. */
+const HUB_PAGE = 'debug-sandbox.html';
+const CODE_STYLE_PAGE = 'code-style.html';
+const pageOf = (docId: string): string =>
+  docId === CODE_STYLE_DOC.id ? CODE_STYLE_PAGE : HUB_PAGE;
+
+const ALL_DOCS = [...SANDBOX_DOCS, CODE_STYLE_DOC];
+const DOC_BY_FILE = new Map(ALL_DOCS.map((doc) => [doc.file, doc]));
+const DOC_BY_ID = new Map(ALL_DOCS.map((doc) => [doc.id, doc]));
 
 /** Repo root, from this file's location — `readSandboxDocs()` needs no argument. */
 const DEFAULT_REPO_ROOT = path.resolve(import.meta.dirname, '../..');
@@ -139,6 +162,8 @@ export function docAnchorId(docId: string, anchor: string): string {
 /** Per-render state: which doc, its headings so far, and the duplicate-slug counters. */
 interface RenderState {
   readonly docId: string;
+  /** How far below its markdown level each heading renders (HEADING_OFFSET). */
+  readonly headingOffset: number;
   readonly headings: DocHeading[];
   readonly slugCounts: Map<string, number>;
   /** Whether each open link was de-linked, so `link_close` closes the right tag. */
@@ -162,7 +187,20 @@ function stripRelativePrefix(target: string): string {
   return target.replace(/^(?:\.{1,2}\/)+/, '');
 }
 
-/** The doc a link target refers to, if the hub renders it. */
+/**
+ * Where a link to `doc` points from the doc being rendered: an in-page anchor when both
+ * render on one page, otherwise the other page (at its top for a page-sized doc, at the
+ * doc's article for a hub doc).
+ */
+function docHref(fromDocId: string, doc: SandboxDoc, fragment: string): string {
+  const anchor = docAnchorId(doc.id, fragment);
+  const page = pageOf(doc.id);
+  if (page === pageOf(fromDocId)) return `#${anchor}`;
+  if (!fragment && page === CODE_STYLE_PAGE) return page;
+  return `${page}#${anchor}`;
+}
+
+/** The doc a link target refers to, if a debug page renders it. */
 function resolveDocTarget(target: string): SandboxDoc | undefined {
   return DOC_BY_FILE.get(stripRelativePrefix(target));
 }
@@ -204,14 +242,17 @@ md.core.ruler.push('drop_comment_paragraphs', (state) => {
  * How far below its markdown level a heading renders. DocsSection puts each doc under
  * `<h2>Docs</h2>` and an article `<h3>{file}</h3>`, so a doc's `#` title is an `h4` —
  * rendered as written it was a second page `<h1>`, four of them (TODO §D10). The
- * markdown keeps its `#`: GitHub renders it standalone, where `h1` is right.
+ * markdown keeps its `#`: GitHub renders it standalone, where `h1` is right. On the Code
+ * style page the only heading above the doc is the page's own `<h1>`, so its `#` is an
+ * `h2`.
  */
 const HEADING_OFFSET = 3;
+const PAGE_HEADING_OFFSET = 1;
 
-/** `h1` → `h4` … clamped at `h6`, where HTML's headings stop. */
-function nestedHeadingTag(markdownTag: string | undefined): string {
+/** `h1` → `h4` (or `h2` on a page of its own) … clamped at `h6`, where HTML stops. */
+function nestedHeadingTag(markdownTag: string | undefined, offset: number): string {
   const level = Number(markdownTag?.slice(1) ?? 2);
-  return `h${Math.min(level + HEADING_OFFSET, 6)}`;
+  return `h${Math.min(level + offset, 6)}`;
 }
 
 md.renderer.rules.heading_open = (tokens, idx, _options, env) => {
@@ -222,10 +263,13 @@ md.renderer.rules.heading_open = (tokens, idx, _options, env) => {
   // The MARKDOWN level, not the rendered one: the contents nav picks `##`/`###` by it.
   const level = Number(token?.tag?.slice(1) ?? 0);
   state.headings.push({ id, text: text.replace(/`/g, ''), level });
-  return `<${nestedHeadingTag(token?.tag)} id="${md.utils.escapeHtml(id)}">`;
+  return `<${nestedHeadingTag(token?.tag, state.headingOffset)} id="${md.utils.escapeHtml(id)}">`;
 };
 
-md.renderer.rules.heading_close = (tokens, idx) => `</${nestedHeadingTag(tokens[idx]?.tag)}>\n`;
+md.renderer.rules.heading_close = (tokens, idx, _options, env) => {
+  const state = env as unknown as RenderState;
+  return `</${nestedHeadingTag(tokens[idx]?.tag, state.headingOffset)}>\n`;
+};
 
 md.renderer.rules.link_open = (tokens, idx, _options, env) => {
   const state = env as unknown as RenderState;
@@ -241,8 +285,7 @@ md.renderer.rules.link_open = (tokens, idx, _options, env) => {
   if (doc) {
     state.delinked.push(false);
     const fragment = target.includes('#') ? slugify(target.split('#')[1] ?? '') : '';
-    const anchor = docAnchorId(doc.id, fragment);
-    return `<a href="#${md.utils.escapeHtml(anchor)}">`;
+    return `<a href="${md.utils.escapeHtml(docHref(state.docId, doc, fragment))}">`;
   }
 
   if (/^https?:\/\//i.test(target)) {
@@ -313,6 +356,7 @@ export function renderDoc(
 } {
   const state: RenderState = {
     docId,
+    headingOffset: pageOf(docId) === HUB_PAGE ? HEADING_OFFSET : PAGE_HEADING_OFFSET,
     headings: [],
     slugCounts: new Map(),
     delinked: [],
@@ -338,7 +382,13 @@ export function readSandboxDocs(repoRoot: string = DEFAULT_REPO_ROOT): SandboxDo
   });
 }
 
-/** Absolute paths of the markdown files the hub renders — for the plugin's watch list. */
+/** Read and render docs/STYLE.md for the Code style page. */
+export function readCodeStyleDoc(repoRoot: string = DEFAULT_REPO_ROOT): SandboxDocPage {
+  const markdown = readFileSync(path.join(repoRoot, CODE_STYLE_DOC.file), 'utf-8');
+  return { ...CODE_STYLE_DOC, ...renderDoc(markdown, CODE_STYLE_DOC.id) };
+}
+
+/** Absolute paths of the markdown files the debug pages render — the plugin's watch list. */
 export function sandboxDocPaths(repoRoot: string = DEFAULT_REPO_ROOT): string[] {
-  return SANDBOX_DOCS.map((doc) => path.join(repoRoot, doc.file));
+  return ALL_DOCS.map((doc) => path.join(repoRoot, doc.file));
 }

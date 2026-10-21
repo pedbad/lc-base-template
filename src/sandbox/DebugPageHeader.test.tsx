@@ -38,9 +38,9 @@ describe('DebugPageHeader', () => {
     expect(html).not.toContain('href="#one"');
   });
 
-  test('the nav holds exactly four plain links: the other two debug pages, course home, the repo', () => {
+  test('the nav holds exactly five plain links: the other three debug pages, course home, the repo', () => {
     const nav = /<nav[^>]*>.*?<\/nav>/s.exec(html)?.[0] ?? '';
-    expect(nav.match(/<a /g)).toHaveLength(4);
+    expect(nav.match(/<a /g)).toHaveLength(5);
   });
 
   // Maintainer, 2026-10-13: both debug pages link to the source. An external link, so
@@ -57,8 +57,32 @@ describe('DebugPageHeader', () => {
   test('links to the OTHER debug pages and to course home, through the base', () => {
     expect(html).toContain('href="/exercise-showcase.html"');
     expect(html).toContain('href="/ui-showcase.html"');
+    expect(html).toContain('href="/code-style.html"');
     expect(html).not.toContain('href="/debug-sandbox.html"');
     expect(html).toContain('Course home');
+  });
+
+  test('lists Code style last of the debug pages, after the UI showcase', () => {
+    const order = ['exercise-showcase', 'ui-showcase', 'code-style'].map((page) =>
+      html.indexOf(`href="/${page}.html"`),
+    );
+    expect(order).toEqual([...order].sort((a, b) => a - b));
+    expect(html).toContain('>Code style<');
+  });
+
+  test('on the Code style page, links to the other three and not to itself', () => {
+    const style = renderToStaticMarkup(
+      <DebugPageHeader
+        title="Code style"
+        description="How the code is written."
+        navLabel="Code style sections"
+        sections={[]}
+        jumpLabel="Jump to section"
+        current="style"
+      />,
+    );
+    expect(style).toContain('href="/debug-sandbox.html"');
+    expect(style).not.toContain('href="/code-style.html"');
   });
 
   test('carries the theme switch', () => {

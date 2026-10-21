@@ -24,7 +24,7 @@
  */
 import path from 'node:path';
 import type { Plugin } from 'vite';
-import { readSandboxDocs, sandboxDocPaths } from './docs-markdown';
+import { readCodeStyleDoc, readSandboxDocs, sandboxDocPaths } from './docs-markdown';
 
 /** What the sandbox imports. */
 export const SANDBOX_DOCS_MODULE_ID = 'virtual:sandbox-docs';
@@ -32,7 +32,7 @@ export const SANDBOX_DOCS_MODULE_ID = 'virtual:sandbox-docs';
 /** Rollup's convention for a module no file backs. */
 const RESOLVED_ID = `\0${SANDBOX_DOCS_MODULE_ID}`;
 
-/** Renders the docs hub's markdown into a virtual module. */
+/** Renders the docs hub's markdown, and the Code style page's, into a virtual module. */
 export function sandboxDocs(rootDir: string = path.resolve(import.meta.dirname, '../..')): Plugin {
   return {
     name: 'lc-sandbox-docs',
@@ -45,7 +45,11 @@ export function sandboxDocs(rootDir: string = path.resolve(import.meta.dirname, 
       if (id !== RESOLVED_ID) return undefined;
       // Registered on every load so a re-render after an edit re-registers them too.
       for (const file of sandboxDocPaths(rootDir)) this.addWatchFile(file);
-      return `export const SANDBOX_DOC_PAGES = ${JSON.stringify(readSandboxDocs(rootDir))};`;
+      // Two exports, one per page that reads them; each page's bundle keeps only its own.
+      return [
+        `export const SANDBOX_DOC_PAGES = ${JSON.stringify(readSandboxDocs(rootDir))};`,
+        `export const CODE_STYLE_DOC_PAGE = ${JSON.stringify(readCodeStyleDoc(rootDir))};`,
+      ].join('\n');
     },
 
     configureServer(server) {

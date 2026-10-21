@@ -10,4 +10,6 @@ declare module 'virtual:sandbox-docs' {
   import type { SandboxDocPage } from '@/build/docs-markdown';
 
   export const SANDBOX_DOC_PAGES: readonly SandboxDocPage[];
+  /** docs/STYLE.md, for the Code style debug page (code-style.html). */
+  export const CODE_STYLE_DOC_PAGE: SandboxDocPage;
 }

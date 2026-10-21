@@ -1,13 +1,13 @@
 /**
- * DebugPageHeader — the header all three debug pages share: the sandbox, the exercise
- * showcase and the UI showcase. Title, a one-line description, the theme switch, and a
- * nav holding a "jump to" menu of the page's own sections plus four plain links — the
- * two OTHER debug pages, course home and the GitHub repo. The sections sit in a shadcn
+ * DebugPageHeader — the header all four debug pages share: the sandbox, the exercise
+ * showcase, the UI showcase and the code style guide. Title, a one-line description, the
+ * theme switch, and a nav holding a "jump to" menu of the page's own sections plus five
+ * plain links — the three OTHER debug pages, course home and the GitHub repo. The sections sit in a shadcn
  * dropdown because the exercise showcase has 25 of them, and a wrapping row of links
  * that long is noise. One component, so the navs cannot drift apart.
  *
  * It lives in `src/sandbox/` because the sandbox had it first; the showcases import it.
- * All three pages are debug-only (`DEBUG=1`, see build-entries.ts), so none ships.
+ * All four pages are debug-only (`DEBUG=1`, see build-entries.ts), so none ships.
  *
  * PINNED (§E18 follow-up, maintainer 2026-10-16). The bar stays at the top while the
  * page scrolls, so the jump menu, the palette drop-down and the theme switch are always
@@ -43,13 +43,14 @@ export interface DebugSection {
   readonly label: string;
 }
 
-/** The three debug pages. Each links to the two it is not. */
-type DebugPage = 'sandbox' | 'showcase' | 'ui';
+/** The four debug pages. Each links to the three it is not. */
+type DebugPage = 'sandbox' | 'showcase' | 'ui' | 'style';
 
 const DEBUG_PAGES: readonly { page: DebugPage; href: string; label: string }[] = [
   { page: 'sandbox', href: 'debug-sandbox.html', label: 'Debug sandbox' },
   { page: 'showcase', href: 'exercise-showcase.html', label: 'Exercise showcase' },
   { page: 'ui', href: 'ui-showcase.html', label: 'UI showcase' },
+  { page: 'style', href: 'code-style.html', label: 'Code style' },
 ];
 
 /**
