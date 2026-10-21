@@ -133,3 +133,40 @@ test('after quick drags while playing, the shown time is where the audio is', as
     `${formatTime(Number(await scrubber.inputValue()))} / ${formatTime(length)}`,
   );
 });
+
+test('the keyboard seeks the audio: PageUp forward, an arrow back', async ({ page }) => {
+  // A key moves the thumb with no pointer down, so the seek cannot wait for a drop; it
+  // was once dropped altogether (second review, TODO §E25). Paused, so nothing moves but
+  // the keys: each engine picks its own step for `step="any"`, so only the direction is
+  // checked.
+  await recordPlayedElements(page);
+  await openShowcase(page);
+  const player = card(page, 'inline-gap-master').locator('.sequence-audio-controller');
+  const scrubber = player.getByRole('slider', { name: 'Audio progress' });
+  await expect.poll(() => scrubber.getAttribute('max')).not.toBe('0');
+
+  await player.getByRole('button', { name: 'Play audio' }).click();
+  await player.getByRole('button', { name: 'Pause audio' }).click();
+  await expect(player.getByRole('button', { name: 'Play audio' })).toBeVisible();
+  const start = (await playingPosition(page, CLIPS)) ?? NaN;
+
+  /** The playing position once it has caught up with the scrubber. */
+  async function settled(): Promise<number> {
+    let position = NaN;
+    await expect
+      .poll(async () => {
+        position = (await playingPosition(page, CLIPS)) ?? NaN;
+        return Math.abs(Number(await scrubber.inputValue()) - position) <= TOLERANCE;
+      }, 'the audio did not move to the scrubber')
+      .toBe(true);
+    return position;
+  }
+
+  await scrubber.focus();
+  await page.keyboard.press('PageUp');
+  const forward = await settled();
+  expect(forward).toBeGreaterThan(start);
+
+  await page.keyboard.press('ArrowLeft');
+  expect(await settled()).toBeLessThan(forward);
+});
