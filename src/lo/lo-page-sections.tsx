@@ -9,7 +9,7 @@
  * (Blocks before exercises mirrors the two on-disk folders the manifest keeps
  * separate.) Block bodies render through `LoBlock` (which resolves `getBlockRenderer`); exercise bodies mount
  * through `ExerciseHost`, which owns the instruction box and resolves the engine via
- * `lazyRegistry` — the same path the showcase uses, so the wiring is defined once.
+ * `lazy-registry` — the same path the showcase uses, so the wiring is defined once.
  *
  * Accordion ids are namespaced by KIND (`block-01-grammar`, `exercise-01-select`).
  * Refs are unique per kind LO-wide, so this cannot collide with itself, and the

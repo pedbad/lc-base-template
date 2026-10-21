@@ -1,5 +1,5 @@
 /**
- * clipStatus — how a speaker icon's status follows AudioManager (TODO §E13b). Pure,
+ * clip-status — how a speaker icon's status follows AudioManager (TODO §E13b). Pure,
  * so it is unit-tested; useAudioClip wires it to the manager subscription.
  */
 import type { AudioManagerState } from './AudioManager';

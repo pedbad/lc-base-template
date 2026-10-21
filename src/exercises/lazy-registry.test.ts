@@ -1,64 +1,64 @@
 import { test, expect } from 'vitest';
 import { EXERCISE_TYPE_KEYS } from '@/config/exercise-types';
-import { EXERCISE_REGISTRY, getExercise } from './lazyRegistry';
+import { EXERCISE_REGISTRY, getExercise } from './lazy-registry';
 
 // The registry fills one engine at a time (Phase B). `select` (#1) is registered.
-test('lazyRegistry: registers the select engine', () => {
+test('lazy-registry: registers the select engine', () => {
   expect(getExercise('select')).toBeDefined();
   expect(Object.keys(EXERCISE_REGISTRY)).toContain('select');
 });
 
 // `inline-choice` (#2) is registered.
-test('lazyRegistry: registers the inline-choice engine', () => {
+test('lazy-registry: registers the inline-choice engine', () => {
   expect(getExercise('inline-choice')).toBeDefined();
   expect(Object.keys(EXERCISE_REGISTRY)).toContain('inline-choice');
 });
 
 // `radio-quiz` (#3) is registered.
-test('lazyRegistry: registers the radio-quiz engine', () => {
+test('lazy-registry: registers the radio-quiz engine', () => {
   expect(getExercise('radio-quiz')).toBeDefined();
   expect(Object.keys(EXERCISE_REGISTRY)).toContain('radio-quiz');
 });
 
 // `inline-gap` (#4), `typed-transform` (#5) and `dictation` (#6) are registered.
-test('lazyRegistry: registers the ported TextEntry-cluster engines', () => {
+test('lazy-registry: registers the ported TextEntry-cluster engines', () => {
   expect(getExercise('inline-gap')).toBeDefined();
   expect(getExercise('typed-transform')).toBeDefined();
   expect(getExercise('dictation')).toBeDefined();
 });
 
 // `line-match` (#7) is registered.
-test('lazyRegistry: registers the line-match engine', () => {
+test('lazy-registry: registers the line-match engine', () => {
   expect(getExercise('line-match')).toBeDefined();
 });
 
 // `word-spot` (#8) is registered.
-test('lazyRegistry: registers the word-spot engine', () => {
+test('lazy-registry: registers the word-spot engine', () => {
   expect(getExercise('word-spot')).toBeDefined();
 });
 
 // `memory-match` (#9) is registered.
-test('lazyRegistry: registers the memory-match engine', () => {
+test('lazy-registry: registers the memory-match engine', () => {
   expect(getExercise('memory-match')).toBeDefined();
 });
 
 // `word-order` (#10) is registered.
-test('lazyRegistry: registers the word-order engine', () => {
+test('lazy-registry: registers the word-order engine', () => {
   expect(getExercise('word-order')).toBeDefined();
 });
 
 // `phrase-reorder` (#11) is registered.
-test('lazyRegistry: registers the phrase-reorder engine', () => {
+test('lazy-registry: registers the phrase-reorder engine', () => {
   expect(getExercise('phrase-reorder')).toBeDefined();
 });
 
 // `drag-fill-gaps` (#12) is registered — the last of the 12 engines (spec §11).
-test('lazyRegistry: registers the drag-fill-gaps engine', () => {
+test('lazy-registry: registers the drag-fill-gaps engine', () => {
   expect(getExercise('drag-fill-gaps')).toBeDefined();
 });
 
 // All 12 canonical types are ported (Phase B complete): every key resolves.
-test('lazyRegistry: every canonical exercise type is registered', () => {
+test('lazy-registry: every canonical exercise type is registered', () => {
   EXERCISE_TYPE_KEYS.forEach((type) => {
     expect(getExercise(type)).toBeDefined();
   });

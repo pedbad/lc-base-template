@@ -17,7 +17,7 @@ export interface ShowcaseFixture {
   id: string;
   /** Human-readable card title shown above the live exercise. */
   title: string;
-  /** Which engine renders it (resolved via lazyRegistry). */
+  /** Which engine renders it (resolved via lazy-registry). */
   type: ExerciseType;
   /** The exercise config (content + optional options/labels). Narrowed by the engine. */
   config: unknown;

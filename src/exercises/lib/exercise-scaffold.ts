@@ -1,5 +1,5 @@
 /**
- * exerciseScaffold.ts — shared wiring for the blank-grading exercise family
+ * exercise-scaffold.ts — shared wiring for the blank-grading exercise family
  * (select, inline-choice, radio-quiz, inline-gap, typed-transform, dictation,
  * line-match; spec §7). Each of those engines independently carried the SAME three
  * mechanical pieces around its engine-specific grading + render:

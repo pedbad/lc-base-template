@@ -10,7 +10,7 @@
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §8, §9.
  */
 import { ExerciseOptionsSchema } from '@/config/lo-schema';
-import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
+import type { ExerciseComponentProps } from '@/exercises/lazy-registry';
 import { TextEntryRuntime } from '../text-entry/TextEntryRuntime';
 import { DictationExerciseConfigSchema } from './dictation-schema';
 

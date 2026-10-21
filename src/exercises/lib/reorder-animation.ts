@@ -1,5 +1,5 @@
 /**
- * reorderAnimation.ts — a tiny FLIP (First-Last-Invert-Play) helper for engines
+ * reorder-animation.ts — a tiny FLIP (First-Last-Invert-Play) helper for engines
  * that reorder DOM nodes and want the move animated (spec §8, "ported once").
  * Ported from french-lo-1's reorderAnimation.js, typed.
  *

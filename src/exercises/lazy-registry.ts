@@ -1,5 +1,5 @@
 /**
- * lazyRegistry.ts — maps an exercise `type` key to its lazily-loaded engine.
+ * lazy-registry.ts — maps an exercise `type` key to its lazily-loaded engine.
  *
  * The single place that says "this `type` is rendered by this component". Engines
  * register here as they are ported (Phase B, one at a time), each behind React

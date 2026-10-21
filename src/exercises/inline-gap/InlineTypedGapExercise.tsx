@@ -59,9 +59,9 @@ import {
 } from '@/exercises/lib/parsing';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
-import { createExerciseReducer } from '@/exercises/lib/exerciseScaffold';
+import { createExerciseReducer } from '@/exercises/lib/exercise-scaffold';
 import { ProgressMeter } from '@/exercises/lib/ProgressMeter';
-import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
+import type { ExerciseComponentProps } from '@/exercises/lazy-registry';
 import { TARGET_LANG } from '@/lib/lang';
 import { InlineGapExerciseConfigSchema, type InlineGapItem } from './inline-gap-schema';
 import { fillInlineGapAnswers, gradeInlineGap } from './inline-gap-grading';

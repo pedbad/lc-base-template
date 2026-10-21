@@ -3,7 +3,7 @@
  * so it is tested here; useAudioClip only wires it to the subscription.
  */
 import { expect, test } from 'vitest';
-import { statusAfterManagerChange } from './clipStatus';
+import { statusAfterManagerChange } from './clip-status';
 
 const state = (activeId: string | null, isPlaying: boolean) => ({
   activeId,

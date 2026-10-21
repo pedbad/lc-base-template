@@ -373,7 +373,7 @@ keeps every course consistent — **add content as data; don't quietly change th
 
 - `src/styles/**` — design tokens, theme, global CSS. Drift here re-skins every course.
 - `src/config/**` — the LO / exercise **schemas** and course config (the content contract).
-- `src/exercises/lazyRegistry.ts` + `src/exercises/lib/**` — core engine wiring / shared scaffold.
+- `src/exercises/lazy-registry.ts` + `src/exercises/lib/**` — core engine wiring / shared scaffold.
 - `.github/**`, `vite.config.ts`, `package.json`, `bun.lock`, tsconfig/eslint/prettier/stylelint,
   `.claude/settings.json` — build, CI, and the repo's Claude Code settings.
 - `docs/specs/**` — the canonical specs authors build against.

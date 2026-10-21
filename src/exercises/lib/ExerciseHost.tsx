@@ -3,7 +3,7 @@
  *
  * One place that turns an exercise (`type` + parsed `config`) into rendered UI: the
  * instruction box (ExerciseInstructions) above the lazily-loaded engine resolved
- * through the lazyRegistry. Both hosts render through this — the showcase today, and
+ * through the lazy-registry. Both hosts render through this — the showcase today, and
  * the real LO runtime when it lands — so the instruction wiring is defined once, not
  * per engine.
  *
@@ -20,7 +20,7 @@
 import { Suspense } from 'react';
 
 import { type ExerciseType } from '@/config/exercise-types';
-import { getExercise } from '@/exercises/lazyRegistry';
+import { getExercise } from '@/exercises/lazy-registry';
 import { useIsHydrated } from '@/hooks/useIsHydrated';
 import { ExerciseErrorBoundary } from './ExerciseErrorBoundary';
 import { ExerciseInstructions } from './ExerciseInstructions';

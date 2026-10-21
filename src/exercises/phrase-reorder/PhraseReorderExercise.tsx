@@ -19,11 +19,11 @@
 import { useLayoutEffect, useReducer, useRef, type DragEvent } from 'react';
 import { AudioClip } from '@/components/audio/AudioClip';
 import { ExerciseOptionsSchema } from '@/config/lo-schema';
-import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
+import type { ExerciseComponentProps } from '@/exercises/lazy-registry';
 import { ExerciseFooter } from '../lib/ExerciseFooter';
 import { ProgressMeter } from '../lib/ProgressMeter';
 import { canRevealAnswers, SHOW_ANSWERS_AFTER_SEQUENCE } from '../lib/reveal';
-import { captureFlipPositions, playFlipAnimation } from '../lib/reorderAnimation';
+import { captureFlipPositions, playFlipAnimation } from '../lib/reorder-animation';
 import { TARGET_LANG } from '@/lib/lang';
 import {
   PhraseReorderExerciseConfigSchema,

@@ -43,7 +43,7 @@ import { Button } from '@/components/ui/button';
 import { AudioClip } from '@/components/audio/AudioClip';
 import { resolveAsset, storageScope } from '@/lib/assets';
 import { TARGET_LANG } from '@/lib/lang';
-import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
+import type { ExerciseComponentProps } from '@/exercises/lazy-registry';
 import {
   FlashcardsExerciseConfigSchema,
   FlashcardsOptionsSchema,

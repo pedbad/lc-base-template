@@ -3,7 +3,7 @@
  * tokens only (spec §5 css-layer discipline); no raw hex, no !important.
  *
  * Motion is compositor-friendly: the swap reorder is a `transform` FLIP animation
- * (reorderAnimation, driven from React) — this file only styles static states.
+ * (reorder-animation, driven from React) — this file only styles static states.
  */
 @layer components {
   .phrase-reorder {

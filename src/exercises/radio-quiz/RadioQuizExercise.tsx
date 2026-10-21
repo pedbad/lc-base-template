@@ -51,9 +51,9 @@ import { mulberry32, shuffle } from '@/exercises/lib/shuffle';
 import { ChoicePillGroup } from '@/exercises/lib/ChoicePillGroup';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
-import { useExerciseScaffold } from '@/exercises/lib/exerciseScaffold';
+import { useExerciseScaffold } from '@/exercises/lib/exercise-scaffold';
 import { ProgressMeter } from '@/exercises/lib/ProgressMeter';
-import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
+import type { ExerciseComponentProps } from '@/exercises/lazy-registry';
 import { TARGET_LANG } from '@/lib/lang';
 import {
   RadioQuizExerciseConfigSchema,

@@ -25,7 +25,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import BackToTopButton from './BackToTopButton';
-import { headingId } from '@/lib/headingId';
+import { headingId } from '@/lib/heading-id';
 
 const html = (sectionId = 'exercises') =>
   renderToStaticMarkup(<BackToTopButton sectionId={sectionId} />);

@@ -49,7 +49,7 @@ import {
 } from '@/exercises/lib/scoring';
 import { ExerciseFooter } from '@/exercises/lib/ExerciseFooter';
 import { ResultSlot } from '@/exercises/lib/ResultSlot';
-import { createExerciseReducer } from '@/exercises/lib/exerciseScaffold';
+import { createExerciseReducer } from '@/exercises/lib/exercise-scaffold';
 import { ProgressMeter } from '@/exercises/lib/ProgressMeter';
 import { TARGET_LANG } from '@/lib/lang';
 import type { TextEntryContent } from './text-entry-schema';

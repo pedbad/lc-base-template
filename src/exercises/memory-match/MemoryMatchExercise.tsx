@@ -8,7 +8,7 @@
  * by a stable `pairId` (not by matching content strings), french-lo-1's bespoke design
  * tokens are mapped to the template palette, and the 3D card styling lives in
  * memory-match.css instead of inline Tailwind. The show-answers reorder is animated
- * with the shared FLIP helper (reorderAnimation). `options.sampleSize` plays a random
+ * with the shared FLIP helper (reorder-animation). `options.sampleSize` plays a random
  * N of M pairs; the deck is always shuffled (shuffle is N/A — spec §5.2).
  *
  * Flip cue (TODO §E21): every card turned face up counts towards the host's
@@ -21,12 +21,12 @@ import { useContext, useEffect, useLayoutEffect, useReducer, useRef, useState } 
 import AudioManager from '@/audio/AudioManager';
 import { resolveAsset } from '@/lib/assets';
 import { ExerciseOptionsSchema } from '@/config/lo-schema';
-import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
+import type { ExerciseComponentProps } from '@/exercises/lazy-registry';
 import { ExerciseFooter } from '../lib/ExerciseFooter';
 import { FlipCueContext } from '../lib/FlipCueContext';
 import { latestEnding, planExits, type PlannedExit } from '../lib/flip-cue-exits';
 import { ProgressMeter } from '../lib/ProgressMeter';
-import { captureFlipPositions, playFlipAnimation } from '../lib/reorderAnimation';
+import { captureFlipPositions, playFlipAnimation } from '../lib/reorder-animation';
 import { MemoryCard, type DeckCard } from './MemoryCard';
 import { TARGET_LANG } from '@/lib/lang';
 import { MemoryMatchExerciseConfigSchema } from './memory-match-schema';

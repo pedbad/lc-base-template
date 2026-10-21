@@ -15,7 +15,7 @@
  *
  * HALF ONE — THE AUTHORING CONTRACT. Adding a new exercise type is three steps, and
  * the spec is explicit that guard e fails if ANY is skipped (design spec §223):
- * register it in `lazyRegistry`, add a showcase fixture, add a Zod content schema.
+ * register it in `lazy-registry`, add a showcase fixture, add a Zod content schema.
  * So the contract is checked over `EXERCISE_TYPE_KEYS` — the canonical list — and
  * every skipped step is reported, never just the first, because someone who forgot
  * one step usually forgot two.
@@ -148,7 +148,7 @@ export function findContractGaps(inputs: ContractInputs): ContractGap[] {
   const withSchema = new Set(inputs.typesWithSchema);
 
   const detailFor: Readonly<Record<ContractStep, (type: string) => string>> = {
-    engine: () => 'src/exercises/lazyRegistry.ts (EXERCISE_REGISTRY)',
+    engine: () => 'src/exercises/lazy-registry.ts (EXERCISE_REGISTRY)',
     fixture: (type) =>
       `src/exercises/${type}/${type}.fixture.ts, collected by src/showcase/fixtures.ts`,
     schema: schemaFileFor,

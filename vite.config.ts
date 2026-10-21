@@ -110,9 +110,9 @@ export default defineConfig({
         'src/showcase/**',
         'src/ui-showcase/**',
         'src/code-style/**',
-        // Wiring, not logic. lazyRegistry is a table of lazy() imports that only a
+        // Wiring, not logic. lazy-registry.ts is a table of lazy() imports that only a
         // browser resolves; its keys are checked by registry-completeness.
-        'src/exercises/lazyRegistry.ts',
+        'src/exercises/lazy-registry.ts',
         // Vite plugin glue that only runs inside a dev server / build.
         'src/build/lo-dev-pages.ts',
         'src/build/sandbox-docs-plugin.ts',
@@ -128,11 +128,11 @@ export default defineConfig({
         lines: 0,
         // Logic: grading, schemas, config, src/lo, src/build, src/lib — every .ts
         // that is not browser glue (below).
-        'src/!(audio|hooks)/**/!(use*|reorderAnimation).ts': { lines: 80 },
+        'src/!(audio|hooks)/**/!(use*|reorder-animation).ts': { lines: 80 },
         // Views: the suite renders static markup, so event handlers never run.
         // The floor catches a component with no test; raise it as tests grow.
         'src/**/*.tsx': { lines: 20 },
-        // Browser glue — src/hooks/, src/audio/, use*.ts, reorderAnimation.ts
+        // Browser glue — src/hooks/, src/audio/, use*.ts, reorder-animation.ts
         // (scroll, audio, animation) — needs a DOM to test: counted and reported,
         // no bar yet.
       },

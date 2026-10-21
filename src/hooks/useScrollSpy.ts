@@ -2,8 +2,8 @@
  * useScrollSpy — which LO section is on screen, for the header's active link
  * (docs/specs/2026-10-06-header-scroll-spy-design.md).
  *
- * THIN BY DESIGN. It measures and listens; the rules live in `src/lib/sectionInView.ts`
- * and `src/lib/jumpHold.ts`, which are unit-tested. The suite runs in `node` with no
+ * THIN BY DESIGN. It measures and listens; the rules live in `src/lib/section-in-view.ts`
+ * and `src/lib/jump-hold.ts`, which are unit-tested. The suite runs in `node` with no
  * DOM, so nothing here could be tested beyond wiring.
  *
  * A PASSIVE SCROLL LISTENER, NOT AN INTERSECTIONOBSERVER (spec §4). The question is
@@ -21,9 +21,9 @@
  * the effect.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { createJumpHold } from '@/lib/jumpHold';
-import type { JumpHold } from '@/lib/jumpHold';
-import { isScrolledToBottom, pickSectionInView } from '@/lib/sectionInView';
+import { createJumpHold } from '@/lib/jump-hold';
+import type { JumpHold } from '@/lib/jump-hold';
+import { isScrolledToBottom, pickSectionInView } from '@/lib/section-in-view';
 
 /** Slack below a section's `scroll-margin-top`, so a followed link — which lands the
  *  section's top exactly on its scroll margin — is past the line, sub-pixels and all. */

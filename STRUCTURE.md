@@ -133,7 +133,7 @@ src/exercises/select/
 Pure grading is split from the view on purpose: the interesting logic is testable
 without rendering anything. An engine that needs its own styles adds `<type>.css`,
 inside `@layer` (`flashcards/flashcards.css`). `lib/` holds what all engines share (the host, the
-footer, the instructions callout, the blank-grading scaffold). `lazyRegistry.ts`
+footer, the instructions callout, the blank-grading scaffold). `lazy-registry.ts`
 maps an exercise `type` string to its component — **guard e** fails if a canonical
 type lacks a registry entry, a showcase fixture or a `<type>-schema.ts`, or if an
 authored `type` resolves to no engine.

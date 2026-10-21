@@ -1,5 +1,5 @@
 /**
- * jumpHold — the hold a followed link puts on the scroll-spy (header scroll-spy spec
+ * jump-hold — the hold a followed link puts on the scroll-spy (header scroll-spy spec
  * §3, S5).
  *
  * Following a nav link smooth-scrolls PAST the sections in between, and a spy left

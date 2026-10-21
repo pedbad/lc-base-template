@@ -40,8 +40,8 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { headingId } from '@/lib/headingId';
-import { prefersReducedMotion } from '@/lib/prefersReducedMotion';
+import { headingId } from '@/lib/heading-id';
+import { prefersReducedMotion } from '@/lib/prefers-reduced-motion';
 import InstructionsCallout from './InstructionsCallout';
 
 interface LoAccordionProps {

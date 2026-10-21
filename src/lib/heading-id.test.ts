@@ -4,7 +4,7 @@
  * this single helper is what every section + accordion uses so ids never drift.
  */
 import { describe, expect, test } from 'vitest';
-import { headingId } from './headingId';
+import { headingId } from './heading-id';
 
 describe('headingId', () => {
   test('appends the -heading suffix to a base id', () => {

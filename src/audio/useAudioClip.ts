@@ -2,7 +2,7 @@
  * useAudioClip — playback state + a single click handler for an AudioManager-driven
  * clip (the animated-speaker variant). Holds status / progress / duration, wires the
  * AudioManager subscription (another clip starting resets this one; a refused resume or
- * an outside pause shows paused, an outside resume playing, via clipStatus.ts),
+ * an outside pause shows paused, an outside resume playing, via clip-status.ts),
  * attaches media listeners to the off-DOM Audio element, and toggles play/pause.
  *
  * Ported from french-lo-1's components/AudioClip/useAudioClip.js (typed).
@@ -10,7 +10,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { SyntheticEvent } from 'react';
 import AudioManager from './AudioManager';
-import { statusAfterManagerChange } from './clipStatus';
+import { statusAfterManagerChange } from './clip-status';
 import { resolveAsset } from '@/lib/assets';
 
 export type ClipStatus = 'stopped' | 'playing' | 'paused';

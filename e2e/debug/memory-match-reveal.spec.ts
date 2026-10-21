@@ -3,7 +3,7 @@
  * from the second review of §E12c). Show answers reorders the deck into solved pairs and
  * plays a FLIP animation over about 0.75 s (620 ms plus an 18 ms stagger per card):
  * every card is moved back to where it was with a transform, then eased to zero
- * (src/exercises/lib/reorderAnimation.ts). A resize in that window reflows the grid under
+ * (src/exercises/lib/reorder-animation.ts). A resize in that window reflows the grid under
  * the running animation. Whatever happens, once it ends every card must be in the deck in
  * the answer order and none may keep a transform, inline or from an animation that
  * outlived its run. jsdom has no layout, so only a real browser can check it.

@@ -4,7 +4,7 @@
  * The 12 interactive exercise types ported from french-lo-1, in kebab-case
  * (spec §2), plus new engines added in Phase C. This is the single source of
  * truth for valid exercise `type` values: `lo-schema.ts` builds its Zod enum
- * from it, and the `lazyRegistry` (Phase B) keys its engine map by it. Adding an
+ * from it, and the `lazy-registry` (Phase B) keys its engine map by it. Adding an
  * engine = add its key here.
  *
  * Adding a key here makes `EXERCISE_INSTRUCTIONS` (an exhaustive Record over these

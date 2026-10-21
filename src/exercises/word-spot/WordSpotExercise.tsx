@@ -23,7 +23,7 @@ import { Button } from '@/components/ui/button';
 import { AudioClip } from '@/components/audio/AudioClip';
 import { ExerciseOptionsSchema } from '@/config/lo-schema';
 import { resolveLabel } from '@/config/ui-strings';
-import type { ExerciseComponentProps } from '@/exercises/lazyRegistry';
+import type { ExerciseComponentProps } from '@/exercises/lazy-registry';
 import { canRevealAnswers } from '../lib/reveal';
 import { ProgressMeter } from '../lib/ProgressMeter';
 import { TARGET_LANG } from '@/lib/lang';

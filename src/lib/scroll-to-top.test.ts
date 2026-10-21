@@ -12,7 +12,7 @@
  * place this logic is both reachable and testable. The button is then pure markup.
  */
 import { afterEach, describe, expect, test } from 'vitest';
-import { scrollToTop } from './scrollToTop';
+import { scrollToTop } from './scroll-to-top';
 
 interface Recorded {
   readonly calls: ScrollToOptions[];

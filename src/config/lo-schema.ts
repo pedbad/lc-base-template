@@ -26,7 +26,7 @@
  * SCOPE NOTE (deliberately loose now): `content` is an open object here. Exact
  * per-exercise-type content shapes are explicitly deferred (spec §19) and arrive
  * cluster-by-cluster from step 14, where `type` resolves to an engine via
- * `lazyRegistry`. Ordinal+type ref naming (`01-grammar`) is validated structurally
+ * `lazy-registry`. Ordinal+type ref naming (`01-grammar`) is validated structurally
  * here (non-empty string); the folder↔config render-mirror match is guard b's job
  * (steps 19–26), not pulled forward into the schema. `type` is now a Zod enum of the
  * 15 canonical keys (`exercise-types.ts`).

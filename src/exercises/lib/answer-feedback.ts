@@ -18,7 +18,7 @@
  * still wrong, but it is NAMED, so the learner knows exactly what to fix.
  */
 import { normalizeAnswer, normalizeForDictation } from './answers';
-import { diffChars } from './charDiff';
+import { diffChars } from './char-diff';
 
 export type ComparisonMode = 'strict' | 'dictation';
 
