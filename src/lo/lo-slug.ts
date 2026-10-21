@@ -7,8 +7,11 @@
  * never authored, so it can't drift from the folder it names.
  *
  * Pure string work, no I/O: the Part D prerender pass calls this for every folder
- * `listLoSlugs()` returns, and it must be testable without touching disk.
+ * `listLoSlugs()` returns, and it must be testable without touching disk. Its one import
+ * is relative and import-free, because the dev-server plugin reaches this file from
+ * `vite.config.ts`, where `@/…` imports break the build.
  */
+import { RESERVED_PAGE_SLUGS } from '../build/page-names';
 
 /**
  * `lo-` + ordinal + `-` + a url-safe kebab-case slug. The slug pattern matches
@@ -81,7 +84,11 @@ export function sortLoFolders(folderNames: readonly string[]): readonly string[]
  * overwriting another's HTML; hence the check lives here, where the whole set is
  * visible, rather than in the caller that writes the files.
  *
- * @throws Error naming both offenders on a collision, or the malformed folder
+ * A slug may not be one of the course's own pages either (`index`, the debug pages:
+ * `src/build/page-names.ts`), or the build would overwrite one with the other.
+ *
+ * @throws Error naming both offenders on a collision, the folder on a reserved slug,
+ *   or the malformed folder
  */
 export function loSlugsByFolder(folderNames: readonly string[]): ReadonlyMap<string, string> {
   const byFolder = new Map<string, string>();
@@ -89,6 +96,11 @@ export function loSlugsByFolder(folderNames: readonly string[]): ReadonlyMap<str
 
   for (const folderName of folderNames) {
     const slug = loSlug(folderName);
+    if (RESERVED_PAGE_SLUGS.includes(slug)) {
+      throw new Error(
+        `lo-config/${folderName} derives the slug "${slug}", but dist/${slug}.html is one of the course's own pages (reserved: ${RESERVED_PAGE_SLUGS.join(', ')}). Rename the folder.`,
+      );
+    }
     const claimed = folderBySlug.get(slug);
     if (claimed !== undefined) {
       throw new Error(

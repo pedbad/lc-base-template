@@ -45,7 +45,7 @@ import { injectRootDiv } from './prerender-html';
 // here must be free of `@/…` imports. `load-lo-disk` is not — `assembleLo` pulls the
 // schemas in by alias — hence `lo-folders.ts`, which it re-exports from.
 import { listLoSlugs } from '../lo/lo-folders';
-import { loSlug } from '../lo/lo-slug';
+import { loSlugsByFolder, sortLoFolders } from '../lo/lo-slug';
 
 /** The Node LO reader, by its project path: loaded by Vite, so its `@/…` imports resolve. */
 const LOAD_LO_DISK_MODULE = '/src/lo/load-lo-disk.ts';
@@ -68,32 +68,44 @@ const LO_PAGE_PATH_PATTERN = /^\/([a-z0-9]+(?:-[a-z0-9]+)*)\.html$/;
  * @param loFolders LO folder names under `lo-config/`
  * @returns the folder whose slug matches, or undefined — undefined means "not ours",
  *   so the request falls through to the middleware that owns it (a real 404 included)
- * @throws Error naming the folder when an LO folder name is malformed
+ * @throws Error naming the folder when an LO folder name is malformed, or its slug is
+ *   taken by another folder or by one of the course's own pages
  */
 export function devLoFolderForPath(
   pathname: string,
   loFolders: readonly string[],
 ): string | undefined {
   const match = LO_PAGE_PATH_PATTERN.exec(pathname);
+  if (pathname !== '/' && match === null) return undefined;
+
+  // The build's own check on the whole set, on every page request: a duplicate slug or
+  // one of the course's own page names (`index`, a debug page) fails here, naming the
+  // folder, instead of only when someone runs `bun run build`. Reserved slugs never
+  // reach the map, so `/index.html` stays Vite's own landing page.
+  const slugsByFolder = loSlugsByFolder(loFolders);
   if (match === null) return undefined;
 
   const slug = match[1];
-  // `index` is Vite's own entry, not an LO — the landing page must stay the landing
-  // page. No LO folder can derive it either, but saying so here is cheaper than
-  // trusting that nobody ever creates `lo-07-index`.
-  if (slug === 'index') return undefined;
-
-  return loFolders.find((folder) => loSlug(folder) === slug);
+  return [...slugsByFolder].find(([, folderSlug]) => folderSlug === slug)?.[0];
 }
 
 /**
- * The dev-server plugin. `apply: 'serve'` — the build has the prerender pass and must
- * never see this.
+ * The dev-server plugin. Its middleware runs only under `vite` (configureServer); the
+ * build has the prerender pass for pages. On `vite build` it does one thing: check
+ * the lesson folders' page names in `buildStart`, before Vite writes any output, so a
+ * lesson named `index` or after a debug page stops the build before `dist/` is touched
+ * (review 2026-10-21). The prerender checks again; this is the earlier of the two.
  */
 export function loDevPages(): Plugin {
+  let isBuild = false;
   return {
     name: 'lc-lo-dev-pages',
-    apply: 'serve',
+    config(_config, { command }) {
+      isBuild = command === 'build';
+    },
+    buildStart() {
+      if (isBuild) loSlugsByFolder(sortLoFolders(listLoSlugs()));
+    },
     configureServer(server) {
       // Registered inside configureServer (not in a returned function), so it runs
       // BEFORE Vite's internal middlewares — the SPA fallback would otherwise take

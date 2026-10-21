@@ -41,6 +41,7 @@
  * publish both pages.
  */
 import path from 'node:path';
+import { DEBUG_ENTRY_FILES } from './page-names';
 
 /**
  * Env var names that opt a build into the debug entries. `DEBUG` is the documented
@@ -51,13 +52,9 @@ export const DEBUG_ENV_VARS = ['DEBUG', 'SHOWCASE'] as const;
 /** Values that mean "yes, build it". Compared lowercased and trimmed. */
 const TRUTHY = ['1', 'true'];
 
-/** Rollup input name → root-level HTML file, for every debug entry. */
-export const DEBUG_ENTRY_FILES = {
-  showcase: 'exercise-showcase.html',
-  sandbox: 'debug-sandbox.html',
-  ui: 'ui-showcase.html',
-  style: 'code-style.html',
-} as const;
+// The list lives with the other reserved page names, where a lesson slug is checked
+// against it (src/build/page-names.ts); re-exported so this stays the entries' home.
+export { DEBUG_ENTRY_FILES };
 
 /** Whether one env value reads as an explicit yes. */
 function isOn(raw: string | undefined): boolean {

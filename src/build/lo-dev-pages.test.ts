@@ -53,4 +53,22 @@ describe('devLoFolderForPath', () => {
   it('propagates a malformed folder name', () => {
     expect(() => devLoFolderForPath('/example.html', ['stray'])).toThrow(/stray/);
   });
+
+  // The dev server runs the build's own check, so a reserved or duplicate slug fails on
+  // the first page request instead of only at `bun run build` (review 2026-10-21).
+  it('rejects a lesson folder with a reserved slug on any page request', () => {
+    const folders = [...FOLDERS, 'lo-02-index'];
+    expect(() => devLoFolderForPath('/example.html', folders)).toThrow(/lo-02-index/);
+    expect(() => devLoFolderForPath('/', folders)).toThrow(/lo-02-index/);
+  });
+
+  it('rejects two lesson folders with the same slug on any page request', () => {
+    expect(() => devLoFolderForPath('/example.html', [...FOLDERS, 'lo-07-example'])).toThrow(
+      /lo-00-example and lo-config\/lo-07-example/,
+    );
+  });
+
+  it('leaves asset requests alone even when a folder is wrong', () => {
+    expect(devLoFolderForPath('/src/main.tsx', [...FOLDERS, 'lo-02-index'])).toBeUndefined();
+  });
 });
