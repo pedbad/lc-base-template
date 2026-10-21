@@ -32,6 +32,7 @@ import {
   type LoExerciseConfig,
   type LoHero,
 } from '@/config/lo-schema';
+import type { ExerciseType } from '@/config/exercise-types';
 import { parseRichTextEntry } from './rich-text/parse-rich-text-entry';
 import {
   collectEntryModalTargets,
@@ -58,6 +59,13 @@ export interface LoFileTree {
   /** id → raw `hovers/<id>/hover.json` (TODO §D17). Absent is normal. */
   readonly hovers?: Readonly<Record<string, unknown>>;
 }
+
+/**
+ * Which schema checks an exercise's content, by type: `exerciseConfigSchema` from
+ * `src/exercises/exercise-schemas.ts`. Passed in rather than imported, so the browser
+ * reader can leave fifteen schemas out of the main bundle (see `assembleLo`).
+ */
+export type ExerciseSchemaLookup = (type: ExerciseType) => z.ZodType;
 
 /** One resolved part: the ref it was named by, plus its validated config. */
 export interface AssembledPart<TConfig> {
@@ -130,11 +138,22 @@ function requireFile(
  * come first and then exercises, each in its declared array order (the two lists are
  * separate because they mirror the two on-disk folders).
  *
+ * With `exerciseSchema`, each exercise's content is also checked against its own
+ * engine's schema (review 2026-10-21, concern 1). The Node reader always passes it, so
+ * every build and every dev page fails on a bad exercise, naming the file and the field.
+ * The browser reader does not: the page it hydrates was built, and so checked, already,
+ * and the schemas would cost the main bundle about 2.3 kB gzipped.
+ *
  * @param slug the LO folder name, e.g. `lo-00-example`
  * @param tree the LO's already-read files
+ * @param exerciseSchema the per-type content schemas; absent skips that check
  * @throws Error naming the offending file when any part is missing or invalid
  */
-export function assembleLo(slug: string, tree: LoFileTree): AssembledLo {
+export function assembleLo(
+  slug: string,
+  tree: LoFileTree,
+  exerciseSchema?: ExerciseSchemaLookup,
+): AssembledLo {
   const manifest = parseFile(LoManifestSchema, tree.manifest, loPath(slug, 'lo.json'));
 
   const modals = Object.fromEntries(
@@ -208,14 +227,12 @@ export function assembleLo(slug: string, tree: LoFileTree): AssembledLo {
     }),
     exercises: section.exercises.map((ref) => {
       const filePath = loPath(slug, `exercises/${ref}/exercise.json`);
-      return {
-        ref,
-        config: parseFile(
-          LoExerciseConfigSchema,
-          requireFile(tree.exercises, ref, filePath),
-          filePath,
-        ),
-      };
+      const raw = requireFile(tree.exercises, ref, filePath);
+      const config = parseFile(LoExerciseConfigSchema, raw, filePath);
+      // The envelope only says which engine; the engine's own schema checks the
+      // content, here at load, so a bad exercise fails the build and not the learner.
+      if (exerciseSchema) parseFile(exerciseSchema(config.type), raw, filePath);
+      return { ref, config };
     }),
   }));
 

@@ -154,11 +154,13 @@ export type ExerciseConfig = z.infer<typeof ExerciseConfigSchema>;
 /**
  * An exercise AS REFERENCED BY an LO section: the shared envelope with `title`
  * promoted to required, because every LO exercise renders inside an accordion and
- * that accordion needs its `<h3>`. This is what the loader validates; the per-type
- * `content` tightening (SelectContentSchema et al.) belongs to each ENGINE, which
- * applies its own schema at render. Guard e proves every engine HAS one (the third
- * step of the authoring contract, design spec §13 "Rare path") — it deliberately does not parse
- * content itself, which would make a registry guard fail for content reasons.
+ * that accordion needs its `<h3>`. This is what the loader validates first; the
+ * per-type `content` tightening (SelectContentSchema et al.) belongs to each ENGINE,
+ * and the Node reader checks it at load too, through `src/exercises/exercise-schemas.ts`
+ * (review 2026-10-21), so a bad exercise fails the build. Guard e proves every engine
+ * HAS one (the third step of the authoring contract, design spec §13 "Rare path") — it
+ * deliberately does not parse content itself, which would make a registry guard fail
+ * for content reasons.
  */
 export const LoExerciseConfigSchema = ExerciseConfigSchema.extend({
   title: z.string().min(1),
