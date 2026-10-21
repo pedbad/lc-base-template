@@ -7,8 +7,9 @@
  * `node:fs` is absent from a browser bundle.
  *
  * This reader is for Node contexts: the on-disk tests, Part D's post-build
- * `renderToStaticMarkup` pass over every LO folder, and the dev server's lesson pages. NEVER import it from anything the
- * browser bundle reaches — `load-lo-glob.ts` is the app's reader.
+ * `renderToStaticMarkup` pass over every LO folder, and the dev server's lesson pages.
+ * NEVER import it from anything the browser bundle reaches — `load-lo-glob.ts` is the
+ * app's reader.
  */
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import path from 'node:path';

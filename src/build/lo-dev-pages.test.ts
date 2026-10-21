@@ -3,8 +3,14 @@
  * middleware. The middleware itself is Vite plumbing (verified in the browser); the
  * decision it makes per request is here, where every edge is cheap to state.
  */
-import { describe, expect, it } from 'vitest';
-import { devLoFolderForPath } from './lo-dev-pages';
+import path from 'node:path';
+import type { Plugin, ViteDevServer } from 'vite';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { devLoFolderForPath, loDevPages } from './lo-dev-pages';
+
+// The plugin reads the folder list from disk; these tests set it per case.
+const diskFolders = vi.hoisted(() => ({ list: [] as string[] }));
+vi.mock('../lo/lo-folders', () => ({ listLoSlugs: () => diskFolders.list }));
 
 const FOLDERS = ['lo-00-example', 'lo-01-going-to-a-cafe'];
 
@@ -70,5 +76,99 @@ describe('devLoFolderForPath', () => {
 
   it('leaves asset requests alone even when a folder is wrong', () => {
     expect(devLoFolderForPath('/src/main.tsx', [...FOLDERS, 'lo-02-index'])).toBeUndefined();
+  });
+});
+
+/** A plugin hook as Vite calls it: the function itself, not an object hook. */
+function hook<T>(value: unknown): T {
+  return value as T;
+}
+
+describe('loDevPages on vite build', () => {
+  beforeEach(() => {
+    diskFolders.list = ['lo-00-example'];
+  });
+
+  function startBuild(command: 'build' | 'serve') {
+    const plugin: Plugin = loDevPages();
+    hook<(config: object, env: { command: string }) => void>(plugin.config)({}, { command });
+    return () => hook<() => void>(plugin.buildStart)();
+  }
+
+  it('stops the build before any output when a lesson takes a reserved name', () => {
+    diskFolders.list = ['lo-00-example', 'lo-01-index'];
+    expect(startBuild('build')).toThrow(/lo-config\/lo-01-index derives the slug "index"/);
+  });
+
+  it('lets a build with good lesson names start', () => {
+    expect(startBuild('build')).not.toThrow();
+  });
+
+  it('leaves the dev server to check per request', () => {
+    diskFolders.list = ['lo-01-index'];
+    expect(startBuild('serve')).not.toThrow();
+  });
+});
+
+describe('loDevPages on the dev server', () => {
+  type Handler = (req: object, res: object, next: (error?: unknown) => void) => void;
+
+  /** Mounts the middleware on a fake server whose LO reader does what `loadLo` says. */
+  function middleware(loadLo: (folder: string) => unknown) {
+    let handler: Handler | undefined;
+    const transformIndexHtml = vi.fn(async () => '<div id="root"></div>');
+    const server = {
+      config: { base: '/', root: path.resolve(import.meta.dirname, '../..') },
+      middlewares: { use: (fn: Handler) => (handler = fn) },
+      ssrLoadModule: vi.fn(async () => ({ loadLo })),
+      transformIndexHtml,
+    };
+    hook<(server: ViteDevServer) => void>(loDevPages().configureServer)(
+      server as unknown as ViteDevServer,
+    );
+    if (!handler) throw new Error('the plugin registered no middleware');
+    const serve = handler;
+
+    /** Requests `url`; resolves with what reached `next`, or the body sent. */
+    const request = (url: string) =>
+      new Promise<{ error?: unknown; body?: string }>((resolve) => {
+        const res = {
+          statusCode: 0,
+          setHeader: () => {},
+          end: (body: string) => resolve({ body }),
+        };
+        serve({ method: 'GET', url }, res, (error) => resolve({ error }));
+      });
+    return { request, server, transformIndexHtml };
+  }
+
+  beforeEach(() => {
+    diskFolders.list = ['lo-00-example'];
+  });
+
+  it('answers a lesson page that loads, stamped with its folder', async () => {
+    const { request, server } = middleware(() => ({}));
+    const { body } = await request('/example.html');
+    expect(server.ssrLoadModule).toHaveBeenCalledWith('/src/lo/load-lo-disk.ts');
+    expect(body).toContain('lo-00-example');
+  });
+
+  it('fails a lesson page whose content the Node reader rejects, naming the file', async () => {
+    const invalid = new Error(
+      'lo-config/lo-00-example/exercises/01-select/exercise.json is invalid',
+    );
+    const { request, transformIndexHtml } = middleware(() => {
+      throw invalid;
+    });
+    expect((await request('/example.html')).error).toBe(invalid);
+    expect(transformIndexHtml).not.toHaveBeenCalled();
+  });
+
+  it('fails any page request while a lesson folder takes a reserved name', async () => {
+    diskFolders.list = ['lo-00-example', 'lo-02-code-style'];
+    const { request, server } = middleware(() => ({}));
+    const { error } = await request('/');
+    expect(String(error)).toMatch(/lo-02-code-style derives the slug "code-style"/);
+    expect(server.ssrLoadModule).not.toHaveBeenCalled();
   });
 });

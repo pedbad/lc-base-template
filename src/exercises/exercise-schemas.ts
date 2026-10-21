@@ -2,14 +2,16 @@
  * exercise-schemas.ts — maps an exercise `type` key to its full config schema.
  *
  * The one place that says "this `type` is validated by this schema" (review
- * 2026-10-21, concern 1). The LO assembler reads it, so every exercise in every LO is
- * checked against its own engine's schema at load: a bad `content` fails the build and
- * the dev page, naming the file and the field, instead of reaching a learner as the
- * engine's red error box. Each engine still re-parses at render, for its defaults.
+ * 2026-10-21, concern 1). The Node LO reader (`load-lo-disk.ts`) passes it to
+ * `assembleLo`, so every exercise in every LO is checked against its own engine's schema
+ * at load: a bad `content` fails the build and the dev page, naming the file and the
+ * field, instead of reaching a learner as the engine's red error box. It is not in the
+ * main bundle (the browser reader skips the check). Each engine still re-parses at
+ * render, for its defaults.
  *
- * The twin of `lazy-registry.ts`, but schemas only, never views: the assembler runs in
- * the Bun prerender and in the main bundle, so nothing here may pull in React or an
- * engine's component. The Record is exhaustive over `ExerciseType`, so a new engine
+ * The twin of `lazy-registry.ts`, but schemas only, never views: it runs in the Bun
+ * prerender and under Vite SSR in dev, so nothing here may pull in React or an engine's
+ * component. The Record is exhaustive over `ExerciseType`, so a new engine
  * key fails to compile until its schema is added here.
  */
 import type { z } from 'zod';

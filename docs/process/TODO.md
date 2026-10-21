@@ -2219,7 +2219,7 @@ rather than the Language Centre's course factory; the maintainer took three smal
      answered 500 in dev; corrected, the build and the page checks passed (18 of 18).
   2. **A lesson named `index` was overwritten** (`2998963`). `src/build/page-names.ts`
      reserves `index` and every debug page, built or not; `loSlugsByFolder()` rejects
-     them, and Vite's `buildStart` (before `dist/` exists), each dev page request and
+     them, and Vite's `buildStart` (before `dist/` is emptied or written), each dev page request and
      the prerender all go through it. The prerender now renders every page in memory
      and checks its files against what Vite wrote before writing any, so a bad lesson
      no longer leaves `example.html` behind. Checked by hand: `lo-01-index`,

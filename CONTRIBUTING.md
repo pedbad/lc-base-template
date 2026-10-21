@@ -97,8 +97,8 @@ page**, with no code change.
    the build and the dev server both stop, naming the folder.
 2. Edit `lo.json` and each `blocks/*/block.json` / `exercises/*/exercise.json`. Every
    exercise is checked against its engine's schema when the lesson loads, so a mistake
-   stops `bun run build` (and the lesson's page in `bun run dev`), naming the file and
-   the field.
+   stops `bun run build` (and the lesson's page in `bun run dev`, on load or reload),
+   naming the file and the field.
 3. `bun run build && bun run preview` to click through the whole course.
 
 **Never edit or delete `lo-00-example`.** It is every course's master copy: the test
