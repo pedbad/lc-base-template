@@ -70,20 +70,61 @@ camelCase, named after the one function they export (`prefersReducedMotion.ts`,
   yours.
 - One component per file, plus its small private helpers.
 
+```ts
+// Do: a named function declaration (src/exercises/lib/progress-text.ts).
+export function progressText(template: string, correct: number, total: number): string {
+
+// Not: an exported arrow function.
+export const progressText = (template: string, correct: number, total: number): string => {
+```
+
 ### Types
 
 - **An object shape is an `interface`** (205 to 2); a union, a tuple or an alias is a
   `type`.
-- **Props are `interface <Component>Props`**, destructured in the parameter list:
-  `export function ProgressMeter({ correct, total }: ProgressMeterProps)`.
+- **Props are `interface <Component>Props`**, destructured in the parameter list.
 - Types parsed from content come from the Zod schema (`z.infer`), not a second
   hand-written copy of it.
+
+From `src/exercises/lib/ProgressMeter.tsx` and `src/exercises/reading/reading-schema.ts`:
+
+```tsx
+interface ProgressMeterProps {
+  correct: number;
+  total: number;
+  /** The exercise's own wording, if it overrides `progressCorrect`. */
+  labels?: UiStringsOverride;
+  iconSrc?: string;
+}
+
+export function ProgressMeter({
+  correct,
+  total,
+  labels,
+  iconSrc = courseConfig.progressIcon,
+}: ProgressMeterProps) {
+
+// A type read from lesson JSON: inferred from its schema, never written out twice.
+export type ReadingQuestion = z.infer<typeof ReadingQuestionSchema>;
+```
 
 ### Imports
 
 In this order, as most files already do: React; other packages; `@/…` (another folder
 of `src/`); `./…` (this folder); the component's own `.css` last. Use `@/` across
 folders and a relative path within one.
+
+From `src/exercises/lib/ProgressMeter.tsx`:
+
+```tsx
+import type { CSSProperties } from 'react';
+import { courseConfig } from '@/config/course.config';
+import { resolveLabel, type UiStringsOverride } from '@/config/ui-strings';
+import { resolveAsset } from '@/lib/assets';
+import { maskImageStyle } from '@/lib/mask-image';
+import { progressText } from './progress-text';
+import './progress-meter.css';
+```
 
 ### Comments
 
@@ -97,6 +138,21 @@ Almost every file (221 of 226) opens with a header comment: what the file is, an
   checks it.
 - A comment that has stopped being true is worse than none; fix it in the same commit.
 
+The header of `src/lib/mask-image.ts` — what the file is, then why it is not done the
+obvious way:
+
+```ts
+/**
+ * mask-image — the inline style that paints an asset as a mask on the element itself.
+ *
+ * WHY ON THE ELEMENT AND NOT THROUGH A CUSTOM PROPERTY. A relative `url()` inside a
+ * custom property is resolved against the stylesheet that reads it, not the page. In a
+ * `./` build (one build for any folder) the asset is `./logo.svg`, the reading
+ * stylesheet is in `assets/`, and the browser asked for `assets/logo.svg`. An inline
+ * `mask-image` resolves against the page, which is where the asset is.
+ */
+```
+
 ### Errors and logging
 
 - No `console.log` in committed code (there is none).
@@ -104,6 +160,19 @@ Almost every file (221 of 226) opens with a header comment: what the file is, an
   happened and what the code did instead (`flip cue: could not read …; showing the cue`).
 - Fail loudly at build time: a bad lesson, a missing file or a reshaped template throws
   with the offending path named, rather than shipping a half-built page.
+
+From `src/audio/AudioManager.ts` — the comment says why, the warning names what failed,
+and the code recovers instead of leaving the button on "playing":
+
+```ts
+// A refused play (autoplay policy, unplayable file) clears the clip and tells the
+// caller, so nobody is left showing "playing" (TODO §E13b).
+audio.play().catch((error: unknown) => {
+  if (isInterrupted(error) || this.activeAudio !== audio) return;
+  console.warn(`AudioManager: could not play ${source}.`, error);
+  fail();
+});
+```
 
 ### React
 
@@ -113,10 +182,31 @@ Almost every file (221 of 226) opens with a header comment: what the file is, an
 - State that a parent drives through a ref uses React 19's `ref` prop, not
   `forwardRef`.
 
+```tsx
+// Do: read it in an effect (src/components/shell/LoAccordion.tsx).
+useEffect(() => {
+  const inner = innerRef.current;
+  if (!isOpen || !inner || prefersReducedMotion()) return;
+  animationRef.current = animateHeight(inner, 0, inner.scrollHeight);
+}, [isOpen]);
+
+// Not: read it during render. The Bun prerender has no matchMedia, and the first
+// client render would disagree with the prerendered markup.
+const isReduced = prefersReducedMotion();
+```
+
 ### Tests
 
 - Vitest: `describe` per unit, `test` per behaviour (`it` also appears; either is fine).
-  Name the behaviour: `test('a ./ build takes the folder the page is served from')`.
+  Name the behaviour, so a failure reads as a sentence.
+
+From `src/build/build-base.test.ts`:
+
+```ts
+it('is ./ when BASE_URL is not set: one build for any folder', () => {
+it('keeps a fixed address when BASE_URL names one', () => {
+```
+
 - Most component tests render to a string (`renderToStaticMarkup`) in Node. Only a test
   that must replay real DOM events opts in to happy-dom, per file
   ([`docs/TOOLING.md`](TOOLING.md), "Config").
