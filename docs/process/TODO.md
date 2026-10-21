@@ -9,8 +9,8 @@ session, on either machine.
 | `LC_BASE_TEMPLATE_BUILD_HANDOVER.md`  | the numbered buildlist + tick history (steps 1–34)         |
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 
-**Last updated:** 2026-10-21 · **HEAD:** see `git log` · **Suite:** 192 files · 2000 tests green
-(Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 51 on a `DEBUG=1` build (17 × 3, `e2e/debug/`) · CI green · `main` protected since 2026-10-21 (job E1).
+**Last updated:** 2026-10-21 · **HEAD:** see `git log` · **Suite:** 196 files · 2112 tests green
+(Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 60 on a `DEBUG=1` build (20 × 3, `e2e/debug/`) · CI green · `main` protected since 2026-10-21 (job E1).
 
 Non-negotiable constraints for every job below live in
 `2026-08-06-post-phase-d-handover.md` §3. Read them before touching the build. In short:
@@ -82,8 +82,10 @@ left, in order:
    with real code examples (below).
 8. **E27 — DONE 2026-10-21**: one file-naming rule in `src/`, enforced; the eleven
    camelCase modules renamed to kebab-case (below).
-9. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
-   rules carried into each course repo at its step 3, and E16 after.
+9. **E28 — DONE 2026-10-21**: the third external review's three defects, each kept as
+   a regression test (below).
+10. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
+    rules carried into each course repo at its step 3, and E16 after.
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
 GitHub; CI is green there; no open PRs, and only `main` exists on GitHub. The one
@@ -2202,6 +2204,35 @@ rather than the Language Centre's course factory; the maintainer took three smal
   kebab-case, a `use…` hook or PascalCase, with optional lowercase dot qualifiers
   (`course.config.ts`). Not a ninth guard: like docs-tree, it runs in `bun run test`,
   and the locked list stays the eight spec guards.
+- **E28 — the third external review, before the move. DONE 2026-10-21**, three
+  commits, fixed in the review's priority order, each reproduced first and kept as a
+  regression test.
+  1. **Broken exercises passed the checks** (`714e1cb`). The loader checked only the
+     loose envelope; content waited for the engine, at render. `src/exercises/exercise-schemas.ts`
+     maps every type to its full schema (an exhaustive Record, so a new engine fails to
+     compile without one), and the Node reader checks every exercise with it, so the
+     build and the dev server's lesson page both stop naming the lesson, the file and
+     the field (`content.items`). The browser reader skips it on purpose: built pages
+     are already checked, and the schemas cost 2.3 kB of `main` (`docs/TOOLING.md`,
+     "Bundle budget"). `e2e/pages.spec.ts` now finds every lesson from `lo-config/`.
+     Acceptance run by hand: a lesson with `"content": {}` failed `bun run build` and
+     answered 500 in dev; corrected, the build and the page checks passed (18 of 18).
+  2. **A lesson named `index` was overwritten** (`2998963`). `src/build/page-names.ts`
+     reserves `index` and every debug page, built or not; `loSlugsByFolder()` rejects
+     them, and Vite's `buildStart` (before `dist/` exists), each dev page request and
+     the prerender all go through it. The prerender now renders every page in memory
+     and checks its files against what Vite wrote before writing any, so a bad lesson
+     no longer leaves `example.html` behind. Checked by hand: `lo-01-index`,
+     `lo-01-code-style` and a second `-example` each fail the build and the dev server.
+  3. **The playlist ignored playback state in the gap** (`64797ab`). The advance timer
+     lives in a ref: a pause keeps the target clip and drops the timer, resume plays it
+     once, a new clip or unmount cancels it, and the timer re-checks before it starts
+     anything. Every state change goes through `changePlayState`, and the last clip
+     reports `stopped`. Six DOM tests on fake timers; four failed before the fix, and
+     the duplicate-`ended` one was tightened until it did. **Known edge, not fixed:**
+     another player starting during the gap (`AudioManager.stopAll`) pauses an element
+     that is already paused, so no event reaches the controller and the next clip
+     still starts after the gap. Fixing it needs an `AudioManager` change.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that

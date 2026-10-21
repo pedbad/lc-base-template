@@ -284,10 +284,17 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
 **This is the one place the budget is written down.** Every other doc and comment that
 needs the number points here rather than restating it.
 
-| Asset        | Budget (gzipped) | Measured 2026-10-16 | Headroom |
+| Asset        | Budget (gzipped) | Measured 2026-10-21 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 140 kB**     | 136.93 kB           | 3.07 kB  |
-| `main-*.css` | **< 19 kB**      | 17.98 kB            | 1.02 kB  |
+| `main-*.js`  | **< 140 kB**     | 137.13 kB           | 2.87 kB  |
+| `main-*.css` | **< 19 kB**      | 17.96 kB            | 1.04 kB  |
+
+- **Third review's fixes (2026-10-21, TODO §E28): JS 136.97 → 137.13 kB, CSS
+  unchanged.** The playlist's gap handling and the reserved page names. Checking every
+  exercise's content in the browser too would have cost 2.3 kB more (136.97 → 139.26):
+  the fifteen engine schemas, otherwise only in the lazy engine chunks. So only the Node
+  reader checks content, which the build and the dev pages use; the browser hydrates
+  pages already checked.
 
 - **Flashcards done card (2026-10-16, TODO §E22): JS 136.92 → 136.93 kB, CSS
   unchanged.** The card and its styles live in the lazy flashcards chunk; `main` only
