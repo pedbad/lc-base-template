@@ -10,7 +10,7 @@ session, on either machine.
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 | [`../ROADMAP.md`](../ROADMAP.md)      | larger work beyond this queue, each with its trigger       |
 
-**Last updated:** 2026-10-21 · **HEAD:** see `git log` · **Suite:** 196 files · 2118 tests green
+**Last updated:** 2026-10-22 · **HEAD:** see `git log` · **Suite:** 196 files · 2120 tests green
 (Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 60 on a `DEBUG=1` build (20 × 3, `e2e/debug/`) · CI green · `main` protected since 2026-10-21 (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -87,7 +87,10 @@ left, in order:
    a regression test (below).
 10. **E29 — DONE 2026-10-21**: a docs drift sweep; about 45 statements in the living
     docs brought back in line with the code (below).
-11. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
+11. **E30 — DONE 2026-10-21**: a roadmap beyond the queue, right-to-left first (below).
+12. **E31 — DONE 2026-10-22**: the CULP syllabi as a read-only reference, and a
+    `culp-syllabus` skill that checks a teacher's material against them (below).
+13. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
     rules carried into each course repo at its step 6 (item 3), and E16 after.
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
@@ -112,7 +115,7 @@ never the branch's.
 - **Tabs on phones (§F3) is DONE** (2026-10-13): below the block's `@3xl` width the tab
   row gives way to the shadcn `Select`. It cost 21.8 kB of JS, and the maintainer
   raised the JS cap to 140 kB (`docs/TOOLING.md`, "Bundle budget").
-- **After the organisation move (item 11 above), ask the maintainer what is next.**
+- **After the organisation move (item 13 above), ask the maintainer what is next.**
   Candidates: §F2 (the remaining tabs-panel entries), §F6 (further components), or a
   Deferred item. The §E2 queue (`2026-10-12-team-workflow-handover.md` §3, "Next, in
   order") is done up to its last item, the move itself (E8, E4, E7, E5).
@@ -2260,6 +2263,18 @@ rather than the Language Centre's course factory; the maintainer took three smal
   releases, a Moodle package, per-lesson chunking and speech or AI exercises.
   `FUTURE_PROJECTS.md` stays where it is with a "historical" banner, because code
   comments and specs cite its items by number.
+- **E31 — the CULP syllabi and a `culp-syllabus` skill. DONE 2026-10-22**
+  (maintainer's request, branch `feat/culp-syllabi`). The Language Centre's CULP syllabi
+  are in [`docs/culp-syllabi/`](../culp-syllabi/README.md): 124 documents in 20
+  languages, generated from PDF outside the repo, read-only, and kept byte-identical by
+  `.prettierignore` (its README is the one file written here). Course developers are
+  not linguists, so a read-only skill tells them what a CULP level covers and whether a
+  teacher's material sits at it. Design:
+  [`docs/specs/2026-10-22-culp-syllabus-skill-design.md`](../specs/2026-10-22-culp-syllabus-skill-design.md).
+  Proved by hand with two fresh agents (design §7): both answers held against the notes,
+  and the run led to four small changes in the skill. **Open, in the maintainer's
+  generator (outside the repo):** five Spanish notes carry `document_language: en`, which
+  the README says is left out for English.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
