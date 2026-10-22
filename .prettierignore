@@ -18,8 +18,8 @@ graphify-out
 .understand-anything
 .impeccable
 
-# CULP syllabi: a generated, read-only copy that must stay byte-identical to the
-# maintainer's generator output. Never formatted, never edited by hand. Its README is
-# written in the repo, not generated, so it is formatted like any other doc.
+# CULP syllabi: read-only notes that must stay byte-identical to the files the
+# maintainer supplied. Never formatted, never edited by hand. Its README is written in
+# the repo, so it is formatted like any other doc.
 docs/culp-syllabi/*
 !docs/culp-syllabi/README.md

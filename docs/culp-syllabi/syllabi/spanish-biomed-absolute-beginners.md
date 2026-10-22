@@ -3,7 +3,6 @@ title: "Biomedical Campus: Spanish Absolute Beginners"
 aliases: [Biomedical Campus Spanish Absolute Beginners]
 language: "[[Spanish]]"
 language_code: es
-document_language: en
 level: Absolute Beginners
 level_order: 10
 strand: "[[BioMed]]"
