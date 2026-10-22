@@ -4,6 +4,11 @@
 2026-10-22 (§7)
 **TODO:** §E31 · **The syllabi:** [`docs/culp-syllabi/README.md`](../culp-syllabi/README.md)
 
+> **Since E32 (2026-10-22) there is no generator:** the maintainer supplies the notes as
+> Markdown files and a test checks them
+> ([README, "Adding or updating notes"](../culp-syllabi/README.md#adding-or-updating-notes)).
+> Where this design says "generated", read "supplied by the maintainer".
+
 ## 1. Why
 
 Courses copied from this template (`lc-french`, `lc-italian`, `lc-german`, …) are built
