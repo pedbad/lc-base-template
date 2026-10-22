@@ -173,14 +173,37 @@ Right after creating it, in the new course repo:
    CI never runs on the course.
 2. **Settings → General:** untick "Template repository" if it was carried over — a course
    is not a template.
-3. **Settings → Rules → New branch ruleset** on `main`: require a pull request,
-   **required approvals 0**, **require review from Code Owners**, and all five CI status
-   checks (`Lint, test, build` and four `Browser tests (…)`; the exact names are
-   in [`BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md)). Content-only PRs then merge on green CI; any PR
-   touching code waits for the maintainer (the code owner). With a colleague as the author
-   and the maintainer as the reviewer, nobody is locked out. **Verify on the first course**
-   with two test PRs (one content-only, one touching `src/`) that GitHub accepts
-   "0 approvals + code owner review" and behaves as described.
+3. **Two branch rulesets on `main`**, each from **Settings → Rules → Rulesets → New
+   ruleset → New branch ruleset**, enforcement **Active**, target **Include default
+   branch**. GitHub applies every rule of every ruleset on a branch, so the two add up.
+   - **Ruleset A, the template's rules** (TODO §E1). Bypass list **empty**, so they hold
+     for everyone, the Owner included. Rules: **Restrict deletions**; **Require linear
+     history**; **Require a pull request before merging**, required approvals **0**;
+     **Require status checks to pass**, with **Require branches to be up to date before
+     merging** and all five CI checks (`Lint, test, build` and four `Browser tests (…)`;
+     the exact names are in [`BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md)); **Block
+     force pushes**.
+   - **Ruleset B, code owners.** Bypass list: **Organization admin**, set to **For pull
+     requests only**. One rule: **Require a pull request before merging**, required
+     approvals **0**, with **Require review from Code Owners**.
+
+   What that gives:
+   - A **content-only** PR merges on green CI: the content folders have no code owner
+     (step 5).
+   - A colleague's PR **touching code** waits for the maintainer's review, as code owner.
+   - The maintainer's **own** PR touching code, a template sync above all (step 9),
+     could never get that review: GitHub does not count an author's approval, and the
+     maintainer is the only code owner. Ruleset B's bypass lets an Owner merge it from
+     the pull request ("Merge without waiting for requirements to be met"). Ruleset A
+     still holds, so a red, missing or out-of-date check blocks the merge, and nobody
+     pushes to `main` directly.
+
+   **Verify on the first course** with three test PRs before any real work: one
+   content-only (merges on green CI, no review); one from the colleague touching `src/`
+   (waits for the maintainer); and one from the maintainer touching `src/`, as a sync
+   would (the bypass box appears, and the merge still waits for every check to pass).
+   If the bypass lets that third PR merge before its checks pass, remove the bypass, and
+   let the colleague open each sync PR for the maintainer to review instead.
 
 **Fallback — a linked copy instead of a fork** (only if a second fork into `lc-elearn`
 is refused). Create an **empty** repo `lc-elearn/lc-french`
@@ -219,20 +242,23 @@ request into the course repo's `main`, CI green before merge).
 
 When the template changes, each course repo pulls it in:
 
-- **Fork:** course repo page → **Sync fork** → **Update branch**. Then, on each clone:
-  `git pull && bun install`. If GitHub refuses because the step 6 ruleset requires a pull
-  request on `main`, add the template as `upstream` once
+- **Fork:** not the **Sync fork** button. It updates `main` directly, which step 6's
+  ruleset A refuses for everyone. Add the template as `upstream` once
   (`git remote add upstream <template URL>`) and use the branch route below.
-- **Linked copy** (or a refused fork sync): `main` takes changes only through a pull
-  request (step 6), so merge on a branch, on a clone of the course repo:
+- **Linked copy:** `upstream` is set already (step 6).
 
-  ```bash
-  git switch main && git pull && git switch -c sync-template
-  git fetch upstream && git merge upstream/main && bun install
-  git push -u origin sync-template
-  ```
+Either way, `main` takes changes only through a pull request (step 6), so merge on a
+branch, on a clone of the course repo:
 
-  Then open a pull request into the course's `main` and merge it once CI is green.
+```bash
+git switch main && git pull && git switch -c sync-template
+git fetch upstream && git merge upstream/main && bun install
+git push -u origin sync-template
+```
+
+Then open a pull request into the course's `main` and merge it once CI is green. A sync
+touches code, so the maintainer merges their own sync PR with ruleset B's bypass (step 6).
+Then, on each clone: `git switch main && git pull && bun install`.
 
 `bun install` is not optional — a template update can add a package, and the hooks and
 tests fail without it.
