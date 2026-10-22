@@ -5,7 +5,8 @@ syllabi, converted from PDF to Markdown on 2026-10-21: 124 documents in 20 langu
 Staff names and email addresses have been removed. They are here so that anyone turning
 a teacher's material into a lesson, people or agents, can check it against the matching
 CULP level: what that level covers, and whether the material is too basic or too
-advanced for it.
+advanced for it. In Claude Code, the
+[`culp-syllabus`](../../.claude/skills/culp-syllabus/SKILL.md) skill does this check.
 
 > **Do not edit anything in this folder by hand.** It is a generated, read-only copy;
 > the master and its generator live outside this repo, and the maintainer regenerates

@@ -1,6 +1,7 @@
 /**
  * claude-skills.test.ts — keeps the Claude skills that ship with the repo in the shape
- * E7 agreed (docs/specs/2026-10-16-claude-skills-design.md §6).
+ * E7 agreed (docs/specs/2026-10-16-claude-skills-design.md §6), plus E31's syllabus
+ * skill (docs/specs/2026-10-22-culp-syllabus-skill-design.md §6).
  *
  * Reads the files from disk, not git's index, so a new skill's shape is checked before
  * it is committed. A course repo may add skills of its own: they need the same
@@ -24,11 +25,15 @@ const SHIPPED_SKILLS = [
   'sync-from-template',
   'before-pr',
   'build-for-upload',
+  'culp-syllabus',
 ];
 const STEP_0 = '## Step 0 — Where am I';
 const STEP_1 = '## Step 1 — Test first';
 /** Step 0 applies the one shared rule rather than a copy of it (spec §4.1). */
 const WHERE_AM_I_LINK = '../README.md#where-am-i';
+/** The syllabus skill links the notes' one description rather than a copy (E31 §3.3). */
+const CULP_SKILL = 'culp-syllabus';
+const CULP_README_LINK = '../../../docs/culp-syllabi/README.md';
 
 /** The text under a `## ` heading, up to the next `## ` heading. */
 function section(markdown: string, heading: string): string {
@@ -120,6 +125,12 @@ describe('the Claude skills that ship with the repo', () => {
     const step1 = section(read(skillFile(name)), STEP_1);
     expect(step1, `${name} Step 1 must run \`bun run test\``).toContain('bun run test');
     expect(step1, `${name} Step 1 must check the test fails`).toMatch(/\bfail/);
+  });
+
+  it(`${CULP_SKILL} links the syllabi README`, () => {
+    const file = skillFile(CULP_SKILL);
+    expect(existsSync(file), `missing ${file}`).toBe(true);
+    expect(read(file)).toContain(CULP_README_LINK);
   });
 
   it('no shipped skill or agent tells Claude to run `bun test`', () => {

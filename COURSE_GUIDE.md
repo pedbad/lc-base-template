@@ -104,12 +104,13 @@ The repo comes with recipes that Claude Code follows, in
 [`.claude/skills/`](.claude/skills/). Ask in your own words; Claude picks the matching
 recipe and keeps to this guide's rules.
 
-| Say something like                  | Claude follows       | It                                                  |
-| ----------------------------------- | -------------------- | --------------------------------------------------- |
-| "Add a lesson about food"           | `add-lo`             | copies the example lesson, fills it in, checks it   |
-| "Is this ready for a pull request?" | `before-pr`          | runs every check and walks the pull request form    |
-| "Build the course for the server"   | `build-for-upload`   | goes through [`DEPLOY.md`](DEPLOY.md) step by step  |
-| "I need a new kind of exercise"     | see the next section | asks the maintainer for it, rather than building it |
+| Say something like                         | Claude follows       | It                                                                           |
+| ------------------------------------------ | -------------------- | ---------------------------------------------------------------------------- |
+| "Add a lesson about food"                  | `add-lo`             | copies the example lesson, fills it in, checks it                            |
+| "Is this ready for a pull request?"        | `before-pr`          | runs every check and walks the pull request form                             |
+| "Build the course for the server"          | `build-for-upload`   | goes through [`DEPLOY.md`](DEPLOY.md) step by step                           |
+| "Is this Word document right for Basic 2?" | `culp-syllabus`      | compares it with the CULP syllabus and says what is above or below the level |
+| "I need a new kind of exercise"            | see the next section | asks the maintainer for it, rather than building it                          |
 
 ## Need a new exercise, block or look?
 
