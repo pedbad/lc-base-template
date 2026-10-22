@@ -11,3 +11,8 @@
 # Bun's lockfile is machine-generated — collapse it in diffs / PR reviews to
 # cut noise, and mark it generated so GitHub's language stats ignore it.
 bun.lock -diff linguist-generated=true
+
+# The CULP syllabi are generated outside the repo (docs/culp-syllabi/README.md):
+# collapse them in PR reviews. Local diffs stay on. The README is written here.
+docs/culp-syllabi/** linguist-generated=true
+docs/culp-syllabi/README.md linguist-generated=false

@@ -155,20 +155,21 @@ BASE_URL=/course/ bun run build
 
 ## The docs
 
-| File                                           | For                                                        |
-| ---------------------------------------------- | ---------------------------------------------------------- |
-| [`COURSE_GUIDE.md`](COURSE_GUIDE.md)           | colleagues writing a course in its own repo                |
-| [`DEPLOY.md`](DEPLOY.md)                       | whoever publishes a course — build, check, upload          |
-| [`CONTRIBUTING.md`](CONTRIBUTING.md)           | developers — setup, authoring loop, the commit gate        |
-| [`DESIGNER.md`](DESIGNER.md)                   | designers — change colours and fonts without touching code |
-| [`STRUCTURE.md`](STRUCTURE.md)                 | anyone new — what every folder is for                      |
-| [`AGENTS.md`](AGENTS.md)                       | AI coding agents working in this repo                      |
-| [`.claude/skills/`](.claude/skills/)           | Claude Code's recipes; the code ones start from a test     |
-| [`docs/STYLE.md`](docs/STYLE.md)               | developers — how the code is written, and what tools check |
-| [`docs/TOOLING.md`](docs/TOOLING.md)           | why each tool was chosen, and every build decision         |
-| [`docs/ORGANIZATION.md`](docs/ORGANIZATION.md) | maintainer — the planned move to the team organisation     |
-| [`docs/process/TODO.md`](docs/process/TODO.md) | what is still open — start here in a new session           |
-| [`docs/ROADMAP.md`](docs/ROADMAP.md)           | larger work beyond the queue, and what starts each         |
+| File                                                | For                                                             |
+| --------------------------------------------------- | --------------------------------------------------------------- |
+| [`COURSE_GUIDE.md`](COURSE_GUIDE.md)                | colleagues writing a course in its own repo                     |
+| [`DEPLOY.md`](DEPLOY.md)                            | whoever publishes a course — build, check, upload               |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md)                | developers — setup, authoring loop, the commit gate             |
+| [`DESIGNER.md`](DESIGNER.md)                        | designers — change colours and fonts without touching code      |
+| [`STRUCTURE.md`](STRUCTURE.md)                      | anyone new — what every folder is for                           |
+| [`AGENTS.md`](AGENTS.md)                            | AI coding agents working in this repo                           |
+| [`.claude/skills/`](.claude/skills/)                | Claude Code's recipes; the code ones start from a test          |
+| [`docs/STYLE.md`](docs/STYLE.md)                    | developers — how the code is written, and what tools check      |
+| [`docs/TOOLING.md`](docs/TOOLING.md)                | why each tool was chosen, and every build decision              |
+| [`docs/ORGANIZATION.md`](docs/ORGANIZATION.md)      | maintainer — the planned move to the team organisation          |
+| [`docs/process/TODO.md`](docs/process/TODO.md)      | what is still open — start here in a new session                |
+| [`docs/ROADMAP.md`](docs/ROADMAP.md)                | larger work beyond the queue, and what starts each              |
+| [`docs/culp-syllabi/`](docs/culp-syllabi/README.md) | course developers — the CULP syllabi, to check a lesson's level |
 
 ## License
 
