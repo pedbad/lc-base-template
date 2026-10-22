@@ -117,7 +117,7 @@ fixed `BASE_URL`, and that is what makes it work. **Guard c** checks the form;
 | `src/ui-showcase/` | The opt-in debug gallery of every block type, plain and as a card, through the course page's own `LoBlock`.                                                  |
 | `src/code-style/`  | The opt-in Code style page: `docs/STYLE.md` rendered with its examples, from the markdown itself.                                                            |
 | `src/sandbox/`     | The opt-in debug sandbox — tokens, type, the icon sprite, the docs hub and the palette preview.                                                              |
-| `src/docs/`        | Documentation checks — the `STRUCTURE.md` tree generator, its freshness test, and the markdown link check.                                                   |
+| `src/docs/`        | Documentation checks — the `STRUCTURE.md` tree generator, its freshness test, the markdown link check, the Claude skills' shape and the CULP syllabus notes. |
 
 ### Inside `src/exercises/`
 

@@ -105,3 +105,20 @@ assessment is a `> [!important]` callout. There is no HTML.
 - **The template is left-to-right only for now.** The Arabic, Persian, Urdu and Hebrew
   syllabi are here for when right-to-left support lands
   ([`ROADMAP.md` §1](../ROADMAP.md#1-right-to-left-languages-persian-arabic)).
+
+## Adding or updating notes
+
+1. **The maintainer supplies the files**: new notes, or corrected ones that replace a
+   note of the same name. Put each in its folder (`syllabi/`, `languages/`, `strands/`)
+   exactly as supplied.
+2. **A new note joins the web.** Its language hub lists it, so does its strand hub if it
+   has a strand, and the levels around it and its programme specification link back to
+   it. Those are notes too, so they come from the maintainer as well.
+3. **Run `bun run test`.** [`src/docs/culp-syllabi.test.ts`](../../src/docs/culp-syllabi.test.ts)
+   checks every note: its fields and file name, its level against the table above, its
+   dates, that every link leads to a note and runs both ways, the hubs and the index, no
+   email address and no HTML, and the numbers in this README. When it names a problem in
+   a note, tell the maintainer, who decides the fix. When it names a number here, update
+   the README.
+4. **Open a pull request** for the change
+   ([`CONTRIBUTING.md` → "How a change reaches `main`"](../../CONTRIBUTING.md#how-a-change-reaches-main)).
