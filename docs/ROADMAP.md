@@ -43,17 +43,26 @@ in [`docs/culp-syllabi/`](culp-syllabi/README.md) (E31).
   line-height tokens if the script needs them. Hebrew needs the direction work but
   not a font.
 - **Grading.** `normalizeAnswer` and `normalizeForDictation`
-  ([`src/exercises/lib/answers.ts`](../src/exercises/lib/answers.ts)) NFC-normalise
-  and nothing more. Per language, decide what counts as the same answer: Arabic and
+  ([`src/exercises/lib/answers.ts`](../src/exercises/lib/answers.ts)) NFC-normalise,
+  fold apostrophe variants into one and collapse spaces; dictation also ignores Latin
+  sentence punctuation and quote marks, but not the Arabic comma, semicolon or question
+  mark (، ؛ ؟). Nothing in them knows a script. Per language, decide what counts as the
+  same answer: Arabic and
   Persian forms of yeh and kaf (ي/ی, ك/ک), the zero-width non-joiner (U+200C),
   Persian and Arabic-Indic digits, and whether short-vowel marks count. Grading keeps
   accents on purpose today, so the vowel marks are a deliberate choice, not a default.
 - **Engines with an order or a side.** Word order, phrase reorder, line match, the
   flashcards' arrows and the audio scrubbers (which arrow key moves forward?) each
   need a check in right-to-left, and an RTL fixture.
-- **Layout.** Small. Our own CSS names a physical side in five places: three
-  `translateX` in `src/components/home/home.css` and a `text-align: left` in each of
-  `phrase-reorder.css` and `sandbox.css`. They become start and end.
+- **Layout.** Small. Counted 2026-10-23, our own CSS names a physical side in eleven
+  rules: seven on course pages (a `padding-left`, a `border-left` and three
+  `translateX` in `src/components/home/home.css`, a corner radius in
+  `src/exercises/lib/flip-cue.css`, a `text-align: left` in `phrase-reorder.css`) and
+  four in the debug sandbox's `sandbox.css`. The components add seven physical Tailwind
+  classes (`mr-`, `ml-auto`, `pl-`, `border-l-`, `text-left`) in the typed gap, the
+  instructions, line match and the text block. Those inside course-language content
+  become start and end (`ms-`, `ps-`, `border-s-`, `text-start`); the English chrome
+  around them can stay as it is.
 - **Tests.** An RTL lesson or fixtures in the browser suite, with axe, so the
   direction cannot quietly regress.
 
