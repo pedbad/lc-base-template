@@ -2,7 +2,8 @@
 
 `lc-base-template` is dual-licensed: **the code is MIT, the learning content is
 CC BY-NC 4.0.** Brand assets and the Feijoa typeface are licensed under neither
-— see "Brand assets and typeface" below.
+— see "Brand assets and typeface" below — and nor are the CULP syllabi in
+`docs/culp-syllabi/`.
 
 Copyright holder for both licenses:
 **The Language Centre, University of Cambridge.**
@@ -17,6 +18,7 @@ Copyright holder for both licenses:
 | `lo-config/` — Learning Object manifests, blocks, exercises, modals | CC BY-NC 4.0            |
 | `public/audio/`, `public/images/` — authored learning media         | CC BY-NC 4.0            |
 | `docs/` — specs, handovers, process notes                           | CC BY-NC 4.0            |
+| `docs/culp-syllabi/` — the CULP syllabi, for reference only         | **neither**             |
 | Cambridge logos, wordmarks and visual-language imagery              | **neither** — see below |
 | `public/fonts/feijoa/` (never committed; git-ignored)               | **neither** — see below |
 

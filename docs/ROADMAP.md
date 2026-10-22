@@ -25,7 +25,8 @@ script.
 **Today.** No `dir` attribute anywhere in `src/`, the HTML pages or the prerender.
 Engines already mark the course language: they wrap learner content in
 `lang={TARGET_LANG}` ([`src/lib/lang.ts`](../src/lib/lang.ts)). That is the hook the
-direction hangs on.
+direction hangs on. The CULP syllabi for Arabic, Persian, Urdu and Hebrew are already
+in [`docs/culp-syllabi/`](culp-syllabi/README.md) (E31).
 
 **What it touches.**
 
