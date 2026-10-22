@@ -5,7 +5,7 @@ description: Use when someone asks whether lesson material fits a CULP level, or
 
 # Check material against a CULP syllabus
 
-The Language Centre's CULP syllabi are generated, read-only notes in `docs/culp-syllabi/`.
+The Language Centre's CULP syllabi are read-only notes in `docs/culp-syllabi/`.
 Read [their README](../../../docs/culp-syllabi/README.md) first: it describes the notes'
 layout and fields, and what to be careful of. Design:
 [`docs/specs/2026-10-22-culp-syllabus-skill-design.md`](../../../docs/specs/2026-10-22-culp-syllabus-skill-design.md).

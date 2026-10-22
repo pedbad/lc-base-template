@@ -8,12 +8,12 @@ CULP level: what that level covers, and whether the material is too basic or too
 advanced for it. In Claude Code, the
 [`culp-syllabus`](../../.claude/skills/culp-syllabus/SKILL.md) skill does this check.
 
-> **Do not edit anything in this folder by hand.** It is a generated, read-only copy;
-> the master and its generator live outside this repo, and the maintainer regenerates
-> it. If a note is wrong, tell the maintainer. Prettier skips the folder
-> ([`.prettierignore`](../../.prettierignore)) so that every file stays byte-identical
-> to the generator's output. This README is the one exception: it is written in the repo,
-> and the generator leaves it alone.
+> **Do not edit the notes by hand.** They are kept exactly as the maintainer supplied
+> them. A new or corrected note comes from the maintainer as a Markdown file, and is
+> checked and added by pull request; if a note looks wrong, tell the maintainer.
+> Prettier skips the folder ([`.prettierignore`](../../.prettierignore)) so that every
+> note stays byte-identical to the file supplied. This README is the one exception: it
+> is written in the repo.
 
 The syllabi belong to the Language Centre, University of Cambridge. They are shared here
 for reference only and are not covered by this repo's CC BY-NC 4.0 licence

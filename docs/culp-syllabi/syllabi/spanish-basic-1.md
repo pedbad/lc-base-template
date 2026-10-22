@@ -3,7 +3,6 @@ title: "CULP Programa de Estudios Básico 1"
 aliases: [Spanish Basic 1]
 language: "[[Spanish]]"
 language_code: es
-document_language: en
 level: Basic 1
 level_order: 10
 strand: General

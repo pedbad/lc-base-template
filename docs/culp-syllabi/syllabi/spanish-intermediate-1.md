@@ -3,7 +3,6 @@ title: CULP SPANISH Intermediate 1
 aliases: [Spanish Intermediate 1]
 language: "[[Spanish]]"
 language_code: es
-document_language: en
 level: Intermediate 1
 level_order: 50
 strand: General
