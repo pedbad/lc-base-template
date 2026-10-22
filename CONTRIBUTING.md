@@ -428,8 +428,9 @@ The settings and why they are safe for one maintainer:
 > (`src/exercises/reading/`) as the reference shape.
 
 **Claude skills.** The recurring jobs (a lesson, an engine, a block type, the theme, a
-template sync, the check before a pull request, a build for upload) have recipes in
-[`.claude/skills/`](.claude/skills/), with a reviewer in
+template sync, the check before a pull request, a build for upload, a level check
+against the CULP syllabi in [`docs/culp-syllabi/`](docs/culp-syllabi/README.md)) have
+recipes in [`.claude/skills/`](.claude/skills/), with a reviewer in
 [`.claude/agents/lc-reviewer.md`](.claude/agents/lc-reviewer.md). The code recipes start
 from a failing test. In a course repo they file a **Template request** issue on the
 template instead of writing code ([`COURSE_GUIDE.md`](COURSE_GUIDE.md), "Need a new

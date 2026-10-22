@@ -144,9 +144,10 @@ Do not fork a second copy of it.
 - When a doc and the code disagree, **the code is the truth** — fix the doc and
   say so.
 - **Task recipes live in [`.claude/skills/`](.claude/skills/)** (a lesson, an engine,
-  a block type, the theme, a template sync, before a PR, a build for upload). Claude
-  Code loads them by itself; other agents can read them. They link to this file and
-  never restate it, so when a rule here changes, check the skills that link to it.
+  a block type, the theme, a template sync, before a PR, a build for upload, a level
+  check against the CULP syllabi). Claude Code loads them by itself; other agents can
+  read them. They link to this file and never restate it, so when a rule here changes,
+  check the skills that link to it.
 
 ---
 

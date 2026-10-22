@@ -27,6 +27,9 @@ schemas check every lesson file when it loads, and `bun run test` runs them.
    and keep the folder names in step with the config (`<ordinal>-<type>`,
    [`STRUCTURE.md`](../../../STRUCTURE.md)). Rich-text tags are in
    [`docs/specs/lo-rich-text-modals.md`](../../../docs/specs/lo-rich-text-modals.md).
+   If the lesson comes from a teacher's document, the
+   [`culp-syllabus`](../culp-syllabus/SKILL.md) skill can first check its level
+   (optional).
 4. **Use existing kinds only.** If the user wants a kind of exercise or block that does
    not exist, stop and use the `add-exercise-engine` or `add-block-type` skill instead.
 5. **Media.** Ask who made each image and recording before adding it, and follow the
