@@ -10,7 +10,7 @@ session, on either machine.
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 | [`../ROADMAP.md`](../ROADMAP.md)      | larger work beyond this queue, each with its trigger       |
 
-**Last updated:** 2026-10-22 · **HEAD:** see `git log` · **Suite:** 197 files · 2162 tests green
+**Last updated:** 2026-10-23 · **HEAD:** see `git log` · **Suite:** 197 files · 2162 tests green
 (Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 60 on a `DEBUG=1` build (20 × 3, `e2e/debug/`) · CI green · `main` protected since 2026-10-21 (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -92,8 +92,10 @@ left, in order:
     `culp-syllabus` skill that checks a teacher's material against them (below).
 13. **E32 — DONE 2026-10-22**: no generator; the CULP notes are supplied by hand and
     checked by a test (below).
-14. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
-    rules carried into each course repo at its step 6 (item 3), and E16 after.
+14. **E33 — DONE 2026-10-23**: a drift check before the move; course repos get two
+    rulesets, so the maintainer can merge their own template syncs (below).
+15. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
+    rules carried into each course repo as step 6's ruleset A (E33), and E16 after.
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
 GitHub; CI is green there; no open PRs, and only `main` exists on GitHub. The one
@@ -117,7 +119,7 @@ never the branch's.
 - **Tabs on phones (§F3) is DONE** (2026-10-13): below the block's `@3xl` width the tab
   row gives way to the shadcn `Select`. It cost 21.8 kB of JS, and the maintainer
   raised the JS cap to 140 kB (`docs/TOOLING.md`, "Bundle budget").
-- **After the organisation move (item 14 above), ask the maintainer what is next.**
+- **After the organisation move (item 15 above), ask the maintainer what is next.**
   Candidates: §F2 (the remaining tabs-panel entries), §F6 (further components), or a
   Deferred item. The §E2 queue (`2026-10-12-team-workflow-handover.md` §3, "Next, in
   order") is done up to its last item, the move itself (E8, E4, E7, E5).
@@ -2287,6 +2289,23 @@ rather than the Language Centre's course factory; the maintainer took three smal
   HTML, and the README's numbers), written failing first against a stub. Four faults
   planted in memory in the real notes were each named, with nothing else flagged.
   It cannot tell a staff member's name from other words; an email address, yes.
+- **E33 — a drift check before the move, and course repos that do not lock the
+  maintainer out. DONE 2026-10-23** (maintainer's request, branch
+  `docs/e33-course-rulesets`). The 31 living docs, checked against the code (named
+  paths and scripts, counts, the bundle budget, the CI check names), held three wrong
+  statements. ROADMAP §1 said the answer normalisers NFC-normalise and nothing more
+  (they also fold apostrophes and spaces, and dictation drops Latin punctuation but not
+  Arabic), and counted five physical-side CSS rules (there are eleven, plus seven
+  Tailwind classes). ORGANIZATION step 6 left out the E1 rules this file said it
+  carried, and its one ruleset locked the maintainer out of their own template syncs:
+  the sync skill is the maintainer's, a sync touches code, code-owner review was
+  required, and GitHub never counts an author's approval. Step 6 is now two rulesets:
+  A, E1's rules with no bypass; B, code-owner review that an Organization admin can
+  bypass for pull requests only. Step 9 drops the Sync fork button, which ruleset A
+  refuses. Written from GitHub's docs, not yet tried: step 6's three test PRs on the
+  first course are the proof, the third a maintainer sync that must still wait for its
+  checks. Left to the maintainer, as repo settings: deleting head branches on merge is
+  off, and squash merges are allowed although pull requests rebase-merge.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
