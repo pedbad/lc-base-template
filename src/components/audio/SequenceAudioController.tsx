@@ -281,7 +281,8 @@ export function SequenceAudioController({
     if (!audio || !src) return;
 
     const { playSequence = false, offset = 0, autoplay } = opts;
-    wantsPlayRef.current = autoplay !== false;
+    const requestsPlay = autoplay !== false;
+    wantsPlayRef.current = requestsPlay;
     // A new clip replaces whatever the gap was going to start.
     cancelAdvance();
     audio.src = src;
@@ -298,6 +299,12 @@ export function SequenceAudioController({
 
       // Not the request's own autoplay: a pause may have come while the clip loaded.
       const shouldPlay = wantsPlayRef.current;
+      // A play cancelled before it began, on a stopped player: nothing played, so it
+      // stays stopped and the parent hears nothing (TODO §E35).
+      if (requestsPlay && !shouldPlay && stateRef.current.playState === 'stopped') {
+        setState({ playPending: false });
+        return;
+      }
       if (shouldPlay) startPlayback(audio);
 
       const d = Number.isFinite(audio.duration) ? audio.duration : durationsRef.current[index] || 0;
@@ -337,8 +344,9 @@ export function SequenceAudioController({
   const seekMaster = (masterTime: number) => {
     const { playState } = stateRef.current;
     const { index, offset } = locateMasterTime(masterTime);
+    // A play still waiting on its clip carries on from the new place.
     playItem(index, {
-      autoplay: playState === 'playing',
+      autoplay: playState === 'playing' || isPlayPending(),
       offset,
       playSequence: stateRef.current.playSequence,
     });
@@ -349,8 +357,9 @@ export function SequenceAudioController({
   /**
    * Pauses, in a clip, in the gap after one, or while one loads: nothing starts until a
    * resume. The pause and cancel buttons and every stop through AudioManager come here.
-   * A clip that loads after it still takes its place, but stays silent: its start reads
-   * `wantsPlayRef` when the metadata arrives.
+   * A clip that loads after it stays silent, since its start reads `wantsPlayRef` when
+   * the metadata arrives; it takes its place paused, or, if nothing had played, leaves
+   * the player stopped.
    */
   const pause = (audio: HTMLAudioElement) => {
     wantsPlayRef.current = false;
@@ -452,7 +461,7 @@ export function SequenceAudioController({
     const audio = audioRef.current;
     if (!audio || audio.ended || stateRef.current.playState !== 'playing') return;
     wantsPlayRef.current = false;
-    changePlayState('paused');
+    changePlayState('paused', { playPending: false });
   };
 
   const handlePlay = () => {
