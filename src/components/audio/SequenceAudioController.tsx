@@ -30,6 +30,9 @@ interface ControllerState {
   masterTime: number; // overall sequence time
   playSequence: boolean;
   playState: PlayState;
+  // A play asked for while the clip loads: not yet playing, but the button offers to
+  // cancel it. UI only; the parent hears nothing until the clip starts (TODO §E35).
+  playPending: boolean;
   scrubTime: number | null; // transient UI-only master time while scrubbing
 }
 
@@ -70,6 +73,7 @@ const INITIAL_STATE: ControllerState = {
   masterTime: 0,
   playSequence: false,
   playState: 'stopped',
+  playPending: false,
   scrubTime: null,
 };
 
@@ -300,6 +304,7 @@ export function SequenceAudioController({
       durationsRef.current[index] = d;
 
       changePlayState(shouldPlay ? 'playing' : 'paused', {
+        playPending: false,
         clipDuration: d,
         clipTime: audio.currentTime,
         currentIndex: index,
@@ -321,8 +326,12 @@ export function SequenceAudioController({
     } else {
       pendingStartRef.current = start;
       audio.addEventListener('loadedmetadata', start, { once: true });
+      setState({ playPending: wantsPlayRef.current });
     }
   };
+
+  /** True while a play the learner asked for waits on its clip's metadata. */
+  const isPlayPending = () => wantsPlayRef.current && pendingStartRef.current !== null;
 
   /** Seek within the overall sequence. */
   const seekMaster = (masterTime: number) => {
@@ -339,7 +348,9 @@ export function SequenceAudioController({
 
   /**
    * Pauses, in a clip, in the gap after one, or while one loads: nothing starts until a
-   * resume. The pause button and every stop through AudioManager come here.
+   * resume. The pause and cancel buttons and every stop through AudioManager come here.
+   * A clip that loads after it still takes its place, but stays silent: its start reads
+   * `wantsPlayRef` when the metadata arrives.
    */
   const pause = (audio: HTMLAudioElement) => {
     wantsPlayRef.current = false;
@@ -349,7 +360,8 @@ export function SequenceAudioController({
       advanceRef.current = { index: advance.index, timer: null };
     }
     audio.pause();
-    if (stateRef.current.playState === 'playing') changePlayState('paused');
+    if (stateRef.current.playState === 'playing') changePlayState('paused', { playPending: false });
+    else setState({ playPending: false });
   };
 
   /** Resumes where the pause left off: the paused clip, or the clip the gap was for. */
@@ -370,6 +382,11 @@ export function SequenceAudioController({
     if (!audio) return;
     const { playState } = stateRef.current;
 
+    // Still loading the clip it was asked to play: the press cancels that play.
+    if (playState !== 'playing' && isPlayPending()) {
+      pause(audio);
+      return;
+    }
     if (playState === 'paused') {
       resume(audio, { playSequence: true });
       return;
@@ -386,7 +403,7 @@ export function SequenceAudioController({
     if (!audio) return;
     const { playState } = stateRef.current;
 
-    if (playState === 'playing') pause(audio);
+    if (playState === 'playing' || isPlayPending()) pause(audio);
     else if (playState === 'paused') resume(audio);
     else toggleMasterPlay();
   };
@@ -452,7 +469,8 @@ export function SequenceAudioController({
     audio.removeEventListener('loadedmetadata', pendingStartRef.current);
     pendingStartRef.current = null;
     wantsPlayRef.current = false;
-    if (stateRef.current.playState === 'playing') changePlayState('paused');
+    if (stateRef.current.playState === 'playing') changePlayState('paused', { playPending: false });
+    else setState({ playPending: false });
   };
 
   const handleEnded = () => {
@@ -563,8 +581,12 @@ export function SequenceAudioController({
 
   /* ---------- Render ---------- */
 
-  const { masterTime, masterDuration, scrubTime, playState } = state;
+  const { masterTime, masterDuration, scrubTime, playState, playPending } = state;
   const displayTime = scrubTime !== null ? scrubTime : masterTime;
+  const isPlaying = playState === 'playing';
+  // Loading is not playing: only the button changes, to cancel what was asked for.
+  const isLoading = !isPlaying && playPending;
+  const buttonLabel = isPlaying ? 'Pause audio' : isLoading ? 'Cancel playback' : 'Play audio';
 
   return (
     // NB: french-lo-1 put onMouseDown/onTouchStart stopPropagation here to shield the
@@ -574,11 +596,11 @@ export function SequenceAudioController({
     <div className="sequence-audio-controller flex w-full items-center gap-3 rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-foreground">
       <button
         type="button"
-        aria-label={playState === 'playing' ? 'Pause audio' : 'Play audio'}
+        aria-label={buttonLabel}
         className="play-pause grid min-h-6 min-w-6 shrink-0 cursor-pointer place-items-center leading-none"
         onClick={toggleMasterPlay}
       >
-        {playState === 'playing' ? (
+        {isPlaying || isLoading ? (
           <svg
             width="16"
             height="16"
