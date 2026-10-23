@@ -102,15 +102,15 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      # Browsers are ~500 MB; cache them per Playwright version. On a hit only the
-      # Linux system libraries are installed, which the cache cannot hold. Browsers are
-      # built per distro, so the key also names the runner image ($ImageOS, read here
-      # because the `env` context holds only workflow keys): an image move misses.
+      # Browsers are ~500 MB; cache them per Playwright version. Browsers are built per
+      # distro, so the key also names the runner image ($ImageOS, read here because the
+      # `env` context holds only workflow keys): an image move misses.
       - name: Read the Playwright version and runner image
         id: playwright
         run: |
           echo "version=$(node -p "require('./node_modules/@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
           echo "image=$ImageOS" >> "$GITHUB_OUTPUT"
+          echo "image-version=$ImageVersion" >> "$GITHUB_OUTPUT"
 
       # An exact tag, not `@v6`, for the same reason as setup-node above.
       - name: Cache Playwright browsers
@@ -120,21 +120,63 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.image }}-${{ steps.playwright.outputs.version }}
 
+      # The system libraries the browsers need, plus PulseAudio for the sound device
+      # below: ~120 MB of Ubuntu packages, which the browser cache cannot hold. A
+      # runner's Ubuntu mirror sometimes serves them at 50-100 kB/s, never failing,
+      # until the job's 15 minutes cancel a required check (TODO §E38, four times on
+      # 2026-10-22/23). So the downloaded packages are cached too, and a run fetches
+      # only what Ubuntu updated since. The key names the image version, so each new
+      # image saves a fresh copy, starting from the last one (restore-keys).
+      - name: Cache downloaded system packages
+        uses: actions/cache@v6.1.0
+        with:
+          path: ~/.cache/apt-archives
+          key: apt-${{ runner.os }}-${{ steps.playwright.outputs.image }}-${{ steps.playwright.outputs.image-version }}-${{ steps.playwright.outputs.version }}
+          restore-keys: |
+            apt-${{ runner.os }}-${{ steps.playwright.outputs.image }}-
+
+      # Each try gets TRY_SECONDS (an uncached install takes under a minute), run as
+      # root so `timeout` stops apt itself, not only the sudo in front of it. A try that
+      # fails or runs out drops the Azure mirror, so the next goes to archive.ubuntu.com
+      # (the runner's second mirror, /etc/apt/apt-mirrors.txt), and apt keeps every
+      # package already downloaded. Every try fits in timeout-minutes, and that in the
+      # job's 15 (src/docs/ci-workflow.test.ts). Then autoclean drops packages Ubuntu
+      # has replaced, so the cache does not grow.
+      - name: Install browser system libraries
+        timeout-minutes: 8
+        env:
+          TRIES: 3
+          TRY_SECONDS: 120
+        run: |
+          mkdir -p ~/.cache/apt-archives
+          if compgen -G ~/.cache/apt-archives/'*.deb' > /dev/null; then
+            sudo cp ~/.cache/apt-archives/*.deb /var/cache/apt/archives/
+          fi
+          for try in $(seq "$TRIES"); do
+            if sudo env "PATH=$PATH" timeout --kill-after=10s "${TRY_SECONDS}s" sh -c \
+              'bunx playwright install-deps chromium firefox webkit && apt-get install -y --no-install-recommends pulseaudio'; then
+              break
+            fi
+            if [ "$try" -eq "$TRIES" ]; then exit 1; fi
+            echo "::warning::System packages: try $try of $TRIES failed or ran out of time. Trying again without the Azure mirror."
+            sudo sed -i '/azure\.archive\.ubuntu\.com/d' /etc/apt/apt-mirrors.txt
+            sudo dpkg --configure -a
+          done
+          sudo apt-get autoclean
+          rm -f ~/.cache/apt-archives/*.deb
+          cp /var/cache/apt/archives/*.deb ~/.cache/apt-archives/
+
       - name: Install browsers
         if: steps.browser-cache.outputs.cache-hit != 'true'
-        run: bunx playwright install --with-deps chromium firefox webkit
-
-      - name: Install browser system libraries
-        if: steps.browser-cache.outputs.cache-hit == 'true'
-        run: bunx playwright install-deps chromium firefox webkit
+        run: bunx playwright install chromium firefox webkit
 
       # The runner has no sound device, so Firefox cannot play audio there
       # (NS_ERROR_DOM_MEDIA_MEDIASINK_ERR) and a clip's currentTime never moves. A
-      # PulseAudio null sink gives it one. Without it, e2e/debug/sequence-scrub.spec.ts
-      # passed only because a stale playlist timer jumped clips (TODO §E28, PR 31).
+      # PulseAudio null sink gives it one (installed with the system libraries above).
+      # Without it, e2e/debug/sequence-scrub.spec.ts passed only because a stale
+      # playlist timer jumped clips (TODO §E28, PR 31).
       - name: Start a virtual sound device
         run: |
-          sudo apt-get install -y --no-install-recommends pulseaudio
           pulseaudio --start --exit-idle-time=-1
           pactl load-module module-null-sink sink_name=ci
           pactl set-default-sink ci
