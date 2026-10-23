@@ -42,8 +42,19 @@ describe('FlipCue leaving', () => {
     const pop = renderToStaticMarkup(<FlipCue exit="pop" />);
     expect(pop).toContain('<span class="flip-cue-sparks" aria-hidden="true"');
     expect(pop.match(/class="flip-cue-spark"/g)).toHaveLength(5);
-    for (const exit of ['peel', 'wave', 'tuck'] as const) {
+    for (const exit of ['peel', 'wave', 'tuck', 'shatter'] as const) {
       expect(renderToStaticMarkup(<FlipCue exit={exit} />), exit).not.toContain('flip-cue-sparks');
+    }
+  });
+
+  it('adds two decorative shards for the shatter, and only the shatter', () => {
+    const shatter = renderToStaticMarkup(<FlipCue exit="shatter" delayMs={70} />);
+    expect(shatter).toContain(
+      '<span class="flip-cue-shards" aria-hidden="true" style="--flip-cue-delay:70ms">',
+    );
+    expect(shatter.match(/class="flip-cue-shard"/g)).toHaveLength(2);
+    for (const exit of ['peel', 'pop', 'fold', 'melt'] as const) {
+      expect(renderToStaticMarkup(<FlipCue exit={exit} />), exit).not.toContain('flip-cue-shards');
     }
   });
 

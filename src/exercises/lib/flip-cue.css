@@ -220,6 +220,208 @@
     }
   }
 
+  /* Fold: folds over its own diagonal like a dog-eared page, then fades. */
+  .flip-cue[data-exit='fold'] {
+    transform-origin: 50% 50%;
+    animation: flip-cue-fold 1200ms ease-in-out var(--flip-cue-delay, 0ms) both;
+  }
+
+  @keyframes flip-cue-fold {
+    0% {
+      opacity: 1;
+      transform: perspective(20rem) rotate3d(-1, 1, 0, 0deg);
+    }
+
+    55% {
+      opacity: 1;
+      transform: perspective(20rem) rotate3d(-1, 1, 0, 180deg);
+    }
+
+    100% {
+      opacity: 0;
+      transform: perspective(20rem) rotate3d(-1, 1, 0, 180deg) translate(0.625rem, 0.625rem);
+    }
+  }
+
+  /* Flip: turns over like the card beneath it, twice, shrinking away. */
+  .flip-cue[data-exit='flip'] {
+    transform-origin: 67% 67%;
+    animation: flip-cue-flip 1100ms ease-in var(--flip-cue-delay, 0ms) both;
+  }
+
+  @keyframes flip-cue-flip {
+    0% {
+      opacity: 1;
+      transform: perspective(20rem) rotateY(0deg) scale(1);
+    }
+
+    40% {
+      opacity: 1;
+      transform: perspective(20rem) rotateY(180deg) scale(1.1);
+    }
+
+    100% {
+      opacity: 0;
+      transform: perspective(20rem) rotateY(360deg) scale(0);
+    }
+  }
+
+  /* Wipe: a short swell, then it is wiped back into the corner it came from. */
+  .flip-cue[data-exit='wipe'] {
+    animation: flip-cue-wipe 1000ms cubic-bezier(0.6, 0, 0.4, 1) var(--flip-cue-delay, 0ms) both;
+  }
+
+  @keyframes flip-cue-wipe {
+    0% {
+      clip-path: polygon(100% 0, 100% 100%, 0 100%);
+      transform: scale(1);
+    }
+
+    20% {
+      clip-path: polygon(100% 0, 100% 100%, 0 100%);
+      transform: scale(1.06);
+    }
+
+    100% {
+      clip-path: polygon(100% 100%, 100% 100%, 100% 100%);
+      transform: scale(1);
+    }
+  }
+
+  /* Spin: winds back, then pinwheels away into nothing. */
+  .flip-cue[data-exit='spin'] {
+    transform-origin: 67% 67%;
+    animation: flip-cue-spin 1200ms ease-in var(--flip-cue-delay, 0ms) both;
+  }
+
+  @keyframes flip-cue-spin {
+    0% {
+      opacity: 1;
+      transform: rotate(0deg) scale(1);
+    }
+
+    20% {
+      opacity: 1;
+      transform: rotate(-20deg) scale(1);
+    }
+
+    100% {
+      opacity: 0;
+      transform: rotate(540deg) scale(0);
+    }
+  }
+
+  /* Shatter: trembles, then cracks; the corner vanishes as its two shards fly apart. */
+  .flip-cue[data-exit='shatter'] {
+    animation: flip-cue-shatter 1200ms linear var(--flip-cue-delay, 0ms) both;
+  }
+
+  @keyframes flip-cue-shatter {
+    0%,
+    16% {
+      opacity: 1;
+      transform: none;
+    }
+
+    4%,
+    12% {
+      transform: translate(-0.125rem, 0.0625rem);
+    }
+
+    8% {
+      transform: translate(0.125rem, -0.0625rem);
+    }
+
+    18%,
+    100% {
+      opacity: 0;
+      transform: none;
+    }
+  }
+
+  .flip-cue-shards {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  /* Each shard is one half of the corner's triangle, split from the right angle. */
+  .flip-cue-shard {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: var(--flip-cue-size, 7rem);
+    height: var(--flip-cue-size, 7rem);
+    border-bottom-right-radius: calc(var(--radius) + 3px);
+    background: linear-gradient(to bottom right, transparent 50%, var(--flip-cue) 50%);
+    clip-path: polygon(100% 0, 100% 100%, 50% 50%);
+    animation: flip-cue-shard-a 1200ms ease-in var(--flip-cue-delay, 0ms) both;
+  }
+
+  .flip-cue-shard:nth-child(2) {
+    clip-path: polygon(50% 50%, 100% 100%, 0 100%);
+    animation-name: flip-cue-shard-b;
+  }
+
+  @keyframes flip-cue-shard-a {
+    0%,
+    16% {
+      opacity: 0;
+      transform: none;
+    }
+
+    18% {
+      opacity: 1;
+      transform: none;
+    }
+
+    100% {
+      opacity: 0;
+      transform: translate(2.5rem, -4.5rem) rotate(70deg);
+    }
+  }
+
+  @keyframes flip-cue-shard-b {
+    0%,
+    16% {
+      opacity: 0;
+      transform: none;
+    }
+
+    18% {
+      opacity: 1;
+      transform: none;
+    }
+
+    100% {
+      opacity: 0;
+      transform: translate(-4.5rem, 3rem) rotate(-80deg);
+    }
+  }
+
+  /* Melt: squashes down, then flattens into the card's bottom edge. */
+  .flip-cue[data-exit='melt'] {
+    transform-origin: 50% 100%;
+    animation: flip-cue-melt 1400ms ease-in var(--flip-cue-delay, 0ms) both;
+  }
+
+  @keyframes flip-cue-melt {
+    0% {
+      opacity: 1;
+      transform: scale(1, 1);
+    }
+
+    30% {
+      opacity: 1;
+      transform: scale(0.95, 1.25);
+    }
+
+    100% {
+      opacity: 0;
+      transform: scale(1.2, 0);
+    }
+  }
+
   /* The instruction box's pointer before **Tap to flip** fades with the corners. */
   .flip-cue-glyph-leaving {
     animation: flip-cue-fade 900ms ease-in both;
@@ -232,7 +434,7 @@
   }
 
   /* Reduced motion: one quiet fade for every corner, all at once — the shorthand
-     resets the delay — with no wave and no sparkles. */
+     resets the delay — with no wave, no sparkles and no shards. */
   @media (prefers-reduced-motion: reduce) {
     .flip-cue[data-exit] {
       animation: flip-cue-fade 400ms ease-out forwards;
@@ -242,7 +444,8 @@
       animation: none;
     }
 
-    .flip-cue-sparks {
+    .flip-cue-sparks,
+    .flip-cue-shards {
       display: none;
     }
 
