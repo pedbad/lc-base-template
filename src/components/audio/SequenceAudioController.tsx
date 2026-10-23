@@ -136,6 +136,9 @@ export function SequenceAudioController({
   const loadedIndexRef = useRef(0);
   // The seek waiting on metadata, so a newer seek can replace it instead of both running.
   const pendingStartRef = useRef<(() => void) | null>(null);
+  // What the learner asked for last: play, until a pause or a stop from anywhere. A clip
+  // that finishes loading starts only if this still says play (TODO §E34).
+  const wantsPlayRef = useRef(false);
   // The move to the next clip after the gap: which clip, and the timer that starts it.
   // A pause clears the timer and keeps the index, so play resumes there; a stop, a new
   // clip or an unmount drops both (review 2026-10-21).
@@ -274,6 +277,7 @@ export function SequenceAudioController({
     if (!audio || !src) return;
 
     const { playSequence = false, offset = 0, autoplay } = opts;
+    wantsPlayRef.current = autoplay !== false;
     // A new clip replaces whatever the gap was going to start.
     cancelAdvance();
     audio.src = src;
@@ -288,7 +292,8 @@ export function SequenceAudioController({
         // Some browsers throw if currentTime is set before metadata; ignore.
       }
 
-      const shouldPlay = autoplay !== false;
+      // Not the request's own autoplay: a pause may have come while the clip loaded.
+      const shouldPlay = wantsPlayRef.current;
       if (shouldPlay) startPlayback(audio);
 
       const d = Number.isFinite(audio.duration) ? audio.duration : durationsRef.current[index] || 0;
@@ -332,25 +337,31 @@ export function SequenceAudioController({
 
   /* ---------- Master control ---------- */
 
-  /** Pauses, in a clip or in the gap after one: the next clip waits for a resume. */
+  /**
+   * Pauses, in a clip, in the gap after one, or while one loads: nothing starts until a
+   * resume. The pause button and every stop through AudioManager come here.
+   */
   const pause = (audio: HTMLAudioElement) => {
+    wantsPlayRef.current = false;
     const advance = advanceRef.current;
     if (advance?.timer != null) {
       clearTimeout(advance.timer);
       advanceRef.current = { index: advance.index, timer: null };
     }
     audio.pause();
-    changePlayState('paused');
+    if (stateRef.current.playState === 'playing') changePlayState('paused');
   };
 
   /** Resumes where the pause left off: the paused clip, or the clip the gap was for. */
   const resume = (audio: HTMLAudioElement, patch: StatePatch = {}) => {
+    wantsPlayRef.current = true;
     const advance = advanceRef.current;
     if (advance) {
       playItem(advance.index, { playSequence: true });
       return;
     }
-    startPlayback(audio);
+    // A clip still loading starts itself when ready; playing it now would start it twice.
+    if (!pendingStartRef.current) startPlayback(audio);
     changePlayState('playing', patch);
   };
 
@@ -414,20 +425,34 @@ export function SequenceAudioController({
     );
   };
 
-  // Pauses and resumes from outside: a media key, or another player stopping this one
-  // through AudioManager — except in the gap between clips, where the element is
-  // already paused, fires nothing, and the next clip still starts (TODO §E28). At a
-  // clip's end the element pauses too, just before `ended`; handleEnded answers that one
-  // (the next clip, or stopped), so it is skipped here.
+  // Pauses and resumes from outside the page, such as a media key; each one is what the
+  // learner asked for last. Another player stopping this one calls `pause` through
+  // AudioManager instead, which holds in the gap between clips too, where the element
+  // fires nothing (TODO §E34); a `pause` event that follows it here finds the state
+  // already paused, or repeats it. At a clip's end the element pauses too, just before
+  // `ended`; handleEnded answers that one (the next clip, or stopped), so it is skipped.
   const handlePause = () => {
     const audio = audioRef.current;
     if (!audio || audio.ended || stateRef.current.playState !== 'playing') return;
+    wantsPlayRef.current = false;
     changePlayState('paused');
   };
 
   const handlePlay = () => {
+    wantsPlayRef.current = true;
     if (stateRef.current.playState === 'playing') return;
     changePlayState('playing');
+  };
+
+  // A clip that cannot load never sends its metadata: drop the start waiting for it,
+  // so a resume made meanwhile does not stay on "playing" in silence.
+  const handleError = () => {
+    const audio = audioRef.current;
+    if (!audio || !pendingStartRef.current) return;
+    audio.removeEventListener('loadedmetadata', pendingStartRef.current);
+    pendingStartRef.current = null;
+    wantsPlayRef.current = false;
+    if (stateRef.current.playState === 'playing') changePlayState('paused');
   };
 
   const handleEnded = () => {
@@ -508,16 +533,23 @@ export function SequenceAudioController({
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
     audio.addEventListener('pause', handlePause);
     audio.addEventListener('play', handlePlay);
-    AudioManager.registerElement(audio);
+    audio.addEventListener('error', handleError);
+    AudioManager.registerElement(audio, () => pause(audio));
     preloadDurations();
 
     return () => {
       cancelAdvance();
+      wantsPlayRef.current = false;
+      if (pendingStartRef.current) {
+        audio.removeEventListener('loadedmetadata', pendingStartRef.current);
+        pendingStartRef.current = null;
+      }
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       audio.removeEventListener('pause', handlePause);
       audio.removeEventListener('play', handlePlay);
+      audio.removeEventListener('error', handleError);
       AudioManager.unregisterElement(audio);
       audio.pause();
       audio.src = '';

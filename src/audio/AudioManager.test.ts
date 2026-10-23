@@ -190,3 +190,43 @@ describe('AudioManager when the browser refuses to play', () => {
     unsubscribe();
   });
 });
+
+// Audit 2026-10-23 (TODO §E34): stopAll() only paused a registered player's element. In
+// a playlist's gap that element is already paused, so nothing reached the player and its
+// next clip started anyway. A registered player now gives its own stop.
+describe('AudioManager stopping a registered player', () => {
+  const player = () => ({ pause: vi.fn() }) as unknown as HTMLAudioElement;
+
+  test('stopAll hands each registered player its own stop', () => {
+    const element = player();
+    const stop = vi.fn();
+    AudioManager.registerElement(element, stop);
+
+    AudioManager.stopAll();
+
+    expect(stop).toHaveBeenCalledOnce();
+    AudioManager.unregisterElement(element);
+  });
+
+  test('stopAll leaves alone the player that is starting', () => {
+    const element = player();
+    const stop = vi.fn();
+    AudioManager.registerElement(element, stop);
+
+    AudioManager.stopAll({ except: element });
+
+    expect(stop).not.toHaveBeenCalled();
+    AudioManager.unregisterElement(element);
+  });
+
+  test('a player that has unregistered is not stopped', () => {
+    const element = player();
+    const stop = vi.fn();
+    AudioManager.registerElement(element, stop);
+    AudioManager.unregisterElement(element);
+
+    AudioManager.stopAll();
+
+    expect(stop).not.toHaveBeenCalled();
+  });
+});

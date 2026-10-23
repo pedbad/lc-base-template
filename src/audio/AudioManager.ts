@@ -40,7 +40,8 @@ const clamp01 = (value: number): number => Math.max(0, Math.min(1, value));
 class AudioManager {
   private activeAudio: HTMLAudioElement | null = null;
   private activeId: string | null = null;
-  private registeredElements = new Set<HTMLAudioElement>();
+  /** Each registered player's element, with the player's own stop (TODO §E34). */
+  private registeredElements = new Map<HTMLAudioElement, () => void>();
   private volume = 1;
   private listeners = new Set<Listener>();
 
@@ -116,7 +117,7 @@ class AudioManager {
     if (typeof document !== 'undefined') {
       document.querySelectorAll('audio').forEach((el) => el.pause());
     }
-    this.registeredElements.forEach((el) => el.pause());
+    this.stopRegistered(null);
     // Notified at once, as play() starts; a refused resume is then corrected from the
     // outcome, so subscribers end on "not playing" rather than a stale "playing".
     const audio = this.activeAudio;
@@ -151,16 +152,20 @@ class AudioManager {
         if (el !== except) el.pause();
       });
     }
-    this.registeredElements.forEach((el) => {
-      if (el !== except) el.pause();
-    });
+    this.stopRegistered(except);
     this.notify();
   }
 
   // --- DOM <audio> registration (used by SequenceAudioController) -----------
 
-  registerElement(audioEl: HTMLAudioElement | null) {
-    if (audioEl) this.registeredElements.add(audioEl);
+  /**
+   * Registers a player's element with the player's own `stop`, which every stop from
+   * here calls instead of pausing the element. A player can have work pending that its
+   * element knows nothing of: a playlist's gap, or a clip still loading that would start
+   * when it is ready (TODO §E34). Its stop cancels that work too.
+   */
+  registerElement(audioEl: HTMLAudioElement | null, stop: () => void) {
+    if (audioEl) this.registeredElements.set(audioEl, stop);
   }
 
   unregisterElement(audioEl: HTMLAudioElement) {
@@ -172,7 +177,7 @@ class AudioManager {
   setVolume(value: number) {
     this.volume = clamp01(value);
     if (this.activeAudio) this.activeAudio.volume = this.volume;
-    this.registeredElements.forEach((el) => {
+    this.registeredElements.forEach((_stop, el) => {
       el.volume = this.volume;
     });
     this.notify();
@@ -190,7 +195,7 @@ class AudioManager {
 
   isPlaying(): boolean {
     if (this.activeAudio) return !this.activeAudio.paused && !this.activeAudio.ended;
-    for (const el of this.registeredElements) {
+    for (const el of this.registeredElements.keys()) {
       if (!el.paused && !el.ended) return true;
     }
     return false;
@@ -201,6 +206,13 @@ class AudioManager {
   subscribe(listener: Listener): () => void {
     this.listeners.add(listener);
     return () => this.listeners.delete(listener);
+  }
+
+  /** Stops every registered player but `except`, through each player's own stop. */
+  private stopRegistered(except: HTMLAudioElement | null) {
+    this.registeredElements.forEach((stop, el) => {
+      if (el !== except) stop();
+    });
   }
 
   private clearActive() {

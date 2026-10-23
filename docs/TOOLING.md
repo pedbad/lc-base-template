@@ -286,10 +286,15 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
 **This is the one place the budget is written down.** Every other doc and comment that
 needs the number points here rather than restating it.
 
-| Asset        | Budget (gzipped) | Measured 2026-10-21 | Headroom |
+| Asset        | Budget (gzipped) | Measured 2026-10-23 | Headroom |
 | ------------ | ---------------- | ------------------- | -------- |
-| `main-*.js`  | **< 140 kB**     | 137.13 kB           | 2.87 kB  |
+| `main-*.js`  | **< 140 kB**     | 137.18 kB           | 2.82 kB  |
 | `main-*.css` | **< 19 kB**      | 17.96 kB            | 1.04 kB  |
+
+- **Fourth review's fixes (2026-10-23, TODO §E34): JS 137.13 → 137.18 kB, CSS
+  unchanged.** AudioManager, in every page, now keeps each player's own stop. The blank
+  checks cost the main bundle nothing: they run in the engine schemas, which only the
+  Node reader and the lazy engine chunks hold.
 
 - **Third review's fixes (2026-10-21, TODO §E28): JS 136.97 → 137.13 kB, CSS
   unchanged.** The playlist's gap handling and the reserved page names. Checking every
