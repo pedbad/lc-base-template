@@ -35,6 +35,20 @@ describe('InlineChoiceContentSchema', () => {
     expect(parsed.items[0].audio).toBe('02-inline-choice/q1.mp3');
     expect(parsed.footnote).toBe('Tip: subject-verb agreement.');
   });
+
+  // Audit 2026-10-23 (TODO §E34): the same `[a|*b|c]` blanks as select, the same check.
+  test('rejects a blank with no correct option, on its own sentence', () => {
+    const result = InlineChoiceContentSchema.safeParse({
+      items: [{ text: 'Tú [*eres|es].' }, { text: 'Yo [soy|eres|es].' }],
+    });
+    expect(result.error?.issues.map((issue) => issue.path)).toEqual([['items', 1, 'text']]);
+    expect(result.error?.issues[0].message).toContain('[soy|eres|es] has no correct option');
+  });
+
+  test('rejects an exercise with no blank at all', () => {
+    const result = InlineChoiceContentSchema.safeParse({ items: [{ text: 'Vivo en Madrid.' }] });
+    expect(result.error?.issues[0].message).toContain('no sentence has a blank');
+  });
 });
 
 describe('InlineChoiceExerciseConfigSchema', () => {

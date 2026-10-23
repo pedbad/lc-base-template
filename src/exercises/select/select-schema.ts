@@ -21,24 +21,29 @@
  *       docs/specs/2026-06-15-lc-base-template-design.md §10.
  */
 import { z } from 'zod';
+import { hasAnyBlank, noBlankIssue, sentenceWithBlanks } from '../lib/blank-checks';
 import { instructionsField } from '../lib/instructions';
+import { choiceBlankProblems } from '../lib/parsing';
 import { ExerciseConfigSchema } from '@/config/lo-schema';
 
-/** One sentence in a select exercise. `text` carries the `[a|*b|c]` blanks. */
+/** One sentence in a select exercise. `text` carries the `[a|*b|c]` blanks; each must be
+ *  answerable (exactly one `*`, no empty or repeated option), or the load fails. */
 export const SelectItemSchema = z.object({
-  text: z.string().min(1),
+  text: sentenceWithBlanks(choiceBlankProblems),
   /** Reserved asset ref; playback deferred until the audio subsystem is ported. */
   audio: z.string().min(1).optional(),
 });
 export type SelectItem = z.infer<typeof SelectItemSchema>;
 
 /** The `content` block for a `select` exercise. */
-export const SelectContentSchema = z.object({
-  ...instructionsField,
-  items: z.array(SelectItemSchema).min(1),
-  layoutMode: z.enum(['rows', 'inline-passage']).default('rows'),
-  footnote: z.string().min(1).optional(),
-});
+export const SelectContentSchema = z
+  .object({
+    ...instructionsField,
+    items: z.array(SelectItemSchema).min(1),
+    layoutMode: z.enum(['rows', 'inline-passage']).default('rows'),
+    footnote: z.string().min(1).optional(),
+  })
+  .refine((content) => hasAnyBlank(content.items), noBlankIssue('[*right|wrong]'));
 export type SelectContent = z.infer<typeof SelectContentSchema>;
 
 /**

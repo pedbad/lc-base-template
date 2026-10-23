@@ -25,12 +25,15 @@
  *       docs/specs/2026-06-15-lc-base-template-design.md §10.
  */
 import { z } from 'zod';
+import { hasAnyBlank, noBlankIssue, sentenceWithBlanks } from '../lib/blank-checks';
 import { instructionsField } from '../lib/instructions';
+import { inputBlankProblems } from '../lib/parsing';
 import { ExerciseConfigSchema } from '@/config/lo-schema';
 
-/** One sentence in an inline-gap exercise. `text` carries `[expected::placeholder]` blanks. */
+/** One sentence in an inline-gap exercise. `text` carries `[expected::placeholder]` blanks;
+ *  each needs an answer before any `::`, or the load fails. */
 export const InlineGapItemSchema = z.object({
-  text: z.string().min(1),
+  text: sentenceWithBlanks(inputBlankProblems),
   /** Optional instruction shown above the sentence. */
   prompt: z.string().min(1).optional(),
   /** Optional per-row audio clip (rendered as a click-to-play speaker). */
@@ -39,21 +42,23 @@ export const InlineGapItemSchema = z.object({
 export type InlineGapItem = z.infer<typeof InlineGapItemSchema>;
 
 /** The `content` block for an inline-gap exercise. */
-export const InlineGapContentSchema = z.object({
-  ...instructionsField,
-  items: z.array(InlineGapItemSchema).min(1),
-  /**
-   * When true, the rows' audio is played as one continuous playlist by a master
-   * SequenceAudioController (play/pause, scrubber, volume, auto-advance), and each
-   * row's speaker becomes a display driven by it. When false/omitted, each row's
-   * audio is an independent click-to-play clip. No-op if no item carries audio.
-   */
-  useSequenceAudioController: z.boolean().optional(),
-  /** Optional "listen first" intro: a label + a single clip above the items. */
-  listenDescriptionText: z.string().min(1).optional(),
-  soundFile: z.string().min(1).optional(),
-  footnote: z.string().min(1).optional(),
-});
+export const InlineGapContentSchema = z
+  .object({
+    ...instructionsField,
+    items: z.array(InlineGapItemSchema).min(1),
+    /**
+     * When true, the rows' audio is played as one continuous playlist by a master
+     * SequenceAudioController (play/pause, scrubber, volume, auto-advance), and each
+     * row's speaker becomes a display driven by it. When false/omitted, each row's
+     * audio is an independent click-to-play clip. No-op if no item carries audio.
+     */
+    useSequenceAudioController: z.boolean().optional(),
+    /** Optional "listen first" intro: a label + a single clip above the items. */
+    listenDescriptionText: z.string().min(1).optional(),
+    soundFile: z.string().min(1).optional(),
+    footnote: z.string().min(1).optional(),
+  })
+  .refine((content) => hasAnyBlank(content.items), noBlankIssue('[answer::hint]'));
 export type InlineGapContent = z.infer<typeof InlineGapContentSchema>;
 
 /**

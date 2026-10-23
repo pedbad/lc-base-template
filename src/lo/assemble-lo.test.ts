@@ -170,6 +170,26 @@ test('assembleLo: rejects exercise content its engine schema refuses, naming fil
   );
 });
 
+// Audit 2026-10-23 (TODO §E34): a select blank with no `*` built, and graded every option
+// wrong. The reader the build uses now refuses it, naming file, blank and sentence.
+test('assembleLo: rejects a blank no learner could answer, naming file, blank and sentence', () => {
+  const tree = validTree();
+  const exercises = {
+    ...tree.exercises,
+    '01-select': {
+      type: 'select',
+      title: 'Pick',
+      content: { items: [{ text: 'Yo [soy|eres|es] de Madrid.' }] },
+    },
+  };
+
+  expect(() =>
+    assembleLo('lo-01-salutations', { ...tree, exercises }, exerciseConfigSchema),
+  ).toThrow(
+    /exercises\/01-select\/exercise\.json is invalid[\s\S]*\[soy\|eres\|es\] has no correct option[\s\S]*content\.items\[0\]\.text/,
+  );
+});
+
 test('assembleLo: checks every exercise type against its own engine schema', () => {
   const tree = validTree();
   const exercises = {
