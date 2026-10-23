@@ -10,8 +10,8 @@ session, on either machine.
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 | [`../ROADMAP.md`](../ROADMAP.md)      | larger work beyond this queue, each with its trigger       |
 
-**Last updated:** 2026-10-23 · **HEAD:** see `git log` · **Suite:** 197 files · 2207 tests green
-(Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 60 on a `DEBUG=1` build (20 × 3, `e2e/debug/`) · CI green · `main` protected since 2026-10-21 (job E1).
+**Last updated:** 2026-10-23 · **HEAD:** see `git log` · **Suite:** 197 files · 2239 tests green
+(Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 63 on a `DEBUG=1` build (21 × 3, `e2e/debug/`) · CI green · `main` protected since 2026-10-21 (job E1).
 
 Non-negotiable constraints for every job below live in
 `2026-08-06-post-phase-d-handover.md` §3. Read them before touching the build. In short:
@@ -96,7 +96,9 @@ left, in order:
     rulesets, so the maintainer can merge their own template syncs (below).
 15. **E34 — DONE 2026-10-23**: the fourth external review; blanks no learner could answer
     now fail the build, and Pause and stops hold in the playlist (below).
-16. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
+16. **E35 — DONE 2026-10-23**: blanks judged as the learner sees them, with one entity
+    decoder; the play button cancels a play still loading (below).
+17. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
     rules carried into each course repo as step 6's ruleset A (E33), and E16 after.
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
@@ -2352,6 +2354,38 @@ rather than the Language Centre's course factory; the maintainer took three smal
   WebKit; Firefox runs in CI. **Not shown yet:** a colleague doing this from the guide
   alone. [`FRENCH_PILOT_CHECKLIST.md`](FRENCH_PILOT_CHECKLIST.md) is prepared for the
   first course, not run.
+- **E35 — a fifth review: answers checked as written, and a first play that could not be
+  cancelled. DONE 2026-10-23** (maintainer's request, branch
+  `fix/e35-decoded-answers-and-audio-cancel` from `main` at `6c084de`, the commit the
+  findings were read at). Both reproduced first.
+  (1) **The checks read the written text, the learner the decoded one.**
+  `decodeHtmlEntities` decoded every entity in the browser but only `&apos;` in Node, so
+  inline-gap's `[&nbsp;]` (an answer that decodes and trims to nothing) and select's
+  `[*é|&eacute;]` (two identical options, one graded correct) both built; the prerender
+  also printed `&eacute;` where the hydrated page printed `é`. The decoder is now the
+  `entities` package's HTML5 decoder in every environment (named, decimal and hex,
+  decoded once; no table of our own), and the blank syntax is still read before it, so
+  an encoded `|`, `*` or bracket is text. The checks judge the decoded option or answer
+  through `normalizeAnswer`, as grading does: an option or answer that shows as nothing,
+  and two options that look the same, are refused; a capital or an accent still makes
+  two options differ, and so, as with typed answers, an apostrophe's shape does not. By
+  hand: two copied lessons, one per blank, built on `6c084de` and stop `bun run build`
+  (exit 1) on the branch, naming file, blank and sentence. **Reverses E34's note:** a
+  bracket can now be shown as text, as `&#91;` or `&#93;` (CONTRIBUTING). **Cost:** the
+  decoder adds about 15 KB gzipped to the lazy `parsing` chunk (all JS 219 → 235 KB).
+  (2) **The first play could not be cancelled.** While the first clip loaded the button
+  still said Play, so a second press asked again. The controller now holds the waiting
+  play as UI state: the button says "Cancel playback" and goes through `pause()`; the
+  parent hears nothing until a clip plays, and a play cancelled from stopped leaves the
+  player stopped. A read-only review (`lc-reviewer`) found two more ways to lose or keep
+  the wrong state, both fixed: a seek while the play waited cancelled it, and a pause
+  from outside left the button on Cancel. Eight happy-dom tests, each seen failing, and
+  one real-browser test (`e2e/debug/sequence-scrub.spec.ts`) that holds the clip with
+  `page.route`: it failed in Chromium on the old controller and passes in Chromium,
+  Firefox and WebKit. **Open, not fixed here (older than E35):** a row's speaker pressed
+  again while its clip loads restarts the load instead of cancelling it
+  (`useRowAudio.playRow`); and drag-fill-gaps shows its tile word undecoded
+  (`[caf&eacute;]` reads `caf&eacute;`, `drag-fill-gaps-grading.ts`).
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
