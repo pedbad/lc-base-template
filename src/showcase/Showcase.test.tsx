@@ -35,10 +35,12 @@ describe('Showcase nav', () => {
     });
   });
 
-  test('links to the other debug pages and course home, not to itself', () => {
-    expect(nav).toContain('href="/debug-sandbox.html"');
-    expect(nav).toContain('href="/ui-showcase.html"');
-    expect(nav).not.toContain('href="/exercise-showcase.html"');
+  test('links to every debug page and course home, marking itself current', () => {
+    ['exercise-showcase', 'debug-sandbox', 'ui-showcase', 'code-style'].forEach((file) => {
+      expect(nav).toContain(`href="/${file}.html"`);
+    });
+    expect(nav.match(/aria-current="page"/g)).toHaveLength(1);
+    expect(nav).toMatch(/<a [^>]*href="\/exercise-showcase\.html"[^>]*aria-current="page"/);
     expect(nav).toContain('Course home');
   });
 });
