@@ -132,3 +132,62 @@ runs in the browser: speech recognition, recording yourself to compare with the 
 clip, and text-to-speech as a fallback only. Tier C needs a model: feedback on free
 writing, a conversation partner, adaptive items. The template is static by design, so
 Tier C starts with a decision too: what runs where, and who pays for it.
+
+## 7. Language variants in one course (a dialect switch)
+
+**Why.** Some courses teach one language in more than one variety: Brazilian and
+European Portuguese, Spanish from Spain and from Latin America, Syrian, Iraqi and
+Egyptian Arabic. A learner or a teacher should be able to pick a variety at the top of
+a lesson and see every activity in it, or switch a single exercise. Dialects taught as
+separate courses (a Tunisian Arabic course beside a Syrian one) stay separate course
+repos; this item is for one course that holds several.
+
+**Today.** A course has one language code
+([`src/config/course.config.ts`](../src/config/course.config.ts)), and the engines tag
+their content with it (`lang={TARGET_LANG}`, [`src/lib/lang.ts`](../src/lib/lang.ts),
+imported by 17 source files). Content in any variety can already be written and
+recorded, and a title can say which variety it is, but all of it carries the course's
+code. Modals and hover cards take their own `lang`
+([`src/config/lo-schema.ts`](../src/config/lo-schema.ts)); exercises and blocks do not.
+A typed answer has one expected form (`answer` in
+[`text-entry-schema.ts`](../src/exercises/text-entry/text-entry-schema.ts),
+`[expected::hint]` in the typed gap), so `fato` and `facto` cannot both be right. Region
+codes already read well: the flashcards name the language with `Intl.DisplayNames`,
+which gives "Brazilian Portuguese" for `pt-BR`, "European Portuguese" for `pt-PT` and
+"Arabic (Syria)" for `ar-SY`.
+
+**What it touches.**
+
+- **The course lists its varieties** in its config, as language codes. A course with no
+  list shows no switch and does not change at all.
+- **Variants at the envelope, not inside each engine.** An exercise or block may hold
+  one `content` per variety (`variants`, keyed by code); one without `variants` is
+  shared by every variety. The build checks each variety's content with the type's own
+  schema. The switch picks the content before the engine sees it, so the 15 engines
+  take their `lang` from the choice instead of `TARGET_LANG` and otherwise stay as they
+  are. Changing variety remounts the exercise, so its answers reset.
+- **The switch.** One per lesson, at the top, plus an override on each exercise that
+  has variants: a radio group, usable from the keyboard, with the change announced. The
+  choice is remembered per course (beside `storageScope()`) and kept in the address
+  (`?variant=pt-PT`), so a teacher can link to one variety.
+- **Blocks.** Text, vocabulary, tabs, media, modals and hover cards, the same way.
+- **The prerender.** Pages are built with the first variety, so a remembered other
+  choice applies after hydration. The spec decides whether that swap is acceptable or
+  the choice is applied before the first paint.
+- **Typed answers that accept more than one form** (`fato` or `facto`), useful with or
+  without the switch. The separator cannot be `|`: choice blanks already use it.
+- **Budget.** The headroom is 2.82 kB of JS and 1.04 kB of CSS
+  ([`docs/TOOLING.md`](TOOLING.md), "Bundle budget"), so the switch loads only in a
+  course that lists varieties.
+- **Docs and tests.** A variant in the example lesson, CONTRIBUTING, COURSE_GUIDE and
+  the `add-lo` skill; unit, component and browser tests, with axe.
+
+Estimated on 2026-10-23 at six to nine working days, with a spec first.
+
+**Open questions.** Must an exercise with variants cover every variety the course
+lists, or fall back to the first with a note? Should a learner ever see two varieties
+side by side? That is a comparison view, more work than a switch.
+
+**Start when** the first course that needs a switch is planned (Portuguese, Spanish, or
+an Arabic course across dialects), after the organisation move (TODO §E2). An Arabic
+course needs item 1 first, so build the switch with text direction in mind.
