@@ -2,32 +2,24 @@
  * html.ts — HTML-entity decoding for authored exercise text (spec §8, "ported
  * once"). Ported from french-lo-1's htmlUtils.decodeHtmlEntities.
  *
- * Authored content may embed entities (e.g. `l&apos;école`, `&lt;b&gt;`). The
- * sentence parser decodes each text/option segment through this before display.
+ * Authored content may embed entities (e.g. `l&apos;école`, `caf&#233;`). The sentence
+ * parser decodes each text/option segment through this before display, and the
+ * build-time content checks read the same decoded text (TODO §E35).
  *
- * Three branches, cheapest first:
- *   1. Fast-path — no `&` at all → return as-is (the common case).
- *   2. Non-browser (bun test / SSR) — no `document`, so decode only `&apos;`, the
- *      entity that dominates language content (contractions like l'école).
- *   3. Browser — delegate to the HTML parser via an off-screen <textarea>, which
- *      covers all named (`&eacute;`), decimal (`&#233;`) and hex (`&#xE9;`)
- *      entities with no regex table to maintain.
+ * One decoder everywhere: the `entities` package's HTML5 decoder, which knows every
+ * named (`&eacute;`), decimal (`&#233;`) and hexadecimal (`&#xE9;`) reference the way a
+ * browser parsing page text does. It once decoded through an off-screen <textarea> in
+ * the browser and only `&apos;` in Node, so the prerendered page, the build's checks and
+ * the learner's page each read a different string.
+ *
+ * Decodes once: `&amp;eacute;` is the text `&eacute;`, never `é`.
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §8.
  */
+import { decodeHTML } from 'entities/decode';
+
 export const decodeHtmlEntities = (value: string = ''): string => {
   const text = `${value}`;
-
-  // 1. Fast-path: nothing to decode.
-  if (!text.includes('&')) return text;
-
-  // 2. Non-browser: handle the one entity that appears most often in content.
-  if (typeof document === 'undefined') {
-    return text.replaceAll('&apos;', "'");
-  }
-
-  // 3. Browser: let the HTML parser decode every entity.
-  const textarea = document.createElement('textarea');
-  textarea.innerHTML = text;
-  return textarea.value;
+  // Fast-path: nothing to decode, the common case.
+  return text.includes('&') ? decodeHTML(text) : text;
 };

@@ -304,11 +304,18 @@ answer, before any page is written (TODO §E34).
 | select, inline-choice | `[*soy\|eres\|es]`  | Options split by `\|`. Exactly one is marked `*` as correct. No empty option, none twice. |
 | inline-gap            | `[llamo::llamarse]` | The answer, then optionally `::` and a hint shown in the empty box. The answer is needed. |
 
-Brackets only make blanks: each `[` closes with a `]`, with no bracket inside. There is no
-way to show a bracket as text in these sentences; write `( )` instead. A sentence
+Brackets only make blanks: each `[` closes with a `]`, with no bracket inside. To show a
+bracket as text, write it as an HTML entity, `&#91;` or `&#93;`. A sentence
 without a blank is fine (passage text), but each exercise needs at least one. Radio-quiz
 marks its one correct option with `*` too, on its option list; drag-fill-gaps and
 word-spot bracket a word (`[word]`) with rules of their own, in their schemas.
+
+Any HTML entity (`&eacute;`, `&#233;`, `&#xE9;`, `&nbsp;`) may stand for a character.
+The blank's `[`, `]`, `|`, `*` and `::` are read first, so an entity is always text:
+`[*a&#124;b|c]` offers `a|b` and `c`. Every rule above is then checked on the options and
+answers as the learner sees them, decoded: `[*é|&eacute;]` offers `é` twice, and
+`[&nbsp;]` has no answer. Spacing and how an accent is encoded do not make two options
+differ; a capital or an accent does (TODO §E35).
 
 When a blank is wrong, the build stops and says where and what:
 
@@ -326,6 +333,7 @@ message, with a blank that causes it and the fix:
 | `has no correct option`         | `[soy\|eres\|es]`           | mark one: `[*soy\|eres\|es]`           |
 | `marks 2 options correct`       | `[*soy\|*eres\|es]`         | keep `*` on one only                   |
 | `has an empty option`           | `[soy\|\|*es]`              | remove the extra `\|`: `[soy\|*es]`    |
+| `shows as nothing`              | `[soy\|&nbsp;\|*es]`        | write the option, or remove it         |
 | `marks an empty option correct` | `[*\|es]`                   | write it after the `*`: `[*soy\|es]`   |
 | `offers "es" twice`             | `[es\|*es]`                 | make every option different            |
 | `has no answer`                 | `[::llamarse]`              | answer first: `[llamo::llamarse]`      |

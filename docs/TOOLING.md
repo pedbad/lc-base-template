@@ -956,7 +956,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   landed (see "shared exercise shell" below). Registered in `lazy-registry.ts`; two
   showcase fixtures (`select-rows`, `select-inline`) prove both `layoutMode`s.
 - **Shared helpers ported alongside** (`src/exercises/lib/`, "ported once" §8):
-  `html.ts` (`decodeHtmlEntities`) and `parsing.ts` (`parseSentence` +
+  `html.ts` (`decodeHtmlEntities`, one HTML5 decoder for Node and browser since E35) and `parsing.ts` (`parseSentence` +
   `parseChoiceBlank`). `parseInputBlank` is deferred to engine #4 (`inline-gap`).
 - **Behavior wired from Phase A** (no new abstraction): `prepareChoiceItems`
   drives `options.shuffle`/`sampleSize`; `getInitialScoringState`/`commitCheck`
