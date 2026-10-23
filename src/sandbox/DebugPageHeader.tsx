@@ -1,8 +1,8 @@
 /**
  * DebugPageHeader — the header all four debug pages share: the sandbox, the exercise
  * showcase, the UI showcase and the code style guide. Title, a one-line description, the
- * theme switch, and a nav holding a "jump to" menu of the page's own sections plus five
- * plain links — the three OTHER debug pages, course home and the GitHub repo. The sections sit in a shadcn
+ * theme switch, and a nav holding a "jump to" menu of the page's own sections plus six
+ * plain links — all four debug pages, course home and the GitHub repo. The sections sit in a shadcn
  * dropdown because the exercise showcase has 25 of them, and a wrapping row of links
  * that long is noise. One component, so the navs cannot drift apart.
  *
@@ -19,6 +19,13 @@
  * TWO ROWS (maintainer, 2026-10-16): the title, this page's tools and the theme switch
  * share the top row, the switch at its right end; the nav takes the row below. Source
  * order matches, so tabbing reaches the switch before the nav.
+ *
+ * ALL FOUR, CURRENT MARKED (maintainer, 2026-10-23): every page lists the same four
+ * debug pages in one order and marks its own with aria-current="page", rather than
+ * leaving it out. It stays a link: the list keeps one shape, and one tab order, on every
+ * page, and a screen reader hears "current page" within the set instead of an entry that
+ * is simply missing. The highlight is keyed on that attribute, so look and semantics
+ * cannot disagree.
  *
  * Cross-page hrefs go through `resolveAsset` / `resolveHomeHref`, never a bare relative
  * path, so they survive a non-root base. The repo link is absolute and external, so it
@@ -43,12 +50,13 @@ export interface DebugSection {
   readonly label: string;
 }
 
-/** The four debug pages. Each links to the three it is not. */
-type DebugPage = 'sandbox' | 'showcase' | 'ui' | 'style';
+/** The four debug pages. Each lists all four and marks itself current. */
+export type DebugPage = 'sandbox' | 'showcase' | 'ui' | 'style';
 
+/** In nav order, the same on every page. */
 const DEBUG_PAGES: readonly { page: DebugPage; href: string; label: string }[] = [
-  { page: 'sandbox', href: 'debug-sandbox.html', label: 'Debug sandbox' },
   { page: 'showcase', href: 'exercise-showcase.html', label: 'Exercise showcase' },
+  { page: 'sandbox', href: 'debug-sandbox.html', label: 'Debug sandbox' },
   { page: 'ui', href: 'ui-showcase.html', label: 'UI showcase' },
   { page: 'style', href: 'code-style.html', label: 'Code style' },
 ];
@@ -68,7 +76,7 @@ interface DebugPageHeaderProps {
   sections: readonly DebugSection[];
   /** The menu button's text, e.g. "Jump to card". */
   jumpLabel: string;
-  /** Which page this is, so the nav links to the others and not to itself. */
+  /** Which page this is, so the nav marks it current. */
   current: DebugPage;
   /** Controls only this page has, shown in the top row just before the theme switch (§E18). */
   tools?: ReactNode;
@@ -100,6 +108,10 @@ function usePublishedHeight() {
 
 const LINK_CLASS = `rounded-sm underline underline-offset-4 hover:no-underline ${FOCUS_OUTLINE}`;
 
+/** The current page's link: the theme's accent pair, as a menu item's highlight is. */
+const CURRENT_LINK_CLASS =
+  'aria-[current=page]:rounded-md aria-[current=page]:bg-accent aria-[current=page]:px-2 aria-[current=page]:py-0.5 aria-[current=page]:font-semibold aria-[current=page]:text-accent-foreground aria-[current=page]:no-underline';
+
 /**
  * Styled like shadcn's `DropdownMenuItem`, but Base UI's `LinkItem`: a real `<a>` with
  * the menuitem role, because each entry NAVIGATES (to an in-page card). shadcn's wrapper
@@ -117,7 +129,6 @@ export function DebugPageHeader({
   current,
   tools,
 }: DebugPageHeaderProps) {
-  const others = DEBUG_PAGES.filter((entry) => entry.page !== current);
   const headerRef = usePublishedHeight();
   return (
     <header ref={headerRef} className="sticky top-0 z-40 border-b border-border bg-card">
@@ -154,9 +165,14 @@ export function DebugPageHeader({
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          {others.map((other) => (
-            <a key={other.page} className={LINK_CLASS} href={resolveAsset(other.href)}>
-              {other.label}
+          {DEBUG_PAGES.map((entry) => (
+            <a
+              key={entry.page}
+              className={`${LINK_CLASS} ${CURRENT_LINK_CLASS}`}
+              href={resolveAsset(entry.href)}
+              aria-current={entry.page === current ? 'page' : undefined}
+            >
+              {entry.label}
             </a>
           ))}
           <a className={LINK_CLASS} href={resolveHomeHref()}>

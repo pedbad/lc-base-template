@@ -1,12 +1,39 @@
 /**
- * DebugPageHeader.test.tsx — the one header all three debug pages share (the sandbox,
- * the exercise showcase and the UI showcase), so their navs cannot drift apart.
+ * DebugPageHeader.test.tsx — the one header all four debug pages share (the sandbox,
+ * the exercise showcase, the UI showcase and the code style guide), so their navs cannot
+ * drift apart.
  */
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, test } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { DEBUG_HEADER_HEIGHT_VAR, DebugPageHeader } from './DebugPageHeader';
+import { DEBUG_HEADER_HEIGHT_VAR, DebugPageHeader, type DebugPage } from './DebugPageHeader';
+
+/** The header as `current` renders it, with no sections of its own. */
+function headerFor(current: DebugPage): string {
+  return renderToStaticMarkup(
+    <DebugPageHeader
+      title="Debug page"
+      description="What this page is for."
+      navLabel="Debug page sections"
+      sections={[]}
+      jumpLabel="Jump to section"
+      current={current}
+    />,
+  );
+}
+
+/** The nav's plain links, in order: [href, aria-current or null, text]. */
+function navLinks(markup: string): [string, string | null, string][] {
+  const nav = /<nav[^>]*>.*?<\/nav>/s.exec(markup)?.[0] ?? '';
+  return [...nav.matchAll(/<a ([^>]*)>(.*?)<\/a>/gs)].map(([, attributes, inner]) => [
+    /href="([^"]*)"/.exec(attributes)?.[1] ?? '',
+    /aria-current="([^"]*)"/.exec(attributes)?.[1] ?? null,
+    inner.replace(/<[^>]*>/g, '').trim(),
+  ]);
+}
+
+const PAGES: readonly DebugPage[] = ['showcase', 'sandbox', 'ui', 'style'];
 
 const html = renderToStaticMarkup(
   <DebugPageHeader
@@ -38,9 +65,17 @@ describe('DebugPageHeader', () => {
     expect(html).not.toContain('href="#one"');
   });
 
-  test('the nav holds exactly five plain links: the other three debug pages, course home, the repo', () => {
-    const nav = /<nav[^>]*>.*?<\/nav>/s.exec(html)?.[0] ?? '';
-    expect(nav.match(/<a /g)).toHaveLength(5);
+  // Maintainer, 2026-10-23: every debug page lists all four, in one order, and shows
+  // which one you are on, instead of leaving the current page out.
+  test('the nav holds six plain links: all four debug pages, course home, the repo', () => {
+    expect(navLinks(html).map(([, , text]) => text)).toEqual([
+      'Exercise showcase',
+      'Debug sandbox',
+      'UI showcase',
+      'Code style',
+      'Course home',
+      'GitHub repo (opens in a new tab)',
+    ]);
   });
 
   // Maintainer, 2026-10-13: both debug pages link to the source. An external link, so
@@ -54,35 +89,46 @@ describe('DebugPageHeader', () => {
     expect(repo).toMatch(/class="sr-only">[^<]*\(opens in a new tab\)/);
   });
 
-  test('links to the OTHER debug pages and to course home, through the base', () => {
-    expect(html).toContain('href="/exercise-showcase.html"');
-    expect(html).toContain('href="/ui-showcase.html"');
-    expect(html).toContain('href="/code-style.html"');
-    expect(html).not.toContain('href="/debug-sandbox.html"');
-    expect(html).toContain('Course home');
+  test('lists the same links in the same order on every debug page', () => {
+    const lists = PAGES.map((page) =>
+      navLinks(headerFor(page)).map(([href, , text]) => [href, text]),
+    );
+    lists.forEach((list) => expect(list).toEqual(lists[0]));
   });
 
-  test('lists Code style last of the debug pages, after the UI showcase', () => {
-    const order = ['exercise-showcase', 'ui-showcase', 'code-style'].map((page) =>
-      html.indexOf(`href="/${page}.html"`),
-    );
-    expect(order).toEqual([...order].sort((a, b) => a - b));
-    expect(html).toContain('>Code style<');
+  test('links to every debug page through the base, the current one included', () => {
+    PAGES.forEach((page) => {
+      const markup = headerFor(page);
+      ['exercise-showcase', 'debug-sandbox', 'ui-showcase', 'code-style'].forEach((file) => {
+        expect(markup, page).toContain(`href="/${file}.html"`);
+      });
+      expect(markup).toContain('Course home');
+    });
   });
 
-  test('on the Code style page, links to the other three and not to itself', () => {
-    const style = renderToStaticMarkup(
-      <DebugPageHeader
-        title="Code style"
-        description="How the code is written."
-        navLabel="Code style sections"
-        sections={[]}
-        jumpLabel="Jump to section"
-        current="style"
-      />,
-    );
-    expect(style).toContain('href="/debug-sandbox.html"');
-    expect(style).not.toContain('href="/code-style.html"');
+  // The current page stays a link, marked aria-current="page": the list keeps one shape,
+  // and so one tab order, on every page, and a screen reader announces it as the current
+  // page of a set rather than as text that is missing from it.
+  test('marks the current page, and only it, with aria-current="page"', () => {
+    const expected: Record<DebugPage, string> = {
+      showcase: 'Exercise showcase',
+      sandbox: 'Debug sandbox',
+      ui: 'UI showcase',
+      style: 'Code style',
+    };
+    PAGES.forEach((page) => {
+      const current = navLinks(headerFor(page)).filter(([, ariaCurrent]) => ariaCurrent !== null);
+      expect(current, page).toEqual([[expect.any(String), 'page', expected[page]]]);
+    });
+  });
+
+  // The highlight is keyed on the attribute itself, so the look and the semantics cannot
+  // disagree, and it uses the theme's accent pair, never a raw colour.
+  test('styles the current link from its aria-current attribute, with theme tokens', () => {
+    const link = /<a [^>]*aria-current="page"[^>]*>/.exec(html)?.[0] ?? '';
+    expect(link).toMatch(/aria-\[current=page\]:bg-accent\b/);
+    expect(link).toMatch(/aria-\[current=page\]:text-accent-foreground\b/);
+    expect(link).toMatch(/aria-\[current=page\]:no-underline\b/);
   });
 
   test('carries the theme switch', () => {
