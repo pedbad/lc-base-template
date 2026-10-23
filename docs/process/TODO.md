@@ -100,7 +100,9 @@ left, in order:
     decoder; the play button cancels a play still loading (below).
 17. **E36 — DONE 2026-10-23**: every debug page's nav lists all four debug pages and
     marks the current one (below).
-18. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
+18. **E37 — DONE 2026-10-23**: a fifth debug page, CULP syllabi, renders the syllabi
+    folder's README, now with the hierarchy and the skill explained (below).
+19. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
     rules carried into each course repo as step 6's ruleset A (E33), and E16 after.
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
@@ -2401,6 +2403,23 @@ rather than the Language Centre's course factory; the maintainer took three smal
   with the attribute. Tests first: the header's unit tests (same list on all four, exactly
   one current) and the three pages' own, and `e2e/debug/debug-nav.spec.ts`, which opens
   each page and checks the list, the one current link and that its fill differs.
+- **E37 — a CULP syllabi debug page. DONE 2026-10-23** (maintainer's request, branch
+  `feat/culp-syllabi-page`, stacked on E36's `feat/debug-nav-current-page`). A fifth
+  debug page, `culp-syllabi.html` (`DEBUG=1` only, `src/culp-syllabi/`), renders
+  `docs/culp-syllabi/README.md` the way Code style renders `docs/STYLE.md`: built from
+  the markdown, so the README stays the one source. Its nav link sits after Code style,
+  before Course home. The notes themselves are not rendered (the Language Centre's,
+  shared for reference only). The README gained a tree of the folder's hierarchy (index
+  → hubs → notes, and the links between notes), what each kind of file is for, and a
+  section on the `culp-syllabus` skill; no new counts, so `checkReadmeCounts` still
+  owns every number. **One renderer fix:** a doc's relative link is now read from that
+  doc's own folder, as GitHub reads it (`../STYLE.md` in the README is `docs/STYLE.md`);
+  a root doc's links resolve as before. Wired like Code style: `DEBUG_ENTRY_FILES`,
+  `virtual:sandbox-docs`, the CSS scan split, the coverage exclusion, the theme script
+  (now seven copies). Tests first: the renderer, the plugin's watch list, the reserved
+  slug, the CSS split, the entries, the header (seven links), the page, and
+  `e2e/debug/culp-syllabi.spec.ts` (axe in both themes, and its CONTRIBUTING link opens
+  the sandbox there).
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
