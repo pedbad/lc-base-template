@@ -18,7 +18,7 @@ A build emits a static course: a landing page plus one page per Learning Object.
   page's body is prerendered, so it reads and navigates without JavaScript, and
   hydrates into the interactive app when JavaScript runs.
 
-Five debug pages exist and are **not part of a deployed course**. The exercise
+Six debug pages exist and are **not part of a deployed course**. The exercise
 showcase (`exercise-showcase.html`) is a gallery of every engine driven by
 fixtures; the UI showcase (`ui-showcase.html`) renders every block type, as a
 plain block and as a card, through the course page's own renderers; the debug sandbox (`debug-sandbox.html`) is a theme-token, typography

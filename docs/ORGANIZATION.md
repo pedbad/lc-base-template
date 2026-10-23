@@ -58,8 +58,9 @@ branch rules on every course repo, and nobody else can switch them off.
 ## Still to decide before starting
 
 - [x] **Deploy targets.** None fixed in the repo: addresses change between servers, so
-      each build is given its course's folder as `BASE_URL` ([`DEPLOY.md`](../DEPLOY.md)).
-      Decided by the maintainer 2026-10-16.
+      the default build uses relative paths (`./`) and works from any folder; `BASE_URL`
+      is set only for a fixed address ([`DEPLOY.md`](../DEPLOY.md), E24). Decided by the
+      maintainer 2026-10-16.
 - [x] **Content licence variant.** CC BY-NC 4.0 (no commercial reuse), as `LICENSE`
       says. Confirmed by the maintainer 2026-10-14.
 

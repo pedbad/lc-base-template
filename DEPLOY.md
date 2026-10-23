@@ -120,7 +120,7 @@ It takes under a minute and writes the finished site into `dist/`. A good build:
 If it stops with a message naming a file under `lo-config/`, a lesson has a mistake in
 it. Do not deploy: send the message to the lesson's author or the maintainer.
 
-**Never build with `DEBUG=1` for the course's address.** That adds four internal pages
+**Never build with `DEBUG=1` for the course's address.** That adds six internal pages
 (listed in step 6) and the palette preview to `dist/`; they belong only on a
 [demo build for the team](#demo-build-for-the-team).
 

@@ -10,7 +10,7 @@ session, on either machine.
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 | [`../ROADMAP.md`](../ROADMAP.md)      | larger work beyond this queue, each with its trigger       |
 
-**Last updated:** 2026-10-23 · **HEAD:** see `git log` · **Suite:** 197 files · 2239 tests green
+**Last updated:** 2026-10-23 · **HEAD:** see `git log` · **Suite:** 201 files · 2296 tests green
 (Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 63 on a `DEBUG=1` build (21 × 3, `e2e/debug/`) · CI green · `main` protected since 2026-10-21 (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -133,7 +133,7 @@ never the branch's.
 - **Tabs on phones (§F3) is DONE** (2026-10-13): below the block's `@3xl` width the tab
   row gives way to the shadcn `Select`. It cost 21.8 kB of JS, and the maintainer
   raised the JS cap to 140 kB (`docs/TOOLING.md`, "Bundle budget").
-- **After the organisation move (item 16 above), ask the maintainer what is next.**
+- **After the organisation move (item 22 above), ask the maintainer what is next.**
   Candidates: §F2 (the remaining tabs-panel entries), §F6 (further components), or a
   Deferred item. The §E2 queue (`2026-10-12-team-workflow-handover.md` §3, "Next, in
   order") is done up to its last item, the move itself (E8, E4, E7, E5).
