@@ -139,6 +139,9 @@ Meanwhile, keep writing the lesson with the types that exist.
   wrong with it. Compare with the same kind of file in `lo-config/lo-00-example/`. If it
   says a block type "has invalid content" instead, it names no file: look in the
   `block.json` files of that type in your lesson's `blocks/` folder.
+- **It names a blank** in a sentence, such as `the blank [soy|eres|es] has no correct
+option`: each message and its fix are in
+  [`CONTRIBUTING.md` → "Blanks in a sentence"](CONTRIBUTING.md#blanks-in-a-sentence).
 - **It fails anywhere else**, or the message does not make sense: ask the maintainer
   rather than changing files outside your folders.
 - **What a folder is for:** [`STRUCTURE.md`](STRUCTURE.md).
