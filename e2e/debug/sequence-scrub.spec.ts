@@ -12,10 +12,13 @@
  * does for its events). The player is paused through the element before it is read: the
  * pause fires a last `timeupdate`, so the shown time and the position stop moving and can
  * be compared without a sleep.
+ *
+ * The last test holds the first clip's response (`page.route`) so the first play waits
+ * on its metadata for as long as the test needs (TODO §E35).
  */
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page, type Route } from '@playwright/test';
 
-import { card, openShowcase } from './debug-support';
+import { card, openShowcase, requireDebugBuild, showcaseReady } from './debug-support';
 
 const CLIPS = ['q1.wav', 'q2.wav', 'q3.wav'].map(
   (name) => `audio/showcase-demo/inline-gap/${name}`,
@@ -169,4 +172,59 @@ test('the keyboard seeks the audio: PageUp forward, an arrow back', async ({ pag
 
   await page.keyboard.press('ArrowLeft');
   expect(await settled()).toBeLessThan(forward);
+});
+
+test('a play still loading can be cancelled, and starts nothing when the clip arrives', async ({
+  page,
+}) => {
+  // The first play waits for the first clip's metadata. The button once stayed on Play
+  // through the wait, so pressing it again asked for the play a second time instead of
+  // cancelling it (TODO §E35). Every element that loads is kept, to know when they are done.
+  await recordPlayedElements(page);
+  await page.addInitScript(() => {
+    const loaded: HTMLMediaElement[] = [];
+    Object.assign(window, { loadedAudio: loaded });
+    const { load } = HTMLMediaElement.prototype;
+    HTMLMediaElement.prototype.load = function (this: HTMLMediaElement) {
+      loaded.push(this);
+      return load.call(this);
+    };
+  });
+  const held: Route[] = [];
+  let holding = true;
+  await page.route(`**/${CLIPS[0]}`, (route) => {
+    if (holding) held.push(route);
+    else void route.continue();
+  });
+  // Not openShowcase: in Firefox a held clip can hold the page's `load` event too.
+  requireDebugBuild();
+  await page.goto('exercise-showcase.html', { waitUntil: 'domcontentloaded' });
+  await showcaseReady(page);
+  const player = card(page, 'inline-gap-master').locator('.sequence-audio-controller');
+
+  await player.getByRole('button', { name: 'Play audio' }).click();
+  await player.getByRole('button', { name: 'Cancel playback' }).click();
+  await expect(player.getByRole('button', { name: 'Play audio' })).toBeVisible();
+
+  holding = false;
+  await Promise.all(held.map((route) => route.continue()));
+  // Every element that loaded the clip has its metadata, or gave up on it.
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        (window as unknown as { loadedAudio: HTMLMediaElement[] }).loadedAudio.every(
+          (element) => element.readyState >= HTMLMediaElement.HAVE_METADATA || element.error,
+        ),
+      ),
+    )
+    .toBe(true);
+  const played = () =>
+    page.evaluate(() => (window as unknown as { playedAudio: unknown[] }).playedAudio.length);
+  expect(await played()).toBe(0);
+  await expect(player.getByRole('button', { name: 'Play audio' })).toBeVisible();
+
+  // Pressed again, it plays, once.
+  await player.getByRole('button', { name: 'Play audio' }).click();
+  await expect(player.getByRole('button', { name: 'Pause audio' })).toBeVisible();
+  expect(await played()).toBe(1);
 });

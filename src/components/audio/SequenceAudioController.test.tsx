@@ -513,6 +513,95 @@ describe('SequenceAudioController cancelling playback', () => {
     expect(label()).toBe('Play audio');
   });
 
+  // E35: the first play waits for the first clip's metadata. The button showed Play
+  // throughout, so a second press asked to play again instead of cancelling.
+  describe('while the first clip loads', () => {
+    async function pressPlayOnce(props: ControllerProps = {}) {
+      const { audio } = await mount(props);
+      await clickPlayButton();
+      return audio;
+    }
+
+    it('offers to cancel, and tells the parent nothing is playing yet', async () => {
+      const onPlayStateChange = vi.fn();
+      await pressPlayOnce({ onPlayStateChange });
+
+      expect(label()).toBe('Cancel playback');
+      expect(onPlayStateChange).not.toHaveBeenCalled();
+      expect(playCalls()).toBe(0);
+    });
+
+    it('starts nothing when cancelled before the metadata arrives', async () => {
+      const audio = await pressPlayOnce();
+
+      await clickPlayButton();
+      expect(label()).toBe('Play audio');
+      await metadataArrives(audio);
+
+      expect(playCalls()).toBe(0);
+      expect(label()).toBe('Play audio');
+    });
+
+    it('plays once when started again after a cancel', async () => {
+      const audio = await pressPlayOnce();
+      await clickPlayButton();
+      await metadataArrives(audio);
+
+      await clickPlayButton();
+
+      expect(playCalls()).toBe(1);
+      expect(audio.src).toMatch(/q1\.wav$/);
+      expect(label()).toBe('Pause audio');
+    });
+
+    it('plays once when cancelled and started again before the metadata arrives', async () => {
+      const audio = await pressPlayOnce();
+      await clickPlayButton();
+      await clickPlayButton();
+      expect(label()).toBe('Cancel playback');
+
+      await metadataArrives(audio);
+
+      expect(playCalls()).toBe(1);
+      expect(label()).toBe('Pause audio');
+    });
+
+    it('starts nothing when stopped globally', async () => {
+      const audio = await pressPlayOnce();
+
+      await act(async () => AudioManager.stopAll());
+      expect(label()).toBe('Play audio');
+      await metadataArrives(audio);
+
+      expect(playCalls()).toBe(0);
+      expect(label()).toBe('Play audio');
+    });
+
+    it('starts nothing once unmounted', async () => {
+      const audio = await pressPlayOnce();
+
+      act(() => root.unmount());
+      root = createRoot(container);
+      await metadataArrives(audio);
+
+      expect(playCalls()).toBe(0);
+    });
+
+    it('offers play again when the clip fails to load, and plays on a retry', async () => {
+      const audio = await pressPlayOnce();
+
+      await act(async () => audio.dispatchEvent(new Event('error')));
+      expect(label()).toBe('Play audio');
+
+      await clickPlayButton();
+      expect(label()).toBe('Cancel playback');
+      await metadataArrives(audio);
+
+      expect(playCalls()).toBe(1);
+      expect(label()).toBe('Pause audio');
+    });
+  });
+
   it('plays on from the next clip when restarted after a stop in the gap', async () => {
     const { audio, onTrackChange } = await playingFirstClip();
     await act(async () => audio.dispatchEvent(new Event('ended')));
