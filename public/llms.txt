@@ -25,8 +25,10 @@ plain block and as a card, through the course page's own renderers; the debug sa
 and icon reference for the designer that also renders `DESIGNER.md`,
 `CONTRIBUTING.md`, `STRUCTURE.md` and `AGENTS.md` as HTML; the code style page
 (`code-style.html`) renders `docs/STYLE.md`, how the code is written, with its
-examples; and the CULP syllabi page (`culp-syllabi.html`) renders
-`docs/culp-syllabi/README.md`, how the syllabus notes are organised. All five are
+examples; the CULP syllabi page (`culp-syllabi.html`) renders
+`docs/culp-syllabi/README.md`, how the syllabus notes are organised; and the Claude
+skills page (`claude-skills.html`) shows a card per Claude skill in `.claude/skills/`,
+with its recipe. All six are
 **opt-in per build** behind one fail-closed flag (`DEBUG=1 bun run build`,
 or the older name `SHOWCASE=1`), so a deployed course contains none of them unless
 that flag was set. They are listed here so their absence is not mistaken for a
