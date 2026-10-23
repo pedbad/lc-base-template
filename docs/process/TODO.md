@@ -102,8 +102,8 @@ left, in order:
     marks the current one (below).
 18. **E37 — DONE 2026-10-23**: a fifth debug page, CULP syllabi, renders the syllabi
     folder's README, now with the hierarchy and the skill explained (below).
-19. **E38 — DONE 2026-10-23**: CI retries a stalled install of the browsers' system
-    libraries instead of losing the job to it (below).
+19. **E38 — DONE 2026-10-23**: apt retries a stalled download in CI instead of the
+    browser jobs losing 15 minutes to it (below).
 20. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
     rules carried into each course repo as step 6's ruleset A (E33), and E16 after.
 
@@ -2424,12 +2424,16 @@ rather than the Language Centre's course factory; the maintainer took three smal
   the sandbox there).
 - **E38 — CI survives a stalled apt. DONE 2026-10-23** (maintainer's request, branch
   `ci/retry-playwright-deps`). Three browser-test jobs that day (PR 41 once, `main`
-  twice) sat in `playwright install-deps` with no output until the 15-minute job limit,
-  and were cancelled before a test ran; a re-run passed each time. The step now gives
-  each attempt 3 minutes (it normally takes ~30 s) and tries three times, with a
-  10-minute step limit as a backstop. The browser download on a cache miss is a
-  separate step without the cap, so a slow download is never cut short. Not covered:
-  the sound-device step's own `apt-get install`, which has not stalled.
+  twice) sat in `playwright install-deps` until the 15-minute job limit and were
+  cancelled before a test ran; a re-run passed each time. **First try, reverted in the
+  same PR:** a 3-minute cap per attempt with a retry loop. The step downloads ~120 MB
+  from apt, a slow mirror ran past the cap, and the killed install left dpkg locked, so
+  both retries failed at once (exit 100). **The fix:** apt is configured
+  (`/etc/apt/apt.conf.d/99ci-network-retries`) to drop a silent connection after 30 s
+  and retry it, up to five times, so a stall ends without cutting a slow but moving
+  download short; it covers the sound-device step's `apt-get` too. The step has a
+  10-minute limit as a backstop. The browser download on a cache miss is now its own
+  step, without `--with-deps`, and the libraries install on every run.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
