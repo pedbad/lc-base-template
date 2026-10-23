@@ -1096,7 +1096,9 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 - **What:** each engine's grading logic — the pure "is this answer correct, and what
   fills it on Show-answers" functions — was lifted out of the `*.tsx` component into a
   colocated `src/exercises/<engine>/<engine>-grading.ts` (e.g. `select-grading.ts`
-  exports `gradeSelect` + `fillSelectAnswers`). 13 of the 15 engines carry a grading file;
+  exports `gradeSelect` + `fillSelectAnswers`). 12 of the 15 engines carry their own grading
+  file, dictation and typed-transform share `text-entry/text-entry-grading.ts`, and only
+  flashcards has none;
   the component imports the fns instead of inlining them.
 - **Why:** grading is the one genuinely engine-specific pure function in each engine,
   and it was tangled into JSX/handlers where it could not be unit-tested in isolation.
@@ -1299,7 +1301,8 @@ dependency the debug sandbox introduces, and it never reaches a bundle — verif
   which is sanitising in the parser rather than a second dependency: no DOM-based
   sanitiser, no post-pass. The docs are repo-authored so today's risk is nil, but
   provenance is an argument about today's content and markdown permits raw HTML by spec.
-  It costs almost nothing — across the five rendered docs the only raw HTML is
+  It costs almost nothing — across every rendered doc (the hub's four, `docs/STYLE.md`,
+  the CULP syllabi README, the skills README and each `SKILL.md`) the only raw HTML is
   `STRUCTURE.md`'s two `docs:tree` marker comments, and a paragraph that is only
   comments is dropped, as GitHub hides it (`drop_comment_paragraphs` in
   `docs-markdown.ts`).
