@@ -104,7 +104,9 @@ left, in order:
     folder's README, now with the hierarchy and the skill explained (below).
 19. **E38 — DONE 2026-10-23**: CI's system-package install can no longer stall a
     required check until the job times out (below).
-20. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
+20. **E39 — DONE 2026-10-23**: the retiring flip cue picks from ten exits, all
+    equally likely, instead of four (below).
+21. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
     rules carried into each course repo as step 6's ruleset A (E33), and E16 after.
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
@@ -2449,6 +2451,24 @@ rather than the Language Centre's course factory; the maintainer took three smal
   that step. Its fourth test holds the five check names to
   `docs/BRANCH_PROTECTION.md`'s list; it passed before and after, and failed when a
   matrix name was changed by hand. Step timings from CI: in the pull request.
+- **E39 — the retiring flip cue picks from ten exits. DONE 2026-10-23** (maintainer's
+  request, branch `feat/flip-cue-ten-exits`). E21's four exits (peel, pop, wave, tuck,
+  weighted 35/35/15/15) gain six, chosen from a demo of ten: **fold** (folds over its
+  diagonal like a dog-ear), **flip** (turns over like the card), **wipe** (wiped back into
+  the corner), **spin** (pinwheels away), **shatter** (trembles, then two shards fly apart
+  as the corner vanishes) and **melt** (squashes into the bottom edge). The maintainer
+  asked for all ten, one picked at random each time, so every weight is 10. The shatter's
+  shards, like the pop's sparkles, sit beside the cue, so memory-match now gives both its
+  card-scaled `--flip-cue-size`; the sparkles had used the 7rem default there since E21.
+  Reduced motion is unchanged: one plain fade, with the shards hidden too. Tests first:
+  `flip-cue-exits.test.ts` (weights and picks), `flip-cue-css.test.ts` (each exit's
+  keyframes and duration, the shards, reduced motion) and `FlipCue.test.tsx` (two shards
+  for the shatter only); `memory-match-css.test.ts` holds the shared size, and
+  `e2e/debug/flip-cue.spec.ts` accepts the new names. Checked in
+  Chromium on the dev server's showcase: a memory grid's third turn, with the random
+  source forced, plays all ten exits with their keyframes, durations and 70 ms stagger,
+  and frozen mid-way the shards are card-sized. Design:
+  [`2026-10-16-flip-cue-retire-design.md`](../specs/2026-10-16-flip-cue-retire-design.md) §2.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
