@@ -1,6 +1,6 @@
 import { test, expect } from 'vitest';
 
-import type { InputMeta } from '@/exercises/lib/parsing';
+import { parseInputBlank, type InputMeta } from '@/exercises/lib/parsing';
 import { gradeInlineGap, fillInlineGapAnswers } from './inline-gap-grading';
 
 const meta = (expected: string): InputMeta => ({ expected, placeholder: '', widthCh: 8 });
@@ -50,4 +50,11 @@ test('fillInlineGapAnswers: reveals expected answers, all correct', () => {
 
 test('fillInlineGapAnswers: missing meta yields empty-string value', () => {
   expect(fillInlineGapAnswers([], 1).values[0]).toBe('');
+});
+
+// E35: an answer written with an entity grades against what it decodes to.
+test('gradeInlineGap: an encoded accented answer grades its decoded form', () => {
+  const blanks = [parseInputBlank('caf&eacute;', 0).meta];
+  expect(gradeInlineGap(blanks, { 0: 'café' }, 1).checkedResults[0]).toBe(true);
+  expect(gradeInlineGap(blanks, { 0: 'cafe' }, 1).checkedResults[0]).toBe(false);
 });

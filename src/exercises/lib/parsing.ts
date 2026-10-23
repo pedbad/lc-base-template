@@ -13,11 +13,13 @@
  * tail handling, blank-index bookkeeping); each engine supplies only `parseBlank`.
  *
  * `choiceBlankProblems` and `inputBlankProblems` are the content checks the engine
- * schemas run at load (TODO §E34). They read a sentence through this same parser, so
- * what the build accepts is exactly what the engine can render and grade.
+ * schemas run at load (TODO §E34). They read a sentence through this same parser, and
+ * judge each option and answer decoded and normalized as the page shows and grades it
+ * (TODO §E35), so what the build accepts is exactly what the engine can render and grade.
  *
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §8.
  */
+import { normalizeAnswer } from './answers';
 import { decodeHtmlEntities } from './html';
 
 /** A run of literal text between blanks (entities already decoded). */
@@ -107,7 +109,7 @@ export interface ChoiceSegment {
 
 /** One option of a choice blank: as written, as shown, and whether `*` marks it correct. */
 interface ChoiceOption {
-  /** Trimmed, its `*` dropped, entities not yet decoded: what the content check judges. */
+  /** Trimmed, its `*` dropped, entities not yet decoded: what the author typed. */
   written: string;
   /** `written` with entities decoded: what the learner sees. */
   label: string;
@@ -115,7 +117,8 @@ interface ChoiceOption {
 }
 
 /** Splits a choice blank's inner text into its options: the one split the engine and
- *  the content check both use. */
+ *  the content check both use. The `|` and `*` syntax is read before any entity is
+ *  decoded, so `&#124;` or `&#42;` in an option is text, never a split or a mark. */
 function splitChoiceOptions(rawInner: string): ChoiceOption[] {
   return rawInner.split('|').map((raw) => {
     const option = raw.trim();
@@ -204,12 +207,41 @@ export function countBlanks(text: string): number {
   return parseSentence(text, { parseBlank: parseInputBlank }).nextBlankIndex;
 }
 
+/** The faults in one choice blank's options, judged as the learner sees them. */
+function choiceOptionProblems(blank: string, choiceOptions: ChoiceOption[]): string[] {
+  const problems: string[] = [];
+  // Compared as grading compares typed answers: spacing, Unicode form and apostrophe
+  // variants fold; capitals and accents stay, since `Es` and `és` are real choices.
+  const shown = choiceOptions.map((option) => normalizeAnswer(option.label));
+  const blankAt = choiceOptions.findIndex((_, i) => shown[i] === '');
+  if (choiceOptions.some((option, i) => option.marked && shown[i] === '')) {
+    problems.push(`the blank ${blank} marks an empty option correct: write the option after the *`);
+  } else if (blankAt !== -1) {
+    const { written } = choiceOptions[blankAt];
+    problems.push(
+      written === ''
+        ? `the blank ${blank} has an empty option: remove the extra |`
+        : `the blank ${blank} has an option, "${written}", that shows as nothing: write the option or remove it`,
+    );
+  }
+  const repeatAt = shown.findIndex((option, i) => option !== '' && shown.indexOf(option) !== i);
+  if (repeatAt !== -1) {
+    const first = choiceOptions[shown.indexOf(shown[repeatAt])].written;
+    const again = choiceOptions[repeatAt].written;
+    const spelling = first === again ? '' : ` (written "${first}" and "${again}")`;
+    problems.push(
+      `the blank ${blank} offers "${shown[repeatAt]}" twice${spelling}: each option must differ`,
+    );
+  }
+  return problems;
+}
+
 /**
  * What stops a learner answering the `[a|*b|c]` blanks in `text`, one plain sentence per
- * fault; empty when every blank is usable. A blank needs exactly one `*`, no empty
- * option and no option twice. Options are judged as written, never decoded: the engine
- * views run this in the browser too, where every entity decodes, and in Node only
- * `&apos;` does, so a decoded verdict could pass the build and fail the page.
+ * fault; empty when every blank is usable. A blank needs exactly one `*`, no option that
+ * shows as nothing and no two options that look the same. The `*` is read as written;
+ * the options are judged decoded, by the decoder the page uses, so an option written
+ * `&eacute;` beside `é` is the same option twice (TODO §E35).
  */
 export function choiceBlankProblems(text: string): string[] {
   const problems: string[] = hasStrayBrackets(text) ? [STRAY_BRACKETS] : [];
@@ -225,18 +257,7 @@ export function choiceBlankProblems(text: string): string[] {
       } else if (marked > 1) {
         problems.push(`the blank ${blank} marks ${marked} options correct: keep * on one only`);
       }
-      const written = choiceOptions.map((option) => option.written);
-      if (choiceOptions.some((option) => option.marked && option.written === '')) {
-        problems.push(
-          `the blank ${blank} marks an empty option correct: write the option after the *`,
-        );
-      } else if (written.includes('')) {
-        problems.push(`the blank ${blank} has an empty option: remove the extra |`);
-      }
-      const repeated = written.find((option, i) => option !== '' && written.indexOf(option) !== i);
-      if (repeated !== undefined) {
-        problems.push(`the blank ${blank} offers "${repeated}" twice: each option must differ`);
-      }
+      problems.push(...choiceOptionProblems(blank, choiceOptions));
       return parseChoiceBlank(rawInner, blankIndex);
     },
   });
@@ -246,14 +267,17 @@ export function choiceBlankProblems(text: string): string[] {
 /**
  * What stops a learner answering the `[expected::placeholder]` blanks in `text`, one
  * plain sentence per fault; empty when every blank has an answer a learner would type.
- * Judged as written, like `choiceBlankProblems`, so Node and the browser agree.
+ * The answer is judged as the engine grades it: decoded by `parseInputBlank`, then
+ * normalized as typed answers are, so `[&nbsp;]` has no answer (TODO §E35). The `|` and
+ * `*` of a pasted choice are syntax, so they are looked for as written.
  */
 export function inputBlankProblems(text: string): string[] {
   const problems: string[] = hasStrayBrackets(text) ? [STRAY_BRACKETS] : [];
   parseSentence(text, {
     parseBlank: (rawInner, blankIndex) => {
       const { answer } = splitInputBlank(rawInner);
-      if (answer === '') {
+      const parsed = parseInputBlank(rawInner, blankIndex);
+      if (normalizeAnswer(parsed.meta.expected) === '') {
         problems.push(
           `the blank [${rawInner}] has no answer: write it before any ::, as in [llamo::llamarse]`,
         );
@@ -262,7 +286,7 @@ export function inputBlankProblems(text: string): string[] {
           `the blank [${rawInner}] is written as a choice: here a blank is [answer::hint], and the learner types the answer`,
         );
       }
-      return parseInputBlank(rawInner, blankIndex);
+      return parsed;
     },
   });
   return problems;

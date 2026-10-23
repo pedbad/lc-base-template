@@ -164,10 +164,48 @@ describe('choiceBlankProblems', () => {
     ]);
   });
 
-  // The views run these checks in the browser too, where every entity is decoded, and
-  // in Node only `&apos;` is. Judged on the written text, the verdict is the same in both.
-  test('judges options as written, before any entity is decoded', () => {
-    expect(choiceBlankProblems("[l&apos;eau|*l'eau]")).toEqual([]);
+  // Options are judged as the learner sees them (E35): decoded once, by the decoder the
+  // page uses, and compared as grading compares answers, so spacing and the way an
+  // accent is encoded do not make two options differ, but a capital or an accent does.
+  test.each(['[*é|&eacute;]', '[*é|&#233;]', '[*é|&#xE9;]', '[*e\u0301|é]', '[*a  b|a&nbsp;b]'])(
+    'names two options that look the same once decoded: %s',
+    (blank) => {
+      expect(choiceBlankProblems(`Y ${blank}.`)).toEqual([
+        expect.stringMatching(/offers ".+" twice/),
+      ]);
+    },
+  );
+
+  test("names a literal and an encoded apostrophe as one option: [l&apos;eau|*l'eau]", () => {
+    expect(choiceBlankProblems("[l&apos;eau|*l'eau]")).toEqual([
+      expect.stringContaining(`offers "l'eau" twice`),
+    ]);
+  });
+
+  test('keeps options that differ by a capital or an accent', () => {
+    expect(choiceBlankProblems('[*Es|es|és] así.')).toEqual([]);
+  });
+
+  test.each([
+    ['[*&nbsp;|b]', 'marks an empty option correct'],
+    ['[a|&#32;|*b]', 'shows as nothing'],
+    ['[a|&#x20;&nbsp;|*b]', 'shows as nothing'],
+  ])('names an option that decodes to nothing: %s', (blank, reason) => {
+    expect(choiceBlankProblems(`Y ${blank}.`)).toEqual([expect.stringContaining(reason)]);
+  });
+
+  test('reads encoded |, * and ] as text, never as blank syntax', () => {
+    expect(choiceBlankProblems('&#91;sic&#93; [*a&#124;b|c] [&#42;a|*b] [*x&#93;|y]')).toEqual([]);
+    expect(
+      parseSentence('&#91;sic&#93; [*a|b]', { parseBlank: parseChoiceBlank }).segments[0],
+    ).toEqual({ key: 'text-0-0', type: 'text', value: '[sic] ' });
+    expect(parseChoiceBlank('*a&#124;b|c', 0).meta).toEqual({ options: ['a|b', 'c'], winner: 0 });
+    expect(parseChoiceBlank('&#42;a|*b', 0).meta).toEqual({ options: ['*a', 'b'], winner: 1 });
+  });
+
+  test('decodes once: an encoded entity is shown as written, not decoded again', () => {
+    expect(choiceBlankProblems('[*&amp;eacute;|é]')).toEqual([]);
+    expect(parseChoiceBlank('*&amp;eacute;|é', 0).meta.options).toEqual(['&eacute;', 'é']);
   });
 
   test('names a blank that offers the same option twice', () => {
@@ -201,6 +239,19 @@ describe('inputBlankProblems', () => {
       expect(inputBlankProblems(text)).toEqual([expect.stringContaining('has no answer')]);
     },
   );
+
+  // An entity that decodes to a space is no answer either: grading trims it away (E35).
+  test.each(['Yo me [&nbsp;] Ana.', 'Yo me [&#32;::hint] Ana.', 'Yo me [ &nbsp;&#x20; ] Ana.'])(
+    'names a blank whose answer decodes to nothing: %s',
+    (text) => {
+      expect(inputBlankProblems(text)).toEqual([expect.stringContaining('has no answer')]);
+    },
+  );
+
+  test('accepts an encoded accented answer and gives the learner the decoded one', () => {
+    expect(inputBlankProblems('Un [caf&eacute;::boisson] noir.')).toEqual([]);
+    expect(parseInputBlank('caf&#xE9;::boisson', 0).meta.expected).toBe('café');
+  });
 
   test('names brackets that do not pair up', () => {
     expect(inputBlankProblems('Yo me [llamo::llamarse Ana.')).toContainEqual(

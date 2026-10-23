@@ -27,6 +27,7 @@
     "@fontsource-variable/open-sans": "^5.2.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "entities": "^8.1.0",
     "lucide-react": "^1.21.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",

@@ -1,27 +1,39 @@
 /**
- * Tests for decodeHtmlEntities. Run under bun (no `document`), so these cover the
- * two non-browser branches: the fast-path (no `&`) and the `&apos;` SSR fallback.
- * Full named/numeric entity decoding is browser-only (delegates to a <textarea>)
- * and is therefore not exercised here.
+ * Tests for decodeHtmlEntities. The decoder is the same code in Node (the build, the
+ * prerender, these tests) and in the browser, so one table of cases holds for both; the
+ * "in a browser" block runs it again with a `document` present to show it is not used.
  */
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { decodeHtmlEntities } from './html';
 
+/** Named, decimal and hexadecimal forms, and what each must read as. */
+const CASES: Array<[string, string]> = [
+  ['no entities here', 'no entities here'],
+  ['l&apos;école', "l'école"],
+  ['d&apos;un&apos;a', "d'un'a"],
+  ['caf&eacute;', 'café'],
+  ['caf&#233;', 'café'],
+  ['caf&#xE9;', 'café'],
+  ['caf&#Xe9;', 'café'],
+  ['&lt;b&gt; &amp; &quot;', '<b> & "'],
+  ['a&nbsp;b', 'a b'],
+];
+
 describe('decodeHtmlEntities', () => {
-  test('returns plain text unchanged (fast path, no entities)', () => {
-    expect(decodeHtmlEntities('no entities here')).toBe('no entities here');
+  test.each(CASES)('decodes %j to %j', (written, shown) => {
+    expect(decodeHtmlEntities(written)).toBe(shown);
+  });
+
+  test('decodes once: an encoded ampersand stays an ampersand, not a second entity', () => {
+    expect(decodeHtmlEntities('&amp;eacute; &amp;#124;')).toBe('&eacute; &#124;');
+  });
+
+  test('leaves an ampersand that starts no entity as written', () => {
+    expect(decodeHtmlEntities('Tom & Jerry &unknownentity;')).toBe('Tom & Jerry &unknownentity;');
   });
 
   test('returns empty string for empty input', () => {
     expect(decodeHtmlEntities('')).toBe('');
-  });
-
-  test('decodes &apos; to an apostrophe (SSR fallback)', () => {
-    expect(decodeHtmlEntities('l&apos;école')).toBe("l'école");
-  });
-
-  test('decodes every &apos; occurrence', () => {
-    expect(decodeHtmlEntities('d&apos;un&apos;a')).toBe("d'un'a");
   });
 
   test('coerces non-string input to string', () => {
@@ -32,39 +44,18 @@ describe('decodeHtmlEntities', () => {
     expect(decodeHtmlEntities()).toBe('');
   });
 
-  // Browser branch. The suite runs in Node, so `document` is stubbed with the one
-  // thing the branch touches — an element whose `value` reads back decoded markup.
+  // The browser once decoded through an off-screen <textarea> and Node only `&apos;`, so
+  // the prerendered page and the build's checks read text the learner never saw (E35).
   describe('in a browser', () => {
     afterEach(() => {
       vi.unstubAllGlobals();
     });
 
-    test('decodes through an off-screen textarea, not the &apos;-only fallback', () => {
-      const created: string[] = [];
-      vi.stubGlobal('document', {
-        createElement: (tag: string) => {
-          created.push(tag);
-          let markup = '';
-          return {
-            set innerHTML(value: string) {
-              markup = value;
-            },
-            get value() {
-              return markup.replaceAll('&eacute;', 'é').replaceAll('&lt;', '<');
-            },
-          };
-        },
-      });
-
-      expect(decodeHtmlEntities('caf&eacute; &lt;b')).toBe('café <b');
-      expect(created).toEqual(['textarea']);
-    });
-
-    test('still skips the parser when there is no "&"', () => {
+    test('decodes exactly as in Node, without touching the DOM', () => {
       const createElement = vi.fn();
       vi.stubGlobal('document', { createElement });
 
-      expect(decodeHtmlEntities('plain')).toBe('plain');
+      for (const [written, shown] of CASES) expect(decodeHtmlEntities(written)).toBe(shown);
       expect(createElement).not.toHaveBeenCalled();
     });
   });
