@@ -102,8 +102,8 @@ left, in order:
     marks the current one (below).
 18. **E37 — DONE 2026-10-23**: a fifth debug page, CULP syllabi, renders the syllabi
     folder's README, now with the hierarchy and the skill explained (below).
-19. **E38 — DONE 2026-10-23**: apt retries a stalled download in CI instead of the
-    browser jobs losing 15 minutes to it (below).
+19. **E38 — DONE 2026-10-23**: CI caches the browsers' system packages, so a stalled
+    apt mirror no longer cancels browser jobs (below).
 20. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
     rules carried into each course repo as step 6's ruleset A (E33), and E16 after.
 
@@ -2422,18 +2422,20 @@ rather than the Language Centre's course factory; the maintainer took three smal
   slug, the CSS split, the entries, the header (seven links), the page, and
   `e2e/debug/culp-syllabi.spec.ts` (axe in both themes, and its CONTRIBUTING link opens
   the sandbox there).
-- **E38 — CI survives a stalled apt. DONE 2026-10-23** (maintainer's request, branch
-  `ci/retry-playwright-deps`). Three browser-test jobs that day (PR 41 once, `main`
-  twice) sat in `playwright install-deps` until the 15-minute job limit and were
-  cancelled before a test ran; a re-run passed each time. **First try, reverted in the
-  same PR:** a 3-minute cap per attempt with a retry loop. The step downloads ~120 MB
-  from apt, a slow mirror ran past the cap, and the killed install left dpkg locked, so
-  both retries failed at once (exit 100). **The fix:** apt is configured
-  (`/etc/apt/apt.conf.d/99ci-network-retries`) to drop a silent connection after 30 s
-  and retry it, up to five times, so a stall ends without cutting a slow but moving
-  download short; it covers the sound-device step's `apt-get` too. The step has a
-  10-minute limit as a backstop. The browser download on a cache miss is now its own
-  step, without `--with-deps`, and the libraries install on every run.
+- **E38 — CI caches the browsers' system packages. DONE 2026-10-23** (maintainer's
+  request, branch `ci/retry-playwright-deps`). Four browser-test jobs that day sat in
+  `playwright install-deps` on "Need to get 119 MB of archives" until their time limit
+  and were cancelled before a test ran; a re-run passed each time. Two tries that did
+  not work, both in PR 42: a 3-minute cap with a retry loop (the download outran it, and
+  the killed install left dpkg locked, so every retry failed with exit 100), then apt's
+  own `Acquire::Retries` and 30 s timeouts (the next stall ran on to the step limit
+  regardless). **The fix:** the `.deb` files are cached (`~/apt-archives`, keyed by
+  runner image and Playwright version, like the browsers) and copied into apt's archive
+  before the install, so a cache hit downloads nothing, or only a package the mirror
+  has updated since. A miss downloads as before and fills the cache, PulseAudio's
+  packages included. The apt retry settings stay, and the install steps keep time limits
+  (10 and 5 minutes) so a stalled miss costs minutes, not the job. The browser download
+  on a cache miss is its own step, without `--with-deps`.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that

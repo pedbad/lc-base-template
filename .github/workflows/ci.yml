@@ -102,9 +102,8 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      # Browsers are ~500 MB; cache them per Playwright version. The Linux system
-      # libraries are installed either way (below), since the cache cannot hold them. Browsers are
-      # built per distro, so the key also names the runner image ($ImageOS, read here
+      # Browsers are ~500 MB; cache them per Playwright version. Browsers are built per
+      # distro, so the key also names the runner image ($ImageOS, read here
       # because the `env` context holds only workflow keys): an image move misses.
       - name: Read the Playwright version and runner image
         id: playwright
@@ -124,17 +123,30 @@ jobs:
         if: steps.browser-cache.outputs.cache-hit != 'true'
         run: bunx playwright install chromium firefox webkit
 
-      # The system libraries come from apt (~120 MB on a fresh runner), which sometimes
-      # stalls: on 2026-10-23 three jobs sat here until the 15-minute job limit and were
-      # cancelled before a test ran. Killing apt from outside and retrying does not work:
-      # a killed install leaves dpkg locked, and every retry fails at once (tried in this
-      # PR). So apt is told to give up on a silent connection after 30 s and retry it
-      # itself, which ends a stall without cutting a slow but moving download short. The
-      # step limit is the backstop, so a hang costs at most 10 minutes, not the job.
-      - name: Make apt retry a stalled download
+      # The system libraries come from apt: ~120 MB of packages on a fresh runner, from a
+      # mirror that sometimes stalls (2026-10-23: four jobs sat on "Need to get 119 MB"
+      # until their time limit, before a test ran; an apt retry setting did not catch it,
+      # and killing apt leaves dpkg locked). So the packages themselves are cached, keyed
+      # like the browsers: on a hit apt finds every .deb already in its archive and
+      # downloads nothing (or only a package the mirror has updated since). apt is also
+      # told to keep what it downloads, so a miss can fill the cache, and to drop and
+      # retry a silent connection. The step limit is the backstop for a miss that stalls.
+      - name: Cache the system packages
+        id: apt-cache
+        uses: actions/cache@v6.1.0
+        with:
+          path: ~/apt-archives
+          key: apt-${{ runner.os }}-${{ steps.playwright.outputs.image }}-${{ steps.playwright.outputs.version }}
+
+      - name: Prepare apt
         run: |
-          printf 'Acquire::Retries "5";\nAcquire::http::Timeout "30";\nAcquire::https::Timeout "30";\n' \
-            | sudo tee /etc/apt/apt.conf.d/99ci-network-retries
+          printf '%s\n' 'APT::Keep-Downloaded-Packages "true";' 'Acquire::Retries "5";' \
+            'Acquire::http::Timeout "30";' 'Acquire::https::Timeout "30";' \
+            | sudo tee /etc/apt/apt.conf.d/99ci
+          mkdir -p ~/apt-archives
+          if compgen -G "$HOME/apt-archives/*.deb" > /dev/null; then
+            sudo cp "$HOME"/apt-archives/*.deb /var/cache/apt/archives/
+          fi
 
       - name: Install browser system libraries
         timeout-minutes: 10
@@ -145,11 +157,18 @@ jobs:
       # PulseAudio null sink gives it one. Without it, e2e/debug/sequence-scrub.spec.ts
       # passed only because a stale playlist timer jumped clips (TODO §E28, PR 31).
       - name: Start a virtual sound device
+        timeout-minutes: 5
         run: |
           sudo apt-get install -y --no-install-recommends pulseaudio
           pulseaudio --start --exit-idle-time=-1
           pactl load-module module-null-sink sink_name=ci
           pactl set-default-sink ci
+
+      # On a miss, hand the packages apt just downloaded (Playwright's and PulseAudio's)
+      # to the cache step, which saves ~/apt-archives when the job ends.
+      - name: Keep the system packages for the cache
+        if: steps.apt-cache.outputs.cache-hit != 'true'
+        run: find /var/cache/apt/archives -maxdepth 1 -name '*.deb' -exec cp -t "$HOME/apt-archives" {} +
 
       - name: Build
         run: bun run build
