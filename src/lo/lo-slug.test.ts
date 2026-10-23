@@ -101,14 +101,18 @@ describe('loSlugsByFolder', () => {
     );
   });
 
-  it.each(['exercise-showcase', 'debug-sandbox', 'ui-showcase', 'code-style', 'culp-syllabi'])(
-    'rejects a lesson that would write the %s debug page',
-    (slug) => {
-      expect(() => loSlugsByFolder([`lo-03-${slug}`])).toThrow(
-        new RegExp(`lo-03-${slug} derives the slug "${slug}"`),
-      );
-    },
-  );
+  it.each([
+    'exercise-showcase',
+    'debug-sandbox',
+    'ui-showcase',
+    'code-style',
+    'culp-syllabi',
+    'claude-skills',
+  ])('rejects a lesson that would write the %s debug page', (slug) => {
+    expect(() => loSlugsByFolder([`lo-03-${slug}`])).toThrow(
+      new RegExp(`lo-03-${slug} derives the slug "${slug}"`),
+    );
+  });
 
   it('accepts a slug that only contains a reserved name', () => {
     expect([...loSlugsByFolder(['lo-01-index-cards']).values()]).toEqual(['index-cards']);

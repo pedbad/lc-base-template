@@ -16,7 +16,8 @@
  * A third joined on 2026-10-13: `ui-showcase.html`, every block type rendered through
  * the course page's own renderers (TODO §F4). A fourth on 2026-10-21: `code-style.html`,
  * docs/STYLE.md with its examples. A fifth on 2026-10-23: `culp-syllabi.html`, the
- * CULP syllabi folder's README. Same rule, same flag, same list.
+ * CULP syllabi folder's README. A sixth the same day: `claude-skills.html`, a card per
+ * Claude skill and the skills README (TODO §E40). Same rule, same flag, same list.
  *
  * WHY ONE FLAG AND NOT TWO. Two flags would be two fail-closed rules to keep in step for
  * no gain: the dev server serves BOTH pages regardless of this list, so nobody needs a

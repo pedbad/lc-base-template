@@ -52,9 +52,9 @@ export default defineConfig({
       '@': path.resolve(import.meta.dirname, './src'),
     },
   },
-  // Multi-page build. The course (index.html) always builds. The five debug-only pages —
-  // the exercise showcase, the UI showcase, the designer's sandbox, the code style page
-  // and the CULP syllabi page — are OPT-IN behind one flag, `DEBUG=1 bun run build`, because an unconditional
+  // Multi-page build. The course (index.html) always builds. The six debug-only pages —
+  // the exercise showcase, the UI showcase, the designer's sandbox, the code style page,
+  // the CULP syllabi page and the Claude skills page — are OPT-IN behind one flag, `DEBUG=1 bun run build`, because an unconditional
   // entry put `dist/exercise-showcase.html` on every deploy: unlinked, but a public URL
   // on a live course (Phase C · Part D §5, closed 2026-09-03). See src/build/build-entries.ts
   // for the fail-closed rule and why `SHOWCASE=1` still works; the entry list is
@@ -112,6 +112,7 @@ export default defineConfig({
         'src/ui-showcase/**',
         'src/code-style/**',
         'src/culp-syllabi/**',
+        'src/claude-skills/**',
         // Wiring, not logic. lazy-registry.ts is a table of lazy() imports that only a
         // browser resolves; its keys are checked by registry-completeness.
         'src/exercises/lazy-registry.ts',

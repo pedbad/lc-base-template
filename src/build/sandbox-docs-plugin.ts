@@ -24,6 +24,7 @@
  */
 import path from 'node:path';
 import type { Plugin } from 'vite';
+import { claudeSkillPaths, readClaudeSkills } from './claude-skills-docs';
 import {
   readCodeStyleDoc,
   readCulpSyllabiDoc,
@@ -37,7 +38,13 @@ export const SANDBOX_DOCS_MODULE_ID = 'virtual:sandbox-docs';
 /** Rollup's convention for a module no file backs. */
 const RESOLVED_ID = `\0${SANDBOX_DOCS_MODULE_ID}`;
 
-/** Renders the docs hub's markdown, and the Code style and CULP syllabi pages', into a virtual module. */
+/** Every markdown file the debug pages render: the listed docs, then each SKILL.md. */
+const watchedDocs = (rootDir: string): string[] => [
+  ...sandboxDocPaths(rootDir),
+  ...claudeSkillPaths(rootDir),
+];
+
+/** Renders the docs hub's markdown, and the Code style, CULP syllabi and Claude skills pages', into a virtual module. */
 export function sandboxDocs(rootDir: string = path.resolve(import.meta.dirname, '../..')): Plugin {
   return {
     name: 'lc-sandbox-docs',
@@ -49,17 +56,18 @@ export function sandboxDocs(rootDir: string = path.resolve(import.meta.dirname, 
     load(id) {
       if (id !== RESOLVED_ID) return undefined;
       // Registered on every load so a re-render after an edit re-registers them too.
-      for (const file of sandboxDocPaths(rootDir)) this.addWatchFile(file);
+      for (const file of watchedDocs(rootDir)) this.addWatchFile(file);
       // One export per page that reads them; each page's bundle keeps only its own.
       return [
         `export const SANDBOX_DOC_PAGES = ${JSON.stringify(readSandboxDocs(rootDir))};`,
         `export const CODE_STYLE_DOC_PAGE = ${JSON.stringify(readCodeStyleDoc(rootDir))};`,
         `export const CULP_SYLLABI_DOC_PAGE = ${JSON.stringify(readCulpSyllabiDoc(rootDir))};`,
+        `export const CLAUDE_SKILLS_PAGE = ${JSON.stringify(readClaudeSkills(rootDir))};`,
       ].join('\n');
     },
 
     configureServer(server) {
-      const docs = new Set(sandboxDocPaths(rootDir));
+      const docs = new Set(watchedDocs(rootDir));
       server.watcher.add([...docs]);
       server.watcher.on('change', (file) => {
         if (!docs.has(path.resolve(file))) return;

@@ -74,11 +74,19 @@ describe('debugEntries', () => {
       ui: path.resolve(root, 'ui-showcase.html'),
       style: path.resolve(root, 'code-style.html'),
       culp: path.resolve(root, 'culp-syllabi.html'),
+      skills: path.resolve(root, 'claude-skills.html'),
     });
   });
 
   it('names one root-level html file per entry', () => {
     expect(Object.values(DEBUG_ENTRY_FILES).every((file) => file.endsWith('.html'))).toBe(true);
-    expect(Object.keys(DEBUG_ENTRY_FILES)).toEqual(['showcase', 'sandbox', 'ui', 'style', 'culp']);
+    expect(Object.keys(DEBUG_ENTRY_FILES)).toEqual([
+      'showcase',
+      'sandbox',
+      'ui',
+      'style',
+      'culp',
+      'skills',
+    ]);
   });
 });

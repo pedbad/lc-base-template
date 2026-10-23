@@ -33,7 +33,7 @@ function navLinks(markup: string): [string, string | null, string][] {
   ]);
 }
 
-const PAGES: readonly DebugPage[] = ['showcase', 'sandbox', 'ui', 'style', 'culp'];
+const PAGES: readonly DebugPage[] = ['showcase', 'sandbox', 'ui', 'style', 'culp', 'skills'];
 
 const html = renderToStaticMarkup(
   <DebugPageHeader
@@ -67,13 +67,14 @@ describe('DebugPageHeader', () => {
 
   // Maintainer, 2026-10-23: every debug page lists all of them, in one order, and shows
   // which one you are on, instead of leaving the current page out.
-  test('the nav holds seven plain links: all five debug pages, course home, the repo', () => {
+  test('the nav holds eight plain links: all six debug pages, course home, the repo', () => {
     expect(navLinks(html).map(([, , text]) => text)).toEqual([
       'Exercise showcase',
       'Debug sandbox',
       'UI showcase',
       'Code style',
       'CULP syllabi',
+      'Claude skills',
       'Course home',
       'GitHub repo (opens in a new tab)',
     ]);
@@ -100,11 +101,16 @@ describe('DebugPageHeader', () => {
   test('links to every debug page through the base, the current one included', () => {
     PAGES.forEach((page) => {
       const markup = headerFor(page);
-      ['exercise-showcase', 'debug-sandbox', 'ui-showcase', 'code-style', 'culp-syllabi'].forEach(
-        (file) => {
-          expect(markup, page).toContain(`href="/${file}.html"`);
-        },
-      );
+      [
+        'exercise-showcase',
+        'debug-sandbox',
+        'ui-showcase',
+        'code-style',
+        'culp-syllabi',
+        'claude-skills',
+      ].forEach((file) => {
+        expect(markup, page).toContain(`href="/${file}.html"`);
+      });
       expect(markup).toContain('Course home');
     });
   });
@@ -119,6 +125,7 @@ describe('DebugPageHeader', () => {
       ui: 'UI showcase',
       style: 'Code style',
       culp: 'CULP syllabi',
+      skills: 'Claude skills',
     };
     PAGES.forEach((page) => {
       const current = navLinks(headerFor(page)).filter(([, ariaCurrent]) => ariaCurrent !== null);

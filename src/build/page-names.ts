@@ -25,6 +25,7 @@ export const DEBUG_ENTRY_FILES = {
   ui: 'ui-showcase.html',
   style: 'code-style.html',
   culp: 'culp-syllabi.html',
+  skills: 'claude-skills.html',
 } as const;
 
 /** The course home: Vite's entry, replaced by the prerendered landing page. */

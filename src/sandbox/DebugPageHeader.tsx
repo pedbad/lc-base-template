@@ -1,13 +1,14 @@
 /**
- * DebugPageHeader — the header all five debug pages share: the sandbox, the exercise
- * showcase, the UI showcase, the code style guide and the CULP syllabi guide. Title, a one-line description, the
- * theme switch, and a nav holding a "jump to" menu of the page's own sections plus seven
- * plain links — all five debug pages, course home and the GitHub repo. The sections sit in a shadcn
+ * DebugPageHeader — the header all six debug pages share: the sandbox, the exercise
+ * showcase, the UI showcase, the code style guide, the CULP syllabi guide and the
+ * Claude skills page. Title, a one-line description, the
+ * theme switch, and a nav holding a "jump to" menu of the page's own sections plus eight
+ * plain links — all six debug pages, course home and the GitHub repo. The sections sit in a shadcn
  * dropdown because the exercise showcase has 25 of them, and a wrapping row of links
  * that long is noise. One component, so the navs cannot drift apart.
  *
  * It lives in `src/sandbox/` because the sandbox had it first; the showcases import it.
- * All five pages are debug-only (`DEBUG=1`, see build-entries.ts), so none ships.
+ * All six pages are debug-only (`DEBUG=1`, see build-entries.ts), so none ships.
  *
  * PINNED (§E18 follow-up, maintainer 2026-10-16). The bar stays at the top while the
  * page scrolls, so the jump menu, the palette drop-down and the theme switch are always
@@ -50,8 +51,8 @@ export interface DebugSection {
   readonly label: string;
 }
 
-/** The five debug pages. Each lists all five and marks itself current. */
-export type DebugPage = 'sandbox' | 'showcase' | 'ui' | 'style' | 'culp';
+/** The six debug pages. Each lists all six and marks itself current. */
+export type DebugPage = 'sandbox' | 'showcase' | 'ui' | 'style' | 'culp' | 'skills';
 
 /** In nav order, the same on every page. */
 const DEBUG_PAGES: readonly { page: DebugPage; href: string; label: string }[] = [
@@ -60,6 +61,7 @@ const DEBUG_PAGES: readonly { page: DebugPage; href: string; label: string }[] =
   { page: 'ui', href: 'ui-showcase.html', label: 'UI showcase' },
   { page: 'style', href: 'code-style.html', label: 'Code style' },
   { page: 'culp', href: 'culp-syllabi.html', label: 'CULP syllabi' },
+  { page: 'skills', href: 'claude-skills.html', label: 'Claude skills' },
 ];
 
 /**

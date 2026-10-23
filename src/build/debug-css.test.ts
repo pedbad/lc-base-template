@@ -25,6 +25,7 @@ const DEBUG_FOLDERS = [
   './ui-showcase',
   './code-style',
   './culp-syllabi',
+  './claude-skills',
 ] as const;
 
 describe('debug pages have their own stylesheet', () => {
@@ -54,6 +55,7 @@ describe('debug pages have their own stylesheet', () => {
     'ui-showcase/main.tsx',
     'code-style/main.tsx',
     'culp-syllabi/main.tsx',
+    'claude-skills/main.tsx',
   ])('%s loads debug.css, not index.css', (entry) => {
     const source = read(entry);
     expect(source).toContain("import '../debug.css';");
