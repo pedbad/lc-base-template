@@ -98,7 +98,9 @@ left, in order:
     now fail the build, and Pause and stops hold in the playlist (below).
 16. **E35 — DONE 2026-10-23**: blanks judged as the learner sees them, with one entity
     decoder; the play button cancels a play still loading (below).
-17. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
+17. **E36 — DONE 2026-10-23**: every debug page's nav lists all four debug pages and
+    marks the current one (below).
+18. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
     rules carried into each course repo as step 6's ruleset A (E33), and E16 after.
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
@@ -2386,6 +2388,19 @@ rather than the Language Centre's course factory; the maintainer took three smal
   again while its clip loads restarts the load instead of cancelling it
   (`useRowAudio.playRow`); and drag-fill-gaps shows its tile word undecoded
   (`[caf&eacute;]` reads `caf&eacute;`, `drag-fill-gaps-grading.ts`).
+- **E36 — one nav on every debug page, the current page marked. DONE 2026-10-23**
+  (maintainer's request, branch `feat/debug-nav-current-page` from `main` at `b3ec2aa`).
+  Each debug page's header listed the OTHER debug pages and left its own out, so the list
+  changed shape from page to page. `DebugPageHeader` (already the one header all four
+  share) now lists Exercise showcase, Debug sandbox, UI showcase and Code style, then
+  Course home and the repo, in that order everywhere, and marks the page you are on with
+  `aria-current="page"`. **It stays a link:** one shape and one tab order on every page,
+  and a screen reader hears "current page" within the set rather than an entry that is
+  missing. Its highlight is the theme's accent pair (`bg-accent`, `text-accent-foreground`,
+  no underline, semibold), keyed on `aria-[current=page]:`, so the look cannot disagree
+  with the attribute. Tests first: the header's unit tests (same list on all four, exactly
+  one current) and the three pages' own, and `e2e/debug/debug-nav.spec.ts`, which opens
+  each page and checks the list, the one current link and that its fill differs.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
