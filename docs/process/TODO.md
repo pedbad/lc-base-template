@@ -102,7 +102,9 @@ left, in order:
     marks the current one (below).
 18. **E37 — DONE 2026-10-23**: a fifth debug page, CULP syllabi, renders the syllabi
     folder's README, now with the hierarchy and the skill explained (below).
-19. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
+19. **E38 — DONE 2026-10-23**: CI's system-package install can no longer stall a
+    required check until the job times out (below).
+20. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
     rules carried into each course repo as step 6's ruleset A (E33), and E16 after.
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
@@ -2420,6 +2422,33 @@ rather than the Language Centre's course factory; the maintainer took three smal
   slug, the CSS split, the entries, the header (seven links), the page, and
   `e2e/debug/culp-syllabi.spec.ts` (axe in both themes, and its CONTRIBUTING link opens
   the sandbox there).
+- **E38 — CI's system packages, bounded. DONE 2026-10-23** (maintainer's request,
+  branch `ci/e35-apt-stalls`; numbered E35 there and renumbered at its rebase, since
+  `main` had taken E35–E37 meanwhile). While it waited, four more jobs stalled the same
+  way on 2026-10-23 (PR 41, `main` twice, PR 42), and PR 42, a second attempt at the
+  same fix made without knowing of this one, was closed for it. On 2026-10-22/23 the `e2e` job's "Install browser system
+  libraries" step ran into the job's 15-minute timeout six times in four runs (PRs 36
+  and 37), each a cancelled required check waiting on `gh run rerun --failed`. The log
+  of one: the package lists came at 11.5 MB/s, then `Need to get 119 MB of archives`
+  (181 packages) trickled from `azure.archive.ubuntu.com` at 50–100 kB/s, never
+  failing; healthy runs of the same step took 24–46 s. apt falls back to the runner's
+  second mirror only on an error, never on slowness. The fix, in `ci.yml`: one step
+  installs the browsers' libraries and PulseAudio on every run (the browser-cache miss
+  no longer uses `--with-deps`, and the sound-device step only starts PulseAudio); the
+  downloaded `.deb` files are cached, keyed by runner image version, with
+  `apt-get autoclean` so the cache does not grow; each try runs under `timeout` as root
+  (so it stops apt, not only sudo) for 120 s, three tries inside the step's eight
+  minutes; a failed try drops the Azure mirror, so the next fetches from
+  `archive.ubuntu.com`, keeping the packages already downloaded. Rejected: the
+  Playwright container image (a pull of its own, Firefox as root, PulseAudio still from
+  apt, and a tag to keep in step with `@playwright/test`), and a hand-kept package list
+  (every job runs all three browsers, so it saves nothing and drifts). Test first:
+  `src/docs/ci-workflow.test.ts` (new devDependency `yaml`, the 2.9.0 already in the
+  lockfile) failed three of four before the change: apt reached from one step only,
+  each try's limit fitting the step's and the step's the job's, and the cache read by
+  that step. Its fourth test holds the five check names to
+  `docs/BRANCH_PROTECTION.md`'s list; it passed before and after, and failed when a
+  matrix name was changed by hand. Step timings from CI: in the pull request.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that

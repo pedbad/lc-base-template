@@ -255,6 +255,15 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
   sound device, and without one Firefox cannot play a clip at all
   (`NS_ERROR_DOM_MEDIA_MEDIASINK_ERR`), so an audio test there checks nothing (TODO §E28). The gate in AGENTS.md runs the course suite only; run the
   debug suite by hand when a change touches a debug page or what it shows.
+- **CI's system packages are bounded (E38):** the browsers' Linux libraries and
+  PulseAudio come to ~120 MB of Ubuntu packages, which the runner's Azure mirror
+  sometimes serves at 50–100 kB/s without ever failing, until the job's 15 minutes
+  cancel a required check. So one step installs them, on every run: the downloaded
+  packages are cached (keyed by runner image version), each try has two minutes, a
+  failed try drops the Azure mirror for `archive.ubuntu.com`, and three tries fit
+  inside the step's eight minutes. `src/docs/ci-workflow.test.ts` holds those limits
+  and the five check names `main` requires (`docs/BRANCH_PROTECTION.md`). The reasons
+  are in the comments on the steps in `ci.yml`.
 - **Not in the pre-push hook**, which stays fast. **In the verify gate**, after `build`.
 - **Needs Node** (≥ 22.12, `.nvmrc`): Playwright's runner does not run on Bun.
 - **Once per machine:** `bunx playwright install chromium firefox webkit`.
