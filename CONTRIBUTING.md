@@ -314,7 +314,8 @@ Any HTML entity (`&eacute;`, `&#233;`, `&#xE9;`, `&nbsp;`) may stand for a chara
 The blank's `[`, `]`, `|`, `*` and `::` are read first, so an entity is always text:
 `[*a&#124;b|c]` offers `a|b` and `c`. Every rule above is then checked on the options and
 answers as the learner sees them, decoded: `[*é|&eacute;]` offers `é` twice, and
-`[&nbsp;]` has no answer. Spacing and how an accent is encoded do not make two options
+`[&nbsp;]` has no answer. Options are compared as typed answers are graded: spacing, how
+an accent is encoded and the apostrophe's shape (`l'eau`, `l’eau`) do not make two options
 differ; a capital or an accent does (TODO §E35).
 
 When a blank is wrong, the build stops and says where and what:
