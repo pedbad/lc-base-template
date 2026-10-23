@@ -10,7 +10,7 @@ session, on either machine.
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 | [`../ROADMAP.md`](../ROADMAP.md)      | larger work beyond this queue, each with its trigger       |
 
-**Last updated:** 2026-10-23 · **HEAD:** see `git log` · **Suite:** 197 files · 2162 tests green
+**Last updated:** 2026-10-23 · **HEAD:** see `git log` · **Suite:** 197 files · 2207 tests green
 (Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 60 on a `DEBUG=1` build (20 × 3, `e2e/debug/`) · CI green · `main` protected since 2026-10-21 (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -94,7 +94,9 @@ left, in order:
     checked by a test (below).
 14. **E33 — DONE 2026-10-23**: a drift check before the move; course repos get two
     rulesets, so the maintainer can merge their own template syncs (below).
-15. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
+15. **E34 — DONE 2026-10-23**: the fourth external review; blanks no learner could answer
+    now fail the build, and Pause and stops hold in the playlist (below).
+16. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
     rules carried into each course repo as step 6's ruleset A (E33), and E16 after.
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
@@ -119,7 +121,7 @@ never the branch's.
 - **Tabs on phones (§F3) is DONE** (2026-10-13): below the block's `@3xl` width the tab
   row gives way to the shadcn `Select`. It cost 21.8 kB of JS, and the maintainer
   raised the JS cap to 140 kB (`docs/TOOLING.md`, "Bundle budget").
-- **After the organisation move (item 15 above), ask the maintainer what is next.**
+- **After the organisation move (item 16 above), ask the maintainer what is next.**
   Candidates: §F2 (the remaining tabs-panel entries), §F6 (further components), or a
   Deferred item. The §E2 queue (`2026-10-12-team-workflow-handover.md` §3, "Next, in
   order") is done up to its last item, the move itself (E8, E4, E7, E5).
@@ -2244,7 +2246,9 @@ rather than the Language Centre's course factory; the maintainer took three smal
      the duplicate-`ended` one was tightened until it did. **Known edge, not fixed:**
      another player starting during the gap (`AudioManager.stopAll`) pauses an element
      that is already paused, so no event reaches the controller and the next clip
-     still starts after the gap. Fixing it needs an `AudioManager` change.
+     still starts after the gap. Fixing it needs an `AudioManager` change. **Fixed in
+     E34** (2026-10-23): AudioManager now stops each player through the player's own
+     pause.
   4. **Found by CI on the way (PR 31):** the runner has no sound device, so Firefox there
      never played a clip (`NS_ERROR_DOM_MEDIA_MEDIASINK_ERR`). `e2e/debug/sequence-scrub.spec.ts`
      had passed on `main` only because the stale gap timer from item 3 jumped the player
@@ -2306,6 +2310,48 @@ rather than the Language Centre's course factory; the maintainer took three smal
   first course are the proof, the third a maintainer sync that must still wait for its
   checks. Left to the maintainer, as repo settings: deleting head branches on merge is
   off, and squash merges are allowed although pull requests rebase-merge.
+- **E34 — the fourth external review: answers no learner could give, and a playlist
+  that would not stay paused. DONE 2026-10-23** (maintainer's request, branch
+  `fix/e34-answers-and-audio` from `main` at `f0c6a71`; the review read `71f65e6`, and
+  no app code changed between). Its three defects were each reproduced first.
+  (1) **A blank no learner could answer built green.** `Yo [soy|eres|es]`, with no `*`,
+  built (a copied lesson wrote `repro.html`) and graded every option wrong; two `*`
+  silently kept the first; Show answers on an unmarked blank marked it correct with
+  nothing selected. Inline-choice shares the syntax and the gap, and inline-gap took
+  `[::hint]`, an empty answer. The checks are in `src/exercises/lib/parsing.ts`, read
+  through the engine's own parser (one option splitter for both, the parser's own
+  `BLANK_REGEX` for brackets): exactly one `*`, no empty or repeated option, brackets
+  that pair up, an answer before `::` that is not a choice pasted in, and a blank
+  somewhere in each exercise. Options are judged as written, never decoded: the views
+  re-run the schemas in the browser, where every entity decodes, and in Node only
+  `&apos;` does, so a decoded verdict could pass the build and fail the page. The three
+  schemas run them at load (`src/exercises/lib/blank-checks.ts`), so the build and the
+  dev page refuse the lesson, naming file, blank and sentence. Seen failing first: 20
+  parser tests, 11 schema and reader tests. By hand, the same copied lesson now stops
+  `bun run build` (exit 1) before any page is written. For authors: CONTRIBUTING,
+  "Blanks in a sentence". **Now refused, as a side effect:** a lone `[` or `]` in a
+  sentence, which used to show as text; there is no way to write one (CONTRIBUTING says
+  so). **Accepted on purpose:** a one-option blank, `[*es]`, answerable if pointless.
+  **Still so:** drag-fill-gaps and word-spot check only that their `[word]` blanks
+  exist, by regexes of their own.
+  (2) **Pause did not cancel a track still loading**, and (3) **a stop from another
+  player did not reach a playlist in its gap** (E28's known edge, closed). One approach
+  for both: the controller keeps what the learner asked for last, and a clip that
+  finishes loading plays only if that still says play; AudioManager registers each
+  player with its own stop, the controller's `pause`, so a stop from anywhere cancels
+  the gap and a pending start, not only the element. Unmount drops the waiting
+  listener; a media key counts as the learner's latest ask; a clip that fails to load
+  drops its waiting start. Ten happy-dom tests on held-back metadata and fake timers,
+  each seen failing (a play after Pause, two plays from one resume, a stale play after
+  unmount, the next clip after a stop in the gap…; the stopped-player case by taking
+  its guard out). Of three AudioManager tests, one could fail first; the other two
+  assert a stop is not made, which the old code never made either. A read-only review
+  (`lc-reviewer`) found the media-key, load-error, decoding and pasted-choice cases
+  above, all fixed here. Browser
+  coverage: the debug suite (sequence scrub, showcase audio) passes in Chromium and
+  WebKit; Firefox runs in CI. **Not shown yet:** a colleague doing this from the guide
+  alone. [`FRENCH_PILOT_CHECKLIST.md`](FRENCH_PILOT_CHECKLIST.md) is prepared for the
+  first course, not run.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
