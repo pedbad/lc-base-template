@@ -106,7 +106,9 @@ left, in order:
     required check until the job times out (below).
 20. **E39 — DONE 2026-10-23**: the retiring flip cue picks from ten exits, all
     equally likely, instead of four (below).
-21. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
+21. **E40 — DONE 2026-10-23**: a sixth debug page, Claude skills, shows a card per
+    skill in `.claude/skills/` with its recipe and the shared steps (below).
+22. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
     rules carried into each course repo as step 6's ruleset A (E33), and E16 after.
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
@@ -2469,6 +2471,24 @@ rather than the Language Centre's course factory; the maintainer took three smal
   source forced, plays all ten exits with their keyframes, durations and 70 ms stagger,
   and frozen mid-way the shards are card-sized. Design:
   [`2026-10-16-flip-cue-retire-design.md`](../specs/2026-10-16-flip-cue-retire-design.md) §2.
+- **E40 — a Claude skills debug page. DONE 2026-10-23** (maintainer's request, branch
+  `feat/claude-skills-page`). The eight skills sit in a hidden folder and were listed
+  only in README's table and CONTRIBUTING, so a course author had no way to see what
+  Claude can do for them. `claude-skills.html` (`DEBUG=1` only, sixth in every debug
+  page's nav) has one card per folder holding a `SKILL.md`: its `name` (as `/name`, how
+  to call it) and `description` from the frontmatter, and the rest of the file as the
+  recipe in a closed `<details>`. The folder's README, the steps several skills share,
+  renders after the cards. Nothing is registered: `src/build/claude-skills-docs.ts` walks
+  the folder, so a course repo's own skills appear too, and a `SKILL.md` without a name
+  or a description stops the build, naming the file. The docs renderer gains a
+  `DocSource` for files its registry does not list, so a recipe's links resolve from its
+  own folder (`../README.md#where-am-i` stays on the page; `../../../AGENTS.md` opens the
+  sandbox). Tests first: the reader (a throwaway repo, and every real skill folder
+  present), the renderer's `DocSource`, the plugin's watch list, the page (cards,
+  disclosures, jump menu, outline, theme script), the header (eight links) and
+  `e2e/debug/claude-skills.spec.ts` (axe in both themes with a recipe open, and the
+  shared-steps link). Checked in Chromium on the dev server, light and dark. At 800 px
+  the eight nav links now wrap to a second row.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that

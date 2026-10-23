@@ -155,7 +155,7 @@ it. Do not deploy: send the message to the lesson's author or the maintainer.
    ```
 
    If you see `exercise-showcase.html`, `ui-showcase.html`, `debug-sandbox.html`,
-   `code-style.html` or `culp-syllabi.html`, the build ran with `DEBUG` set. Open a new terminal and build again.
+   `code-style.html`, `culp-syllabi.html` or `claude-skills.html`, the build ran with `DEBUG` set. Open a new terminal and build again.
 
 ### Look at it in a browser
 

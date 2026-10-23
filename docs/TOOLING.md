@@ -1256,7 +1256,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 
 **Decision:** the repo has debug pages — `exercise-showcase.html` and
 `debug-sandbox.html`, joined by `ui-showcase.html` on 2026-10-13, `code-style.html` on
-2026-10-21 and `culp-syllabi.html` on 2026-10-23 — and ONE env flag emits all of them: `DEBUG=1 bun run build`. The rule
+2026-10-21, and `culp-syllabi.html` and `claude-skills.html` on 2026-10-23 — and ONE env flag emits all of them: `DEBUG=1 bun run build`. The rule
 lives in `src/build/build-entries.ts` (`isDebugRequested`, `debugEntries`) and fails
 CLOSED: absent, empty, `0`, `false` or anything unrecognised all mean "do not build
 them". 10 tests cover the edges.
@@ -1291,8 +1291,9 @@ dependency the debug sandbox introduces, and it never reaches a bundle — verif
 - **A virtual module, not a prerender step.** `scripts/prerender.tsx` runs only after
   `vite build`, so a prerender-based hub would be blank in dev — and dev is where a
   designer reads it. `src/build/sandbox-docs-plugin.ts` serves `virtual:sandbox-docs`
-  instead, registers the six `.md` files (the hub's four, `docs/STYLE.md` for
-  `code-style.html` and `docs/culp-syllabi/README.md` for `culp-syllabi.html`) with `addWatchFile`, and watches them so a saved doc reaches the
+  instead, registers the `.md` files (the hub's four, `docs/STYLE.md` for
+  `code-style.html`, `docs/culp-syllabi/README.md` for `culp-syllabi.html`, and
+  `.claude/skills/README.md` with every `SKILL.md` for `claude-skills.html`) with `addWatchFile`, and watches them so a saved doc reaches the
   page on the next reload rather than after a server restart.
 - **`html: false` — sanitised by default.** markdown-it ESCAPES raw HTML at that setting,
   which is sanitising in the parser rather than a second dependency: no DOM-based

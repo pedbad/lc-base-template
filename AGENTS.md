@@ -61,8 +61,8 @@ bun run test:e2e`; and a fixed address: `BASE_URL=/course/` on both commands.
    cannot exist server-side goes behind `useIsHydrated`.
 5. **Never commit `.claude/tdd-guard/`** or `public/fonts/feijoa/*`.
 6. **Debug pages are opt-in and fail closed.** `exercise-showcase.html`,
-   `ui-showcase.html`, `debug-sandbox.html`, `code-style.html` and `culp-syllabi.html`
-   build only under
+   `ui-showcase.html`, `debug-sandbox.html`, `code-style.html`, `culp-syllabi.html` and
+   `claude-skills.html` build only under
    `DEBUG=1 bun run build`. Add a debug
    artifact to `DEBUG_ENTRY_FILES` in `src/build/page-names.ts`; never as an
    unconditional `rollupOptions.input` entry.
