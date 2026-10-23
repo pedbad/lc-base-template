@@ -44,10 +44,13 @@
  *      does NOT become a GitHub URL: this repo is a TEMPLATE, so a hardcoded upstream
  *      URL would send every clone's designer to somebody else's repository.
  *
- * ── ONE DOC ON A PAGE OF ITS OWN ────────────────────────────────────────────────────
- * `docs/STYLE.md` renders on the Code style debug page (`code-style.html`), not in the
- * hub, so case 1 crosses pages for it: a hub doc's link to it opens that page, and its
- * links to a hub doc open the sandbox at that doc. The page name is relative on purpose:
+ * ── DOCS ON PAGES OF THEIR OWN ──────────────────────────────────────────────────────
+ * `docs/STYLE.md` renders on the Code style debug page (`code-style.html`), and
+ * `docs/culp-syllabi/README.md` on the CULP syllabi page (`culp-syllabi.html`), not in
+ * the hub, so case 1 crosses pages for them: a hub doc's link to one opens its page, and
+ * their links to a hub doc open the sandbox at that doc. A relative link is read from
+ * the linking doc's own folder, as GitHub reads it: `../STYLE.md` in the CULP README is
+ * `docs/STYLE.md`. The page name is relative on purpose:
  * every debug page sits in the one folder the build is served from, so a sibling name
  * resolves correctly under a `./` build and a fixed `BASE_URL` alike, and this
  * build-time HTML never sees the runtime base helpers.
@@ -125,13 +128,24 @@ export const CODE_STYLE_DOC: SandboxDoc = {
   blurb: 'How the code is written: what the tools enforce, and the habits they do not.',
 };
 
+/** The CULP syllabi folder's README, rendered on its own debug page. */
+export const CULP_SYLLABI_DOC: SandboxDoc = {
+  id: 'culp',
+  file: 'docs/culp-syllabi/README.md',
+  audience: 'anyone turning teaching material into a lesson',
+  blurb:
+    'How the CULP syllabi notes are laid out, and the skill that checks material against them.',
+};
+
 /** The debug page each doc renders on: the hub's four share the sandbox. */
 const HUB_PAGE = 'debug-sandbox.html';
-const CODE_STYLE_PAGE = 'code-style.html';
-const pageOf = (docId: string): string =>
-  docId === CODE_STYLE_DOC.id ? CODE_STYLE_PAGE : HUB_PAGE;
+const PAGE_DOCS: ReadonlyMap<string, string> = new Map([
+  [CODE_STYLE_DOC.id, 'code-style.html'],
+  [CULP_SYLLABI_DOC.id, 'culp-syllabi.html'],
+]);
+const pageOf = (docId: string): string => PAGE_DOCS.get(docId) ?? HUB_PAGE;
 
-const ALL_DOCS = [...SANDBOX_DOCS, CODE_STYLE_DOC];
+const ALL_DOCS = [...SANDBOX_DOCS, CODE_STYLE_DOC, CULP_SYLLABI_DOC];
 const DOC_BY_FILE = new Map(ALL_DOCS.map((doc) => [doc.file, doc]));
 const DOC_BY_ID = new Map(ALL_DOCS.map((doc) => [doc.id, doc]));
 
@@ -196,13 +210,14 @@ function docHref(fromDocId: string, doc: SandboxDoc, fragment: string): string {
   const anchor = docAnchorId(doc.id, fragment);
   const page = pageOf(doc.id);
   if (page === pageOf(fromDocId)) return `#${anchor}`;
-  if (!fragment && page === CODE_STYLE_PAGE) return page;
+  if (!fragment && page !== HUB_PAGE) return page;
   return `${page}#${anchor}`;
 }
 
-/** The doc a link target refers to, if a debug page renders it. */
-function resolveDocTarget(target: string): SandboxDoc | undefined {
-  return DOC_BY_FILE.get(stripRelativePrefix(target));
+/** The doc a link target refers to, read from the linking doc's folder, if a debug page renders it. */
+function resolveDocTarget(fromDocId: string, target: string): SandboxDoc | undefined {
+  const folder = path.posix.dirname(DOC_BY_ID.get(fromDocId)?.file ?? '');
+  return DOC_BY_FILE.get(stripRelativePrefix(path.posix.join(folder, target)));
 }
 
 const md = new MarkdownIt({
@@ -242,9 +257,9 @@ md.core.ruler.push('drop_comment_paragraphs', (state) => {
  * How far below its markdown level a heading renders. DocsSection puts each doc under
  * `<h2>Docs</h2>` and an article `<h3>{file}</h3>`, so a doc's `#` title is an `h4` —
  * rendered as written it was a second page `<h1>`, four of them (TODO §D10). The
- * markdown keeps its `#`: GitHub renders it standalone, where `h1` is right. On the Code
- * style page the only heading above the doc is the page's own `<h1>`, so its `#` is an
- * `h2`.
+ * markdown keeps its `#`: GitHub renders it standalone, where `h1` is right. On a doc's
+ * own page (Code style, CULP syllabi) the only heading above the doc is the page's own
+ * `<h1>`, so its `#` is an `h2`.
  */
 const HEADING_OFFSET = 3;
 const PAGE_HEADING_OFFSET = 1;
@@ -281,7 +296,7 @@ md.renderer.rules.link_open = (tokens, idx, _options, env) => {
     return `<a href="#${md.utils.escapeHtml(anchor)}">`;
   }
 
-  const doc = resolveDocTarget(target.split('#')[0] ?? '');
+  const doc = resolveDocTarget(state.docId, target.split('#')[0] ?? '');
   if (doc) {
     state.delinked.push(false);
     const fragment = target.includes('#') ? slugify(target.split('#')[1] ?? '') : '';
@@ -382,10 +397,20 @@ export function readSandboxDocs(repoRoot: string = DEFAULT_REPO_ROOT): SandboxDo
   });
 }
 
+/** Read and render one doc that has a debug page of its own. */
+function readPageDoc(doc: SandboxDoc, repoRoot: string): SandboxDocPage {
+  const markdown = readFileSync(path.join(repoRoot, doc.file), 'utf-8');
+  return { ...doc, ...renderDoc(markdown, doc.id) };
+}
+
 /** Read and render docs/STYLE.md for the Code style page. */
 export function readCodeStyleDoc(repoRoot: string = DEFAULT_REPO_ROOT): SandboxDocPage {
-  const markdown = readFileSync(path.join(repoRoot, CODE_STYLE_DOC.file), 'utf-8');
-  return { ...CODE_STYLE_DOC, ...renderDoc(markdown, CODE_STYLE_DOC.id) };
+  return readPageDoc(CODE_STYLE_DOC, repoRoot);
+}
+
+/** Read and render docs/culp-syllabi/README.md for the CULP syllabi page. */
+export function readCulpSyllabiDoc(repoRoot: string = DEFAULT_REPO_ROOT): SandboxDocPage {
+  return readPageDoc(CULP_SYLLABI_DOC, repoRoot);
 }
 
 /** Absolute paths of the markdown files the debug pages render — the plugin's watch list. */

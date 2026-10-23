@@ -12,4 +12,6 @@ declare module 'virtual:sandbox-docs' {
   export const SANDBOX_DOC_PAGES: readonly SandboxDocPage[];
   /** docs/STYLE.md, for the Code style debug page (code-style.html). */
   export const CODE_STYLE_DOC_PAGE: SandboxDocPage;
+  /** docs/culp-syllabi/README.md, for the CULP syllabi debug page (culp-syllabi.html). */
+  export const CULP_SYLLABI_DOC_PAGE: SandboxDocPage;
 }

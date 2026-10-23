@@ -101,7 +101,7 @@ describe('loSlugsByFolder', () => {
     );
   });
 
-  it.each(['exercise-showcase', 'debug-sandbox', 'ui-showcase', 'code-style'])(
+  it.each(['exercise-showcase', 'debug-sandbox', 'ui-showcase', 'code-style', 'culp-syllabi'])(
     'rejects a lesson that would write the %s debug page',
     (slug) => {
       expect(() => loSlugsByFolder([`lo-03-${slug}`])).toThrow(

@@ -1,6 +1,6 @@
 /**
- * DebugPageHeader.test.tsx — the one header all four debug pages share (the sandbox,
- * the exercise showcase, the UI showcase and the code style guide), so their navs cannot
+ * DebugPageHeader.test.tsx — the one header all five debug pages share (the sandbox,
+ * the exercise showcase, the UI showcase, the code style guide and the CULP syllabi guide), so their navs cannot
  * drift apart.
  */
 import { readFileSync } from 'node:fs';
@@ -33,7 +33,7 @@ function navLinks(markup: string): [string, string | null, string][] {
   ]);
 }
 
-const PAGES: readonly DebugPage[] = ['showcase', 'sandbox', 'ui', 'style'];
+const PAGES: readonly DebugPage[] = ['showcase', 'sandbox', 'ui', 'style', 'culp'];
 
 const html = renderToStaticMarkup(
   <DebugPageHeader
@@ -65,14 +65,15 @@ describe('DebugPageHeader', () => {
     expect(html).not.toContain('href="#one"');
   });
 
-  // Maintainer, 2026-10-23: every debug page lists all four, in one order, and shows
+  // Maintainer, 2026-10-23: every debug page lists all of them, in one order, and shows
   // which one you are on, instead of leaving the current page out.
-  test('the nav holds six plain links: all four debug pages, course home, the repo', () => {
+  test('the nav holds seven plain links: all five debug pages, course home, the repo', () => {
     expect(navLinks(html).map(([, , text]) => text)).toEqual([
       'Exercise showcase',
       'Debug sandbox',
       'UI showcase',
       'Code style',
+      'CULP syllabi',
       'Course home',
       'GitHub repo (opens in a new tab)',
     ]);
@@ -99,9 +100,11 @@ describe('DebugPageHeader', () => {
   test('links to every debug page through the base, the current one included', () => {
     PAGES.forEach((page) => {
       const markup = headerFor(page);
-      ['exercise-showcase', 'debug-sandbox', 'ui-showcase', 'code-style'].forEach((file) => {
-        expect(markup, page).toContain(`href="/${file}.html"`);
-      });
+      ['exercise-showcase', 'debug-sandbox', 'ui-showcase', 'code-style', 'culp-syllabi'].forEach(
+        (file) => {
+          expect(markup, page).toContain(`href="/${file}.html"`);
+        },
+      );
       expect(markup).toContain('Course home');
     });
   });
@@ -115,6 +118,7 @@ describe('DebugPageHeader', () => {
       sandbox: 'Debug sandbox',
       ui: 'UI showcase',
       style: 'Code style',
+      culp: 'CULP syllabi',
     };
     PAGES.forEach((page) => {
       const current = navLinks(headerFor(page)).filter(([, ariaCurrent]) => ariaCurrent !== null);

@@ -1,13 +1,13 @@
 /**
- * DebugPageHeader — the header all four debug pages share: the sandbox, the exercise
- * showcase, the UI showcase and the code style guide. Title, a one-line description, the
- * theme switch, and a nav holding a "jump to" menu of the page's own sections plus six
- * plain links — all four debug pages, course home and the GitHub repo. The sections sit in a shadcn
+ * DebugPageHeader — the header all five debug pages share: the sandbox, the exercise
+ * showcase, the UI showcase, the code style guide and the CULP syllabi guide. Title, a one-line description, the
+ * theme switch, and a nav holding a "jump to" menu of the page's own sections plus seven
+ * plain links — all five debug pages, course home and the GitHub repo. The sections sit in a shadcn
  * dropdown because the exercise showcase has 25 of them, and a wrapping row of links
  * that long is noise. One component, so the navs cannot drift apart.
  *
  * It lives in `src/sandbox/` because the sandbox had it first; the showcases import it.
- * All four pages are debug-only (`DEBUG=1`, see build-entries.ts), so none ships.
+ * All five pages are debug-only (`DEBUG=1`, see build-entries.ts), so none ships.
  *
  * PINNED (§E18 follow-up, maintainer 2026-10-16). The bar stays at the top while the
  * page scrolls, so the jump menu, the palette drop-down and the theme switch are always
@@ -20,7 +20,7 @@
  * share the top row, the switch at its right end; the nav takes the row below. Source
  * order matches, so tabbing reaches the switch before the nav.
  *
- * ALL FOUR, CURRENT MARKED (maintainer, 2026-10-23): every page lists the same four
+ * ALL OF THEM, CURRENT MARKED (maintainer, 2026-10-23): every page lists the same
  * debug pages in one order and marks its own with aria-current="page", rather than
  * leaving it out. It stays a link: the list keeps one shape, and one tab order, on every
  * page, and a screen reader hears "current page" within the set instead of an entry that
@@ -50,8 +50,8 @@ export interface DebugSection {
   readonly label: string;
 }
 
-/** The four debug pages. Each lists all four and marks itself current. */
-export type DebugPage = 'sandbox' | 'showcase' | 'ui' | 'style';
+/** The five debug pages. Each lists all five and marks itself current. */
+export type DebugPage = 'sandbox' | 'showcase' | 'ui' | 'style' | 'culp';
 
 /** In nav order, the same on every page. */
 const DEBUG_PAGES: readonly { page: DebugPage; href: string; label: string }[] = [
@@ -59,6 +59,7 @@ const DEBUG_PAGES: readonly { page: DebugPage; href: string; label: string }[] =
   { page: 'sandbox', href: 'debug-sandbox.html', label: 'Debug sandbox' },
   { page: 'ui', href: 'ui-showcase.html', label: 'UI showcase' },
   { page: 'style', href: 'code-style.html', label: 'Code style' },
+  { page: 'culp', href: 'culp-syllabi.html', label: 'CULP syllabi' },
 ];
 
 /**

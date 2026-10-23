@@ -18,14 +18,15 @@ A build emits a static course: a landing page plus one page per Learning Object.
   page's body is prerendered, so it reads and navigates without JavaScript, and
   hydrates into the interactive app when JavaScript runs.
 
-Four debug pages exist and are **not part of a deployed course**. The exercise
+Five debug pages exist and are **not part of a deployed course**. The exercise
 showcase (`exercise-showcase.html`) is a gallery of every engine driven by
 fixtures; the UI showcase (`ui-showcase.html`) renders every block type, as a
 plain block and as a card, through the course page's own renderers; the debug sandbox (`debug-sandbox.html`) is a theme-token, typography
 and icon reference for the designer that also renders `DESIGNER.md`,
-`CONTRIBUTING.md`, `STRUCTURE.md` and `AGENTS.md` as HTML; and the code style page
+`CONTRIBUTING.md`, `STRUCTURE.md` and `AGENTS.md` as HTML; the code style page
 (`code-style.html`) renders `docs/STYLE.md`, how the code is written, with its
-examples. All four are
+examples; and the CULP syllabi page (`culp-syllabi.html`) renders
+`docs/culp-syllabi/README.md`, how the syllabus notes are organised. All five are
 **opt-in per build** behind one fail-closed flag (`DEBUG=1 bun run build`,
 or the older name `SHOWCASE=1`), so a deployed course contains none of them unless
 that flag was set. They are listed here so their absence is not mistaken for a

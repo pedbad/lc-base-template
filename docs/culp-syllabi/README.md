@@ -6,7 +6,9 @@ Staff names and email addresses have been removed. They are here so that anyone 
 a teacher's material into a lesson, people or agents, can check it against the matching
 CULP level: what that level covers, and whether the material is too basic or too
 advanced for it. In Claude Code, the
-[`culp-syllabus`](../../.claude/skills/culp-syllabus/SKILL.md) skill does this check.
+[`culp-syllabus`](../../.claude/skills/culp-syllabus/SKILL.md) skill does this check
+([below](#the-culp-syllabus-skill)). A `DEBUG=1` build also shows this README on a debug
+page of its own, `culp-syllabi.html`.
 
 > **Do not edit the notes by hand.** They are kept exactly as the maintainer supplied
 > them. A new or corrected note comes from the maintainer as a Markdown file, and is
@@ -27,6 +29,37 @@ for reference only and are not covered by this repo's CC BY-NC 4.0 licence
 | [`languages/`](languages/)             | 20 hubs, one per language, listing its documents in level order                                                            |
 | [`strands/`](strands/)                 | 6 hubs: Medics, BioMed, Academic Reading, Academic Purposes, Business, MBA                                                 |
 | [`CULP Syllabi.md`](<CULP Syllabi.md>) | the index: every hub, with its counts                                                                                      |
+
+The files form a hierarchy: the index points to the hubs, each hub lists its notes, and
+each note points back to its hubs and across to the notes around it.
+
+```text
+docs/culp-syllabi/
+├── CULP Syllabi.md            the index: every hub, with its counts
+├── languages/<Language>.md    one hub per language: its notes, in level order
+├── strands/<Strand>.md        one hub per strand: its notes, across languages
+└── syllabi/<note>.md          one note per document: a syllabus, a programme
+                               specification, or the assessment framework
+    links from each note:
+    ├── language        →  its language hub
+    ├── strand          →  its strand hub, if it has a strand
+    ├── previous_level  →  the note before it, same language and strand
+    ├── next_level      →  the note after it
+    └── programme_spec  →  the specification for its level (and back: syllabi)
+```
+
+What each kind of file is for:
+
+- **A syllabus** is one course at one level: lesson by lesson (or week by week), the
+  topics, language functions and grammar it teaches, and how it is assessed. This is
+  the note to check material against.
+- **A programme specification** is the frame around a level's syllabi: its educational
+  aims, learning outcomes, topics, teaching methods and assessment, the syllabi it
+  covers, and when it was produced and last reviewed.
+- **The assessment framework** sets out how the Advanced level is assessed, in every
+  language: methods and the weight of each component.
+- **A hub** (`languages/`, `strands/`) and **the index** hold no teaching content: they
+  are lists, the way in to the notes.
 
 A note's file name is its language, then its strand if it has one, then its level, then a
 theme or `programme-spec`: [`french-basic-2.md`](syllabi/french-basic-2.md),
@@ -105,6 +138,30 @@ assessment is a `> [!important]` callout. There is no HTML.
 - **The template is left-to-right only for now.** The Arabic, Persian, Urdu and Hebrew
   syllabi are here for when right-to-left support lands
   ([`ROADMAP.md` §1](../ROADMAP.md#1-right-to-left-languages-persian-arabic)).
+
+## The `culp-syllabus` skill
+
+The [`culp-syllabus`](../../.claude/skills/culp-syllabus/SKILL.md) skill is how an agent
+uses these notes. Claude Code loads it by itself when someone asks whether lesson
+material fits a CULP level, or what a level covers: "check this Word document against
+the syllabus", "is this too advanced for French Basic 2?", "what does Spanish Basic 1
+cover?". Other agents can read its steps.
+
+- **It finds the note** the way [Finding the right note](#finding-the-right-note) does,
+  and confirms it with the user: title, level, strand and dates.
+- **It reads around the note:** the note, then the notes its `previous_level`,
+  `next_level` and `programme_spec` name, so it can say what learners already know and
+  what comes later.
+- **It reads the material:** a Markdown, text, JSON or PDF file, a lesson already in
+  `lo-config/`, or a Word document converted to text without saving it.
+- **It reports in plain language,** for a developer rather than a linguist: what fits,
+  what is above or below the level (naming the note and lesson where a structure first
+  appears), suggestions, and the notes it used with their dates, as
+  [Read them with care](#read-them-with-care) asks.
+
+It only reads. It never edits a note or the lesson, and never saves the teacher's
+material in the repo; changing a lesson is the `add-lo` skill's job, and only when the
+user asks.
 
 ## Adding or updating notes
 

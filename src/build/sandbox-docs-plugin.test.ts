@@ -47,10 +47,11 @@ describe('sandboxDocs plugin', () => {
     load.call({ addWatchFile }, `\0${SANDBOX_DOCS_MODULE_ID}`);
 
     const watched = addWatchFile.mock.calls.map((call) => String(call[0]));
-    // The hub's four, plus docs/STYLE.md for the Code style page.
-    expect(watched).toHaveLength(5);
+    // The hub's four, plus docs/STYLE.md and the CULP syllabi README for their pages.
+    expect(watched).toHaveLength(6);
     expect(watched.some((file) => file.endsWith('DESIGNER.md'))).toBe(true);
     expect(watched.some((file) => file.endsWith('AGENTS.md'))).toBe(true);
     expect(watched.some((file) => file.endsWith('docs/STYLE.md'))).toBe(true);
+    expect(watched.some((file) => file.endsWith('docs/culp-syllabi/README.md'))).toBe(true);
   });
 });

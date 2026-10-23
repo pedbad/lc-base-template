@@ -81,22 +81,24 @@ bun run build     # type-check, bundle, then prerender the landing page + one HT
 bun run preview   # serve the built output locally
 ```
 
-A build emits the **course only**. All four debug pages — the exercise showcase
+A build emits the **course only**. All five debug pages — the exercise showcase
 (`/exercise-showcase.html`, every engine with sample content), the UI showcase
 (`/ui-showcase.html`, every block type as a plain block and as a card), the debug
 sandbox (`/debug-sandbox.html`, theme tokens, type specimens, the icon sprite, and the
 project docs rendered from their markdown) and the code style guide
-(`/code-style.html`, `docs/STYLE.md` with its examples) — are opt-in behind one flag, so none ever
+(`/code-style.html`, `docs/STYLE.md` with its examples) and the CULP syllabi guide
+(`/culp-syllabi.html`, how `docs/culp-syllabi/` is organised and the skill that reads it)
+— are opt-in behind one flag, so none ever
 lands on a deployed course:
 
 ```bash
-DEBUG=1 bun run build   # add the four debug pages to dist/
+DEBUG=1 bun run build   # add the five debug pages to dist/
 ```
 
 The flag fails closed: absent, empty, `0`, `false` or anything unrecognised all mean
 "do not build them". `SHOWCASE=1` still works as the older name for the same flag.
 
-`bun run dev` serves all four either way; the flag only affects what a build emits.
+`bun run dev` serves all five either way; the flag only affects what a build emits.
 
 **Bookmark them rather than linking to them.** Nothing in the course links to any
 of them, and nothing should: a link inside the course would work on your machine and 404
@@ -108,6 +110,7 @@ http://localhost:5173/debug-sandbox.html
 http://localhost:5173/exercise-showcase.html
 http://localhost:5173/ui-showcase.html
 http://localhost:5173/code-style.html
+http://localhost:5173/culp-syllabi.html
 ```
 
 If a bookmark looks dead, check the port — Vite quietly takes 5174 (then 5175, …) when
