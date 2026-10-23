@@ -15,6 +15,8 @@ import {
   SANDBOX_DOCS,
   docAnchorId,
   readCodeStyleDoc,
+  readCulpSyllabiDoc,
+  CULP_SYLLABI_DOC,
   readSandboxDocs,
   renderDoc,
   renderDocMarkdown,
@@ -258,6 +260,42 @@ describe('the Code style page', () => {
 
   it('is watched like the hub docs, so an edit reloads the page', () => {
     expect(sandboxDocPaths().some((file) => file.endsWith('docs/STYLE.md'))).toBe(true);
+  });
+});
+
+// The CULP syllabi debug page (culp-syllabi.html) renders docs/culp-syllabi/README.md,
+// the folder's guide, on a page of its own, as the Code style page does docs/STYLE.md.
+describe('the CULP syllabi page', () => {
+  it('renders the folder README itself, its sections as page-level headings', () => {
+    const page = readCulpSyllabiDoc();
+    expect(page.file).toBe('docs/culp-syllabi/README.md');
+    expect(page.headings.map((heading) => heading.text)).toContain('Finding the right note');
+    expect(page.html).toMatch(/<h2 id="culp--culp-syllabi">/);
+    expect(page.html).toMatch(/<h3 id="culp--layout">/);
+  });
+
+  it('keeps its own anchor links on its own page', () => {
+    const { html } = renderDoc('[find](#finding-the-right-note)', CULP_SYLLABI_DOC.id);
+    expect(html).toContain('href="#culp--finding-the-right-note"');
+  });
+
+  it('sends its links to a hub doc back to the sandbox, and to STYLE.md to its page', () => {
+    const { html } = renderDoc(
+      '[PRs](../../CONTRIBUTING.md#how-a-change-reaches-main) [style](../STYLE.md)',
+      CULP_SYLLABI_DOC.id,
+    );
+    expect(html).toContain('href="debug-sandbox.html#contributing--how-a-change-reaches-main"');
+    expect(html).toContain('href="code-style.html"');
+  });
+
+  it('lets a hub doc link to the README open the CULP syllabi page', () => {
+    expect(render('[notes](docs/culp-syllabi/README.md)')).toContain('href="culp-syllabi.html"');
+  });
+
+  it('is watched like the hub docs, so an edit reloads the page', () => {
+    expect(sandboxDocPaths().some((file) => file.endsWith('docs/culp-syllabi/README.md'))).toBe(
+      true,
+    );
   });
 });
 

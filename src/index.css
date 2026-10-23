@@ -39,7 +39,7 @@
    scanned there, so nothing that styles the docs hub lives under `docs/`. */
 @source not "../docs";
 
-/* The three debug pages (sandbox, exercise showcase, UI showcase) are never deployed, so their
+/* The debug pages (sandbox, exercise showcase, UI showcase, code style, CULP syllabi) are never deployed, so their
    classes must not ride in the sheet every LO page loads. `debug.css` imports this file
    and scans these folders back in; only the debug entries load it. Measured 2026-10-07:
    the sandbox's alert examples alone had added 0.16 kB here. Pinned by
@@ -48,3 +48,4 @@
 @source not "./showcase";
 @source not "./ui-showcase";
 @source not "./code-style";
+@source not "./culp-syllabi";

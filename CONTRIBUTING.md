@@ -50,26 +50,26 @@ Once per machine, for the browser tests:
 
 ## Everyday commands
 
-| Command                 | What it does                                                               |
-| ----------------------- | -------------------------------------------------------------------------- |
-| `bun run dev`           | Vite dev server, hot reload — landing page and every LO page               |
-| `bun run build`         | Type-check + bundle + prerender the landing page and one HTML per LO       |
-| `bun run preview`       | Serve the production build locally                                         |
-| `bun run test`          | Run the test suite (Vitest, one-shot)                                      |
-| `bun run test:coverage` | The suite plus per-file coverage bars — what CI runs                       |
-| `bun run test:e2e`      | Browser tests against the last build — Chromium, Firefox, WebKit           |
-| `bun run guards`        | Just the repo-wide guard sweeps — fast; the pre-push hook runs it first    |
-| `bun run test:watch`    | Vitest in watch mode                                                       |
-| `bun run lint`          | ESLint over the repo                                                       |
-| `bun run lint:css`      | Stylelint over `src/**/*.css`                                              |
-| `bun run format`        | Prettier — rewrite all files to the house style                            |
-| `bun run format:check`  | Prettier — verify formatting without writing                               |
-| `bun run docs:tree`     | Regenerate the folder tree in `STRUCTURE.md`                               |
-| `DEBUG=1 bun run build` | Build, plus the four debug pages — both showcases, the sandbox, code style |
+| Command                 | What it does                                                                             |
+| ----------------------- | ---------------------------------------------------------------------------------------- |
+| `bun run dev`           | Vite dev server, hot reload — landing page and every LO page                             |
+| `bun run build`         | Type-check + bundle + prerender the landing page and one HTML per LO                     |
+| `bun run preview`       | Serve the production build locally                                                       |
+| `bun run test`          | Run the test suite (Vitest, one-shot)                                                    |
+| `bun run test:coverage` | The suite plus per-file coverage bars — what CI runs                                     |
+| `bun run test:e2e`      | Browser tests against the last build — Chromium, Firefox, WebKit                         |
+| `bun run guards`        | Just the repo-wide guard sweeps — fast; the pre-push hook runs it first                  |
+| `bun run test:watch`    | Vitest in watch mode                                                                     |
+| `bun run lint`          | ESLint over the repo                                                                     |
+| `bun run lint:css`      | Stylelint over `src/**/*.css`                                                            |
+| `bun run format`        | Prettier — rewrite all files to the house style                                          |
+| `bun run format:check`  | Prettier — verify formatting without writing                                             |
+| `bun run docs:tree`     | Regenerate the folder tree in `STRUCTURE.md`                                             |
+| `DEBUG=1 bun run build` | Build, plus the five debug pages — both showcases, the sandbox, code style, CULP syllabi |
 
 `bun run dev` serves `/debug-sandbox.html`, `/exercise-showcase.html`,
-`/ui-showcase.html` and `/code-style.html` whether or not that flag is set — **bookmark
-the four URLs**. Nothing in the course links to them and
+`/ui-showcase.html`, `/code-style.html` and `/culp-syllabi.html` whether or not that flag
+is set — **bookmark the five URLs**. Nothing in the course links to them and
 nothing should: a deployed build contains none of them, so an in-course link would work
 locally and 404 for every reader. (Vite takes 5174 when 5173 is busy; it prints the port
 it chose.)

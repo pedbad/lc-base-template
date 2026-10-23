@@ -19,7 +19,13 @@ import { describe, expect, it } from 'vitest';
 const SRC = path.resolve(import.meta.dirname, '..');
 const read = (relative: string): string => readFileSync(path.join(SRC, relative), 'utf-8');
 
-const DEBUG_FOLDERS = ['./sandbox', './showcase', './ui-showcase', './code-style'] as const;
+const DEBUG_FOLDERS = [
+  './sandbox',
+  './showcase',
+  './ui-showcase',
+  './code-style',
+  './culp-syllabi',
+] as const;
 
 describe('debug pages have their own stylesheet', () => {
   it('index.css does not scan the debug folders', () => {
@@ -42,12 +48,15 @@ describe('debug pages have their own stylesheet', () => {
     });
   });
 
-  it.each(['sandbox/main.tsx', 'showcase/main.tsx', 'ui-showcase/main.tsx', 'code-style/main.tsx'])(
-    '%s loads debug.css, not index.css',
-    (entry) => {
-      const source = read(entry);
-      expect(source).toContain("import '../debug.css';");
-      expect(source).not.toContain("import '../index.css';");
-    },
-  );
+  it.each([
+    'sandbox/main.tsx',
+    'showcase/main.tsx',
+    'ui-showcase/main.tsx',
+    'code-style/main.tsx',
+    'culp-syllabi/main.tsx',
+  ])('%s loads debug.css, not index.css', (entry) => {
+    const source = read(entry);
+    expect(source).toContain("import '../debug.css';");
+    expect(source).not.toContain("import '../index.css';");
+  });
 });

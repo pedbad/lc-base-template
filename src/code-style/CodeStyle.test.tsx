@@ -32,9 +32,11 @@ describe('Code style page', () => {
   });
 
   test('links to every debug page and course home, marking itself current', () => {
-    ['exercise-showcase', 'debug-sandbox', 'ui-showcase', 'code-style'].forEach((file) => {
-      expect(nav).toContain(`href="/${file}.html"`);
-    });
+    ['exercise-showcase', 'debug-sandbox', 'ui-showcase', 'code-style', 'culp-syllabi'].forEach(
+      (file) => {
+        expect(nav).toContain(`href="/${file}.html"`);
+      },
+    );
     expect(nav.match(/aria-current="page"/g)).toHaveLength(1);
     expect(nav).toMatch(/<a [^>]*href="\/code-style\.html"[^>]*aria-current="page"/);
     expect(nav).toContain('Course home');
