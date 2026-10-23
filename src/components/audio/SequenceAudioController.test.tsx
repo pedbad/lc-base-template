@@ -10,6 +10,7 @@
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import AudioManager from '@/audio/AudioManager';
 import {
   SequenceAudioController,
   type SequenceAudioControllerHandle,
@@ -195,7 +196,7 @@ describe('SequenceAudioController play button', () => {
     await clickPlay(audio);
     expect(playButton().getAttribute('aria-label')).toBe('Pause audio');
 
-    // A media key, or another player stopping this one through AudioManager.
+    // A media key. (Another player stopping this one calls its pause through AudioManager.)
     await act(async () => audio.dispatchEvent(new Event('pause')));
     expect(playButton().getAttribute('aria-label')).toBe('Play audio');
 
@@ -349,5 +350,179 @@ describe('SequenceAudioController playlist lifecycle', () => {
 
     expect(load.mock.calls.length).toBe(loadsBefore);
     expect(onTrackChange).toHaveBeenLastCalledWith(0);
+  });
+});
+
+// Audit 2026-10-23 (TODO §E34): a Pause pressed while the next track loaded did not hold,
+// because the track played when its metadata arrived; nor did a global stop during the
+// gap between tracks. What the learner asked for last now decides, whenever a track is ready.
+describe('SequenceAudioController cancelling playback', () => {
+  const GAP_SECONDS = 2;
+  const GAP_MS = GAP_SECONDS * 1000;
+
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  function playButton() {
+    const button = container.querySelector('button');
+    if (!button) throw new Error('the controller rendered no play button');
+    return button;
+  }
+
+  const label = () => playButton().getAttribute('aria-label');
+  const playCalls = () => vi.mocked(HTMLMediaElement.prototype.play).mock.calls.length;
+
+  /** Mounts with a gap and a ref, presses play and lets the first clip load. */
+  async function playingFirstClip() {
+    const ref = { current: null as SequenceAudioControllerHandle | null };
+    const onTrackChange = vi.fn();
+    const { audio } = await mount({ pauseSeconds: GAP_SECONDS, onTrackChange, ref });
+    await act(async () => playButton().click());
+    await metadataArrives(audio);
+    return { audio, ref, onTrackChange };
+  }
+
+  /** A row's speaker asks for its track; the track's metadata has not arrived yet. */
+  async function requestTrack(ref: { current: SequenceAudioControllerHandle | null }, i: number) {
+    await act(async () => ref.current?.playItem(i));
+  }
+
+  async function clickPlayButton() {
+    await act(async () => playButton().click());
+  }
+
+  it('starts nothing when paused while the next track loads', async () => {
+    const { audio, ref } = await playingFirstClip();
+    await requestTrack(ref, 1);
+    const before = playCalls();
+
+    await clickPlayButton();
+    expect(label()).toBe('Play audio');
+    await metadataArrives(audio);
+
+    expect(playCalls() - before).toBe(0);
+    expect(label()).toBe('Play audio');
+  });
+
+  it('plays once when resumed after the paused track has loaded', async () => {
+    const { audio, ref } = await playingFirstClip();
+    await requestTrack(ref, 1);
+    await clickPlayButton();
+    await metadataArrives(audio);
+    const before = playCalls();
+
+    await clickPlayButton();
+
+    expect(playCalls() - before).toBe(1);
+    expect(audio.src).toMatch(/q2\.wav$/);
+    expect(label()).toBe('Pause audio');
+  });
+
+  it('plays once when resumed before the paused track has loaded', async () => {
+    const { audio, ref } = await playingFirstClip();
+    await requestTrack(ref, 1);
+    await clickPlayButton();
+    const before = playCalls();
+
+    await clickPlayButton();
+    await metadataArrives(audio);
+
+    expect(playCalls() - before).toBe(1);
+    expect(audio.src).toMatch(/q2\.wav$/);
+    expect(label()).toBe('Pause audio');
+  });
+
+  it('starts nothing once unmounted while a track loads', async () => {
+    const { audio, ref } = await playingFirstClip();
+    await requestTrack(ref, 1);
+    const before = playCalls();
+
+    act(() => root.unmount());
+    root = createRoot(container);
+    await act(async () => audio.dispatchEvent(new Event('loadedmetadata')));
+
+    expect(playCalls() - before).toBe(0);
+  });
+
+  it('stays silent when another player starts during the gap', async () => {
+    const { audio, onTrackChange } = await playingFirstClip();
+    await act(async () => audio.dispatchEvent(new Event('ended')));
+
+    await act(async () => AudioManager.stopAll());
+    await act(async () => {
+      vi.advanceTimersByTime(GAP_MS * 2);
+    });
+
+    expect(audio.src).toMatch(/q1\.wav$/);
+    expect(onTrackChange).toHaveBeenLastCalledWith(0);
+    expect(label()).toBe('Play audio');
+  });
+
+  it('starts nothing when stopped globally while a track loads', async () => {
+    const { audio, ref } = await playingFirstClip();
+    await requestTrack(ref, 1);
+    const before = playCalls();
+
+    await act(async () => AudioManager.stopAll());
+    await metadataArrives(audio);
+
+    expect(playCalls() - before).toBe(0);
+    expect(label()).toBe('Play audio');
+  });
+
+  it('stays stopped when another player starts before this one has played', async () => {
+    const onPlayStateChange = vi.fn();
+    const { audio } = await mount({ onPlayStateChange });
+
+    // An intro clip above the exercise plays, which stops every other player.
+    await act(async () => AudioManager.stopAll());
+    expect(onPlayStateChange).not.toHaveBeenCalled();
+
+    await clickPlayButton();
+    await metadataArrives(audio);
+    expect(audio.src).toMatch(/q1\.wav$/);
+    expect(label()).toBe('Pause audio');
+  });
+
+  it('follows a play key pressed while a paused track loads', async () => {
+    const { audio, ref } = await playingFirstClip();
+    await requestTrack(ref, 1);
+    await clickPlayButton();
+
+    await act(async () => audio.dispatchEvent(new Event('play')));
+    await metadataArrives(audio);
+
+    expect(label()).toBe('Pause audio');
+  });
+
+  it('offers play again when a resumed track fails to load', async () => {
+    const { audio, ref } = await playingFirstClip();
+    await requestTrack(ref, 1);
+    await clickPlayButton();
+    await clickPlayButton();
+    expect(label()).toBe('Pause audio');
+
+    await act(async () => audio.dispatchEvent(new Event('error')));
+
+    expect(label()).toBe('Play audio');
+  });
+
+  it('plays on from the next clip when restarted after a stop in the gap', async () => {
+    const { audio, onTrackChange } = await playingFirstClip();
+    await act(async () => audio.dispatchEvent(new Event('ended')));
+    await act(async () => AudioManager.stopAll());
+
+    await clickPlayButton();
+    await metadataArrives(audio);
+
+    expect(audio.src).toMatch(/q2\.wav$/);
+    expect(onTrackChange.mock.calls.map(([index]) => index)).toEqual([0, 1]);
+    expect(label()).toBe('Pause audio');
   });
 });
