@@ -7,14 +7,30 @@
  * The durations mirror flip-cue.css, and flip-cue-css.test.ts fails if they drift.
  */
 
-export type FlipCueExit = 'peel' | 'pop' | 'wave' | 'tuck';
+export type FlipCueExit =
+  | 'peel'
+  | 'pop'
+  | 'wave'
+  | 'tuck'
+  | 'fold'
+  | 'flip'
+  | 'wipe'
+  | 'spin'
+  | 'shatter'
+  | 'melt';
 
-/** Percent chance of each exit: peel and pop most often (maintainer, 2026-10-16). */
+/** Percent chance of each exit: all ten equally likely (maintainer, 2026-10-23). */
 export const FLIP_CUE_EXIT_WEIGHTS: Readonly<Record<FlipCueExit, number>> = {
-  peel: 35,
-  pop: 35,
-  wave: 15,
-  tuck: 15,
+  peel: 10,
+  pop: 10,
+  wave: 10,
+  tuck: 10,
+  fold: 10,
+  flip: 10,
+  wipe: 10,
+  spin: 10,
+  shatter: 10,
+  melt: 10,
 };
 
 /** How long each exit runs, in ms — the same numbers as flip-cue.css. */
@@ -23,6 +39,12 @@ export const FLIP_CUE_EXIT_MS: Readonly<Record<FlipCueExit, number>> = {
   pop: 1300,
   wave: 1500,
   tuck: 1300,
+  fold: 1200,
+  flip: 1100,
+  wipe: 1000,
+  spin: 1200,
+  shatter: 1200,
+  melt: 1400,
 };
 
 /** The gap between one card's exit and the next in a grid, so they ripple. */

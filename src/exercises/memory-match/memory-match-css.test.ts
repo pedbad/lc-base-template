@@ -80,8 +80,12 @@ describe('the flip cue on the face-down side', () => {
   const rule = (selector: string) =>
     new RegExp(`${selector.replaceAll('.', '\\.')}\\s*\\{([^}]*)\\}`).exec(css)?.[1] ?? '';
 
-  test('a quarter of the card wide, at least 2.5rem', () => {
-    expect(rule('.memory-card-back .flip-cue')).toContain('--flip-cue-size: max(2.5rem, 25cqi);');
+  test('a quarter of the card wide, at least 2.5rem, with its sparkles and shards (E39)', () => {
+    expect(
+      rule(
+        '.memory-card-back .flip-cue,\n  .memory-card-back .flip-cue-sparks,\n  .memory-card-back .flip-cue-shards',
+      ),
+    ).toContain('--flip-cue-size: max(2.5rem, 25cqi);');
   });
 
   test('the icon alone, half the triangle', () => {

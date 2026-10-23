@@ -19,8 +19,19 @@ const sequence = (...values: number[]) => {
 };
 
 describe('FLIP_CUE_EXIT_WEIGHTS', () => {
-  test('favours peel and pop, sometimes wave and tuck (maintainer, 2026-10-16)', () => {
-    expect(FLIP_CUE_EXIT_WEIGHTS).toEqual({ peel: 35, pop: 35, wave: 15, tuck: 15 });
+  test('gives all ten exits an equal chance (maintainer, 2026-10-23)', () => {
+    expect(FLIP_CUE_EXIT_WEIGHTS).toEqual({
+      peel: 10,
+      pop: 10,
+      wave: 10,
+      tuck: 10,
+      fold: 10,
+      flip: 10,
+      wipe: 10,
+      spin: 10,
+      shatter: 10,
+      melt: 10,
+    });
   });
 
   test('add up to 100, so each weight reads as a percentage', () => {
@@ -32,19 +43,23 @@ describe('FLIP_CUE_EXIT_WEIGHTS', () => {
 describe('pickExit', () => {
   test.each([
     [0, 'peel'],
-    [0.3499, 'peel'],
-    [0.35, 'pop'],
-    [0.6999, 'pop'],
-    [0.7, 'wave'],
-    [0.8499, 'wave'],
-    [0.85, 'tuck'],
-    [0.9999, 'tuck'],
+    [0.0999, 'peel'],
+    [0.1, 'pop'],
+    [0.2, 'wave'],
+    [0.3, 'tuck'],
+    [0.4, 'fold'],
+    [0.5, 'flip'],
+    [0.6, 'wipe'],
+    [0.7, 'spin'],
+    [0.8, 'shatter'],
+    [0.9, 'melt'],
+    [0.9999, 'melt'],
   ])('a random value of %s picks %s', (value, exit) => {
     expect(pickExit(() => value)).toBe(exit);
   });
 
   test('a broken random source (1 or more) still picks an exit', () => {
-    expect(pickExit(() => 1)).toBe('tuck');
+    expect(pickExit(() => 1)).toBe('melt');
   });
 });
 
@@ -53,8 +68,8 @@ describe('planExits', () => {
     const plan = planExits(['a', 'b', 'c'], sequence(0, 0.5, 0.9));
     expect(plan.map((entry) => [entry.id, entry.exit])).toEqual([
       ['a', 'peel'],
-      ['b', 'pop'],
-      ['c', 'tuck'],
+      ['b', 'flip'],
+      ['c', 'melt'],
     ]);
   });
 

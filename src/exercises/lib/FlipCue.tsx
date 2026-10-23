@@ -9,7 +9,8 @@
  *
  * Retiring (TODO §E21): given an `exit`, it plays that exit after `delayMs`
  * (flip-cue.css) and calls `onExitEnd` when its own animation ends — not when the
- * pointer's wave inside it does. The pop adds five sparkles beside it.
+ * pointer's wave inside it does. The pop adds five sparkles beside it; the shatter, two
+ * shards that fly apart as the corner itself vanishes.
  */
 import type { AnimationEvent, CSSProperties } from 'react';
 import { SplinePointer } from 'lucide-react';
@@ -17,6 +18,7 @@ import type { FlipCueExit } from './flip-cue-exits';
 import './flip-cue.css';
 
 const SPARKS = [0, 1, 2, 3, 4];
+const SHARDS = [0, 1];
 
 interface FlipCueProps {
   exit?: FlipCueExit | null;
@@ -48,6 +50,13 @@ export function FlipCue({ exit = null, delayMs = 0, onExitEnd }: FlipCueProps = 
         <span className="flip-cue-sparks" aria-hidden="true" style={style}>
           {SPARKS.map((index) => (
             <span key={index} className="flip-cue-spark" />
+          ))}
+        </span>
+      ) : null}
+      {exit === 'shatter' ? (
+        <span className="flip-cue-shards" aria-hidden="true" style={style}>
+          {SHARDS.map((index) => (
+            <span key={index} className="flip-cue-shard" />
           ))}
         </span>
       ) : null}

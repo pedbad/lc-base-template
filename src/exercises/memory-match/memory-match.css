@@ -142,10 +142,16 @@
 
   /* The flip cue (FlipCue, maintainer 2026-10-12), scaled to the card: a quarter of
      its width, never under 2.5rem (a 113px phone card), with the icon alone at half
-     the triangle. "Tap to flip" does not fit a triangle this small, so it is hidden. */
-  .memory-card-back .flip-cue {
+     the triangle. "Tap to flip" does not fit a triangle this small, so it is hidden.
+     The pop's sparkles and the shatter's shards sit beside the cue, not inside it, so
+     they take the same size (TODO §E39). */
+  .memory-card-back .flip-cue,
+  .memory-card-back .flip-cue-sparks,
+  .memory-card-back .flip-cue-shards {
     --flip-cue-size: max(2.5rem, 25cqi);
+  }
 
+  .memory-card-back .flip-cue {
     padding: 0.1875rem;
   }
 

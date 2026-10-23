@@ -10,7 +10,7 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 import { card, flipCard, flipCueKey, openShowcase, showcaseReady, stored } from './debug-support';
 
 const RETIRE_AFTER_TURNS = 3;
-const EXITS = /^(peel|pop|wave|tuck)$/;
+const EXITS = /^(peel|pop|wave|tuck|fold|flip|wipe|spin|shatter|melt)$/;
 
 /** Turns `deck`'s current card to its back, then rates it "Again": one turn. */
 async function turnAndRateAgain(deck: Locator): Promise<void> {

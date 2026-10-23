@@ -1,7 +1,7 @@
 /**
  * flip-cue-css.test.ts — the retiring corner's exits (TODO §E21). Each exit's CSS
  * duration must equal FLIP_CUE_EXIT_MS, which picks the card that reports the end of
- * the retirement; reduced motion gets one quiet fade, no delay and no sparkles.
+ * the retirement; reduced motion gets one quiet fade, no delay, no sparkles and no shards.
  */
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -35,6 +35,16 @@ describe('flip-cue.css exits', () => {
     }
   });
 
+  test("the shatter's two shards fly for as long as the shatter runs", () => {
+    expect(css).toMatch(
+      new RegExp(
+        `\\.flip-cue-shard\\s*\\{[^}]*${FLIP_CUE_EXIT_MS.shatter}ms[^}]*var\\(--flip-cue-delay, 0ms\\) both;`,
+      ),
+    );
+    expect(css).toContain('@keyframes flip-cue-shard-a {');
+    expect(css).toContain('@keyframes flip-cue-shard-b {');
+  });
+
   test('the instruction glyph fades out with the corners', () => {
     expect(css).toMatch(/\.flip-cue-glyph-leaving\s*\{[^}]*animation:\s*flip-cue-fade/);
   });
@@ -47,9 +57,9 @@ describe('flip-cue.css under reduced motion', () => {
     );
   });
 
-  test('the pointer does not wave and the sparkles do not show', () => {
+  test('the pointer does not wave and neither sparkles nor shards show', () => {
     expect(reducedMotion).toMatch(/\.flip-cue\[data-exit\] svg\s*\{\s*animation:\s*none;/);
-    expect(reducedMotion).toMatch(/\.flip-cue-sparks\s*\{\s*display:\s*none;/);
+    expect(reducedMotion).toMatch(/\.flip-cue-sparks,\s*\.flip-cue-shards\s*\{\s*display:\s*none;/);
   });
 });
 
