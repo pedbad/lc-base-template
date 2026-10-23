@@ -46,6 +46,20 @@ describe('InlineGapContentSchema', () => {
   test('rejects an item with an empty text', () => {
     expect(() => InlineGapContentSchema.parse({ items: [{ text: '' }] })).toThrow();
   });
+
+  // Audit 2026-10-23 (TODO §E34): a blank with nothing before `::` had no answer to type.
+  test('rejects a blank with no answer, on its own sentence', () => {
+    const result = InlineGapContentSchema.safeParse({
+      items: [{ text: 'Yo [soy::ser].' }, { text: 'Yo me [::llamarse] Ana.' }],
+    });
+    expect(result.error?.issues.map((issue) => issue.path)).toEqual([['items', 1, 'text']]);
+    expect(result.error?.issues[0].message).toContain('[::llamarse] has no answer');
+  });
+
+  test('rejects an exercise with no blank at all', () => {
+    const result = InlineGapContentSchema.safeParse({ items: [{ text: 'Vivo en Madrid.' }] });
+    expect(result.error?.issues[0].message).toContain('no sentence has a blank');
+  });
 });
 
 describe('InlineGapExerciseConfigSchema', () => {

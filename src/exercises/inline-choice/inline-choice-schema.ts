@@ -25,23 +25,28 @@
  *       docs/specs/2026-06-15-lc-base-template-design.md §10.
  */
 import { z } from 'zod';
+import { hasAnyBlank, noBlankIssue, sentenceWithBlanks } from '../lib/blank-checks';
 import { instructionsField } from '../lib/instructions';
+import { choiceBlankProblems } from '../lib/parsing';
 import { ExerciseConfigSchema } from '@/config/lo-schema';
 
-/** One sentence in an inline-choice exercise. `text` carries the `[a|*b|c]` blanks. */
+/** One sentence in an inline-choice exercise. `text` carries the `[a|*b|c]` blanks, held
+ *  to select's rules: exactly one `*`, no empty or repeated option. */
 export const InlineChoiceItemSchema = z.object({
-  text: z.string().min(1),
+  text: sentenceWithBlanks(choiceBlankProblems),
   /** Reserved asset ref; playback deferred until the audio subsystem is ported. */
   audio: z.string().min(1).optional(),
 });
 export type InlineChoiceItem = z.infer<typeof InlineChoiceItemSchema>;
 
 /** The `content` block for an inline-choice exercise. */
-export const InlineChoiceContentSchema = z.object({
-  ...instructionsField,
-  items: z.array(InlineChoiceItemSchema).min(1),
-  footnote: z.string().min(1).optional(),
-});
+export const InlineChoiceContentSchema = z
+  .object({
+    ...instructionsField,
+    items: z.array(InlineChoiceItemSchema).min(1),
+    footnote: z.string().min(1).optional(),
+  })
+  .refine((content) => hasAnyBlank(content.items), noBlankIssue('[*right|wrong]'));
 export type InlineChoiceContent = z.infer<typeof InlineChoiceContentSchema>;
 
 /**
