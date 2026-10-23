@@ -293,6 +293,46 @@ something is still wrong. Each type's `content` shape is its
 Design: [`docs/specs/2026-06-19-exercise-engines-design.md`](docs/specs/2026-06-19-exercise-engines-design.md)
 §5–6; the schema is `ExerciseOptionsSchema` in `src/config/lo-schema.ts`.
 
+### Blanks in a sentence
+
+Three exercise types write their blanks inside the sentence, in square brackets. The
+build reads each blank the way the exercise will, and refuses one no learner could
+answer, before any page is written (TODO §E34).
+
+| Type                  | A blank             | Rules                                                                                     |
+| --------------------- | ------------------- | ----------------------------------------------------------------------------------------- |
+| select, inline-choice | `[*soy\|eres\|es]`  | Options split by `\|`. Exactly one is marked `*` as correct. No empty option, none twice. |
+| inline-gap            | `[llamo::llamarse]` | The answer, then optionally `::` and a hint shown in the empty box. The answer is needed. |
+
+Brackets only make blanks: each `[` closes with a `]`, with no bracket inside. There is no
+way to show a bracket as text in these sentences; write `( )` instead. A sentence
+without a blank is fine (passage text), but each exercise needs at least one. Radio-quiz
+marks its one correct option with `*` too, on its option list; drag-fill-gaps and
+word-spot bracket a word (`[word]`) with rules of their own, in their schemas.
+
+When a blank is wrong, the build stops and says where and what:
+
+```text
+lo-config/lo-01-greetings/exercises/01-select/exercise.json is invalid:
+✖ the blank [soy|eres|es] has no correct option: put * before the right one, as in [*right|wrong]
+  → at content.items[0].text
+```
+
+`content.items[0].text` is the first sentence of `items` (counting starts at 0). Each
+message, with a blank that causes it and the fix:
+
+| The message says…               | For example                 | Fix                                    |
+| ------------------------------- | --------------------------- | -------------------------------------- |
+| `has no correct option`         | `[soy\|eres\|es]`           | mark one: `[*soy\|eres\|es]`           |
+| `marks 2 options correct`       | `[*soy\|*eres\|es]`         | keep `*` on one only                   |
+| `has an empty option`           | `[soy\|\|*es]`              | remove the extra `\|`: `[soy\|*es]`    |
+| `marks an empty option correct` | `[*\|es]`                   | write it after the `*`: `[*soy\|es]`   |
+| `offers "es" twice`             | `[es\|*es]`                 | make every option different            |
+| `has no answer`                 | `[::llamarse]`              | answer first: `[llamo::llamarse]`      |
+| `is written as a choice`        | `[*soy\|es]` in inline-gap  | the answer is typed: `[soy::ser]`      |
+| `brackets that do not pair up`  | `Yo [*soy\|eres de Madrid.` | close it: `Yo [*soy\|eres] de Madrid.` |
+| `no sentence has a blank`       | no `[ ]` anywhere           | add at least one blank                 |
+
 ### The authoring loop
 
 ```bash
