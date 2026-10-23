@@ -27,6 +27,7 @@ export function requireDebugBuild(): void {
     'ui-showcase.html',
     'code-style.html',
     'culp-syllabi.html',
+    'claude-skills.html',
   ].filter((file) => !existsSync(path.join(DIST, file)));
   expect(missing, 'dist/ is a normal build: run `DEBUG=1 bun run build` first').toEqual([]);
 }

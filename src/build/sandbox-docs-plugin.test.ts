@@ -8,6 +8,7 @@
  * doc is not stale until someone restarts the dev server.
  */
 import { describe, expect, it, vi } from 'vitest';
+import { claudeSkillPaths } from './claude-skills-docs';
 import { SANDBOX_DOCS_MODULE_ID, sandboxDocs } from './sandbox-docs-plugin';
 
 /** The plugin's hooks are declared as object properties; call them with a `this`. */
@@ -32,6 +33,7 @@ describe('sandboxDocs plugin', () => {
     const code = load.call({ addWatchFile: vi.fn() }, `\0${SANDBOX_DOCS_MODULE_ID}`);
 
     expect(code).toContain('export const SANDBOX_DOC_PAGES');
+    expect(code).toContain('export const CLAUDE_SKILLS_PAGE');
     // Rendered HTML, not markdown: proof the render ran rather than the file being
     // handed through raw.
     expect(code).toContain('designer--');
@@ -47,8 +49,11 @@ describe('sandboxDocs plugin', () => {
     load.call({ addWatchFile }, `\0${SANDBOX_DOCS_MODULE_ID}`);
 
     const watched = addWatchFile.mock.calls.map((call) => String(call[0]));
-    // The hub's four, plus docs/STYLE.md and the CULP syllabi README for their pages.
-    expect(watched).toHaveLength(6);
+    // The hub's four, docs/STYLE.md and the CULP syllabi README for their pages, the
+    // skills README, and every SKILL.md for the Claude skills page.
+    expect(watched).toHaveLength(7 + claudeSkillPaths().length);
+    expect(watched).toEqual(expect.arrayContaining(claudeSkillPaths()));
+    expect(watched.some((file) => file.endsWith('.claude/skills/README.md'))).toBe(true);
     expect(watched.some((file) => file.endsWith('DESIGNER.md'))).toBe(true);
     expect(watched.some((file) => file.endsWith('AGENTS.md'))).toBe(true);
     expect(watched.some((file) => file.endsWith('docs/STYLE.md'))).toBe(true);

@@ -1,5 +1,5 @@
 /**
- * debug-nav.spec.ts — every debug page's header lists all five debug pages, course home
+ * debug-nav.spec.ts — every debug page's header lists all six debug pages, course home
  * and the repo in one order, and marks the page you are on: a link with
  * aria-current="page", drawn apart from the others (maintainer, 2026-10-23).
  */
@@ -13,6 +13,7 @@ const PAGES = [
   { file: 'ui-showcase.html', label: 'UI showcase' },
   { file: 'code-style.html', label: 'Code style' },
   { file: 'culp-syllabi.html', label: 'CULP syllabi' },
+  { file: 'claude-skills.html', label: 'Claude skills' },
 ] as const;
 
 const LINKS = [...PAGES.map(({ label }) => label), 'Course home', /^GitHub repo/];

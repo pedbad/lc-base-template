@@ -24,11 +24,16 @@ describe('UI showcase nav', () => {
   });
 
   test('links to every debug page and course home, marking itself current', () => {
-    ['exercise-showcase', 'debug-sandbox', 'ui-showcase', 'code-style', 'culp-syllabi'].forEach(
-      (file) => {
-        expect(nav).toContain(`href="/${file}.html"`);
-      },
-    );
+    [
+      'exercise-showcase',
+      'debug-sandbox',
+      'ui-showcase',
+      'code-style',
+      'culp-syllabi',
+      'claude-skills',
+    ].forEach((file) => {
+      expect(nav).toContain(`href="/${file}.html"`);
+    });
     expect(nav.match(/aria-current="page"/g)).toHaveLength(1);
     expect(nav).toMatch(/<a [^>]*href="\/ui-showcase\.html"[^>]*aria-current="page"/);
     expect(nav).toContain('Course home');

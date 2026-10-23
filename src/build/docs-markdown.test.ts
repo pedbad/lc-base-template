@@ -17,6 +17,7 @@ import {
   readCodeStyleDoc,
   readCulpSyllabiDoc,
   CULP_SYLLABI_DOC,
+  CLAUDE_SKILLS_DOC,
   readSandboxDocs,
   renderDoc,
   renderDocMarkdown,
@@ -378,5 +379,48 @@ describe('readSandboxDocs', () => {
     for (const doc of SANDBOX_DOCS) ids.add(doc.id);
     const targets = Array.from(combined.matchAll(/href="#([^"]+)"/g), (m) => m[1] as string);
     expect(targets.filter((target) => !ids.has(target))).toEqual([]);
+  });
+});
+
+// The Claude skills debug page (claude-skills.html) renders .claude/skills/README.md,
+// the shared steps, beside one card per skill (TODO §E40).
+describe('the Claude skills page', () => {
+  it('lets a hub doc link to the skills README open the Claude skills page', () => {
+    expect(render('[skills](.claude/skills/README.md)')).toContain('href="claude-skills.html"');
+  });
+
+  it("keeps the README's own anchor links on its own page", () => {
+    const { html } = renderDoc('[where](#where-am-i)', CLAUDE_SKILLS_DOC.id);
+    expect(html).toContain('href="#skills--where-am-i"');
+  });
+
+  it('is watched like the hub docs, so an edit reloads the page', () => {
+    expect(sandboxDocPaths().some((file) => file.endsWith('.claude/skills/README.md'))).toBe(true);
+  });
+});
+
+// A doc the registry does not list (a skill's SKILL.md) can still be rendered for a
+// page, given its file, page and heading depth: its links resolve from its own folder.
+describe('renderDoc for a file the registry does not list', () => {
+  const source = {
+    file: '.claude/skills/demo/SKILL.md',
+    page: 'claude-skills.html',
+    headingOffset: 2,
+  };
+
+  it('nests its headings at the depth the page asks for', () => {
+    const { html } = renderDoc('# Demo\n\n## Step', 'skill-demo', source);
+    expect(html).toContain('<h3 id="skill-demo--demo">');
+    expect(html).toContain('<h4 id="skill-demo--step">');
+  });
+
+  it('reads its relative links from its own folder, and from its own page', () => {
+    const { html } = renderDoc(
+      '[shared](../README.md#where-am-i) [rules](../../../AGENTS.md)',
+      'skill-demo',
+      source,
+    );
+    expect(html).toContain('href="#skills--where-am-i"');
+    expect(html).toContain('href="debug-sandbox.html#agents"');
   });
 });

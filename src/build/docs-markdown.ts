@@ -45,8 +45,9 @@
  *      URL would send every clone's designer to somebody else's repository.
  *
  * ── DOCS ON PAGES OF THEIR OWN ──────────────────────────────────────────────────────
- * `docs/STYLE.md` renders on the Code style debug page (`code-style.html`), and
- * `docs/culp-syllabi/README.md` on the CULP syllabi page (`culp-syllabi.html`), not in
+ * `docs/STYLE.md` renders on the Code style debug page (`code-style.html`),
+ * `docs/culp-syllabi/README.md` on the CULP syllabi page (`culp-syllabi.html`) and
+ * `.claude/skills/README.md` on the Claude skills page (`claude-skills.html`), not in
  * the hub, so case 1 crosses pages for them: a hub doc's link to one opens its page, and
  * their links to a hub doc open the sandbox at that doc. A relative link is read from
  * the linking doc's own folder, as GitHub reads it: `../STYLE.md` in the CULP README is
@@ -137,15 +138,27 @@ export const CULP_SYLLABI_DOC: SandboxDoc = {
     'How the CULP syllabi notes are laid out, and the skill that checks material against them.',
 };
 
+/** The Claude skills folder's README, the shared steps, rendered on its own debug page. */
+export const CLAUDE_SKILLS_DOC: SandboxDoc = {
+  id: 'skills',
+  file: '.claude/skills/README.md',
+  audience: 'anyone working in the repo with Claude Code',
+  blurb: 'The steps several Claude skills share: where am I, and filing a template request.',
+};
+
+/** The page the Claude skills README and every SKILL.md render on. */
+export const CLAUDE_SKILLS_PAGE_FILE = 'claude-skills.html';
+
 /** The debug page each doc renders on: the hub's four share the sandbox. */
 const HUB_PAGE = 'debug-sandbox.html';
 const PAGE_DOCS: ReadonlyMap<string, string> = new Map([
   [CODE_STYLE_DOC.id, 'code-style.html'],
   [CULP_SYLLABI_DOC.id, 'culp-syllabi.html'],
+  [CLAUDE_SKILLS_DOC.id, CLAUDE_SKILLS_PAGE_FILE],
 ]);
 const pageOf = (docId: string): string => PAGE_DOCS.get(docId) ?? HUB_PAGE;
 
-const ALL_DOCS = [...SANDBOX_DOCS, CODE_STYLE_DOC, CULP_SYLLABI_DOC];
+const ALL_DOCS = [...SANDBOX_DOCS, CODE_STYLE_DOC, CULP_SYLLABI_DOC, CLAUDE_SKILLS_DOC];
 const DOC_BY_FILE = new Map(ALL_DOCS.map((doc) => [doc.file, doc]));
 const DOC_BY_ID = new Map(ALL_DOCS.map((doc) => [doc.id, doc]));
 
@@ -173,9 +186,26 @@ export function docAnchorId(docId: string, anchor: string): string {
   return anchor ? `${docId}--${anchor}` : docId;
 }
 
+/**
+ * Where a doc the registry does not list renders: a skill's SKILL.md, of which a course
+ * repo may add its own, so there is no fixed list of them.
+ */
+export interface DocSource {
+  /** Repo-relative path, the folder its relative links are read from. */
+  readonly file: string;
+  /** The debug page it renders on, which decides whether a link stays in-page. */
+  readonly page: string;
+  /** How far below its markdown level each heading renders. */
+  readonly headingOffset: number;
+}
+
 /** Per-render state: which doc, its headings so far, and the duplicate-slug counters. */
 interface RenderState {
   readonly docId: string;
+  /** The doc's repo-relative path. */
+  readonly file: string;
+  /** The debug page it renders on. */
+  readonly page: string;
   /** How far below its markdown level each heading renders (HEADING_OFFSET). */
   readonly headingOffset: number;
   readonly headings: DocHeading[];
@@ -206,17 +236,17 @@ function stripRelativePrefix(target: string): string {
  * render on one page, otherwise the other page (at its top for a page-sized doc, at the
  * doc's article for a hub doc).
  */
-function docHref(fromDocId: string, doc: SandboxDoc, fragment: string): string {
+function docHref(fromPage: string, doc: SandboxDoc, fragment: string): string {
   const anchor = docAnchorId(doc.id, fragment);
   const page = pageOf(doc.id);
-  if (page === pageOf(fromDocId)) return `#${anchor}`;
+  if (page === fromPage) return `#${anchor}`;
   if (!fragment && page !== HUB_PAGE) return page;
   return `${page}#${anchor}`;
 }
 
 /** The doc a link target refers to, read from the linking doc's folder, if a debug page renders it. */
-function resolveDocTarget(fromDocId: string, target: string): SandboxDoc | undefined {
-  const folder = path.posix.dirname(DOC_BY_ID.get(fromDocId)?.file ?? '');
+function resolveDocTarget(fromFile: string, target: string): SandboxDoc | undefined {
+  const folder = path.posix.dirname(fromFile);
   return DOC_BY_FILE.get(stripRelativePrefix(path.posix.join(folder, target)));
 }
 
@@ -296,11 +326,11 @@ md.renderer.rules.link_open = (tokens, idx, _options, env) => {
     return `<a href="#${md.utils.escapeHtml(anchor)}">`;
   }
 
-  const doc = resolveDocTarget(state.docId, target.split('#')[0] ?? '');
+  const doc = resolveDocTarget(state.file, target.split('#')[0] ?? '');
   if (doc) {
     state.delinked.push(false);
     const fragment = target.includes('#') ? slugify(target.split('#')[1] ?? '') : '';
-    return `<a href="${md.utils.escapeHtml(docHref(state.docId, doc, fragment))}">`;
+    return `<a href="${md.utils.escapeHtml(docHref(state.page, doc, fragment))}">`;
   }
 
   if (/^https?:\/\//i.test(target)) {
@@ -331,7 +361,7 @@ md.renderer.rules.link_close = (_tokens, _idx, _options, env) => {
  */
 function codeRegionOpen(state: RenderState, info: string): string {
   state.codeBlocks += 1;
-  const file = DOC_BY_ID.get(state.docId)?.file ?? state.docId;
+  const file = state.file;
   const language = info.trim().split(/\s+/)[0];
   const name = `${file} code sample ${state.codeBlocks}${language ? ` (${language})` : ''}`;
   return `<pre tabindex="0" role="region" aria-label="${md.utils.escapeHtml(name)}">`;
@@ -354,24 +384,40 @@ for (const rule of ['fence', 'code_block'] as const) {
 md.renderer.rules.table_open = (_tokens, _idx, _options, env) => {
   const state = env as unknown as RenderState;
   state.tables += 1;
-  const file = DOC_BY_ID.get(state.docId)?.file ?? state.docId;
+  const file = state.file;
   const name = md.utils.escapeHtml(`${file} table ${state.tables}`);
   return `<div class="doc-table-scroll" tabindex="0" role="region" aria-label="${name}">\n<table>\n`;
 };
 
 md.renderer.rules.table_close = () => '</table>\n</div>\n';
 
-/** Render one doc's markdown, returning its HTML and the headings it contains. */
+/** Where a listed doc renders: its own file and page, at its page's heading depth. */
+function listedSource(docId: string): DocSource {
+  const page = pageOf(docId);
+  return {
+    file: DOC_BY_ID.get(docId)?.file ?? docId,
+    page,
+    headingOffset: page === HUB_PAGE ? HEADING_OFFSET : PAGE_HEADING_OFFSET,
+  };
+}
+
+/**
+ * Render one doc's markdown, returning its HTML and the headings it contains. A doc the
+ * registry lists needs only its id; any other passes where it renders (`source`).
+ */
 export function renderDoc(
   markdown: string,
   docId: string,
+  source: DocSource = listedSource(docId),
 ): {
   html: string;
   headings: readonly DocHeading[];
 } {
   const state: RenderState = {
     docId,
-    headingOffset: pageOf(docId) === HUB_PAGE ? HEADING_OFFSET : PAGE_HEADING_OFFSET,
+    file: source.file,
+    page: source.page,
+    headingOffset: source.headingOffset,
     headings: [],
     slugCounts: new Map(),
     delinked: [],
@@ -413,7 +459,12 @@ export function readCulpSyllabiDoc(repoRoot: string = DEFAULT_REPO_ROOT): Sandbo
   return readPageDoc(CULP_SYLLABI_DOC, repoRoot);
 }
 
-/** Absolute paths of the markdown files the debug pages render — the plugin's watch list. */
+/** Read and render .claude/skills/README.md, the shared steps, for the Claude skills page. */
+export function readClaudeSkillsReadme(repoRoot: string = DEFAULT_REPO_ROOT): SandboxDocPage {
+  return readPageDoc(CLAUDE_SKILLS_DOC, repoRoot);
+}
+
+/** Absolute paths of the listed markdown files the debug pages render — part of the plugin's watch list. */
 export function sandboxDocPaths(repoRoot: string = DEFAULT_REPO_ROOT): string[] {
   return ALL_DOCS.map((doc) => path.join(repoRoot, doc.file));
 }
