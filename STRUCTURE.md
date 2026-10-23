@@ -264,6 +264,7 @@ as far as the tree is concerned.
 └── src/
     ├── audio/
     ├── build/
+    ├── claude-skills/
     ├── code-style/
     ├── components/
     │   ├── audio/
