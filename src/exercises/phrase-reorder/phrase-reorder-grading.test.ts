@@ -57,3 +57,18 @@ test('scramble: never yields the original order for 2+ cards', () => {
     expect(ids(scramble(deck))).not.toEqual(['slot-0', 'slot-1']);
   }
 });
+
+// TODO §E42: two rows may hold the same phrase; grading compares what a card shows.
+test('countCorrectPositions: two identical phrases swapped still count as right', () => {
+  const tokens = buildTokens([{ phrase: 'sí' }, { phrase: 'no' }, { phrase: 'sí' }]);
+  const [a, b, c] = tokens;
+  expect(countCorrectPositions([c, b, a], tokens)).toBe(3);
+});
+
+test('scramble never starts on an order that already looks solved', () => {
+  const tokens = buildTokens([{ phrase: 'sí' }, { phrase: 'sí' }, { phrase: 'no' }]);
+  // These draws keep "no" last and swap only the two "sí" cards.
+  const draws = [0.9, 0];
+  const scrambled = scramble(tokens, () => draws.shift() ?? 0);
+  expect(scrambled.map((token) => token.phrase)).not.toEqual(['sí', 'sí', 'no']);
+});

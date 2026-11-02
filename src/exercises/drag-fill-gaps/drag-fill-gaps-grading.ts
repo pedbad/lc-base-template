@@ -78,8 +78,9 @@ export interface CheckPlacementsResult {
 }
 
 /**
- * Grade the current placements: a tile is correct when it sits in its home slot
- * (slotId === tileId). Correct tiles lock; wrong tiles are cleared back to the bank.
+ * Grade the current placements: a tile is correct in any slot whose word it shows, so
+ * two blanks with the same word take either tile (TODO §E42). Correct tiles lock;
+ * wrong tiles are cleared back to the bank.
  * Already-locked slots and empty slots are left untouched.
  */
 export function checkPlacements(
@@ -90,11 +91,12 @@ export function checkPlacements(
   const nextAssignments = { ...assignments };
   const nextLocked = { ...locked };
   let anyWrong = false;
+  const wordOf = new Map(tiles.map((tile) => [tile.id, tile.word]));
   tiles.forEach((tile) => {
     if (nextLocked[tile.id]) return;
     const placedTileId = nextAssignments[tile.id];
     if (placedTileId === null || placedTileId === undefined) return;
-    if (placedTileId === tile.id) {
+    if (wordOf.get(placedTileId) === tile.word) {
       nextLocked[tile.id] = true;
     } else {
       nextAssignments[tile.id] = null;

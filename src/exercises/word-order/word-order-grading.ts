@@ -26,11 +26,15 @@ export function buildTokens(words: readonly string[]): Token[] {
  */
 export function scramble(tokens: readonly Token[], rng?: () => number): Token[] {
   const scrambled = shuffle(tokens, rng);
-  if (tokens.length < 2) return scrambled;
-  const unchanged = scrambled.every((token, index) => token.id === tokens[index]?.id);
-  if (!unchanged) return scrambled;
+  // Judged by what the cards show, not which card is where: two identical cards
+  // swapped would still look solved (TODO §E42).
+  const looksSolved = scrambled.every((token, index) => token.label === tokens[index]?.label);
+  if (tokens.length < 2 || !looksSolved) return scrambled;
   const [first, second, ...rest] = scrambled;
-  return first && second ? [second, first, ...rest] : scrambled;
+  if (first && second && first.label !== second.label) return [second, first, ...rest];
+  // The first two look alike: start from the answer moved on by one card, which
+  // differs unless every card is the same (the schema refuses that).
+  return [...tokens.slice(1), tokens[0]];
 }
 
 /** Return a new order with the cards at `idA` and `idB` swapped. */
@@ -45,5 +49,5 @@ export function swapById(order: readonly Token[], idA: string, idB: string): Tok
 
 /** How many tokens sit in their expected position (the Check score). */
 export function countCorrectPositions(order: readonly Token[], expected: readonly Token[]): number {
-  return order.filter((token, index) => token.id === expected[index]?.id).length;
+  return order.filter((token, index) => token.label === expected[index]?.label).length;
 }
