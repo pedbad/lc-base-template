@@ -1808,8 +1808,8 @@ no-preference` only.
   `2026-10-12-team-workflow-handover.md`; its open questions were decided 2026-11-02
   (ORGANIZATION, "Decisions already made"). **Decided 2026-11-02 (after E44):** P1 with
   path 1 and an empty bypass list; `lc-elearn`; merge commits
-  only; the maintainer owns the organisation personally, the only Owner (no
-  institutional owner, no second Owner); members in one team per course; template updates when there is something to
+  only; the maintainer owns the organisation personally (no institutional owner),
+  with two Owner accounts, `pedbad` and `pedbad-uol` as a recovery-only backup; members in one team per course; template updates when there is something to
   share, opened by each author on GitHub's website; a pinned "Deployments" issue per
   course; course settings in `course.json` (E45). All in ORGANIZATION.md, "Decisions
   already made". **Record here** each rules-pilot
