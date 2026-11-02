@@ -1800,9 +1800,12 @@ no-preference` only.
   uploads, by `DEPLOY.md`: E5). The
   move is **deferred by decision**. Plan: `docs/ORGANIZATION.md`. Context, the ordered
   next steps (all done but the move: E8, E4, E7, E5) and open questions:
-  `2026-10-12-team-workflow-handover.md`. **Open before step 6 (E44):** who approves
-  core changes, P1 or P2, and path 1, 2 or 3 for the maintainer's own core PRs
-  (ORGANIZATION.md step 6); until decided, P1 with path 1. **Record here** each rules-pilot
+  `2026-10-12-team-workflow-handover.md`. **Decided 2026-11-02 (after E44):** P1 with
+  path 1 and an empty bypass list; `lc-elearn`; no second Owner for now; merge commits
+  only; members in one team per course; template updates when there is something to
+  share, opened by each author on GitHub's website; a pinned "Deployments" issue per
+  course; course settings in `course.json` (E45). All in ORGANIZATION.md, "Decisions
+  already made". **Record here** each rules-pilot
   case (R1–R16) with its evidence; each stays pending rollout until seen.
 
 **Found in the pre-handover check (2026-10-13).** E3, E4, E5 and E6 are done.
