@@ -4,20 +4,38 @@
 # ENFORCEMENT requires branch protection → "Require review from Code Owners"
 # (see docs: repo Settings → Branches → main). Without that, this only *requests*.
 #
-# Goal for this template: LO authors add content freely (lo-config/, fixtures,
-# new LO JSON) but cannot silently change the design system, config schemas,
-# core engine wiring, or the build/CI/guard setup that keeps every course consistent.
+# Goal for this template: LO authors add their lessons freely (each lesson's
+# lo-config/ folder and its media) but cannot silently change the design system,
+# config schemas, core engine wiring, the template's own example and shared media,
+# or the build/CI/guard setup that keeps every course consistent.
 
 # Everything defaults to the maintainer unless a more specific rule below wins.
 *                       @pedbad
 
-# --- Content: NO owner, so a content-only PR merges once CI is green ---
-# A pattern with no owner after it removes ownership. Content needs no approval
-# (decided 2026-10-12, docs/ORGANIZATION.md step 5); CI still validates every LO.
+# --- Lesson content: NO owner, so a lesson-only PR merges once CI is green ---
+# By path AND purpose (TODO §E41): a course's own lessons and their media, one folder
+# per lesson, `lo-NN-slug`. Never a whole folder: anything else in lo-config/,
+# public/images/ or public/audio/ (a loose file, another subfolder) stays with the
+# default owner above. A pattern with no owner after it removes ownership; the
+# trailing `/` matches folders only. The table authors read: COURSE_GUIDE.md, "What
+# you may edit"; src/docs/codeowners.test.ts holds this file to it.
 # Changed here once: course repos inherit this file, so never edit it per course.
-/lo-config/
-/public/images/
-/public/audio/
+/lo-config/lo-*/
+/public/images/lo-*/
+/public/audio/lo-*/
+
+# --- Template files inside those folders: the maintainer (later lines win) ---
+# The example lesson and its media: tests, docs and the showcase read them.
+/lo-config/lo-00-example/          @pedbad
+/public/images/lo-00-example/      @pedbad
+/public/audio/lo-00-example/       @pedbad
+# Shared media: the institutional marks, and what the engines and showcase use.
+# Owned through `*` already; named so the intent is visible.
+/public/images/footer/             @pedbad
+/public/images/line-match/         @pedbad
+/public/images/placeholders/       @pedbad
+/public/images/lo-placeholder.svg  @pedbad
+/public/audio/showcase-demo/       @pedbad
 
 # --- Design system: tokens, theme, global CSS (drift here breaks every course) ---
 /src/styles/            @pedbad
