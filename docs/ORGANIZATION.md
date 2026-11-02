@@ -34,8 +34,24 @@ branch rules on every course repo, and nobody else can switch them off.
 
 ## Decisions already made
 
-- **Name:** `lc-elearn` (the URL). **Display name:** LC e-Learning Team. Check the name is
-  free at step 1; if taken, pick another and replace `lc-elearn` throughout this file.
+- **Name:** `lc-elearn` (the URL), confirmed 2026-11-02. **Display name:** LC e-Learning
+  Team. Check the name is free at step 1; if taken, pick another and replace `lc-elearn`
+  throughout this file.
+- **Decided 2026-11-02** (the maintainer, after E44):
+  - **Approvals: P1 with path 1.** Only the maintainer approves colleagues' core
+    changes; the maintainer's own core PRs (template updates) are opened by the course's
+    author and approved by the maintainer. Ruleset B's bypass list stays **empty**
+    ([step 6](#who-approves-core-changes)).
+  - **No second Owner for now.**
+  - **Merge commits only** in course repos, for every pull request (step 6, item 4).
+  - **Colleagues join as members**, base permission Read, with **one team per course**
+    holding Write on that course's repo only, one person per team to start (step 7).
+  - **Template updates when there is something to share**, no fixed rhythm: the
+    maintainer announces one and each author opens the course's update PR (step 9).
+  - **Deployments are recorded** in one pinned "Deployments" issue per course repo, a
+    comment per release; never a password, key or sensitive server path
+    ([`DEPLOY.md`](../DEPLOY.md), step 9).
+  - **Course settings an author can edit** (`course.json`), before the first course: E45.
 - **One repo per course** (`lc-french`, `lc-english`, `lc-italian`, …), never one branch per
   course in the template. Language branches would never merge back and would drift.
 - **Course content never enters the template.** Only engine changes go to the template, by
@@ -66,9 +82,8 @@ branch rules on every course repo, and nobody else can switch them off.
       maintainer 2026-10-16.
 - [x] **Content licence variant.** CC BY-NC 4.0 (no commercial reuse), as `LICENSE`
       says. Confirmed by the maintainer 2026-10-14.
-- [ ] **Who approves core changes**, P1 or P2, and how the maintainer's own core PRs are
-      accepted (path 1, 2 or 3): [step 6](#who-approves-core-changes-decision-open).
-      Until decided: P1 with path 1, ruleset B's bypass list empty.
+- [x] **Who approves core changes**: P1 with path 1, ruleset B's bypass list empty
+      ([step 6](#who-approves-core-changes)). Decided by the maintainer 2026-11-02.
 
 ---
 
@@ -202,9 +217,8 @@ Right after creating it, in the new course repo:
      merge commits, and a course takes template updates as merge commits (step 9).
    - **Ruleset B, code owners.** One rule: **Require a pull request before merging**,
      required approvals **0**, with **Require review from Code Owners** and **Dismiss
-     stale pull request approvals when new commits are pushed**. Bypass list: as
-     ["Who approves core changes"](#who-approves-core-changes-decision-open) decides;
-     until it is decided, **empty**.
+     stale pull request approvals when new commits are pushed**. Bypass list **empty**
+     (["Who approves core changes"](#who-approves-core-changes), decided 2026-11-02).
 
    What that gives:
    - A **lesson-only** PR merges on green CI: a course's own lesson folders have no code
@@ -226,13 +240,13 @@ Right after creating it, in the new course repo:
      is not documented. Revisit only if R11 fails.
    - The maintainer's **own** PR touching code (a template update, step 9, or a change to
      the course's identity) cannot get that review: GitHub never counts an author's
-     approval, and the maintainer is the only code owner. How such a PR is accepted is
-     the open decision below.
+     approval, and the maintainer is the only code owner. How such a PR is accepted:
+     below.
 
 4. **Settings → General → Pull Requests:** **Allow merge commits** on: every template
    update merges this way (step 9). **Allow squash merging** and **Allow rebase merging**
-   off, so a template update can never be squashed or rebased by mistake; a course may
-   later allow them for lesson PRs, but a template update still merges as a merge commit.
+   off, for every pull request, so a template update can never be squashed or rebased
+   by mistake (decided 2026-11-02).
    **Automatically delete head branches** on. None of this weakens step 3: pull
    requests, the five checks, code-owner review, and the bans on deletion and force
    pushes all stay.
@@ -259,7 +273,7 @@ Same shared history as a fork, so template updates still merge cleanly. The only
 the "Sync fork" button: updates come in by command line (step 9). Then do the three
 settings above (Actions are on by default in a repo that is not a fork).
 
-### Who approves core changes (decision open)
+### Who approves core changes
 
 Two policies, and the settings above enforce only one of them on their own:
 
@@ -280,9 +294,10 @@ need someone else's approval, or a bypass. The ways to accept one:
 What the settings cannot do: enforce P1 for colleagues while letting the maintainer
 merge their own core PRs alone. Path 3 gives the maintainer the same power over
 colleagues' PRs, so P1 then rests on practice, not on GitHub. Path 1 enforces P1 but
-depends on a colleague for every update. **The maintainer decides, and records the
-choice in TODO.md (E2), before step 6 on the first course.** Until then: path 1,
-bypass list empty.
+depends on a colleague for every update. **Decided 2026-11-02: P1 with path 1**, bypass
+list empty. In practice the author's part is small: the maintainer announces a template
+update, and the author opens the update PR on GitHub's website (step 9), which the
+maintainer reviews and approves.
 
 Never treat `gh pr merge --admin`, or a bypass, as a routine way to merge: it merges a
 PR that "does not meet requirements". The template itself is unaffected: its protection
@@ -292,11 +307,13 @@ requires 0 approvals and no code-owner review
 ## Step 7 — Invite the colleague
 
 **Organisation → People → Invite member** by GitHub username (each colleague uses their own
-personal account). Then, in the course repo: **Settings → Collaborators and teams → Add
-people** → the colleague → **Write**.
-
-For more than one person per course, create a team per course (`french`, `english`, …)
-under **Organisation → Teams** and give the team Write on its repo instead.
+personal account), as a **member**, not an Owner. Then **Organisation → Teams → New
+team**, one per course (`spanish`, `english`, `portuguese`, …), with the colleague as a
+plain member (not a team maintainer), and give the team **Write** on that course's repo
+only: **the course repo → Settings → Collaborators and teams → Add teams**. One person
+per team to start (decided 2026-11-02); a second author, or a colleague helping on
+another course, joins that course's team, and leaves it when done. The maintainer needs
+no team: an Owner already has access to every repo.
 
 ## Step 8 — The colleague's setup
 
@@ -315,6 +332,18 @@ When the template changes, each course repo pulls it in:
   (`git remote add upstream <template URL>`) and use the branch route below.
 - **Linked copy:** `upstream` is set already (step 6).
 
+**When:** whenever the template has something to share (decided 2026-11-02): the
+maintainer merges it in the template, then tells the authors ("a new exercise is in,
+please update your course").
+
+**The author's route, on GitHub's website** (path 1, no commands): in the course repo,
+**Pull requests → New pull request → compare across forks**, with **base**
+`lc-elearn/<course>` `main` and **head** `lc-elearn/lc-base-template` `main` →
+**Create pull request**. The checks run; the maintainer reviews and approves; the author
+merges with **Create a merge commit**. If GitHub reports a conflict, the author stops
+and asks the maintainer. Not yet proven on a real course: pilot case R13.
+
+**The command-line route**, for the maintainer preparing a branch, or a conflict.
 Either way, `main` takes changes only through a pull request (step 6), so merge on a
 branch, on a clone of the course repo. **Who prepares it:** the maintainer, or a
 colleague with write access on that course (path 1 under "Who approves core changes");
@@ -406,7 +435,7 @@ Until then every case is **pending rollout**: no course repo exists yet.
 | R10 | Direct push to `main`              | A, then M | `git push origin HEAD:main` with a trivial commit                  | refused for both: changes must go through a pull request                                                                                        | terminal output                                                        | pending rollout |
 | R11 | Core change after approval         | A, M      | A opens a core PR, M approves, A pushes another core commit        | M's approval is dismissed; merge blocked until M approves again                                                                                 | PR timeline showing the dismissal, merge box                           | pending rollout |
 | R12 | M's own core PR                    | M         | a comment in `src/`, or a template update (R13)                    | path 1: not applicable (A opens it). Path 3: the bypass box appears, and while a check is pending or red the merge stays blocked                | merge box with checks pending; Rules → Insights entry after the merge  | pending rollout |
-| R13 | Template update                    | M or A    | step 9 with the next template commit                               | lesson files unchanged; only **Create a merge commit** offered; afterwards `git merge-base --is-ancestor <template commit> origin/main` exits 0 | `git diff` of the lesson folders, the merge button, the command output | pending rollout |
+| R13 | Template update                    | M or A    | step 9's website route (A), the next template commit               | lesson files unchanged; only **Create a merge commit** offered; afterwards `git merge-base --is-ancestor <template commit> origin/main` exits 0 | `git diff` of the lesson folders, the merge button, the command output | pending rollout |
 | R14 | An open branch after an update     | A         | a lesson branch opened before R13; step 9's branch update          | `git merge main` succeeds; its PR's checks rerun green                                                                                          | terminal output, the PR's checks                                       | pending rollout |
 | R15 | Merging does not publish           | A, P      | R1's merge                                                         | the live site is unchanged until P deploys                                                                                                      | the live page before and after                                         | pending rollout |
 | R16 | Publishing the intended commit     | P         | [`DEPLOY.md`](../DEPLOY.md) in a team test folder                  | that exact commit's CI is green; it builds with `--frozen-lockfile`; P records repo, full commit, result, rollback copy                         | the record line, the live checks                                       | pending rollout |

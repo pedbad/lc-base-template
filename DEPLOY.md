@@ -272,8 +272,10 @@ browser's saved copy. Also:
 
 ## 9. Write it down
 
-Send the maintainer one record per deploy, so everyone knows what is live and how to go
-back:
+Add one record per deploy as a comment on the course repo's pinned **Deployments** issue
+(decided 2026-11-02), so everyone knows what is live and how to go back. Never write a
+password, key or login there, nor a server path that should stay private: the issue is
+public, like the repo.
 
 | Field             | What to write                                                                |
 | ----------------- | ---------------------------------------------------------------------------- |
