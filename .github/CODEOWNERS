@@ -23,6 +23,9 @@
 /lo-config/lo-*/
 /public/images/lo-*/
 /public/audio/lo-*/
+# The course's own settings (title, language, home-page text): its author's, while the
+# rules they follow, src/config/course.config.ts, stay with the maintainer (TODO §E45).
+/course.json
 
 # --- Template files inside those folders: the maintainer (later lines win) ---
 # The example lesson and its media: tests, docs and the showcase read them.

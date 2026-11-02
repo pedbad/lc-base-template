@@ -1,5 +1,11 @@
+import { readFileSync } from 'node:fs';
 import { test, expect } from 'vitest';
-import { CourseConfigSchema, courseConfig } from './course.config';
+import { CourseConfigSchema, courseConfig, parseCourseConfig } from './course.config';
+
+/** The course's own values, as its author writes them (TODO §E45). */
+const courseJson: unknown = JSON.parse(
+  readFileSync(new URL('../../course.json', import.meta.url), 'utf8'),
+);
 
 // Importing courseConfig runs CourseConfigSchema.parse() at module load.
 // If raw config is invalid, that parse throws here and this suite fails —
@@ -44,4 +50,22 @@ test('course.config schema: a progressIcon must not start with "/"', () => {
   const rooted = CourseConfigSchema.safeParse({ ...base, progressIcon: '/icons/dot.svg' });
   if (rooted.success) throw new Error('expected a root-absolute icon to be rejected');
   expect(rooted.error.issues[0]?.message).toBe('relative to %BASE_URL%');
+});
+
+// TODO §E45: the rules stay here, in core; each course's values live in `course.json`
+// at the repo root, which CODEOWNERS leaves to the course's author.
+test('course.config: the course values come from course.json', () => {
+  expect(courseConfig).toEqual(CourseConfigSchema.parse(courseJson));
+});
+
+test('course.config: a bad course.json stops the build, naming the file and the field', () => {
+  const valid = CourseConfigSchema.parse(courseJson);
+  expect(() => parseCourseConfig({ ...valid, courseTitle: '' })).toThrow(
+    /course\.json is invalid[\s\S]*courseTitle/,
+  );
+});
+
+test('course.config: a misspelt key in course.json is refused, not ignored', () => {
+  const valid = CourseConfigSchema.parse(courseJson);
+  expect(() => parseCourseConfig({ ...valid, courseTitel: 'Typo' })).toThrow(/courseTitel/);
 });

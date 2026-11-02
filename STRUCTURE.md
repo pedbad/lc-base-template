@@ -87,8 +87,8 @@ names the config uses, so an asset's path is derivable from the page.
 | `public/audio/`        | Audio clips, per LO and per showcase fixture                 |
 | `public/images/`       | Illustrations, LO card art                                   |
 | `public/fonts/feijoa/` | Commercial display font — **git-ignored, never committed**   |
-| `public/favicon.svg`   | The browser-tab icon (`course.config.ts` → `favicon`)        |
-| `public/logo.svg`      | The header logo (`course.config.ts` → `logo`)                |
+| `public/favicon.svg`   | The browser-tab icon (`course.json` → `favicon`)             |
+| `public/logo.svg`      | The header logo (`course.json` → `logo`)                     |
 | `public/icons.svg`     | The sprite sheet                                             |
 | `public/llms.txt`      | Machine-readable summary of the built site (see `AGENTS.md`) |
 | `public/robots.txt`    | Crawler policy                                               |

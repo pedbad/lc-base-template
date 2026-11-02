@@ -1,0 +1,10 @@
+{
+  "courseTitle": "Cambridge Spanish — Level 1",
+  "languageCode": "es",
+  "landingCopy": {
+    "heading": "Bienvenido",
+    "subheading": "Start your Spanish journey"
+  },
+  "logo": "logo.svg",
+  "favicon": "favicon.svg"
+}

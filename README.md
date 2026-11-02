@@ -24,7 +24,7 @@ ship a static LTR-language course from a menu of ready exercise types.
 of Cambridge**: our developers build each course from it. It is public so that its
 CC BY-NC learning content can be shared, and anyone may build on it. If you are not the
 Language Centre, replace the branding before you publish: the logos in `public/logo.svg`
-and `public/images/footer/`, wired up in `src/config/course.config.ts` and
+and `public/images/footer/`, named in `course.json` and
 `src/config/footer.config.ts`. The Feijoa heading font is never committed, so your
 headings fall back to Open Sans. What may be reused, and on what terms:
 [`LICENSE`](LICENSE).
@@ -120,7 +120,7 @@ If a bookmark looks dead, check the port — Vite quietly takes 5174 (then 5175,
 
 The build emits **one real HTML file per folder in `lo-config/`** (`lo-00-example` →
 `dist/example.html`) plus **`dist/index.html`, the course landing page** — hero copy
-from `src/config/course.config.ts` and one card per LO, linking to that LO's page. The
+from `course.json` and one card per LO, linking to that LO's page. The
 example lesson's card shows only while it is the only LO: a course with lessons of its
 own leaves it out (CONTRIBUTING, "Authoring a Learning Object").
 Each page's body is already rendered, so a course reads and navigates with JavaScript
@@ -129,7 +129,7 @@ JavaScript and say so on the static page.
 
 **LO order is the `lo-NN-` number in each LO's folder name, and nothing else** — cards,
 the lesson nav and the build all read that one source, sorted numerically (so `lo-9-`
-comes before `lo-10-`). There is deliberately no order list in `course.config.ts` to
+comes before `lo-10-`). There is deliberately no order list in `course.json` to
 drift from the folders. Move a lesson by renaming its folder.
 
 ### Previewing a course while you author it

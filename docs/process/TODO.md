@@ -120,10 +120,13 @@ left, in order:
 25. **E44 — DONE 2026-11-02**: the organisation plan closes the approval-after-changes
     gap, names the open approval decision, carries a full rules pilot, and publishing
     checks the exact release commit (below).
-26. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
+26. **E45 — DONE 2026-11-02**: each course's own settings (title, language, home-page
+    text, logo and icon names) live in `course.json`, which its author edits without
+    review; the rules stay core in `src/config/course.config.ts` (below).
+27. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
     rules carried into each course repo as step 6's ruleset A (E33), and E16 after.
-    First the maintainer decides who approves core changes (ORGANIZATION, "Still to
-    decide"); the rules pilot then runs on the first course, once it exists.
+    The maintainer's decisions are made (2026-11-02, ORGANIZATION "Decisions already
+    made"); the rules pilot runs on the first course, once it exists.
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
 GitHub; CI is green there; no open PRs, and only `main` exists on GitHub. The one
@@ -2622,6 +2625,27 @@ rather than the Language Centre's course factory; the maintainer took three smal
   passed on `7059358` itself; no environments, deployments, Pages site or webhooks; the
   account's installed GitHub Apps could not be listed (unverified). **Not changed:** any
   GitHub setting. **Not tested:** every rules-pilot case, which needs a course repo.
+- **E45 — course settings an author can edit, before the first course. DONE 2026-11-02**
+  (maintainer's decision, pamphlet §22; branch `feat/e45-course-settings-file` from
+  `main` at `7059358`). `src/config/course.config.ts` held both the rules for a course's
+  identity and one course's values, in a core-owned folder: an author could not change
+  their own course's title without review, and a template update that touched the rules
+  edited the file every course had edited. **Implemented:** the values move to
+  `course.json` at the repo root, imported and checked by `parseCourseConfig`, which
+  throws `course.json is invalid:` with each fault and its field; the schema is now strict,
+  so a misspelt key is named instead of ignored. `.github/CODEOWNERS` leaves
+  `/course.json` without an owner; `course.config.ts` stays the maintainer's. A new
+  setting is added as optional, with a default, so no course must edit its `course.json`
+  to take an update. **Tested:** three new cases in `course.config.test.ts` (the values
+  come from `course.json`; a blank title names file and field; a misspelt key is
+  refused) and one in `codeowners.test.ts`, all failing first; `bun run build` with a
+  blank title and a misspelt key stopped (exit 1) with `✖ Unrecognized key:
+"courseTitel"` and `✖ Too small … → at courseTitle`, and the file was restored.
+  **Documented:** COURSE_GUIDE ("What you may edit", a row and a paragraph), README,
+  STRUCTURE, CONTRIBUTING, TOOLING, ROADMAP, the CULP syllabi README and the logo's
+  comment point to `course.json`. The logo and icon files themselves stay the
+  maintainer's. **Not tested:** that a course repository's rules let an author merge it
+  without review (rules pilot, R1 pattern).
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
