@@ -152,6 +152,9 @@ Meanwhile, keep writing the lesson with the types that exist.
 - **It names a blank** in a sentence, such as `the blank [soy|eres|es] has no correct
 option`: each message and its fix are in
   [`CONTRIBUTING.md` → "Blanks in a sentence"](CONTRIBUTING.md#blanks-in-a-sentence).
+- **It names a question, row or item**, such as `question 2 offers "sí" twice`: each
+  message and its fix are in
+  [`CONTRIBUTING.md` → "Answers in their own fields"](CONTRIBUTING.md#answers-in-their-own-fields).
 - **It fails anywhere else**, or the message does not make sense: ask the maintainer
   rather than changing files outside your folders.
 - **What a folder is for:** [`STRUCTURE.md`](STRUCTURE.md).
