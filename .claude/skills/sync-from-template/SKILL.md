@@ -1,6 +1,6 @@
 ---
 name: sync-from-template
-description: Use when bringing a template update into a course repo — "sync from the template", "pull in the template changes", "update this course from upstream". Usually the course's author opens the update on GitHub's website; this recipe is the command-line route, for the maintainer or an author, when a branch must be prepared or a conflict resolved.
+description: Use when bringing a template update into a course repo — "sync from the template", "pull in the template changes", "update this course from upstream". For the maintainer, or an authorised colleague, preparing the update branch; the course's author then opens the pull request from it.
 ---
 
 # Sync a course repo from the template

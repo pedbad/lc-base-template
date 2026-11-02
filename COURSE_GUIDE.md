@@ -103,14 +103,20 @@ in the template for every course. The full rule:
 
 ## When the template changes
 
-The maintainer improves the template (a new exercise type, a fix) and tells you. You
-bring it into your course with an update pull request, opened on GitHub's website: in
-your course repo, **Pull requests → New pull request → compare across forks**, with
-**base** your course's `main` and **head** the template's `main`, then **Create pull
-request**. Never the **Sync fork** button: the course's rules refuse it. The checks run,
-the maintainer approves (the update touches the template's code), and you merge with
-**Create a merge commit**. If GitHub reports a conflict, stop and ask the maintainer
-([`docs/ORGANIZATION.md` step 9](docs/ORGANIZATION.md#step-9--bringing-template-updates-into-a-course)).
+The maintainer improves the template (a new exercise type, a fix) and tells you. The
+update reaches your course through a pull request **from an update branch inside your
+course repo**, never from the template's `main` and never through the **Sync fork**
+button:
+
+1. The maintainer (or a colleague the maintainer asks) prepares the update branch and
+   pushes it to your course repo.
+2. **You open the pull request:** on your course repo's page, GitHub offers **Compare &
+   pull request** for the new branch; its base is your course's `main`.
+3. The checks run and the maintainer approves; **you** merge it with **Create a merge
+   commit**. A conflict is the maintainer's to resolve, on the branch.
+
+How the branch is prepared:
+[`docs/ORGANIZATION.md` step 9](docs/ORGANIZATION.md#step-9--bringing-template-updates-into-a-course).
 Then, on your machine, two halves.
 
 Update `main`:
