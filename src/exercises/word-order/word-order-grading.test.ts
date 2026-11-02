@@ -60,3 +60,19 @@ test('scramble: never yields the original order for 2+ cards', () => {
     expect(ids(scramble(deck))).not.toEqual(['token-0', 'token-1']);
   }
 });
+
+// TODO §E42: a sentence may repeat a word, and the two cards look the same, so
+// grading compares what a card shows, not which card it is.
+test('countCorrectPositions: two identical words swapped still count as right', () => {
+  const tokens = buildTokens(['la', 'casa', 'de', 'la', 'abuela']);
+  const [la1, casa, de, la2, abuela] = tokens;
+  expect(countCorrectPositions([la2, casa, de, la1, abuela], tokens)).toBe(5);
+});
+
+test('scramble never starts on an order that already looks solved', () => {
+  const tokens = buildTokens(['la', 'la', 'casa']);
+  // Fisher–Yates with these draws keeps casa last and swaps only the two la cards.
+  const draws = [0.9, 0];
+  const scrambled = scramble(tokens, () => draws.shift() ?? 0);
+  expect(scrambled.map((token) => token.label)).not.toEqual(['la', 'la', 'casa']);
+});

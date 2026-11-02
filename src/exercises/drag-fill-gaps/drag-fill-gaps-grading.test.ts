@@ -81,3 +81,14 @@ test('fillPlacements: every tile in its home slot, all locked', () => {
   expect(assignments).toEqual({ 'tile-0': 'tile-0', 'tile-1': 'tile-1' });
   expect(locked).toEqual({ 'tile-0': true, 'tile-1': true });
 });
+
+// TODO §E42: two blanks may hold the same word, and their tiles look the same, so a
+// tile is right in any slot whose word it shows.
+test('checkPlacements: two identical tiles swapped both lock', () => {
+  const { tiles } = buildModel({ items: [{ text: '[la] casa de [la] abuela' }] });
+  const [first, second] = tiles;
+  const assignments = { [first.id]: second.id, [second.id]: first.id };
+  const result = checkPlacements(tiles, assignments, {});
+  expect(result.anyWrong).toBe(false);
+  expect(result.complete).toBe(true);
+});

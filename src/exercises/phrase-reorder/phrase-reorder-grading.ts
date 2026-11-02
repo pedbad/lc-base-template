@@ -27,11 +27,15 @@ export function buildTokens(rows: readonly { phrase: string }[]): PhraseToken[] 
  */
 export function scramble(tokens: readonly PhraseToken[], rng?: () => number): PhraseToken[] {
   const scrambled = shuffle(tokens, rng);
-  if (tokens.length < 2) return scrambled;
-  const unchanged = scrambled.every((token, index) => token.id === tokens[index]?.id);
-  if (!unchanged) return scrambled;
+  // Judged by what the cards show, not which card is where: two identical cards
+  // swapped would still look solved (TODO §E42).
+  const looksSolved = scrambled.every((token, index) => token.phrase === tokens[index]?.phrase);
+  if (tokens.length < 2 || !looksSolved) return scrambled;
   const [first, second, ...rest] = scrambled;
-  return first && second ? [second, first, ...rest] : scrambled;
+  if (first && second && first.phrase !== second.phrase) return [second, first, ...rest];
+  // The first two look alike: start from the answer moved on by one card, which
+  // differs unless every card is the same (the schema refuses that).
+  return [...tokens.slice(1), tokens[0]];
 }
 
 /** Return a new order with the cards at `idA` and `idB` swapped. */
@@ -49,5 +53,5 @@ export function countCorrectPositions(
   order: readonly PhraseToken[],
   expected: readonly PhraseToken[],
 ): number {
-  return order.filter((token, index) => token.id === expected[index]?.id).length;
+  return order.filter((token, index) => token.phrase === expected[index]?.phrase).length;
 }
