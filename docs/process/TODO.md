@@ -110,16 +110,20 @@ left, in order:
     skill in `.claude/skills/` with its recipe and the shared steps (below).
 22. **E41 — DONE 2026-11-02**: lesson content is defined by path and purpose, not whole
     folders; the template's own files inside `lo-config/`, `public/images/` and
-    `public/audio/` now need review (below). **Merge it before the organisation move.**
+    `public/audio/` now need review (below). Merged (PR 47, `3aa1f6a`).
 23. **E42 — DONE 2026-11-02**: every exercise type refuses, at load, answers and options
-    no learner could use; repeated words are graded by what they show (below). **Merge
-    it before the organisation move.**
+    no learner could use; repeated words are graded by what they show (below). Merged
+    (PR 48, `e90611f`).
 24. **E43 — DONE 2026-11-02**: course repositories take template updates as merge
     commits and do not require linear history; the template keeps its own rules
-    (below). **Merge it before the organisation move.**
-25. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
+    (below). Merged (PR 49, `7059358`).
+25. **E44 — DONE 2026-11-02**: the organisation plan closes the approval-after-changes
+    gap, names the open approval decision, carries a full rules pilot, and publishing
+    checks the exact release commit (below).
+26. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
     rules carried into each course repo as step 6's ruleset A (E33), and E16 after.
-    Only once E41 is on `main`, so every course fork inherits the narrowed `CODEOWNERS`.
+    First the maintainer decides who approves core changes (ORGANIZATION, "Still to
+    decide"); the rules pilot then runs on the first course, once it exists.
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
 GitHub; CI is green there; no open PRs, and only `main` exists on GitHub. The one
@@ -1796,7 +1800,10 @@ no-preference` only.
   uploads, by `DEPLOY.md`: E5). The
   move is **deferred by decision**. Plan: `docs/ORGANIZATION.md`. Context, the ordered
   next steps (all done but the move: E8, E4, E7, E5) and open questions:
-  `2026-10-12-team-workflow-handover.md`.
+  `2026-10-12-team-workflow-handover.md`. **Open before step 6 (E44):** who approves
+  core changes, P1 or P2, and path 1, 2 or 3 for the maintainer's own core PRs
+  (ORGANIZATION.md step 6); until decided, P1 with path 1. **Record here** each rules-pilot
+  case (R1–R16) with its evidence; each stays pending rollout until seen.
 
 **Found in the pre-handover check (2026-10-13).** E3, E4, E5 and E6 are done.
 
@@ -2579,6 +2586,39 @@ rather than the Language Centre's course factory; the maintainer took three smal
   says; Allow merge commits on, squash and rebase off, delete head branches on. The
   template's own protection is unchanged. **Not verified:** GitHub's rulesets and merge
   buttons on a real course; that is the organisation pilot.
+- **E44 — the organisation plan, checked against GitHub's own rules. DONE 2026-11-02**
+  (an external review of the organisation documents; branch
+  `docs/e44-review-release-pilot` from `main` at `7059358`, inspected with read-only
+  `gh api` the same day). **Found:** course ruleset B had no stale-approval dismissal, so
+  an author could push more core changes after the maintainer's approval and merge on it;
+  ORGANIZATION presented the maintainer's ruleset-B bypass as settled, though it belongs
+  to every organisation Owner and lets one merge a colleague's core PR unreviewed too;
+  the first-course check was three PRs; DEPLOY built "`main` when the latest run is
+  green", which does not prove the commit being built passed (a PR's checks ran on its
+  branch; CI cancels an older run on `main` when a newer push arrives), with a plain
+  `bun install`; the French pilot still set `BASE_URL` (stale since E24); COURSE_GUIDE
+  had authors stage whole content folders and update only `main` after a template update.
+  **Verified in GitHub's documentation** (2026-11-02): stale approvals are dismissed when
+  pushed commits affect the diff, or the merged-in base adds changes, with no exception
+  listed for code owners; "the most recent reviewable push" is a different rule; authors
+  cannot approve their own PRs; a ruleset's bypass is per ruleset and per role; bypasses
+  show in Rules → Insights; `CODEOWNERS` is read from the base branch. **Not stated
+  anywhere:** rulesets on the Free plan, and that bypassing ruleset B leaves ruleset A's
+  checks enforced; both are pilot cases. **Documented:** ORGANIZATION step 6 (ruleset B
+  dismisses stale approvals; bypass list empty until decided; "Who approves core
+  changes", P1 or P2 and paths 1–3 with their consequences, an open item in "Still to
+  decide"), step 9 (who prepares an update, a clean tree first, squash "can" conflict,
+  `git merge --abort` qualified, each open branch updated after `main`), "The rules
+  pilot" (R1–R16: who, change, expected, evidence, status, all pending rollout) and
+  "What is proved, and how" (files, inspected settings, proposed settings, behaviour);
+  DEPLOY steps 1, 2 and 9 (the release commit's own five checks by `gh api`,
+  `--frozen-lockfile`, a record with the way back; the CI workflow has no deployment
+  step, and anything outside the repo is unverified); COURSE_GUIDE (stage the lesson's
+  own folders; update each open branch); the French pilot checklist; the sync skill.
+  **Inspected:** the template's classic protection matches `BRANCH_PROTECTION.md`; CI
+  passed on `7059358` itself; no environments, deployments, Pages site or webhooks; the
+  account's installed GitHub Apps could not be listed (unverified). **Not changed:** any
+  GitHub setting. **Not tested:** every rules-pilot case, which needs a course repo.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that

@@ -84,7 +84,7 @@ in the template for every course. The full rule:
    the tests and stops the push if one fails.
 
    ```bash
-   git add lo-config public/images public/audio
+   git add lo-config/lo-03-food public/images/lo-03-food public/audio/lo-03-food
    git commit -m "feat: add lesson 3, food"
    git push -u origin lo-03-food
    ```
@@ -97,16 +97,33 @@ in the template for every course. The full rule:
 
 ## When the template changes
 
-The maintainer improves the template (a new exercise type, a fix) and brings the change
-into each course repo, then tells you. Your part, on your machine:
+The maintainer improves the template (a new exercise type, a fix). The change reaches
+your course through an update pull request into its `main`, prepared by the maintainer or
+by a colleague the maintainer asks, and merged once CI is green and the code owner has
+approved it ([`docs/ORGANIZATION.md` step 9](docs/ORGANIZATION.md#step-9--bringing-template-updates-into-a-course)).
+Then you are told. Your part, on your machine, has two halves.
+
+Update `main`:
 
 ```bash
 git switch main && git pull && bun install
 ```
 
+Then, separately, each lesson branch you still have open, so its pull request is tested
+against the updated course:
+
+```bash
+git status                  # commit your work first
+git switch lo-03-food && git merge main
+git push
+```
+
 `bun install` is not optional: an update can add a package, and the checks fail without
-it. An update clashes with your work only where it changes a file you also changed, so
-add your own lesson folders and media and leave the template's own files alone.
+it. Pushing keeps what you have **committed**; edits you never committed are not saved
+by it, so commit before you switch branches. An update clashes with your work only where
+it changes a file you also changed, so add your own lesson folders and media and leave
+the template's own files alone. If `git merge main` reports a conflict, stop and ask the
+maintainer.
 
 ## Claude can help
 
