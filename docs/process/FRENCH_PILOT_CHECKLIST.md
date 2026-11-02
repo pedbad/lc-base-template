@@ -2,8 +2,9 @@
 
 **Prepared 2026-10-23 (TODO §E34). Not run yet.** The automated checks prove the code;
 this proves the people and the route: that a colleague can build a French lesson from
-the guide alone, read the build's errors, and get it published. Run it once, on the
-first course repo (`lc-french`), after the organisation move
+the guide alone, read the build's errors, and get it published. Run it once, on
+`lc-french` once it has a named author (its team starts empty until then), after the
+organisation move
 ([`docs/ORGANIZATION.md`](../ORGANIZATION.md) steps 1–8) and after that file's rules
 pilot, which proves the repository's merge rules case by case. Tick each step only when its
 expected result was seen. Note what went wrong under it, even when it was fixed on the

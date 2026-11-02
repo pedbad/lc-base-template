@@ -44,7 +44,7 @@ is exactly what the paragraph above is about.
 `bun run test` (Vitest), **not** `bun test` — Bun's own runner throws on the
 `import.meta.glob` in `load-lo-glob.ts` and reports a false failure.
 
-**Next (2026-10-20):** for the current commit see `git log main`. Section D is closed.
+**Next (2026-11-02):** for the current commit see `git log main`. Section D is closed.
 Done 2026-10-14 to 2026-10-16: **E9** (`ec86eb7`), **E10** (`fb73545`), **E11**
 (`187dadc`), **E12a** (`cbda661`), **E12b**, **E15** (`fe43305`), **E4**
 (`COURSE_GUIDE.md`), **E14** (README opener), **E5** (`DEPLOY.md`), **E13** (a and b,
@@ -125,14 +125,24 @@ left, in order:
     review; the rules stay core in `src/config/course.config.ts` (below). Merged (PR 51,
     `2a52ae2`). A docs drift check after it (E46) aligned CONTRIBUTING, COURSE_GUIDE,
     ORGANIZATION, BRANCH_PROTECTION, TOOLING and two skills with E44 and E45.
-27. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
+27. **E46 — DONE 2026-11-02**: a docs drift check aligned the live docs with E44 and E45.
+    Merged (PR 52, `536eeda`).
+28. **E47, E48 — DONE 2026-11-02**: the maintainer owns `lc-elearn` personally, with
+    `pedbad-uol` as a recovery-only backup Owner invited first (ORGANIZATION step 1).
+    Merged (PR 53, `7e4359c`; PR 54, `46a0765`).
+29. **E49 — DONE 2026-11-02**: step 7, one team per course, all courses on one day; a
+    course with no named author is the Language Centre's. Merged (PR 55, `c5e6436`).
+30. **E50 — DONE 2026-11-02**: the update branch in the course repo, the R1–R12 pilot
+    gate, recovery if `pedbad` cannot be used (below). Merged (PR 56, `0f0ada2`). A second
+    drift check (E51) recorded the maintainer's review decision and aligned the rest.
+31. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
     rules carried into each course repo as step 6's ruleset A (E33), and E16 after.
     The maintainer's decisions are made (2026-11-02, ORGANIZATION "Decisions already
     made"); the rules pilot runs on the first course, once it exists. **First thing
     after creating `lc-elearn`: invite `pedbad-uol` as the backup Owner** (ORGANIZATION
-    step 1). Then all course repos on one day, one team per course with one author each
-    (step 7), every repo's rules read back, and rules-pilot cases R1–R12 on one course
-    before authors merge independently (R13 before updates, R16 before deploying).
+    step 1). Then all course repos on one day, one team per course (where no author
+    is named, the team starts empty; step 7), every repo's rules read back, and rules-pilot cases R1–R12 on one course with
+    a named author before authors merge independently (R13 before updates, R16 before deploying).
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
 GitHub; CI is green there; no open PRs, and only `main` exists on GitHub. The one
@@ -156,7 +166,7 @@ never the branch's.
 - **Tabs on phones (§F3) is DONE** (2026-10-13): below the block's `@3xl` width the tab
   row gives way to the shadcn `Select`. It cost 21.8 kB of JS, and the maintainer
   raised the JS cap to 140 kB (`docs/TOOLING.md`, "Bundle budget").
-- **After the organisation move (item 22 above), ask the maintainer what is next.**
+- **After the organisation move (item 31 above), ask the maintainer what is next.**
   Candidates: §F2 (the remaining tabs-panel entries), §F6 (further components), or a
   Deferred item. The §E2 queue (`2026-10-12-team-workflow-handover.md` §3, "Next, in
   order") is done up to its last item, the move itself (E8, E4, E7, E5).
@@ -1815,7 +1825,7 @@ no-preference` only.
   only; the maintainer owns the organisation personally (no institutional owner),
   with two Owner accounts, `pedbad` and `pedbad-uol` as a recovery-only backup; members in one team per course; template updates when there is something to
   share, prepared on an update branch in the course repo and opened by its author
-  (E50); a pinned "Deployments" issue per
+  (E50), the maintainer's own review of a branch they prepared being enough; a pinned "Deployments" issue per
   course; course settings in `course.json` (E45). All in ORGANIZATION.md, "Decisions
   already made". **Record here** each rules-pilot
   case (R1–R16) with its evidence; each stays pending rollout until seen.

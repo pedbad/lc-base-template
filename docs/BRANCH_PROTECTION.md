@@ -19,9 +19,10 @@ be made through a pull request`).
 
 ---
 
-**This file is the template's protection.** A course repository takes the same rules
-except one: it must **not** require linear history, because its template updates merge
-as merge commits to keep the template's history (TODO §E43). Its rulesets and merge
+**This file is the template's protection.** A course repository takes the same base rules,
+minus one and plus two: it must **not** require linear history (its template updates
+merge as merge commits, to keep the template's history, TODO §E43); it adds ruleset B
+(code-owner review, stale approvals dismissed); and it allows merge commits only. Its rulesets and merge
 settings are in [`ORGANIZATION.md`](ORGANIZATION.md) step 6.
 
 ## Why it matters
