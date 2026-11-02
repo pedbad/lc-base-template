@@ -189,13 +189,14 @@ Right after creating it, in the new course repo:
 3. **Two branch rulesets on `main`**, each from **Settings → Rules → Rulesets → New
    ruleset → New branch ruleset**, enforcement **Active**, target **Include default
    branch**. GitHub applies every rule of every ruleset on a branch, so the two add up.
-   - **Ruleset A, the template's rules** (TODO §E1). Bypass list **empty**, so they hold
-     for everyone, the Owner included. Rules: **Restrict deletions**; **Require linear
-     history**; **Require a pull request before merging**, required approvals **0**;
+   - **Ruleset A, the template's rules less one** (TODO §E1, §E43). Bypass list **empty**,
+     so they hold for everyone, the Owner included. Rules: **Restrict deletions**;
+     **Require a pull request before merging**, required approvals **0**;
      **Require status checks to pass**, with **Require branches to be up to date before
      merging** and all five CI checks (`Lint, test, build` and four `Browser tests (…)`;
      the exact names are in [`BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md)); **Block
-     force pushes**.
+     force pushes**. **Not** "Require linear history", which the template has: it forbids
+     merge commits, and a course takes template updates as merge commits (step 9).
    - **Ruleset B, code owners.** Bypass list: **Organization admin**, set to **For pull
      requests only**. One rule: **Require a pull request before merging**, required
      approvals **0**, with **Require review from Code Owners**.
@@ -210,6 +211,14 @@ Right after creating it, in the new course repo:
      the pull request ("Merge without waiting for requirements to be met"). Ruleset A
      still holds, so a red, missing or out-of-date check blocks the merge, and nobody
      pushes to `main` directly.
+
+4. **Settings → General → Pull Requests:** **Allow merge commits** on: every template
+   update merges this way (step 9). **Allow squash merging** and **Allow rebase merging**
+   off, so a template update can never be squashed or rebased by mistake; a course may
+   later allow them for lesson PRs, but a template update still merges as a merge commit.
+   **Automatically delete head branches** on. None of this weakens step 3: pull
+   requests, the five checks, code-owner review, and the bans on deletion and force
+   pushes all stay.
 
    **Verify on the first course** with three test PRs before any real work: one
    content-only (merges on green CI, no review); one from the colleague touching `src/`
@@ -269,15 +278,34 @@ git fetch upstream && git merge upstream/main && bun install
 git push -u origin sync-template
 ```
 
-Then open a pull request into the course's `main` and merge it once CI is green. A sync
-touches code, so the maintainer merges their own sync PR with ruleset B's bypass (step 6).
-Then, on each clone: `git switch main && git pull && bun install`.
+Then open a pull request into the course's `main` and merge it once CI is green, with
+**Create a merge commit**: never **Squash and merge** or **Rebase and merge**. A merge
+commit keeps the template's commits in the course's history, so the next update brings
+only what is new; squashed or rebased, the course holds copies, forgets which template
+commits it has, and the next update conflicts on lines the course never touched
+(reproduced in a local test, TODO §E43). If the course's `main` moved while the pull
+request was open, bring it in by merging (`git merge origin/main`, or **Update branch**
+with a merge), never by rebasing the sync branch. To check afterwards:
+`git merge-base --is-ancestor <template commit> origin/main` prints nothing and exits 0.
+
+A sync touches code, so the maintainer merges their own sync PR with ruleset B's bypass
+(step 6). Then, on each clone: `git switch main && git pull && bun install`.
 
 `bun install` is not optional — a template update can add a package, and the hooks and
 tests fail without it.
 
 A sync conflicts only where the course repo edited a file the template also changed. If
 course repos keep to content and new files (the CONTRIBUTING rule), syncs stay clean.
+When one does conflict, look at both changes before choosing; the
+[`sync-from-template`](../.claude/skills/sync-from-template/SKILL.md) skill says how.
+
+The template itself keeps rebase-merge and linear history
+([`BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md)): nothing is merged into it from
+elsewhere. **If a course's template update was ever squashed or rebased**, do not rewrite
+the course's history: on a new branch, merge the same template commit again with
+`git merge --no-ff <template commit>`, read what it changes (little or nothing), and
+merge that pull request with a merge commit. Never repair with `git merge -s ours`, which
+records the template's changes as taken without taking them.
 
 ---
 

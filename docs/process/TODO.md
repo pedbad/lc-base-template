@@ -114,7 +114,10 @@ left, in order:
 23. **E42 — DONE 2026-11-02**: every exercise type refuses, at load, answers and options
     no learner could use; repeated words are graded by what they show (below). **Merge
     it before the organisation move.**
-24. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
+24. **E43 — DONE 2026-11-02**: course repositories take template updates as merge
+    commits and do not require linear history; the template keeps its own rules
+    (below). **Merge it before the organisation move.**
+25. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
     rules carried into each course repo as step 6's ruleset A (E33), and E16 after.
     Only once E41 is on `main`, so every course fork inherits the narrowed `CODEOWNERS`.
 
@@ -2551,6 +2554,31 @@ rather than the Language Centre's course factory; the maintainer took three smal
   non-answer text are not checked; flashcards are not graded; conjugation's per-row
   `options` are not checked while choice mode is refused; drag-fill-gaps still shows a
   tile's word undecoded (E35's open note).
+- **E43 — template updates keep the template's history in a course. DONE 2026-11-02**
+  (an external review of `f3a09be`; branch `docs/e43-course-sync-history` from `main` at
+  `3aa1f6a`). ORGANIZATION step 6 put "Require linear history" in course ruleset A,
+  step 9 merged `upstream/main` into a sync branch, and CONTRIBUTING, which courses
+  inherit, said "Rebase and merge": so a sync could only be squashed or rebased, and the
+  course would lose the template's commits. **Proved locally, in a throwaway template and
+  course** (plain git, not GitHub): with merge commits, a second update to the same
+  shared file merged with no conflict, the course's lesson survived both, and both
+  template commits stayed ancestors of the course's `main`
+  (`git merge-base --is-ancestor`); with the first update squashed, the template commit
+  was no longer an ancestor and the second update conflicted on a file the course never
+  edited; a real course edit to the shared file still conflicted, and was kept.
+  **Documented:** ORGANIZATION step 6 (ruleset A without linear history; a new item 4,
+  the merge settings) and step 9 (Create a merge commit, update by merge, how to check,
+  how to recover a squashed sync without rewriting history or `merge -s ours`);
+  BRANCH_PROTECTION says it is the template's and names the one difference; CONTRIBUTING
+  marks "Rebase and merge" as the template's rule; the `sync-from-template` skill merges
+  with a merge commit and resolves a clash by reading both sides, no longer taking the
+  template's file by default. **Settings for each future course repository** (nothing
+  changed on GitHub here): ruleset A = restrict deletions, require a pull request (0
+  approvals), require the five status checks (up to date), block force pushes, empty
+  bypass list, and no linear history; ruleset B = code-owner review, bypass as step 6
+  says; Allow merge commits on, squash and rebase off, delete head branches on. The
+  template's own protection is unchanged. **Not verified:** GitHub's rulesets and merge
+  buttons on a real course; that is the organisation pilot.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that

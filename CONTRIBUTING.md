@@ -513,6 +513,12 @@ The settings and why they are safe for one maintainer:
 5. **Merge** with "Rebase and merge" (`main` keeps a straight-line history), then
    `git switch main && git pull`.
 
+That is **the template's** rule. In a **course repository**, a template update is the
+exception: it merges with "Create a merge commit", never squash or rebase, and a sync
+branch that falls behind is updated by merging, never with `--rebase`. Otherwise the
+course loses track of which template commits it has
+([`docs/ORGANIZATION.md`](docs/ORGANIZATION.md) step 9).
+
 **Forgot to branch?** Nothing breaks: the push is refused. Move the work onto a branch:
 
 - **Not committed yet:** `git switch -c fix/short-name` — your changes come with you.
