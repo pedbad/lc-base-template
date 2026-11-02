@@ -99,12 +99,29 @@ Logged in as `pedbad`: **+** (top right) → **New organization** → **Free** �
 `lc-elearn`, display name **LC e-Learning Team**, contact email, "belongs to: my personal
 account".
 
-`pedbad` becomes the organisation's **Owner** automatically. Then add the backup Owner:
-**People → Invite member** → `pedbad-uol` → role **Owner**, and accept the invitation
-logged in as `pedbad-uol`. Before that, on **each** of the two accounts: two-factor on,
-recovery codes saved (a password manager or on paper), and a second method such as a
-passkey or security key, so one lost phone cannot lock both. Read it back:
-`gh api orgs/lc-elearn/members?role=admin --jq '.[].login'` lists both.
+`pedbad` becomes the organisation's **Owner** automatically.
+
+**The first thing after creating it: invite the backup Owner, `pedbad-uol`.** Do it
+before any other setting, so the organisation never runs on one key.
+
+1. **Before the day**, on **each** of `pedbad` and `pedbad-uol`: two-factor on, recovery
+   codes saved (a password manager or on paper), and a second method such as a passkey
+   or security key, so one lost phone cannot lock both.
+2. **Invite**, as `pedbad`: **People → Invite member** → `pedbad-uol` → role **Owner**.
+   Or from the terminal, after granting `gh` the organisation permission once:
+
+   ```bash
+   gh auth refresh -h github.com -s admin:org
+   gh api -X POST orgs/lc-elearn/invitations \
+     -F invitee_id="$(gh api users/pedbad-uol --jq .id)" -f role=admin
+   ```
+
+   (`role=admin` is the Owner role.)
+
+3. **Accept**, logged in as `pedbad-uol` (a private window): the email from GitHub, or
+   github.com/lc-elearn.
+4. **Read it back:** `gh api 'orgs/lc-elearn/members?role=admin' --jq '.[].login'`
+   lists `pedbad` and `pedbad-uol`.
 
 Then **Settings → Member privileges**:
 

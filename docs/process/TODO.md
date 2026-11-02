@@ -128,7 +128,9 @@ left, in order:
 27. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
     rules carried into each course repo as step 6's ruleset A (E33), and E16 after.
     The maintainer's decisions are made (2026-11-02, ORGANIZATION "Decisions already
-    made"); the rules pilot runs on the first course, once it exists.
+    made"); the rules pilot runs on the first course, once it exists. **First thing
+    after creating `lc-elearn`: invite `pedbad-uol` as the backup Owner** (ORGANIZATION
+    step 1).
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
 GitHub; CI is green there; no open PRs, and only `main` exists on GitHub. The one
