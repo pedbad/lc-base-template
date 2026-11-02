@@ -1,6 +1,6 @@
 ---
 name: sync-from-template
-description: Use when bringing a template update into a course repo — "sync from the template", "pull in the template changes", "update this course from upstream". For the maintainer; a colleague only pulls.
+description: Use when bringing a template update into a course repo — "sync from the template", "pull in the template changes", "update this course from upstream". For the maintainer, or a colleague the maintainer asks to prepare the update pull request.
 ---
 
 # Sync a course repo from the template
@@ -25,14 +25,16 @@ How a fork and a linked copy each take an update:
    and content. Take one side's whole file only when the user has seen what it throws
    away. The course's own lessons and media
    ([`COURSE_GUIDE.md` → "What you may edit"](../../../COURSE_GUIDE.md#what-you-may-edit))
-   are the course's. Anything unclear: ask the user, and `git merge --abort` returns the
-   branch to where it was.
+   are the course's. Anything unclear: ask the user. `git merge --abort` stops the merge
+   and tries to put the branch back as it was, discarding resolutions made so far; it is
+   reliable because step 1 started from a clean tree.
 4. **Run the verify gate** from [`AGENTS.md` → "Verify before you claim done"](../../../AGENTS.md#verify-before-you-claim-done).
    The example lesson and the tests may have changed; a lesson of the course's own that
    now fails needs fixing in the lesson, not in the test.
 5. **Push the branch and open a pull request** into the course's `main`; when CI is
    green, merge it with **Create a merge commit**, never squash or rebase
-   (ORGANIZATION.md step 9 says why). If `main` moved meanwhile, merge it into the sync
+   (ORGANIZATION.md step 9 says why), once the code owner has approved it by the path
+   ORGANIZATION.md step 6 records. If `main` moved meanwhile, merge it into the sync
    branch; never rebase it. Then tell the user to let colleagues know. Their side is
-   `git switch main && git pull && bun install`
+   `main` and then each open branch
    ([`COURSE_GUIDE.md` → "When the template changes"](../../../COURSE_GUIDE.md#when-the-template-changes)).

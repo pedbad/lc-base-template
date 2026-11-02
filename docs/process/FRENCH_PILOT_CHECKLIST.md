@@ -4,7 +4,8 @@
 this proves the people and the route: that a colleague can build a French lesson from
 the guide alone, read the build's errors, and get it published. Run it once, on the
 first course repo (`lc-french`), after the organisation move
-([`docs/ORGANIZATION.md`](../ORGANIZATION.md) steps 1–8). Tick each step only when its
+([`docs/ORGANIZATION.md`](../ORGANIZATION.md) steps 1–8) and after that file's rules
+pilot, which proves the repository's merge rules case by case. Tick each step only when its
 expected result was seen. Note what went wrong under it, even when it was fixed on the
 spot: that is what the pilot is for.
 
@@ -55,16 +56,19 @@ publishes (P).
 - [ ] All five checks pass. A lesson-only pull request (only the course's own
       `lo-config/lo-NN-slug/` and its `public/images/` and `public/audio/` folders)
       merges with no review; a change to anything else, the example lesson included,
-      waits for M ([`docs/ORGANIZATION.md`](../ORGANIZATION.md) step 6).
+      waits for M ([`docs/ORGANIZATION.md`](../ORGANIZATION.md) step 6, and its rules
+      pilot for each case).
 - **Expected:** A merges their own content pull request once it is green.
 
 ## 7. P builds and publishes the approved revision
 
-- [ ] P follows [`DEPLOY.md`](../../DEPLOY.md) from `main` at the merged commit: the
-      Feijoa fonts, `BASE_URL` for the course's folder, the build, the checks before
-      upload, the upload.
-- **Expected:** the lesson is live at its address, with the fonts; P writes down the
-  commit that went live (DEPLOY.md, "Write it down").
+- [ ] P follows [`DEPLOY.md`](../../DEPLOY.md) for the merged commit: the release
+      commit's own CI green, `bun install --frozen-lockfile`, the Feijoa fonts, the build
+      (no `BASE_URL`: one build works in any folder), the checks before upload, the
+      upload.
+- **Expected:** the lesson is live at its address, with the fonts; P records the
+  repository, the full release commit, the result and the way back (DEPLOY.md, "Write
+  it down").
 
 ## 8. The published lesson, checked by a person
 

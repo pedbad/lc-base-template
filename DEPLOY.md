@@ -5,36 +5,43 @@ from the repo's `main` branch, with the licensed Feijoa fonts added, check it, t
 the finished files into a folder on the server. The site is plain files: no database, no
 server code, nothing to run on the server. One build works in any folder.
 
+**Merging publishes nothing.** The repo's CI workflow (`.github/workflows/ci.yml`) tests
+and builds, but has no deployment step: a course goes live only when someone follows this
+guide. Anything outside the repo that could publish by itself (a server that pulls from
+GitHub, an app installed on the organisation) is not covered by that; ask whoever runs
+the server if unsure.
+
 If you write lessons rather than publish them, see [`COURSE_GUIDE.md`](COURSE_GUIDE.md).
 
 ## The short version
 
 ```bash
 git switch main && git pull --ff-only
-bun install
+git rev-parse HEAD              # the release commit: its own CI must be green (step 1)
+bun install --frozen-lockfile
 # once per checkout: the three Feijoa files into public/fonts/feijoa/
 bun run build
-bun run preview   # check it, then Ctrl+C
-# copy everything INSIDE dist/ into the course's folder on the server
+bun run preview                 # check it, then Ctrl+C
+# copy everything INSIDE dist/ into the course's folder, then write it down (step 9)
 ```
 
 Every step, and the checks before it goes live, are below.
 
 ## What you need, once
 
-| Tool                 | Check                       | Why                                                                  |
-| -------------------- | --------------------------- | -------------------------------------------------------------------- |
-| **Git**              | `git --version`             | to fetch the course from GitHub                                      |
-| **Bun** 1.3 or later | `bun --version`             | runs every command in this guide (`bun install`, `bun run build`, …) |
-| **Node** 22          | `node --version` → `v22.…`  | the build tools run on Node; `.nvmrc` pins 22, and CI uses the same  |
-| **Feijoa** fonts     | the three files below       | the Cambridge heading font; licensed, so never in the repo           |
-| The **web address**  | ask whoever runs the server | which server folder to copy into (step 4)                            |
+| Tool                | Check                       | Why                                                                 |
+| ------------------- | --------------------------- | ------------------------------------------------------------------- |
+| **Git**             | `git --version`             | to fetch the course from GitHub                                     |
+| **Bun** 1.3         | `bun --version` → `1.3.…`   | runs every command in this guide; CI uses the latest 1.3            |
+| **Node** 22         | `node --version` → `v22.…`  | the build tools run on Node; `.nvmrc` pins 22, and CI uses the same |
+| **Feijoa** fonts    | the three files below       | the Cambridge heading font; licensed, so never in the repo          |
+| The **web address** | ask whoever runs the server | which server folder to copy into (step 4)                           |
 
 Install Bun from [bun.sh](https://bun.sh). For Node, [nvm](https://github.com/nvm-sh/nvm)
 is easiest: in the repo folder, `nvm install` reads `.nvmrc` and installs 22. In each
 new terminal, `nvm use` in the repo folder switches to it.
 
-## 1. Get the code
+## 1. Get the exact commit to publish
 
 The first time:
 
@@ -48,25 +55,53 @@ Every time after that, from the repo folder:
 ```bash
 git switch main
 git pull --ff-only
+git status          # "nothing to commit, working tree clean"
 ```
 
-Build only from `main`, and only when its CI is green: on GitHub open the repo's
-**Actions** tab, and the latest run on `main` should have a green tick. A red cross means
-something is broken; tell the maintainer and do not deploy.
-
-Note which version you are building, for step 9:
+**Name the release.** Write down the course repository (`<organisation>/<course-repo>`)
+and the full commit you will publish, for step 9:
 
 ```bash
-git log --oneline -1
+git rev-parse HEAD
 ```
+
+It prints 40 characters: the **release commit**. Everything below builds that commit
+and nothing else.
+
+**Check that CI passed on that exact commit**, not on "the latest run". A pull request's
+green checks ran on the pull request's branch; merging made a new commit on `main`, which
+CI tests again on its own run. Wait for that run to finish. With the GitHub CLI:
+
+```bash
+gh api "repos/<organisation>/<course-repo>/commits/$(git rev-parse HEAD)/check-runs" \
+  --jq '.check_runs[] | [.name, .conclusion] | @tsv'
+```
+
+All five lines must end in `success`: `Lint, test, build` and four `Browser tests (…)`.
+Fewer than five lines, or any `failure`, `cancelled` or blank, and you do not deploy:
+wait for the run, or tell the maintainer. (CI cancels a run on `main` when a newer push
+arrives, so an older commit can be left with `cancelled`: publish the newer one, once it
+is green.) Without the CLI: open
+`https://github.com/<organisation>/<course-repo>/commit/<release commit>`; the mark beside
+it must be a green tick, with all five checks passed.
+
+**If `main` moves on** before you build, build the commit you checked, not the newer one:
+
+```bash
+git switch --detach <release commit>
+```
+
+and `git switch main` once you have finished.
 
 ## 2. Install the dependencies
 
 ```bash
-bun install
+bun install --frozen-lockfile
 ```
 
-Run it after **every** pull, not just the first time: an update can change the
+It installs exactly the versions in `bun.lock`, as CI does, and stops with an error
+instead of changing the lockfile if `package.json` and `bun.lock` disagree. If it stops,
+do not deploy: tell the maintainer. Run it after **every** pull: an update can change the
 dependencies. It is quick when nothing changed.
 
 ## 3. Add the Feijoa fonts
@@ -237,8 +272,18 @@ browser's saved copy. Also:
 
 ## 9. Write it down
 
-Tell the maintainer the date, the address and the version from step 1
-(`git log --oneline -1`), so everyone knows what is live.
+Send the maintainer one record per deploy, so everyone knows what is live and how to go
+back:
+
+| Field             | What to write                                                                |
+| ----------------- | ---------------------------------------------------------------------------- |
+| Course repository | `<organisation>/<course-repo>`                                               |
+| Release commit    | the full 40 characters from step 1                                           |
+| CI on that commit | green, five of five (step 1)                                                 |
+| Address           | the live address                                                             |
+| Date, and who     | when it went live, and who uploaded it                                       |
+| Result            | step 8's checks passed, or what failed                                       |
+| Way back          | where the copy from step 7 is kept, and the release commit it was built from |
 
 ## When something is wrong
 
@@ -251,9 +296,10 @@ Tell the maintainer the date, the address and the version from step 1
 | A lesson page is "not found"                      | not every file was copied                                             | copy the whole of `dist/` again                            |
 | The old version still shows                       | your browser's saved copy                                             | Cmd+Shift+R / Ctrl+F5, or a private window                 |
 
-**Going back:** put the copy you kept in step 7 back in place. Or rebuild an earlier
-version: `git switch --detach <version>`, then steps 2, 5, 6 and 7, then
-`git switch main` to return.
+**Going back:** put the copy you kept in step 7 back in place. It is the quickest route,
+and exactly what was live before. Or rebuild the previous release from its step 9 record:
+`git switch --detach <previous release commit>`, then steps 2, 5, 6 and 7, then
+`git switch main` to return. Either way, write the rollback down as in step 9.
 
 **Moving a course to a new folder** needs no new build: copy the same files (step 7).
 Learners' saved flashcard progress stays behind at the old folder: their browser keeps
@@ -282,4 +328,4 @@ needs a new demo build.
 - build with `DEBUG=1` for the course's address (only for the
   [team demo](#demo-build-for-the-team));
 - copy a fixed-address (`BASE_URL`) build anywhere but its own address;
-- deploy from a branch other than `main`, or when `main`'s CI is red.
+- deploy from a branch other than `main`, or a commit whose own CI is not green (step 1).
