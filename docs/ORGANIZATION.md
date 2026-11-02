@@ -34,8 +34,8 @@ branch rules on every course repo, and nobody else can switch them off.
 
 ## Decisions already made
 
-- **Name:** `lc-elearn` (the URL), confirmed 2026-11-02. **Display name:** LC e-Learning
-  Team. Check the name is free at step 1; if taken, pick another and replace `lc-elearn`
+- **Name:** `lc-elearn` (the URL), confirmed 2026-11-02. **Display name:** LCE Learn.
+  **Base permission:** Read. Check the name is free at step 1; if taken, pick another and replace `lc-elearn`
   throughout this file.
 - **Decided 2026-11-02** (the maintainer, after E44):
   - **Approvals: P1 with path 1.** Only the maintainer approves colleagues' core
@@ -96,7 +96,7 @@ branch rules on every course repo, and nobody else can switch them off.
 ## Step 1 — Create the organisation
 
 Logged in as `pedbad`: **+** (top right) → **New organization** → **Free** → name
-`lc-elearn`, display name **LC e-Learning Team**, contact email, "belongs to: my personal
+`lc-elearn`, display name **LCE Learn**, contact email, "belongs to: my personal
 account".
 
 `pedbad` becomes the organisation's **Owner** automatically.
@@ -220,9 +220,11 @@ loose in the three content folders. Whole folders are never exempt: the full tab
 
 ## Step 6 — Create a course repo (once per course)
 
-All the course repos can be created on the same day (decided 2026-11-02): repeat this
-step for each, then step 7 for each team. Before authors start merging, run the
-same-day check in "The rules pilot" on one of them.
+All four course repos (French, Spanish, English, Portuguese) can be created on the same
+day (decided 2026-11-02): repeat this step for each, then step 7 for each team. **Read
+back each repo's effective rules** (item 5 below): identical intended settings are not
+evidence of identical configuration. Authors do not merge independently until the
+required cases of "The rules pilot" have passed.
 
 On the template: **Fork** → owner **`lc-elearn`** → name **`lc-french`** (the course's
 name, not `lc-base-template`) → create.
@@ -285,11 +287,41 @@ Right after creating it, in the new course repo:
    requests, the five checks, code-owner review, and the bans on deletion and force
    pushes all stay.
 
-   **Verify on the first course** with the [rules pilot](#the-rules-pilot-first-course)
-   once step 7 has invited a colleague, before real lessons. The course repo has to exist
-   for it, so it runs after these settings, not before them. If the **Rules** page
-   offers no rulesets on the Free plan, stop and record it: GitHub's plans page promises
-   public repositories "a full feature set", but no page names rulesets on Free.
+   From the terminal (the REST names are `allow_merge_commit`, `allow_squash_merge`,
+   `allow_rebase_merge`):
+
+   ```bash
+   gh repo edit lc-elearn/<course> --enable-merge-commit \
+     --enable-squash-merge=false --enable-rebase-merge=false --delete-branch-on-merge
+   ```
+
+   No linear-history rule goes with this: GitHub requires squash or rebase merging to be
+   allowed before linear history can be required, and a course needs neither.
+
+5. **Read back every course repo** (each one, not only the first):
+
+   ```bash
+   gh api repos/lc-elearn/<course> --jq '{merge: .allow_merge_commit,
+     squash: .allow_squash_merge, rebase: .allow_rebase_merge,
+     delete_branch: .delete_branch_on_merge, template: .is_template}'
+   gh api repos/lc-elearn/<course>/rulesets --jq '.[] | {id, name, enforcement}'
+   gh api repos/lc-elearn/<course>/rules/branches/main --jq '.[] | {type, parameters}'
+   ```
+
+   Expected: merge `true`, squash and rebase `false`; rulesets A and B `active`; the
+   effective rules on `main` include deletion, non_fast_forward, pull_request (with
+   `require_code_owner_review` and `dismiss_stale_reviews_on_push` true) and
+   required_status_checks with the five checks; no `required_linear_history`.
+
+   **Verify with the [rules pilot](#the-rules-pilot-first-course)** once step 7 has
+   invited an author, before authors merge independently. The course repo has to exist
+   for it, so it runs after these settings, not before them. **Free plan:** GitHub's
+   plans page gives Free organisations public repositories with "a full feature set",
+   and the template's own public repo already runs classic branch protection; the
+   rulesets and code-owner pages carry no plan line of their own. Availability is
+   expected; whether the settings take effect is what this read-back and the pilot
+   show. If the **Rules** page offers no rulesets, stop and record it; classic branch
+   protection is the fallback. None of this is assumed for a private repository.
 
 **Fallback — a linked copy instead of a fork** (only if a second fork into `lc-elearn`
 is refused). Create an **empty** repo `lc-elearn/lc-french`
@@ -303,9 +335,8 @@ git remote add origin https://github.com/lc-elearn/lc-french.git
 git push -u origin main
 ```
 
-Same shared history as a fork, so template updates still merge cleanly. What is lost is
-step 9's website route: a pull request across repositories needs a fork, so a linked
-copy's update is prepared on the command line (step 9) and opened by its author. Then do the three
+Same shared history as a fork, so template updates still merge cleanly (step 9); only
+the "Sync fork" button is missing, and step 9 never uses it. Then do the three
 settings above (Actions are on by default in a repo that is not a fork).
 
 ### Who approves core changes
@@ -424,18 +455,35 @@ When the template changes, each course repo pulls it in:
 maintainer merges it in the template, then tells the authors ("a new exercise is in,
 please update your course").
 
-**The author's route, on GitHub's website** (path 1, no commands): in the course repo,
-**Pull requests → New pull request → compare across forks**, with **base**
-`lc-elearn/<course>` `main` and **head** `lc-elearn/lc-base-template` `main` →
-**Create pull request**. The checks run; the maintainer reviews and approves; the author
-merges with **Create a merge commit**. If GitHub reports a conflict, the author stops
-and asks the maintainer. Not yet proven on a real course: pilot case R13.
+**The procedure: an update branch inside the course repo.** Not a pull request from the
+template's `main` straight into the course's `main`: the course's rules require the
+branch to be up to date with the course's `main`, and bringing it up to date would
+mean writing course changes into the template's `main`. Course-specific changes never
+go into the template. Nor the **Sync fork** button, which writes to `main` directly.
 
-**The command-line route**, for the maintainer preparing a branch, or a conflict. The
-course's author still opens the pull request from that branch (path 1): one the
-maintainer opens could never get a code owner's approval.
-Either way, `main` takes changes only through a pull request (step 6), so merge on a
-branch, on a clone of the course repo. **Who prepares the branch:** the maintainer, or a
+1. **Prepare** (the maintainer, or an authorised colleague with Write on the course):
+   update the local `main` from the course repo, create an update branch, fetch the
+   template, merge the tested template commit with a merge commit, resolve any
+   conflict deliberately, install, and run the full checks on content and behaviour.
+   Then push the branch to the **course** repo. The commands are below.
+2. **Open the pull request** from that branch into the same course repo's `main`: GitHub
+   offers **Compare & pull request** on the course repo's page once the branch is
+   pushed. **The course's author opens it** (path 1), even when the maintainer
+   prepared the branch: a pull request the maintainer opens could never get a code
+   owner's approval.
+3. **Accept:** the five checks pass, the maintainer approves as code owner, and the
+   author merges with **Create a merge commit**.
+
+**Open review point (decision, not yet made):** when the maintainer prepared the branch,
+the maintainer's approval reviews their own merge work; nobody else reads it. GitHub
+accepts it, because the maintainer is not the pull request's author. Whether that is
+enough, or the author should also comment on the result, is the maintainer's call.
+**Not proven on a real course:** pilot case R13 tests this procedure before it is
+recommended for use.
+
+**The commands**, on a clone of the course repo.
+`main` takes changes only through a pull request (step 6), so the merge happens on a
+branch. **Who prepares the branch:** the maintainer, or a
 colleague with write access on that course; **who opens the pull request:** the
 course's author (path 1 under "Who approves core changes"). Start from a clean working tree: a merge started over
 uncommitted edits can stop half-way, and those edits are hard to separate from it.
@@ -443,7 +491,11 @@ uncommitted edits can stop half-way, and those edits are hard to separate from i
 ```bash
 git status                      # "nothing to commit": otherwise commit or stash first
 git switch main && git pull --ff-only && git switch -c sync-template
-git fetch upstream && git merge upstream/main && bun install
+git fetch upstream
+git log --oneline -5 upstream/main  # find the tested template commit the maintainer named
+git merge --no-ff <template commit> # a merge commit: keeps the template's ancestry
+bun install
+bun run format && bun run lint && bun run lint:css && bun run test:coverage && bun run build && bun run test:e2e
 git push -u origin sync-template
 ```
 
@@ -525,15 +577,18 @@ Until then every case is **pending rollout**: no course repo exists yet.
 | R10 | Direct push to `main`              | A, then M | `git push origin HEAD:main` with a trivial commit                  | refused for both: changes must go through a pull request                                                                                        | terminal output                                                        | pending rollout |
 | R11 | Core change after approval         | A, M      | A opens a core PR, M approves, A pushes another core commit        | M's approval is dismissed; merge blocked until M approves again                                                                                 | PR timeline showing the dismissal, merge box                           | pending rollout |
 | R12 | M's own core PR                    | M         | a comment in `src/`, or a template update (R13)                    | path 1: not applicable (A opens it). Path 3: the bypass box appears, and while a check is pending or red the merge stays blocked                | merge box with checks pending; Rules → Insights entry after the merge  | pending rollout |
-| R13 | Template update                    | M or A    | step 9's website route (A), the next template commit               | lesson files unchanged; only **Create a merge commit** offered; afterwards `git merge-base --is-ancestor <template commit> origin/main` exits 0 | `git diff` of the lesson folders, the merge button, the command output | pending rollout |
+| R13 | Template update                    | M or A    | step 9's procedure: branch prepared, A opens the PR                | lesson files unchanged; only **Create a merge commit** offered; afterwards `git merge-base --is-ancestor <template commit> origin/main` exits 0 | `git diff` of the lesson folders, the merge button, the command output | pending rollout |
 | R14 | An open branch after an update     | A         | a lesson branch opened before R13; step 9's branch update          | `git merge main` succeeds; its PR's checks rerun green                                                                                          | terminal output, the PR's checks                                       | pending rollout |
 | R15 | Merging does not publish           | A, P      | R1's merge                                                         | the live site is unchanged until P deploys                                                                                                      | the live page before and after                                         | pending rollout |
 | R16 | Publishing the intended commit     | P         | [`DEPLOY.md`](../DEPLOY.md) in a team test folder                  | that exact commit's CI is green; it builds with `--frozen-lockfile`; P records repo, full commit, result, rollback copy                         | the record line, the live checks                                       | pending rollout |
 
-**When every course is created on one day**, run R1, R5, R9, R10 and R11 on one course
-with one author (about 30 minutes) before telling authors to merge: the courses share
-one setup, so a wrong rule would be wrong in all of them. The other cases follow the
-first time each situation arises.
+**Before authors merge independently**, on one course with one author: R1 to R12 must
+pass (every content and core boundary, failed checks, direct pushes, renewed approval,
+and the maintainer's own core PR). **R13 must pass before step 9 is recommended**, and
+**R16 before the first real deployment**; R14 and R15 follow the first time each comes
+up. The courses share one intended setup, so step 6's read-back on **every** course
+shows each is configured the same; a case is passed only on evidence, and the others
+stay pending. How long this takes is an estimate (an afternoon), not measured.
 
 If R9, R10 or R11 fails, stop: the rules do not protect `main` as step 6 claims. If R12
 lets a PR merge with a check pending or red, remove the bypass and use path 1. The
@@ -551,11 +606,46 @@ runs after this one.
 
 ---
 
+## If `pedbad` cannot be used
+
+Two different things, kept apart. **Untested:** nothing here has been tried.
+
+**Account recovery** is GitHub's process for `pedbad` itself: its recovery codes, a
+second two-factor method, or GitHub's account recovery request. It restores the
+account; nothing in the organisation needs changing.
+
+**Organisation recovery**, while `pedbad` is unavailable, works through `pedbad-uol`,
+the backup Owner (step 1):
+
+| Action                                          | Who can do it                                                                                           |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| invite, remove, add to teams; change settings   | `pedbad-uol`, as Owner                                                                                  |
+| a lesson-only PR                                | its author, on green CI: no code owner is needed                                                        |
+| a core PR (template update, `src/`, `.github/`) | **nobody**: `CODEOWNERS` names `@pedbad`, and being an Owner does not satisfy a named code-owner review |
+| change `CODEOWNERS` itself                      | **nobody** by pull request, for the same reason: it is under `.github/`                                 |
+
+So core work **waits** for account recovery: that is the expected path. If it cannot
+wait, the only way is a **deliberate administrative change** by `pedbad-uol` on the one
+course repo affected: set ruleset B to **Disabled** (or add `pedbad-uol` to its bypass
+list) for that one pull request, merge it after reading it, and restore ruleset B at
+once. While it is changed, that repo's core PRs need no code-owner approval at all, so
+keep it to minutes, and record what was done, when and why in TODO.md. Ruleset A
+(checks, no direct pushes) is never touched. GitHub's documentation does not say in so
+many words that an Owner can edit a repo's rulesets; it is expected, since an Owner is
+an admin of every repo, but unverified. This is a recovery exception, never a routine.
+
+**Not proposed:** naming `pedbad-uol` in `CODEOWNERS`. It would let the maintainer's
+second account approve the maintainer's own pull requests, which is self-approval in
+effect, and approve colleagues' core PRs from either account. If a second code owner is
+ever added, it is a person other than the maintainer, and the policy becomes P2 (step 6,
+"Who approves core changes"), decided on purpose.
+
 ## Cost
 
 **None expected.** All repos are public, and GitHub's plans page gives Free organisations
-public repositories with "a full feature set". No GitHub page names rulesets or
-code-owner review on the Free plan explicitly, so step 6 checks them on the first course. A paid plan would only matter if a
+public repositories with "a full feature set"; the rulesets and code-owner pages carry
+no plan line of their own, so step 6's read-back and the pilot confirm they take effect.
+Nothing here is assumed for private repositories. A paid plan would only matter if a
 course ever had to be private — and a fork of a public repo cannot be made private, so that
 course would use the linked-copy fallback in step 6.
 

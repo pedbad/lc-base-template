@@ -131,7 +131,8 @@ left, in order:
     made"); the rules pilot runs on the first course, once it exists. **First thing
     after creating `lc-elearn`: invite `pedbad-uol` as the backup Owner** (ORGANIZATION
     step 1). Then all course repos on one day, one team per course with one author each
-    (step 7), and the same-day check on one course before authors merge.
+    (step 7), every repo's rules read back, and rules-pilot cases R1–R12 on one course
+    before authors merge independently (R13 before updates, R16 before deploying).
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
 GitHub; CI is green there; no open PRs, and only `main` exists on GitHub. The one
@@ -1813,7 +1814,8 @@ no-preference` only.
   path 1 and an empty bypass list; `lc-elearn`; merge commits
   only; the maintainer owns the organisation personally (no institutional owner),
   with two Owner accounts, `pedbad` and `pedbad-uol` as a recovery-only backup; members in one team per course; template updates when there is something to
-  share, opened by each author on GitHub's website; a pinned "Deployments" issue per
+  share, prepared on an update branch in the course repo and opened by its author
+  (E50); a pinned "Deployments" issue per
   course; course settings in `course.json` (E45). All in ORGANIZATION.md, "Decisions
   already made". **Record here** each rules-pilot
   case (R1–R16) with its evidence; each stays pending rollout until seen.
@@ -2653,6 +2655,18 @@ rather than the Language Centre's course factory; the maintainer took three smal
   comment point to `course.json`. The logo and icon files themselves stay the
   maintainer's. **Not tested:** that a course repository's rules let an author merge it
   without review (rules pilot, R1 pattern).
+- **E50 — the update route, the pilot gate and recovery, after a review of v0.5. DONE
+  2026-11-02.** The website route (a pull request from the template's `main` into a
+  course's `main`) is withdrawn: with "up to date" required, updating it would write
+  course changes into the template. Step 9 is an update branch inside the course repo,
+  prepared by the maintainer or an authorised colleague and opened by the author.
+  The pilot gate before authors merge independently is R1–R12 (R13 before updates,
+  R16 before deploying), with every course repo's rules read back. Step 6 gives the
+  merge-settings command and the read-back; the Free plan is stated as expected
+  availability, confirmed by read-back. New section "If `pedbad` cannot be used":
+  account and organisation recovery kept apart, what the backup Owner can and cannot
+  do, and a deliberate, recorded ruleset change as the only exception (untested).
+  Display name LCE Learn. **Not tested:** all of it; no organisation exists.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
