@@ -513,9 +513,10 @@ The settings and why they are safe for one maintainer:
 5. **Merge** with "Rebase and merge" (`main` keeps a straight-line history), then
    `git switch main && git pull`.
 
-That is **the template's** rule. In a **course repository**, a template update is the
-exception: it merges with "Create a merge commit", never squash or rebase, and a sync
-branch that falls behind is updated by merging, never with `--rebase`. Otherwise the
+That is **the template's** rule. In a **course repository** every pull request merges
+with "Create a merge commit": squash and rebase are switched off
+([`docs/ORGANIZATION.md`](docs/ORGANIZATION.md) step 6, item 4). For a template update
+it matters most: a sync branch that falls behind is updated by merging, never with `--rebase`. Otherwise the
 course loses track of which template commits it has
 ([`docs/ORGANIZATION.md`](docs/ORGANIZATION.md) step 9).
 

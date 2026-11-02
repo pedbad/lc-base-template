@@ -924,7 +924,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 - **No slug field:** the folder name is the single source of truth; the URL slug
   strips the `lo-NN-` ordinal prefix (`lo-01-salutations` → `/salutations.html`).
   The schema neither stores nor derives it — `src/lo/lo-slug.ts` does, at build time.
-- **Schema-only module (no load-time `parse`):** unlike `course.config.ts` /
+- **Schema-only module (no load-time `parse`):** unlike `course.json` /
   `ui-strings.ts`, this file holds _no concrete data_ yet — the example LO is Step
   13b (shipped: `lo-config/lo-00-example/`) and the loader that parts-and-assembles +
   validates is Step 13c (shipped: `src/lo/`). Proven by `lo-schema.test.ts` (manifest

@@ -103,11 +103,15 @@ in the template for every course. The full rule:
 
 ## When the template changes
 
-The maintainer improves the template (a new exercise type, a fix). The change reaches
-your course through an update pull request into its `main`, prepared by the maintainer or
-by a colleague the maintainer asks, and merged once CI is green and the code owner has
-approved it ([`docs/ORGANIZATION.md` step 9](docs/ORGANIZATION.md#step-9--bringing-template-updates-into-a-course)).
-Then you are told. Your part, on your machine, has two halves.
+The maintainer improves the template (a new exercise type, a fix) and tells you. You
+bring it into your course with an update pull request, opened on GitHub's website: in
+your course repo, **Pull requests → New pull request → compare across forks**, with
+**base** your course's `main` and **head** the template's `main`, then **Create pull
+request**. Never the **Sync fork** button: the course's rules refuse it. The checks run,
+the maintainer approves (the update touches the template's code), and you merge with
+**Create a merge commit**. If GitHub reports a conflict, stop and ask the maintainer
+([`docs/ORGANIZATION.md` step 9](docs/ORGANIZATION.md#step-9--bringing-template-updates-into-a-course)).
+Then, on your machine, two halves.
 
 Update `main`:
 

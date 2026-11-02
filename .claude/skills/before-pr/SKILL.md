@@ -23,7 +23,7 @@ description: Use before committing, pushing or opening a pull request, or when s
    - Check nothing the hard constraints forbid committing is staged
      ([`AGENTS.md` → "Hard constraints"](../../../AGENTS.md)).
 3. **Walk the checklist** in [`.github/pull_request_template.md`](../../../.github/pull_request_template.md)
-   with the user. A content-only pull request (lessons and their media) needs only a
+   with the user. A content-only pull request (lessons, their media, or `course.json`) needs only a
    green CI (COURSE_GUIDE, "Every day: the loop"); a change to the machinery needs the
    accessibility boxes too.
 4. **Commit only if the user asks.** Otherwise say it is ready and show the commit

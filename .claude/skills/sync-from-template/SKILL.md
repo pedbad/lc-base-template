@@ -1,6 +1,6 @@
 ---
 name: sync-from-template
-description: Use when bringing a template update into a course repo — "sync from the template", "pull in the template changes", "update this course from upstream". For the maintainer, or a colleague the maintainer asks to prepare the update pull request.
+description: Use when bringing a template update into a course repo — "sync from the template", "pull in the template changes", "update this course from upstream". Usually the course's author opens the update on GitHub's website; this recipe is the command-line route, for the maintainer or an author, when a branch must be prepared or a conflict resolved.
 ---
 
 # Sync a course repo from the template
@@ -31,7 +31,9 @@ How a fork and a linked copy each take an update:
 4. **Run the verify gate** from [`AGENTS.md` → "Verify before you claim done"](../../../AGENTS.md#verify-before-you-claim-done).
    The example lesson and the tests may have changed; a lesson of the course's own that
    now fails needs fixing in the lesson, not in the test.
-5. **Push the branch and open a pull request** into the course's `main`; when CI is
+5. **Push the branch; the course's author opens the pull request** into the course's
+   `main` (a pull request the maintainer opens could never get a code owner's approval,
+   ORGANIZATION.md step 6, path 1). When CI is
    green, merge it with **Create a merge commit**, never squash or rebase
    (ORGANIZATION.md step 9 says why), once the code owner has approved it by the path
    ORGANIZATION.md step 6 records. If `main` moved meanwhile, merge it into the sync

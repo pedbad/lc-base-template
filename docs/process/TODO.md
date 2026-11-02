@@ -10,7 +10,7 @@ session, on either machine.
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 | [`../ROADMAP.md`](../ROADMAP.md)      | larger work beyond this queue, each with its trigger       |
 
-**Last updated:** 2026-11-02 · **HEAD:** see `git log` · **Suite:** 203 files · 2365 tests green
+**Last updated:** 2026-11-02 · **HEAD:** see `git log` · **Suite:** 203 files · 2369 tests green
 (Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 63 on a `DEBUG=1` build (21 × 3, `e2e/debug/`) · CI green · `main` protected since 2026-10-21 (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -119,10 +119,12 @@ left, in order:
     (below). Merged (PR 49, `7059358`).
 25. **E44 — DONE 2026-11-02**: the organisation plan closes the approval-after-changes
     gap, names the open approval decision, carries a full rules pilot, and publishing
-    checks the exact release commit (below).
+    checks the exact release commit (below). Merged (PR 50, `69bc0ea`).
 26. **E45 — DONE 2026-11-02**: each course's own settings (title, language, home-page
     text, logo and icon names) live in `course.json`, which its author edits without
-    review; the rules stay core in `src/config/course.config.ts` (below).
+    review; the rules stay core in `src/config/course.config.ts` (below). Merged (PR 51,
+    `2a52ae2`). A docs drift check after it (E46) aligned CONTRIBUTING, COURSE_GUIDE,
+    ORGANIZATION, BRANCH_PROTECTION, TOOLING and two skills with E44 and E45.
 27. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
     rules carried into each course repo as step 6's ruleset A (E33), and E16 after.
     The maintainer's decisions are made (2026-11-02, ORGANIZATION "Decisions already
@@ -1802,8 +1804,9 @@ no-preference` only.
   code needs the maintainer's approval and content does not, the maintainer deploys (since 2026-10-16 a colleague builds and
   uploads, by `DEPLOY.md`: E5). The
   move is **deferred by decision**. Plan: `docs/ORGANIZATION.md`. Context, the ordered
-  next steps (all done but the move: E8, E4, E7, E5) and open questions:
-  `2026-10-12-team-workflow-handover.md`. **Decided 2026-11-02 (after E44):** P1 with
+  next steps (all done but the move: E8, E4, E7, E5) :
+  `2026-10-12-team-workflow-handover.md`; its open questions were decided 2026-11-02
+  (ORGANIZATION, "Decisions already made"). **Decided 2026-11-02 (after E44):** P1 with
   path 1 and an empty bypass list; `lc-elearn`; no second Owner for now; merge commits
   only; members in one team per course; template updates when there is something to
   share, opened by each author on GitHub's website; a pinned "Deployments" issue per
