@@ -125,6 +125,14 @@ describe('.github/CODEOWNERS follows the path policy', () => {
     expect(ownersOf(rules, file)).toEqual([]);
   });
 
+  // TODO §E45: the course's own settings (title, language, home-page text) are the
+  // author's; the rules they must follow (src/config/course.config.ts) stay core.
+  it('an author merges course.json, the course settings, without review', () => {
+    expect(ownersOf(rules, 'course.json')).toEqual([]);
+    expect(ownersOf(rules, 'src/config/course.config.ts')).toContain(MAINTAINER);
+    expect(ownersOf(rules, 'lo-config/course.json')).toContain(MAINTAINER);
+  });
+
   it.each([
     // the template's example lesson and its media
     'lo-config/lo-00-example/lo.json',

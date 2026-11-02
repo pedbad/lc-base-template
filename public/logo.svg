@@ -8,7 +8,7 @@
 >
   <!--
     logo.svg — the course's brand mark, shown beside the course title in the header
-    and named by `courseConfig.logo` (src/config/course.config.ts).
+    and named by `logo` in course.json (checked by src/config/course.config.ts).
 
     THIS IS A PLACEHOLDER. Replace it with the real course mark when cloning the
     template. Three things to preserve when you do, because the header relies on them:

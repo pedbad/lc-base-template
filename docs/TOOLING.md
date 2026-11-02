@@ -855,8 +855,9 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 - **What:** a schema library. You declare the _shape_ a config must have
   (`CourseConfigSchema`); `schema.parse(raw)` checks real data against it and either
   returns clean, typed data or throws a precise `ZodError`. First use:
-  `src/config/course.config.ts` — the single source of course identity (title,
-  language, landing copy, logo/favicon). Its `basePath` field is read by nothing: the
+  `src/config/course.config.ts` — the rules for course identity (title, language,
+  landing copy, logo/favicon), checking the values each course keeps in `course.json`
+  (TODO §E45). Its `basePath` field is read by nothing: the
   deploy address is `BASE_URL` ("Static prerender", below). LO order is the folders'
   `lo-NN-` ordinal, not a config field (decision B, below).
 - **Second use — `src/config/ui-strings.ts` (Step 12, spec §9, two-layer):** the
@@ -884,8 +885,8 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
   in `dependencies`, not `devDependencies`.
 - **How it's proven now:** `tsc -b` checks _shapes_ and `vite build` _bundles_ but
   neither _executes_ the runtime `.parse()`. The test suite does — importing
-  `courseConfig` in `course.config.test.ts` runs the parse, so a bad value throws a
-  `ZodError` and fails the suite (and therefore pre-commit + CI). The static pre-render
+  `courseConfig` in `course.config.test.ts` runs the parse, so a bad value in
+  `course.json` throws, naming the file and the field, and fails the suite (and therefore pre-commit + CI). The static pre-render
   executes it at build time too, so a bad config cannot reach `dist/`.
 - **Field rules of note:** required identity fields use `.min(1)` (a blank `""` is
   rejected, not silently shipped); truly optional copy (`subheading`) uses
@@ -1179,7 +1180,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 ### Course landing page — and why authoring is build-then-preview _(Phase D)_
 
 - **What:** the same post-build script now also renders `dist/index.html` from
-  `CourseHome` — hero copy from `course.config.ts`, one card per LO folder. `/` was
+  `CourseHome` — hero copy from `course.json`, one card per LO folder. `/` was
   `lo-00-example` itself, so `dist/index.html` and `dist/example.html` were the same
   page and a second LO's page was an orphan nothing linked to.
 - **One entry, branching on one attribute:** `index.html`'s root div is empty and

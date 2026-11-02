@@ -114,7 +114,7 @@ assessment is a `> [!important]` callout. There is no HTML.
 ## Finding the right note
 
 1. **Language.** A course's `languageCode` in
-   [`src/config/course.config.ts`](../../src/config/course.config.ts), up to any `-`
+   [`course.json`](../../course.json), up to any `-`
    (`pt-BR` is `pt`), is the notes' `language_code`. The language's hub in `languages/`
    lists every document for it, in order.
 2. **Level.** A course's own title says "Level 1", not a CULP level, so ask which CULP

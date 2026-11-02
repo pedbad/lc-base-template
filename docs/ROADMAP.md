@@ -143,7 +143,7 @@ separate courses (a Tunisian Arabic course beside a Syrian one) stay separate co
 repos; this item is for one course that holds several.
 
 **Today.** A course has one language code
-([`src/config/course.config.ts`](../src/config/course.config.ts)), and the engines tag
+([`course.json`](../course.json)), and the engines tag
 their content with it (`lang={TARGET_LANG}`, [`src/lib/lang.ts`](../src/lib/lang.ts),
 imported by 17 source files). Content in any variety can already be written and
 recorded, and a title can say which variety it is, but all of it carries the course's

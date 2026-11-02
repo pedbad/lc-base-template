@@ -1,9 +1,16 @@
 /**
- * course.config.ts — single source of truth for course identity.
+ * course.config.ts — the rules for course identity; the values are in `course.json`.
  *
  * WHAT: One Zod-validated object describing the whole course (title, language,
- * deploy base path, landing copy, logo/favicon). Filled out first when cloning the
- * template. Course ORDER is deliberately absent — see the note on the schema below.
+ * deploy base path, landing copy, logo/favicon). Course ORDER is deliberately absent —
+ * see the note on the schema below.
+ *
+ * SPLIT (TODO §E45): this file is core (the template's, code-owned); the course's own
+ * values live in `course.json` at the repo root, which CODEOWNERS leaves to the
+ * course's author. So an author changes their course's title without review, and a
+ * template update that changes these rules no longer edits the file every course has
+ * edited. A new setting is added here as optional, with a default, so no course has to
+ * touch its `course.json` to take the update.
  *
  * WHY Zod (spec decision #2 + §8): configs are validated AT LOAD. `parse()` runs
  * the moment this module is imported, so a missing/blank/misshapen field fails the
@@ -17,10 +24,11 @@
  * Spec: docs/specs/2026-06-15-lc-base-template-design.md §8, decision #12.
  */
 import { z } from 'zod';
+import courseJson from '../../course.json';
 
 /** The contract: what a valid course identity MUST look like. Exported so its rules
     are tested directly, not only against today's values. */
-export const CourseConfigSchema = z.object({
+export const CourseConfigSchema = z.strictObject({
   /** Course display name. Accents/umlauts fine; blank rejected. */
   courseTitle: z.string().min(1),
   /** ISO-ish language code, e.g. "es", "de". */
@@ -28,7 +36,7 @@ export const CourseConfigSchema = z.object({
   /** Deploy subpath (made env-driven in a later step). Defaults to root. */
   basePath: z.string().default('/'),
   /** Hero copy for the landing page. */
-  landingCopy: z.object({
+  landingCopy: z.strictObject({
     heading: z.string().min(1),
     /** Omit the key entirely when there is no subheading. */
     subheading: z.string().min(1).optional(),
@@ -54,17 +62,16 @@ export const CourseConfigSchema = z.object({
 /** Type is INFERRED from the schema — one source of truth, never drifts apart. */
 export type CourseConfig = z.infer<typeof CourseConfigSchema>;
 
-/** The actual course values (out-of-box example: a Cambridge Spanish course). */
-const raw = {
-  courseTitle: 'Cambridge Spanish — Level 1',
-  languageCode: 'es',
-  landingCopy: {
-    heading: 'Bienvenido',
-    subheading: 'Start your Spanish journey',
-  },
-  logo: 'logo.svg',
-  favicon: 'favicon.svg',
-};
+/**
+ * Validate a course's values, or throw a message an author can act on: the file, then
+ * each fault with its field (`✖ Too small … → at courseTitle`). Strict, so a misspelt
+ * key is named rather than silently ignored.
+ */
+export function parseCourseConfig(raw: unknown): CourseConfig {
+  const result = CourseConfigSchema.safeParse(raw);
+  if (!result.success) throw new Error(`course.json is invalid:\n${z.prettifyError(result.error)}`);
+  return result.data;
+}
 
-/** Validate at load. Invalid `raw` throws here → dev/build dies immediately. */
-export const courseConfig: CourseConfig = CourseConfigSchema.parse(raw);
+/** Validate at load. An invalid `course.json` throws here → dev/build dies immediately. */
+export const courseConfig: CourseConfig = parseCourseConfig(courseJson);

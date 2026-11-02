@@ -159,7 +159,7 @@ contrast. Omit `hero` entirely and the banner renders as a plain brand-coloured 
 
 The `lo-NN-` number in the folder name orders the cards, the lesson nav and the build.
 It is sorted **numerically**, so `lo-9-` precedes `lo-10-` (alphabetically it would
-not). `course.config.ts` has no order list — a second source for the same fact would
+not). `course.json` has no order list — a second source for the same fact would
 be free to drift from the folders silently. **To reorder a course, rename folders.**
 Settle the order before learners start. A flashcards deck keeps their saved progress
 under the site's base path and its LO and exercise folder names, so renaming either
