@@ -311,7 +311,8 @@ Brackets only make blanks: each `[` closes with a `]`, with no bracket inside. T
 bracket as text, write it as an HTML entity, `&#91;` or `&#93;`. A sentence
 without a blank is fine (passage text), but each exercise needs at least one. Radio-quiz
 marks its one correct option with `*` too, on its option list; drag-fill-gaps and
-word-spot bracket a word (`[word]`) with rules of their own, in their schemas.
+word-spot bracket a word (`[word]`) with rules of their own: both are in
+[Answers in their own fields](#answers-in-their-own-fields).
 
 Any HTML entity (`&eacute;`, `&#233;`, `&#xE9;`, `&nbsp;`) may stand for a character.
 The blank's `[`, `]`, `|`, `*` and `::` are read first, so an entity is always text:
@@ -344,6 +345,49 @@ message, with a blank that causes it and the fix:
 | `is written as a choice`        | `[*soy\|es]` in inline-gap  | the answer is typed: `[soy::ser]`      |
 | `brackets that do not pair up`  | `Yo [*soy\|eres de Madrid.` | close it: `Yo [*soy\|eres] de Madrid.` |
 | `no sentence has a blank`       | no `[ ]` anywhere           | add at least one blank                 |
+
+### Answers in their own fields
+
+The other exercise types keep each answer or option in its own JSON field. The build
+asks the same two questions of them, and stops on content no learner could answer
+(TODO §E42): does it show as anything, and can a learner tell it from the others? These
+fields are shown exactly as written, so an entity such as `&eacute;` is not decoded here
+and counts as different from `é`. Spacing and the apostrophe's shape do not make two
+labels differ; a capital or an accent does.
+
+| Type                                    | Field                     | Refused                                                          |
+| --------------------------------------- | ------------------------- | ---------------------------------------------------------------- |
+| radio-quiz, reading (radio questions)   | `options`                 | an option that shows as nothing; two that look the same          |
+| reading                                 | `trueLabel`, `falseLabel` | the two looking the same                                         |
+| line-match, memory-match                | `label`, `text`           | one that shows as nothing; two that look the same, even with ids |
+| typed-transform, conjugation, dictation | `answer`                  | an answer of spaces; for dictation, one of only punctuation      |
+| word-order, phrase-reorder              | `words`, `phrase`         | one that shows as nothing; every one the same (no order to find) |
+| drag-fill-gaps, word-spot               | `[word]` in `text`        | an empty `[ ]`                                                   |
+| conjugation                             | `answerMode`              | `"choice"`: not built yet, so a learner would see only a notice  |
+
+Repeated words are fine where real sentences repeat them: in word-order, phrase-reorder
+and drag-fill-gaps a card or tile is marked right wherever it shows the right word, so
+the two `la` cards of `la casa de la abuela` can sit either way round.
+
+The message names the question or row, counting from 1, above the field path:
+
+```text
+lo-config/lo-01-greetings/exercises/02-radio-quiz/exercise.json is invalid:
+✖ question 2 offers "sí" twice: each option must look different
+  → at content.questions[1].options
+```
+
+| The message says…                     | For example                  | Fix                                     |
+| ------------------------------------- | ---------------------------- | --------------------------------------- |
+| `offers "sí" twice`                   | `["*sí", "sí", "no"]`        | make every option different             |
+| `marks an empty option correct`       | `["*", "no"]`                | write it after the `*`: `["*sí", "no"]` |
+| `has an option that shows as nothing` | `["*sí", " "]`               | write the option, or remove it          |
+| `has no answer`                       | `"answer": " "`              | write what the learner should type      |
+| `has nothing to type`                 | dictation `"answer": "¿?"`   | the answer needs words                  |
+| `shows "gato", as item 1 does`        | two pictures labelled `gato` | make the words differ                   |
+| `needs at least two different words`  | `["sí", "sí"]`               | give the sentence an order to find      |
+| `has an empty blank [ ]`              | `Soy [ ] estudiante.`        | write the word inside the brackets      |
+| `choice mode is not available yet`    | `"answerMode": "choice"`     | remove it, or set it to `"typed"`       |
 
 ### The authoring loop
 

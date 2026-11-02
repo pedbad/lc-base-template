@@ -10,7 +10,7 @@ session, on either machine.
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 | [`../ROADMAP.md`](../ROADMAP.md)      | larger work beyond this queue, each with its trigger       |
 
-**Last updated:** 2026-11-02 · **HEAD:** see `git log` · **Suite:** 202 files · 2339 tests green
+**Last updated:** 2026-11-02 · **HEAD:** see `git log` · **Suite:** 203 files · 2365 tests green
 (Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 63 on a `DEBUG=1` build (21 × 3, `e2e/debug/`) · CI green · `main` protected since 2026-10-21 (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -111,7 +111,10 @@ left, in order:
 22. **E41 — DONE 2026-11-02**: lesson content is defined by path and purpose, not whole
     folders; the template's own files inside `lo-config/`, `public/images/` and
     `public/audio/` now need review (below). **Merge it before the organisation move.**
-23. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
+23. **E42 — DONE 2026-11-02**: every exercise type refuses, at load, answers and options
+    no learner could use; repeated words are graded by what they show (below). **Merge
+    it before the organisation move.**
+24. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
     rules carried into each course repo as step 6's ruleset A (E33), and E16 after.
     Only once E41 is on `main`, so every course fork inherits the narrowed `CODEOWNERS`.
 
@@ -2516,6 +2519,38 @@ rather than the Language Centre's course factory; the maintainer took three smal
   **Not tested:** that a course repo's rules then enforce it; that is the organisation
   pilot (a lesson-only pull request merges without review, one touching the example
   waits).
+- **E42 — answers no learner could use, refused in every exercise type. DONE 2026-11-02**
+  (an external review of `f3a09be`; branch `fix/e42-answer-checks` from `main` at
+  `3aa1f6a`). Reproduced first, on `3aa1f6a`: radio-quiz accepted `["*sí", "sí"]` (two
+  options showing `sí`, one graded wrong), `["*", "no"]` and a blank option;
+  typed-transform and dictation accepted `"answer": " "`, which grading skips; dictation
+  accepted `"¿?"`, which its grading strips to nothing. E34/E35 had covered only the
+  three engines with `[…]` blanks (select, inline-choice, inline-gap). **The matrix**
+  (`src/exercises/answer-validation.test.ts`, as cases): choice labels in their own field
+  (radio-quiz, reading radio questions and its true/false labels, line-match,
+  memory-match) must show as something and look different; typed answers
+  (typed-transform, conjugation) must survive `normalizeAnswer`, and dictation's
+  `normalizeForDictation`; word-order and phrase-reorder cards, and drag-fill-gaps and
+  word-spot `[…]`, must not be blank; flashcards has no grading. Judged as written,
+  since these fields reach the page as React text: `&eacute;` is not `é` here, unlike in
+  a blank. Spacing and apostrophe shape fold, capitals and accents stay (E35's rule).
+  **Found while inspecting, fixed here:** word-order, phrase-reorder and drag-fill-gaps
+  graded a card by which one it was, so in `la casa de la abuela` the two `la` cards
+  swapped were marked wrong; they now grade by what the card shows, and the starting
+  shuffle never already looks solved. Line-match and memory-match no longer accept two
+  words alike behind different ids. Conjugation's `answerMode: "choice"` (the view shows
+  only a notice) is refused until built. **Documented:** CONTRIBUTING, "Answers in their
+  own fields" (the rules, each message and its fix); COURSE_GUIDE points to it; the
+  Deferred row for choice mode. **Implemented:** `src/exercises/lib/answer-checks.ts`
+  (two questions, plain messages naming question, row or item from 1) used by eleven
+  schemas, and the three graders. **Tested:** the matrix (20 cases, 16 failing first),
+  five grading cases (each failing first), the conjugation schema test updated for the
+  refusal; two throwaway lessons, a radio-quiz with two `sí` and a typed-transform row
+  of one space, each stopped `bun run build` (exit 1) naming file, question or row and
+  reason, and were removed. **Deliberate exceptions:** prompts, explanations and other
+  non-answer text are not checked; flashcards are not graded; conjugation's per-row
+  `options` are not checked while choice mode is refused; drag-fill-gaps still shows a
+  tile's word undecoded (E35's open note).
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that
@@ -2607,7 +2642,7 @@ Not forgotten. Decided.
 | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Per-LO chunking (§5.4)         | **~a dozen LOs.** Eager `import.meta.glob` means every page bundles every LO's JSON. Harmless at one. Measure each new LO against the JS budget (`docs/TOOLING.md`, "Bundle budget") — headroom at one LO is small (current figure in that section), so this may wake before a dozen. Parsing rich text at build time is the other lever (TOOLING). |
 | Rich text: §12 leftovers       | Someone actually needs it. Inline rich text + popups shipped 2026-08-04; block entries (lists, tables, the audio player) in prose AND popups shipped 2026-10-06 (spec §14). Still unbuilt from §12: rich text in exercise content, deep-linking a popup, nested popups.                                                                             |
-| Conjugation v2 choice mode     | Someone wants tap-to-answer verb tables. Schema ready, view path unbuilt.                                                                                                                                                                                                                                                                           |
+| Conjugation v2 choice mode     | Someone wants tap-to-answer verb tables. View path unbuilt; refused at load since E42, so a learner never sees the notice.                                                                                                                                                                                                                          |
 | Reading short-answer questions | Someone wants typed answers in a reading passage. v1 shipped MCQ + true/false only; short-answer parked (`2026-07-03-exercise-engines-buildlist.md` §3).                                                                                                                                                                                            |
 
 Exercise types not yet in any queue are parked, tiered by the infrastructure each
