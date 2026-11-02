@@ -51,7 +51,7 @@ branch rules on every course repo, and nobody else can switch them off.
   - **Deployments are recorded** in one pinned "Deployments" issue per course repo, a
     comment per release; never a password, key or sensitive server path
     ([`DEPLOY.md`](../DEPLOY.md), step 9).
-  - **Course settings an author can edit** (`course.json`), before the first course: E45.
+  - **Course settings an author can edit** (`course.json`): done, E45 (PR 51).
 - **One repo per course** (`lc-french`, `lc-english`, `lc-italian`, …), never one branch per
   course in the template. Language branches would never merge back and would drift.
 - **Course content never enters the template.** Only engine changes go to the template, by
@@ -173,6 +173,7 @@ sync). After the `*` default line it has:
 /lo-config/lo-*/
 /public/images/lo-*/
 /public/audio/lo-*/
+/course.json
 # Template files inside those folders: the maintainer (later lines win)
 /lo-config/lo-00-example/          @pedbad
 /public/images/lo-00-example/      @pedbad
@@ -180,8 +181,9 @@ sync). After the `*` default line it has:
 ```
 
 followed by the shared media (`public/images/footer/` and the rest). A pattern with no
-owner after it removes ownership for that path, and the last matching line wins. Every
-other path keeps `@pedbad` (or `@lc-elearn/maintainers`) as owner, including anything
+owner after it removes ownership for that path, and the last matching line wins.
+`/course.json`, the course's own settings, has no owner either (E45). Every other path
+keeps `@pedbad` (or `@lc-elearn/maintainers`) as owner, including anything
 loose in the three content folders. Whole folders are never exempt: the full table is in
 [`COURSE_GUIDE.md` → "What you may edit"](../COURSE_GUIDE.md#what-you-may-edit), and
 `src/docs/codeowners.test.ts` holds the file to it.
@@ -238,8 +240,8 @@ Right after creating it, in the new course repo:
      (an approval from someone other than the last person to push). Stale dismissal
      already closes the gap, and with 0 required approvals its effect on lesson-only PRs
      is not documented. Revisit only if R11 fails.
-   - The maintainer's **own** PR touching code (a template update, step 9, or a change to
-     the course's identity) cannot get that review: GitHub never counts an author's
+   - The maintainer's **own** PR touching code (in practice a template update, step 9)
+     cannot get that review: GitHub never counts an author's
      approval, and the maintainer is the only code owner. How such a PR is accepted:
      below.
 
@@ -269,8 +271,9 @@ git remote add origin https://github.com/lc-elearn/lc-french.git
 git push -u origin main
 ```
 
-Same shared history as a fork, so template updates still merge cleanly. The only loss is
-the "Sync fork" button: updates come in by command line (step 9). Then do the three
+Same shared history as a fork, so template updates still merge cleanly. What is lost is
+step 9's website route: a pull request across repositories needs a fork, so a linked
+copy's update is prepared on the command line (step 9) and opened by its author. Then do the three
 settings above (Actions are on by default in a repo that is not a fork).
 
 ### Who approves core changes
@@ -282,8 +285,8 @@ Two policies, and the settings above enforce only one of them on their own:
 - **P2: an authorised core owner approves.** `CODEOWNERS` names a team such as
   `@lc-elearn/maintainers`, with the maintainer and at least one other person.
 
-The maintainer's own core PRs in a course (template updates; the course's identity)
-need someone else's approval, or a bypass. The ways to accept one:
+The maintainer's own core PRs in a course (in practice, template updates) need someone
+else's approval, or a bypass. The ways to accept one:
 
 | Path                           | How                                                                                                                                                            | Keeps P1?                                                                            | Consequence                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -343,11 +346,13 @@ please update your course").
 merges with **Create a merge commit**. If GitHub reports a conflict, the author stops
 and asks the maintainer. Not yet proven on a real course: pilot case R13.
 
-**The command-line route**, for the maintainer preparing a branch, or a conflict.
+**The command-line route**, for the maintainer preparing a branch, or a conflict. The
+course's author still opens the pull request from that branch (path 1): one the
+maintainer opens could never get a code owner's approval.
 Either way, `main` takes changes only through a pull request (step 6), so merge on a
-branch, on a clone of the course repo. **Who prepares it:** the maintainer, or a
-colleague with write access on that course (path 1 under "Who approves core changes");
-the steps are the same. Start from a clean working tree: a merge started over
+branch, on a clone of the course repo. **Who prepares the branch:** the maintainer, or a
+colleague with write access on that course; **who opens the pull request:** the
+course's author (path 1 under "Who approves core changes"). Start from a clean working tree: a merge started over
 uncommitted edits can stop half-way, and those edits are hard to separate from it.
 
 ```bash
@@ -369,8 +374,8 @@ while the pull request was open, bring it in by merging (`git merge origin/main`
 `git merge-base --is-ancestor <template commit> origin/main` prints nothing and exits 0.
 
 A sync touches code, so it needs a code owner's approval, by the path chosen under "Who
-approves core changes" (path 1: the maintainer reviews the colleague's PR; path 3: the
-maintainer merges their own with the bypass). Merging it does not publish anything: the
+approves core changes": path 1, so the maintainer reviews and approves the author's PR.
+Merging it does not publish anything: the
 course goes live only when it is next built and uploaded ([`DEPLOY.md`](../DEPLOY.md)).
 
 Then every clone updates `main`:
@@ -447,9 +452,9 @@ runs after this one.
 
 ## What is proved, and how
 
-| Layer                                | State on 2026-11-02, template `main` at `7059358`                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Layer                                | State on 2026-11-02, template `main` at `2a52ae2`                                                                                                                                                                                                                                                                                                                                                                                                    |
 | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Repository files** (implemented)   | `CODEOWNERS` (E41), the CI workflow, these docs. `src/docs/codeowners.test.ts` proves the file matches the path policy; GitHub's `CODEOWNERS` errors API reports none. Neither proves GitHub **enforces** a merge rule: that needs the settings below and the pilot.                                                                                                                                                                                 |
+| **Repository files** (implemented)   | `CODEOWNERS` (E41, and `course.json` ownerless since E45), the CI workflow, these docs. `src/docs/codeowners.test.ts` proves the file matches the path policy; GitHub's `CODEOWNERS` errors API reports none. Neither proves GitHub **enforces** a merge rule: that needs the settings below and the pilot.                                                                                                                                          |
 | **GitHub settings, inspected**       | the template only, read with `gh api`: classic protection on `main` (pull request, 0 approvals, the five checks up to date, admins included, linear history, no force push or deletion; no code-owner review or stale dismissal, not needed solo); merge commit, squash and rebase all allowed; no environments, deployments, Pages site or webhooks. GitHub Apps installed on the account were not listed (the API needs an app token): unverified. |
 | **GitHub settings, proposed**        | step 6's rulesets A and B and merge settings for each course repo. Nothing is set: no course repo exists.                                                                                                                                                                                                                                                                                                                                            |
 | **Behaviour shown by pull requests** | on the template, a direct push to `main` was refused (2026-10-21, `BRANCH_PROTECTION.md`). On a course: nothing yet; every rules-pilot case is pending rollout.                                                                                                                                                                                                                                                                                      |
