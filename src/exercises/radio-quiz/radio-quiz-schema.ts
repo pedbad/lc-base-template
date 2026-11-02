@@ -32,6 +32,7 @@
  *       docs/specs/2026-06-15-lc-base-template-design.md §10.
  */
 import { z } from 'zod';
+import { choiceLabelProblems } from '../lib/answer-checks';
 import { instructionsField } from '../lib/instructions';
 import { ExerciseConfigSchema } from '@/config/lo-schema';
 
@@ -82,11 +83,25 @@ export const RadioQuizQuestionSchema = z
 export type RadioQuizQuestion = z.infer<typeof RadioQuizQuestionSchema>;
 
 /** The `content` block for a radio-quiz exercise. */
-export const RadioQuizContentSchema = z.object({
-  ...instructionsField,
-  questions: z.array(RadioQuizQuestionSchema).min(1),
-  footnote: z.string().min(1).optional(),
-});
+export const RadioQuizContentSchema = z
+  .object({
+    ...instructionsField,
+    questions: z.array(RadioQuizQuestionSchema).min(1),
+    footnote: z.string().min(1).optional(),
+  })
+  // Every option must show as something and look different from the others, judged
+  // as the learner sees it: the `*` gone, the rest as written (TODO §E42).
+  .superRefine((content, ctx) => {
+    content.questions.forEach((question, index) => {
+      const options = question.options.map((option) => ({
+        label: option.startsWith(STAR) ? option.slice(STAR.length) : option,
+        marked: option.startsWith(STAR),
+      }));
+      for (const message of choiceLabelProblems(`question ${index + 1}`, options)) {
+        ctx.addIssue({ code: 'custom', message, path: ['questions', index, 'options'] });
+      }
+    });
+  });
 export type RadioQuizContent = z.infer<typeof RadioQuizContentSchema>;
 
 /**

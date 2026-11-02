@@ -22,6 +22,7 @@
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5.2, §7, §8.
  */
 import { z } from 'zod';
+import { distinctLabelProblems } from '../lib/answer-checks';
 import { instructionsField } from '../lib/instructions';
 import { ExerciseConfigSchema } from '@/config/lo-schema';
 
@@ -53,7 +54,17 @@ export const MemoryMatchContentSchema = z
       message: 'Each memory-match item needs a unique id or text (it identifies a pair).',
       path: ['items'],
     },
-  );
+  )
+  // The words a learner picks between must show and look different, whatever their
+  // ids: two pictures labelled alike could never both be matched right (TODO §E42).
+  .superRefine((content, ctx) => {
+    for (const message of distinctLabelProblems(
+      'item',
+      content.items.map((item) => item.text),
+    )) {
+      ctx.addIssue({ code: 'custom', message, path: ['items'] });
+    }
+  });
 export type MemoryMatchContent = z.infer<typeof MemoryMatchContentSchema>;
 
 export const MemoryMatchExerciseConfigSchema = ExerciseConfigSchema.extend({

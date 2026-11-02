@@ -44,6 +44,19 @@ export const WordSpotContentSchema = z
   .refine((content) => content.items.some((item) => WORD_SPOT_TARGET_REGEX.test(item.text)), {
     message: 'word-spot needs at least one [bracketed] target part-word to click.',
     path: ['items'],
+  })
+  // `[ ]` would be a target with nothing to click (TODO §E42).
+  .superRefine((content, ctx) => {
+    content.items.forEach((item, index) => {
+      const targets = item.text.match(/\[[^\]]+\]/g) ?? [];
+      if (targets.some((target) => target.slice(1, -1).trim() === '')) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `line ${index + 1} has an empty [ ] target: put the letters to click inside the brackets`,
+          path: ['items', index, 'text'],
+        });
+      }
+    });
   });
 export type WordSpotContent = z.infer<typeof WordSpotContentSchema>;
 

@@ -39,6 +39,8 @@
  * Spec: docs/specs/2026-07-03-new-exercise-engines-design.md §6; §7 (blank-grading).
  */
 import { z } from 'zod';
+import { choiceLabelProblems } from '../lib/answer-checks';
+import { normalizeAnswer } from '../lib/answers';
 import { instructionsField } from '../lib/instructions';
 import { ExerciseConfigSchema } from '@/config/lo-schema';
 
@@ -109,7 +111,23 @@ export const ReadingContentSchema = z
           path: ['questions', index, 'answer'],
         });
       }
+      // Options a learner can tell apart, judged as written (TODO §E42).
+      if (question.type === 'radio') {
+        const options = question.options.map((label) => ({ label, marked: false }));
+        for (const message of choiceLabelProblems(`question ${index + 1}`, options)) {
+          ctx.addIssue({ code: 'custom', message, path: ['questions', index, 'options'] });
+        }
+      }
     });
+    const trueLabel = content.trueLabel ?? DEFAULT_TRUE_LABEL;
+    const falseLabel = content.falseLabel ?? DEFAULT_FALSE_LABEL;
+    if (normalizeAnswer(trueLabel) === normalizeAnswer(falseLabel)) {
+      ctx.addIssue({
+        code: 'custom',
+        message: `trueLabel and falseLabel both show "${normalizeAnswer(trueLabel)}": a learner could not tell true from false`,
+        path: ['falseLabel'],
+      });
+    }
   });
 export type ReadingContent = z.infer<typeof ReadingContentSchema>;
 

@@ -17,15 +17,32 @@
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5.2, §7, §8.
  */
 import { z } from 'zod';
+import { blankLabelProblems, hasTwoDifferent } from '../lib/answer-checks';
 import { instructionsField } from '../lib/instructions';
 import { ExerciseConfigSchema } from '@/config/lo-schema';
 
-export const WordOrderContentSchema = z.object({
-  ...instructionsField,
-  words: z.array(z.string().min(1)).min(2),
-  audio: z.string().min(1).optional(),
-  footnote: z.string().min(1).optional(),
-});
+export const WordOrderContentSchema = z
+  .object({
+    ...instructionsField,
+    words: z.array(z.string().min(1)).min(2),
+    audio: z.string().min(1).optional(),
+    footnote: z.string().min(1).optional(),
+  })
+  // A card must show something, and the sentence must have an order to find. Repeated
+  // words are fine: grading compares what the cards show (TODO §E42).
+  .superRefine((content, ctx) => {
+    for (const message of blankLabelProblems('word', content.words)) {
+      ctx.addIssue({ code: 'custom', message, path: ['words'] });
+    }
+    if (!hasTwoDifferent(content.words)) {
+      ctx.addIssue({
+        code: 'custom',
+        message:
+          'word-order needs at least two different words: with only one, there is no order to find',
+        path: ['words'],
+      });
+    }
+  });
 export type WordOrderContent = z.infer<typeof WordOrderContentSchema>;
 
 export const WordOrderExerciseConfigSchema = ExerciseConfigSchema.extend({

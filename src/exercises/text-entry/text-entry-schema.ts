@@ -21,6 +21,8 @@
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §8, §9.
  */
 import { z } from 'zod';
+import { hasTypedAnswer } from '../lib/answer-checks';
+import { normalizeAnswer } from '../lib/answers';
 import { instructionsField } from '../lib/instructions';
 
 /** One row: an optional cue, the expected typed answer, and an optional clip. */
@@ -32,10 +34,24 @@ export const TextEntryRowSchema = z.object({
 export type TextEntryRow = z.infer<typeof TextEntryRowSchema>;
 
 /** The shared `content` block for a typed-response table exercise. */
-export const TextEntryContentSchema = z.object({
-  ...instructionsField,
-  rows: z.array(TextEntryRowSchema).min(1),
-  columns: z.object({ prompt: z.string().min(1), answer: z.string().min(1) }).optional(),
-  footnote: z.string().min(1).optional(),
-});
+export const TextEntryContentSchema = z
+  .object({
+    ...instructionsField,
+    rows: z.array(TextEntryRowSchema).min(1),
+    columns: z.object({ prompt: z.string().min(1), answer: z.string().min(1) }).optional(),
+    footnote: z.string().min(1).optional(),
+  })
+  // An answer of spaces is skipped by grading like a blank row, so it could never be
+  // answered (TODO §E42). Dictation, which ignores punctuation too, checks more.
+  .superRefine((content, ctx) => {
+    content.rows.forEach((row, index) => {
+      if (!hasTypedAnswer(row.answer, normalizeAnswer)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `row ${index + 1} has no answer: write what the learner should type`,
+          path: ['rows', index, 'answer'],
+        });
+      }
+    });
+  });
 export type TextEntryContent = z.infer<typeof TextEntryContentSchema>;
