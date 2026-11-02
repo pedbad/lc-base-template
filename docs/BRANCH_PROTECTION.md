@@ -19,6 +19,11 @@ be made through a pull request`).
 
 ---
 
+**This file is the template's protection.** A course repository takes the same rules
+except one: it must **not** require linear history, because its template updates merge
+as merge commits to keep the template's history (TODO §E43). Its rulesets and merge
+settings are in [`ORGANIZATION.md`](ORGANIZATION.md) step 6.
+
 ## Why it matters
 
 Without protection on `main`:
@@ -94,7 +99,7 @@ next to what it buys: nothing red reaches `main`.
 | ☐ &nbsp;&nbsp;→ **Require branches to be up to date before merging**    | CI ran against latest `main`                                                                                                |
 | ☐ **Require conversation resolution before merging**                    | no merging over unresolved comments                                                                                         |
 | ☐ **Do not allow bypassing the above settings**                         | rule applies to admins too (recommended for handoff)                                                                        |
-| ☐ **Require linear history** _(optional)_                               | matches the rebase-merge workflow                                                                                           |
+| ☐ **Require linear history** _(optional)_                               | matches the rebase-merge workflow; **template only**, never a course repo (below)                                           |
 
 **Gotcha — already cleared here.** The status-check picker only lists a check **after CI
 has run at least once**, so on a fresh repo you would open a throwaway PR, let CI run, then
