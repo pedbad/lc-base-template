@@ -113,7 +113,8 @@ button:
 2. **You open the pull request:** on your course repo's page, GitHub offers **Compare &
    pull request** for the new branch; its base is your course's `main`.
 3. The checks run and the maintainer approves; **you** merge it with **Create a merge
-   commit**. A conflict is the maintainer's to resolve, on the branch.
+   commit**. A conflict is resolved on the branch by whoever prepared it, the maintainer or a
+   colleague the maintainer asks.
 
 How the branch is prepared:
 [`docs/ORGANIZATION.md` step 9](docs/ORGANIZATION.md#step-9--bringing-template-updates-into-a-course).

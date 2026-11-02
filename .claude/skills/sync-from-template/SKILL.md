@@ -34,7 +34,8 @@ How a fork and a linked copy each take an update:
 5. **Push the branch; the course's author opens the pull request** into the course's
    `main` (a pull request the maintainer opens could never get a code owner's approval,
    ORGANIZATION.md step 6, path 1). When CI is
-   green, merge it with **Create a merge commit**, never squash or rebase
+   green and the maintainer has approved, the author merges it with **Create a merge
+   commit**, never squash or rebase
    (ORGANIZATION.md step 9 says why), once the code owner has approved it by the path
    ORGANIZATION.md step 6 records. If `main` moved meanwhile, merge it into the sync
    branch; never rebase it. Then tell the user to let colleagues know. Their side is
