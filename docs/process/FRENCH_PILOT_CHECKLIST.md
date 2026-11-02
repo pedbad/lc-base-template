@@ -52,9 +52,10 @@ publishes (P).
 
 ## 6. The checks and review complete
 
-- [ ] All five checks pass. A content-only pull request (only `lo-config/`,
-      `public/images/`, `public/audio/`) merges with no review; a change to anything
-      else waits for M ([`docs/ORGANIZATION.md`](../ORGANIZATION.md) step 6).
+- [ ] All five checks pass. A lesson-only pull request (only the course's own
+      `lo-config/lo-NN-slug/` and its `public/images/` and `public/audio/` folders)
+      merges with no review; a change to anything else, the example lesson included,
+      waits for M ([`docs/ORGANIZATION.md`](../ORGANIZATION.md) step 6).
 - **Expected:** A merges their own content pull request once it is green.
 
 ## 7. P builds and publishes the approved revision

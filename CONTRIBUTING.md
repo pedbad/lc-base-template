@@ -138,9 +138,12 @@ Three `lo.json` fields do double duty as that LO's card:
 | `image`       | the illustration. Optional — omit it and the card shows an icon. |
 
 `image` is a path under `public/`, written the way you'd author any asset
-(`images/your-lo.webp`); the app resolves it against the deploy base, so never write a
-bare relative or root-absolute URL. Out of the box `lo-00-example` points at the shared
-`images/lo-placeholder.svg` — drop your own file into `public/images/` and name it there.
+(`images/lo-NN-slug/card.webp`); the app resolves it against the deploy base, so never
+write a bare relative or root-absolute URL. Out of the box `lo-00-example` points at the
+shared `images/lo-placeholder.svg` — drop your own file into the lesson's own media
+folder, `public/images/lo-NN-slug/`, and name it there. A file loose in `public/images/`
+is not a lesson's own and waits for the maintainer
+([`COURSE_GUIDE.md` → "What you may edit"](COURSE_GUIDE.md#what-you-may-edit)).
 
 `hero` is the page's banner art and is not on the card. Write it as an object,
 `"hero": { "src": "images/lo-NN-slug/hero.webp" }`: a wide crop (about 2000px across,
@@ -421,10 +424,14 @@ keeps every course consistent — **add content as data; don't quietly change th
 
 **Green path (author freely):**
 
-- **No owner review:** `lo-config/` JSON and the lesson media in `public/images/` and
-  `public/audio/` — **media we made or may share only** (see
-  [Authoring a Learning Object](#authoring-a-learning-object)). `CODEOWNERS` leaves these ownerless, so a pull request touching only
-  them merges once CI is green — and CI still validates every LO against the schemas.
+- **No owner review:** a course's own lessons, `lo-config/lo-NN-slug/`, and each
+  lesson's media, `public/images/lo-NN-slug/` and `public/audio/lo-NN-slug/` —
+  **media we made or may share only** (see
+  [Authoring a Learning Object](#authoring-a-learning-object)). `CODEOWNERS` leaves
+  exactly these ownerless, so a pull request touching only them merges once CI is
+  green — and CI still validates every LO against the schemas. The example lesson, the
+  shared media and anything loose in those three folders stay owned: the full table is
+  [`COURSE_GUIDE.md` → "What you may edit"](COURSE_GUIDE.md#what-you-may-edit).
 - **Normal review:** new fixtures (copy an existing exercise fixture, change the Spanish
   content, wire it into the showcase), docs and process notes.
 
