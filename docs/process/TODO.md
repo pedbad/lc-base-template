@@ -147,6 +147,19 @@ left, in order:
     is named, the team starts empty; step 7), every repo's rules read back, and rules-pilot cases R1–R12 on one course with
     a named author before authors merge independently (R13 before updates, R16 before deploying).
 
+**Handover, 2026-11-02 evening (MacBook Pro → work iMac):** `main` holds everything from
+today, E41–E51, PRs 47–58 and this one; no open PRs, nothing unpushed. On the iMac:
+`git switch main && git pull --ff-only`, then `bun install` (no dependency changed today,
+so it should be quick). **Where the organisation move stands:** every maintainer decision
+is made (ORGANIZATION "Decisions already made"); nothing exists on GitHub yet, no
+organisation, fork, team or invitation. **Next:** choose the day of the move and follow
+ORGANIZATION steps 1–9, starting with inviting `pedbad-uol` as backup Owner. All rules-pilot
+cases (R1–R16) are pending rollout. The reader-facing pamphlet and overview (v0.7.1) are
+**not in the repo**: they are on the MacBook's Desktop (`lc-elearn-docs-v0.7.1/`, with a
+zip) and attached in that Claude session; copy the zip across if you want them at work.
+Claude's memory notes (claude-mem) are local to the MacBook, so on the iMac this file and
+ORGANIZATION are the record.
+
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
 GitHub; CI is green there; no open PRs, and only `main` exists on GitHub. The one
 leftover local branch on the iMac, `claude/e20-compare-slider-d7384f`, is already
