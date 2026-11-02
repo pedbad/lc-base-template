@@ -220,6 +220,10 @@ loose in the three content folders. Whole folders are never exempt: the full tab
 
 ## Step 6 — Create a course repo (once per course)
 
+All the course repos can be created on the same day (decided 2026-11-02): repeat this
+step for each, then step 7 for each team. Before authors start merging, run the
+same-day check in "The rules pilot" on one of them.
+
 On the template: **Fork** → owner **`lc-elearn`** → name **`lc-french`** (the course's
 name, not `lc-base-template`) → create.
 
@@ -335,16 +339,64 @@ PR that "does not meet requirements". The template itself is unaffected: its pro
 requires 0 approvals and no code-owner review
 ([`BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md)), so its sole author can merge on green.
 
-## Step 7 — Invite the colleague
+## Step 7 — Invite the colleagues, one team per course
 
-**Organisation → People → Invite member** by GitHub username (each colleague uses their own
-personal account), as a **member**, not an Owner. Then **Organisation → Teams → New
-team**, one per course (`spanish`, `english`, `portuguese`, …), with the colleague as a
-plain member (not a team maintainer), and give the team **Write** on that course's repo
-only: **the course repo → Settings → Collaborators and teams → Add teams**. One person
-per team to start (decided 2026-11-02); a second author, or a colleague helping on
-another course, joins that course's team, and leaves it when done. The maintainer needs
-no team: an Owner already has access to every repo.
+Decided 2026-11-02: colleagues join as organisation **members** (never Owners), and each
+course has its own **team** with **Write** on that course's repo only. Every team starts
+with one person; later a second author, or a colleague helping on another course, joins
+that course's team and leaves it when done. The maintainer needs no team: an Owner
+already reaches every repo. Who is in which team is kept outside this public repo.
+
+**Before the day:** each colleague has a GitHub account under their own name, with their
+**University of Cambridge email** added and verified (Settings → Emails), and sends the
+maintainer their GitHub username.
+
+All the courses can be set up on one day (step 6 for each repo first). Then, for each
+course:
+
+| Course repo     | Team         | Members to start      |
+| --------------- | ------------ | --------------------- |
+| `lc-french`     | `french`     | the French author     |
+| `lc-spanish`    | `spanish`    | the Spanish author    |
+| `lc-english`    | `english`    | the English author    |
+| `lc-portuguese` | `portuguese` | the Portuguese author |
+
+**On the website**, logged in as `pedbad`:
+
+1. **Create the team:** lc-elearn → **Teams → New team** → name `spanish`, visibility
+   **Visible** → **Create team**. GitHub may add you as the team's maintainer: harmless,
+   or remove yourself under the team's **Members**.
+2. **Give it its course, and only that:** the team → **Repositories → Add repository** →
+   `lc-spanish` → role **Write**.
+3. **Invite the colleague into the team:** lc-elearn → **People → Invite member** →
+   their GitHub username (or their Cambridge email) → role **Member** → under teams,
+   tick `spanish` → **Send invitation**.
+4. **They accept** the invitation from GitHub's email, then follow step 8.
+
+**Or from the terminal** (after `gh auth refresh -h github.com -s admin:org` once):
+
+```bash
+gh api -X POST orgs/lc-elearn/teams -f name=spanish -f privacy=closed
+gh api -X PUT orgs/lc-elearn/teams/spanish/repos/lc-elearn/lc-spanish -f permission=push
+gh api -X POST orgs/lc-elearn/invitations -f role=direct_member \
+  -F invitee_id="$(gh api users/<their-username> --jq .id)" \
+  -F "team_ids[]=$(gh api orgs/lc-elearn/teams/spanish --jq .id)"
+```
+
+(`push` is GitHub's name for Write; `direct_member` for Member.)
+
+**Read it back**, once they have accepted:
+
+```bash
+gh api orgs/lc-elearn/teams/spanish/members --jq '.[].login'
+gh api repos/lc-elearn/lc-spanish/teams --jq '.[] | {name, permission}'
+gh api orgs/lc-elearn/invitations --jq '.[] | {login, email, role}'   # still pending
+```
+
+The team lists the colleague; the repo lists `spanish` with `push`, and no other team.
+**Later:** a second author → step 3 with the same team; a colleague helping on another
+course → add them to that course's team as well (**Teams → that team → Members → Add a
+member**), and remove them when done.
 
 ## Step 8 — The colleague's setup
 
@@ -472,6 +524,11 @@ Until then every case is **pending rollout**: no course repo exists yet.
 | R14 | An open branch after an update     | A         | a lesson branch opened before R13; step 9's branch update          | `git merge main` succeeds; its PR's checks rerun green                                                                                          | terminal output, the PR's checks                                       | pending rollout |
 | R15 | Merging does not publish           | A, P      | R1's merge                                                         | the live site is unchanged until P deploys                                                                                                      | the live page before and after                                         | pending rollout |
 | R16 | Publishing the intended commit     | P         | [`DEPLOY.md`](../DEPLOY.md) in a team test folder                  | that exact commit's CI is green; it builds with `--frozen-lockfile`; P records repo, full commit, result, rollback copy                         | the record line, the live checks                                       | pending rollout |
+
+**When every course is created on one day**, run R1, R5, R9, R10 and R11 on one course
+with one author (about 30 minutes) before telling authors to merge: the courses share
+one setup, so a wrong rule would be wrong in all of them. The other cases follow the
+first time each situation arises.
 
 If R9, R10 or R11 fails, stop: the rules do not protect `main` as step 6 claims. If R12
 lets a PR merge with a check pending or red, remove the bypass and use path 1. The
