@@ -42,11 +42,13 @@ branch rules on every course repo, and nobody else can switch them off.
     changes; the maintainer's own core PRs (template updates) are opened by the course's
     author and approved by the maintainer. Ruleset B's bypass list stays **empty**
     ([step 6](#who-approves-core-changes)).
-  - **Ownership:** the maintainer (`pedbad`) owns the organisation personally and is its
-    only Owner, for now; no institutional owner and no second Owner (decided 2026-11-02).
-    Revisit if the maintainer's role changes. Keep the account's two-factor recovery
-    codes safe: with one Owner, losing them locks everyone out of the organisation's
-    settings.
+  - **Ownership:** the maintainer owns the organisation personally; no institutional
+    owner (decided 2026-11-02). **Two Owner accounts, both the maintainer's:** `pedbad`,
+    used every day, and `pedbad-uol`, a **backup for recovery only**, so losing one
+    account's credentials never locks the organisation (step 1). Each has its own
+    two-factor setup and recovery codes, never the same phone alone. Neither is on any
+    bypass list, and `pedbad-uol` is never used for everyday work. Revisit if the
+    maintainer's role changes.
   - **Merge commits only** in course repos, for every pull request (step 6, item 4).
   - **Colleagues join as members**, base permission Read, with **one team per course**
     holding Write on that course's repo only, one person per team to start (step 7).
@@ -97,14 +99,19 @@ Logged in as `pedbad`: **+** (top right) → **New organization** → **Free** �
 `lc-elearn`, display name **LC e-Learning Team**, contact email, "belongs to: my personal
 account".
 
-`pedbad` becomes the organisation's **Owner** automatically.
+`pedbad` becomes the organisation's **Owner** automatically. Then add the backup Owner:
+**People → Invite member** → `pedbad-uol` → role **Owner**, and accept the invitation
+logged in as `pedbad-uol`. Before that, on **each** of the two accounts: two-factor on,
+recovery codes saved (a password manager or on paper), and a second method such as a
+passkey or security key, so one lost phone cannot lock both. Read it back:
+`gh api orgs/lc-elearn/members?role=admin --jq '.[].login'` lists both.
 
 Then **Settings → Member privileges**:
 
-| Setting             | Value    | Why                                                          |
-| ------------------- | -------- | ------------------------------------------------------------ |
-| Base permissions    | **Read** | members can see every repo, but write only where granted     |
-| Repository creation | **off**  | only the Owner creates repos, so the layout stays as planned |
+| Setting             | Value    | Why                                                      |
+| ------------------- | -------- | -------------------------------------------------------- |
+| Base permissions    | **Read** | members can see every repo, but write only where granted |
+| Repository creation | **off**  | only Owners create repos, so the layout stays as planned |
 
 ## Step 2 — Transfer the template
 
@@ -292,11 +299,11 @@ Two policies, and the settings above enforce only one of them on their own:
 The maintainer's own core PRs in a course (in practice, template updates) need someone
 else's approval, or a bypass. The ways to accept one:
 
-| Path                           | How                                                                                                                                                            | Keeps P1?                                                                            | Consequence                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **1. A colleague prepares it** | A colleague with write access on the course runs step 9 on a branch and opens the PR; the maintainer reviews it and approves as code owner.                    | yes                                                                                  | No bypass and no second owner. Needs a colleague who can run a merge and read a conflict, for every course and every update. Ruleset B's bypass list stays empty.                                                                                                                                                                                                                                                                                      |
-| **2. Another code owner**      | A second person joins the owner team in `CODEOWNERS` (changed in the template, step 4) and reviews the maintainer's PRs.                                       | **no**: that person can then approve colleagues' core PRs too, which is P2           | Needs a second trusted person with write access who can review code. Does not on its own guarantee the maintainer's approval of anything.                                                                                                                                                                                                                                                                                                              |
-| **3. A scoped bypass**         | Ruleset B's bypass list: **Organization admin**, **For pull requests only**. The maintainer merges their own PR with "Merge without waiting for requirements". | only by practice: GitHub would let an Owner merge a colleague's core PR the same way | The bypass belongs to the role, so every organisation Owner holds it (today only `pedbad`; any Owner added later too). It covers ruleset B's one rule only. Ruleset A keeps an empty bypass list; GitHub applies every ruleset on a branch, but its documentation does not state that bypassing one leaves another's checks enforced, so pilot R12 must show it before anyone relies on it. Bypasses are listed under **Settings → Rules → Insights**. |
+| Path                           | How                                                                                                                                                            | Keeps P1?                                                                            | Consequence                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1. A colleague prepares it** | A colleague with write access on the course runs step 9 on a branch and opens the PR; the maintainer reviews it and approves as code owner.                    | yes                                                                                  | No bypass and no second owner. Needs a colleague who can run a merge and read a conflict, for every course and every update. Ruleset B's bypass list stays empty.                                                                                                                                                                                                                                                                                                       |
+| **2. Another code owner**      | A second person joins the owner team in `CODEOWNERS` (changed in the template, step 4) and reviews the maintainer's PRs.                                       | **no**: that person can then approve colleagues' core PRs too, which is P2           | Needs a second trusted person with write access who can review code. Does not on its own guarantee the maintainer's approval of anything.                                                                                                                                                                                                                                                                                                                               |
+| **3. A scoped bypass**         | Ruleset B's bypass list: **Organization admin**, **For pull requests only**. The maintainer merges their own PR with "Merge without waiting for requirements". | only by practice: GitHub would let an Owner merge a colleague's core PR the same way | The bypass belongs to the role, so every organisation Owner holds it (`pedbad` and the backup `pedbad-uol`, and any Owner added later). It covers ruleset B's one rule only. Ruleset A keeps an empty bypass list; GitHub applies every ruleset on a branch, but its documentation does not state that bypassing one leaves another's checks enforced, so pilot R12 must show it before anyone relies on it. Bypasses are listed under **Settings → Rules → Insights**. |
 
 What the settings cannot do: enforce P1 for colleagues while letting the maintainer
 merge their own core PRs alone. Path 3 gives the maintainer the same power over
