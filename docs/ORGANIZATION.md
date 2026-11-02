@@ -42,7 +42,11 @@ branch rules on every course repo, and nobody else can switch them off.
     changes; the maintainer's own core PRs (template updates) are opened by the course's
     author and approved by the maintainer. Ruleset B's bypass list stays **empty**
     ([step 6](#who-approves-core-changes)).
-  - **No second Owner for now.**
+  - **Ownership:** the maintainer (`pedbad`) owns the organisation personally and is its
+    only Owner, for now; no institutional owner and no second Owner (decided 2026-11-02).
+    Revisit if the maintainer's role changes. Keep the account's two-factor recovery
+    codes safe: with one Owner, losing them locks everyone out of the organisation's
+    settings.
   - **Merge commits only** in course repos, for every pull request (step 6, item 4).
   - **Colleagues join as members**, base permission Read, with **one team per course**
     holding Write on that course's repo only, one person per team to start (step 7).
