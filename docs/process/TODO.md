@@ -130,7 +130,8 @@ left, in order:
     The maintainer's decisions are made (2026-11-02, ORGANIZATION "Decisions already
     made"); the rules pilot runs on the first course, once it exists. **First thing
     after creating `lc-elearn`: invite `pedbad-uol` as the backup Owner** (ORGANIZATION
-    step 1).
+    step 1). Then all course repos on one day, one team per course with one author each
+    (step 7), and the same-day check on one course before authors merge.
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
 GitHub; CI is green there; no open PRs, and only `main` exists on GitHub. The one
