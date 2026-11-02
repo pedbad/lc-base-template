@@ -134,7 +134,10 @@ left, in order:
     course with no named author is the Language Centre's. Merged (PR 55, `c5e6436`).
 30. **E50 — DONE 2026-11-02**: the update branch in the course repo, the R1–R12 pilot
     gate, recovery if `pedbad` cannot be used (below). Merged (PR 56, `0f0ada2`). A second
-    drift check (E51) recorded the maintainer's review decision and aligned the rest.
+    drift check (E51) recorded the maintainer's review decision and aligned the rest; a
+    review then corrected the Free-plan wording to GitHub's own statement (rulesets and code
+    owners are documented for public repositories on GitHub Free for organizations), and
+    R12 now tests the selected policy, with no bypass.
 31. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
     rules carried into each course repo as step 6's ruleset A (E33), and E16 after.
     The maintainer's decisions are made (2026-11-02, ORGANIZATION "Decisions already
