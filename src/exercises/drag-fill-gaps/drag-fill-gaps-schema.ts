@@ -51,6 +51,20 @@ export const DragFillGapsContentSchema = z
   .refine((content) => content.items.reduce((n, item) => n + countBlanks(item.text), 0) >= 2, {
     message: 'drag-fill-gaps needs at least two [bracketed] blanks to place tiles into.',
     path: ['items'],
+  })
+  // Each blank becomes a tile showing its word, so `[ ]` would be an empty tile
+  // (TODO §E42). Repeated words are fine: grading compares what the tiles show.
+  .superRefine((content, ctx) => {
+    content.items.forEach((item, index) => {
+      const blanks = item.text.match(DRAG_FILL_GAPS_BLANK_REGEX) ?? [];
+      if (blanks.some((blank) => blank.slice(1, -1).trim() === '')) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `sentence ${index + 1} has an empty blank [ ]: write the word inside the brackets`,
+          path: ['items', index, 'text'],
+        });
+      }
+    });
   });
 export type DragFillGapsContent = z.infer<typeof DragFillGapsContentSchema>;
 

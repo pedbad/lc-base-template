@@ -6,7 +6,8 @@
  * Content shape:
  *   - items[]   one picture↔word pair each:
  *       - id?            stable key used to pair picture with its word; falls back
- *                        to `label`. Provide `id` when two items could share a label.
+ *                        to `label`. Labels must still look different:
+ *                        the learner picks a word, and two alike could not both match.
  *       - label          the word the learner picks/connects (the answer).
  *       - image          the picture asset path.
  *       - audio?         optional clip (e.g. hear the word).
@@ -25,6 +26,7 @@
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §8.
  */
 import { z } from 'zod';
+import { distinctLabelProblems } from '../lib/answer-checks';
 import { instructionsField } from '../lib/instructions';
 import { ExerciseConfigSchema } from '@/config/lo-schema';
 
@@ -57,7 +59,17 @@ export const LineMatchContentSchema = z
         'Each line-match item needs a unique id or label (it pairs a picture with its word).',
       path: ['items'],
     },
-  );
+  )
+  // The words a learner picks between must show and look different, whatever their
+  // ids: two pictures labelled alike could never both be matched right (TODO §E42).
+  .superRefine((content, ctx) => {
+    for (const message of distinctLabelProblems(
+      'item',
+      content.items.map((item) => item.label),
+    )) {
+      ctx.addIssue({ code: 'custom', message, path: ['items'] });
+    }
+  });
 export type LineMatchContent = z.infer<typeof LineMatchContentSchema>;
 
 export const LineMatchExerciseConfigSchema = ExerciseConfigSchema.extend({

@@ -19,6 +19,7 @@
  * Spec: docs/specs/2026-06-19-exercise-engines-design.md §2, §5.2, §7, §8.
  */
 import { z } from 'zod';
+import { blankLabelProblems, hasTwoDifferent } from '../lib/answer-checks';
 import { instructionsField } from '../lib/instructions';
 import { ExerciseConfigSchema } from '@/config/lo-schema';
 
@@ -29,11 +30,28 @@ export const PhraseReorderRowSchema = z.object({
 });
 export type PhraseReorderRow = z.infer<typeof PhraseReorderRowSchema>;
 
-export const PhraseReorderContentSchema = z.object({
-  ...instructionsField,
-  rows: z.array(PhraseReorderRowSchema).min(2),
-  footnote: z.string().min(1).optional(),
-});
+export const PhraseReorderContentSchema = z
+  .object({
+    ...instructionsField,
+    rows: z.array(PhraseReorderRowSchema).min(2),
+    footnote: z.string().min(1).optional(),
+  })
+  // As word-order: each card shows something, and there is an order to find; repeated
+  // phrases are graded by what they show (TODO §E42).
+  .superRefine((content, ctx) => {
+    const phrases = content.rows.map((row) => row.phrase);
+    for (const message of blankLabelProblems('row', phrases)) {
+      ctx.addIssue({ code: 'custom', message, path: ['rows'] });
+    }
+    if (!hasTwoDifferent(phrases)) {
+      ctx.addIssue({
+        code: 'custom',
+        message:
+          'phrase-reorder needs at least two different phrases: with only one, there is no order to find',
+        path: ['rows'],
+      });
+    }
+  });
 export type PhraseReorderContent = z.infer<typeof PhraseReorderContentSchema>;
 
 export const PhraseReorderExerciseConfigSchema = ExerciseConfigSchema.extend({

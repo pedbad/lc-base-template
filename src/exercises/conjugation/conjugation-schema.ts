@@ -29,6 +29,8 @@
  * Spec: docs/specs/2026-07-03-new-exercise-engines-design.md §5.
  */
 import { z } from 'zod';
+import { hasTypedAnswer } from '../lib/answer-checks';
+import { normalizeAnswer } from '../lib/answers';
 import { instructionsField } from '../lib/instructions';
 import { ExerciseConfigSchema } from '@/config/lo-schema';
 
@@ -51,15 +53,36 @@ export const ConjugationAnswerModeSchema = z.enum(['typed', 'choice']);
 export type ConjugationAnswerMode = z.infer<typeof ConjugationAnswerModeSchema>;
 
 /** The `content` block for a conjugation exercise. */
-export const ConjugationContentSchema = z.object({
-  ...instructionsField,
-  verb: z.string().min(1),
-  tense: z.string().min(1).optional(),
-  prompt: z.string().min(1).optional(),
-  answerMode: ConjugationAnswerModeSchema.optional(),
-  rows: z.array(ConjugationRowSchema).min(1),
-  footnote: z.string().min(1).optional(),
-});
+export const ConjugationContentSchema = z
+  .object({
+    ...instructionsField,
+    verb: z.string().min(1),
+    tense: z.string().min(1).optional(),
+    prompt: z.string().min(1).optional(),
+    answerMode: ConjugationAnswerModeSchema.optional(),
+    rows: z.array(ConjugationRowSchema).min(1),
+    footnote: z.string().min(1).optional(),
+  })
+  // Only what a learner can answer today (TODO §E42): a typed form that is not blank,
+  // and typed mode, since the view shows a choice-mode exercise only as a notice.
+  .superRefine((content, ctx) => {
+    if (content.answerMode === 'choice') {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'choice mode is not available yet: remove "answerMode", or set it to "typed"',
+        path: ['answerMode'],
+      });
+    }
+    content.rows.forEach((row, index) => {
+      if (!hasTypedAnswer(row.answer, normalizeAnswer)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `row ${index + 1} (${row.person}) has no answer: write the verb form`,
+          path: ['rows', index, 'answer'],
+        });
+      }
+    });
+  });
 export type ConjugationContent = z.infer<typeof ConjugationContentSchema>;
 
 /**

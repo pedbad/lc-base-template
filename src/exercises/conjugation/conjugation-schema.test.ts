@@ -31,14 +31,25 @@ describe('ConjugationContentSchema', () => {
     ).toThrow();
   });
 
-  test('accepts answerMode and per-row choice options (v2 forward-compat)', () => {
+  test('keeps per-row choice options in typed mode, where the view ignores them', () => {
     const parsed = ConjugationContentSchema.parse({
       verb: 'être',
-      answerMode: 'choice',
+      answerMode: 'typed',
       rows: [{ person: 'je', answer: 'suis', options: ['suis', 'es', 'est', 'sont'] }],
     });
-    expect(parsed.answerMode).toBe('choice');
     expect(parsed.rows[0].options).toEqual(['suis', 'es', 'est', 'sont']);
+  });
+
+  // TODO §E42: the view shows a choice-mode exercise only as a notice, so the build
+  // refuses it until the choice path is built (it was accepted as v2 forward-compat).
+  test('refuses choice mode until it is built', () => {
+    expect(() =>
+      ConjugationContentSchema.parse({
+        verb: 'être',
+        answerMode: 'choice',
+        rows: [{ person: 'je', answer: 'suis', options: ['suis', 'es'] }],
+      }),
+    ).toThrow(/choice mode is not available yet/);
   });
 });
 
