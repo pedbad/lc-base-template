@@ -356,10 +356,15 @@ course:
 
 | Course repo     | Team         | Members to start      |
 | --------------- | ------------ | --------------------- |
-| `lc-french`     | `french`     | the French author     |
+| `lc-french`     | `french`     | none yet (see below)  |
 | `lc-spanish`    | `spanish`    | the Spanish author    |
 | `lc-english`    | `english`    | the English author    |
 | `lc-portuguese` | `portuguese` | the Portuguese author |
+
+Every course belongs to the **Language Centre, University of Cambridge**, the copyright
+holder in [`LICENSE`](../LICENSE) and every course's footer, whoever writes it. Where no
+author is named yet, the course is simply the Language Centre's: create its team with no
+members, and add people when they are known. Courses will often have several authors.
 
 **On the website**, logged in as `pedbad`:
 
