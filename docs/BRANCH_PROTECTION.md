@@ -59,8 +59,8 @@ always change or remove the rule under **Settings → Branches**.
 ### ⚠ `CODEOWNERS` is a SECOND lockout, by a different route
 
 **Adding a collaborator is not enough. Fix `.github/CODEOWNERS` first.** Every one of its
-15 owner rules currently names `@pedbad` and nobody else (the three content folders have
-no owner), so **Require review from Code Owners**
+23 owner rules currently names `@pedbad` and nobody else (only a course's own lesson
+folders have no owner, E41), so **Require review from Code Owners**
 demands a code-owner review on your own PR — which, being your own, you cannot give. That
 is the same dead merge button as the approvals trap above, reached without ever touching
 the approvals row, and it survives adding a second collaborator because CODEOWNERS still

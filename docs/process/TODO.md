@@ -10,7 +10,7 @@ session, on either machine.
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 | [`../ROADMAP.md`](../ROADMAP.md)      | larger work beyond this queue, each with its trigger       |
 
-**Last updated:** 2026-10-23 · **HEAD:** see `git log` · **Suite:** 201 files · 2296 tests green
+**Last updated:** 2026-11-02 · **HEAD:** see `git log` · **Suite:** 202 files · 2339 tests green
 (Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 63 on a `DEBUG=1` build (21 × 3, `e2e/debug/`) · CI green · `main` protected since 2026-10-21 (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -108,8 +108,12 @@ left, in order:
     equally likely, instead of four (below).
 21. **E40 — DONE 2026-10-23**: a sixth debug page, Claude skills, shows a card per
     skill in `.claude/skills/` with its recipe and the shared steps (below).
-22. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
+22. **E41 — DONE 2026-11-02**: lesson content is defined by path and purpose, not whole
+    folders; the template's own files inside `lo-config/`, `public/images/` and
+    `public/audio/` now need review (below). **Merge it before the organisation move.**
+23. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
     rules carried into each course repo as step 6's ruleset A (E33), and E16 after.
+    Only once E41 is on `main`, so every course fork inherits the narrowed `CODEOWNERS`.
 
 **Handover, 2026-10-20 (work iMac → MacBook Pro):** `main` is at `649e8ae` and matches
 GitHub; CI is green there; no open PRs, and only `main` exists on GitHub. The one
@@ -1838,6 +1842,7 @@ no-preference` only.
   with no owner (`ORGANIZATION.md` step 5), so a content-only PR needs no approval once
   branch protection requires code-owner review (E1); CI still validates it. CONTRIBUTING's
   green path now says which content skips review. Course repos inherit the file.
+  **Narrowed by E41 (2026-11-02):** by path and purpose, never whole folders.
 - **E7 — Claude skills that ship with the repo. DONE 2026-10-16** (spec
   `docs/specs/2026-10-16-claude-skills-design.md`, plan in `docs/process/`). Seven
   skills (the five below plus `change-theme` and `build-for-upload`), `lc-reviewer`,
@@ -2489,6 +2494,28 @@ rather than the Language Centre's course factory; the maintainer took three smal
   `e2e/debug/claude-skills.spec.ts` (axe in both themes with a recipe open, and the
   shared-steps link). Checked in Chromium on the dev server, light and dark. At 800 px
   the eight nav links now wrap to a second row.
+- **E41 — lesson content defined by path and purpose, before the organisation move.
+  DONE 2026-11-02** (maintainer's request, branch `chore/e41-content-path-policy`). E6
+  made `lo-config/`, `public/images/` and `public/audio/` ownerless as whole folders, so
+  in a course repo the template's own files inside them would have merged without
+  review: the example lesson and its media, the footer's institutional marks, the
+  line-match shapes, the reading placeholder, the card placeholder, the showcase's demo
+  audio, and any loose file. **Documented:** the policy table is `COURSE_GUIDE.md`,
+  "What you may edit", one row per path and purpose. CONTRIBUTING's green path, its card
+  image (now in the lesson's own `public/images/lo-NN-slug/`, never loose),
+  ORGANIZATION's decisions and step 5, BRANCH_PROTECTION's count (23 owner rules) and
+  the French pilot checklist point to it. **Implemented:** `.github/CODEOWNERS` leaves
+  only `/lo-config/lo-*/`, `/public/images/lo-*/` and `/public/audio/lo-*/` ownerless,
+  then names `@pedbad` on the example lesson's three folders and the five shared-media
+  paths (the last matching line wins). **Tested:** `src/docs/codeowners.test.ts`, written
+  first and failing 16 of its cases against the old file, reads the file with
+  `src/docs/codeowners.ts` (GitHub's documented subset of gitignore: last match wins, no
+  `!` or `[ ]`) and checks it against the policy as a predicate, for every file actually
+  in the three folders (so it holds in a course repo, where authors have added lessons)
+  and for 31 named paths. GitHub's CODEOWNERS errors API reports nothing on the branch.
+  **Not tested:** that a course repo's rules then enforce it; that is the organisation
+  pilot (a lesson-only pull request merges without review, one touching the example
+  waits).
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that

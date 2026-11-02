@@ -45,9 +45,12 @@ branch rules on every course repo, and nobody else can switch them off.
   request; the colleague who publishes courses builds and uploads them by
   [`DEPLOY.md`](../DEPLOY.md) (decided 2026-10-16; it was the maintainer).
 - **Review covers code, not content** (decided 2026-10-12). A pull request that only
-  changes content (`lo-config/`, `public/images/`, `public/audio/`) merges on green CI. A
-  pull request that touches anything else waits for the maintainer's approval. Enforced
-  by `CODEOWNERS` (step 5) plus the course repo's branch rules (step 6).
+  changes a course's own lessons and their media (`lo-config/lo-NN-slug/`,
+  `public/images/lo-NN-slug/`, `public/audio/lo-NN-slug/`) merges on green CI. A pull
+  request that touches anything else, the template's example lesson and shared media
+  included, waits for the maintainer's approval. Defined by path and purpose (E41, the
+  table in [`COURSE_GUIDE.md` → "What you may edit"](../COURSE_GUIDE.md#what-you-may-edit));
+  enforced by `CODEOWNERS` (step 5) plus the course repo's branch rules (step 6).
 - **Colleagues get write access to their own course repo only.**
 - **Everything is public** (decided 2026-10-12): the template and every course repo.
   Learning content is Creative Commons — the existing [`LICENSE`](../LICENSE) already
@@ -141,20 +144,29 @@ changed to `lc-elearn/lc-base-template`. If it did not come across, run the doc'
 solo-maintainer command against the new path. Its warnings about single-maintainer
 lockout still apply: moving into an organisation does not add a second reviewer.
 
-**Done 2026-10-14.** **Before the first course repo exists**, make the content folders ownerless in the
-template's `.github/CODEOWNERS`, so a content-only pull request needs no approval. Course
-repos inherit the file, so it is changed once here and never per course (a per-course edit
-would conflict on every sync). Add after the `*` default line:
+**Done 2026-10-14, narrowed by E41.** **Before the first course repo exists**, the
+template's `.github/CODEOWNERS` leaves a course's own lessons and their media without an
+owner, so a lesson-only pull request needs no approval. Course repos inherit the file, so
+it is changed once here and never per course (a per-course edit would conflict on every
+sync). After the `*` default line it has:
 
 ```text
-# Content: no owner, so content-only PRs merge on green CI
-/lo-config/
-/public/images/
-/public/audio/
+# Lesson content: no owner, so a lesson-only PR merges on green CI
+/lo-config/lo-*/
+/public/images/lo-*/
+/public/audio/lo-*/
+# Template files inside those folders: the maintainer (later lines win)
+/lo-config/lo-00-example/          @pedbad
+/public/images/lo-00-example/      @pedbad
+/public/audio/lo-00-example/       @pedbad
 ```
 
-A pattern with no owner after it removes ownership for that path. Every other path keeps
-`@pedbad` (or `@lc-elearn/maintainers`) as owner.
+followed by the shared media (`public/images/footer/` and the rest). A pattern with no
+owner after it removes ownership for that path, and the last matching line wins. Every
+other path keeps `@pedbad` (or `@lc-elearn/maintainers`) as owner, including anything
+loose in the three content folders. Whole folders are never exempt: the full table is in
+[`COURSE_GUIDE.md` → "What you may edit"](../COURSE_GUIDE.md#what-you-may-edit), and
+`src/docs/codeowners.test.ts` holds the file to it.
 
 ---
 
@@ -189,8 +201,8 @@ Right after creating it, in the new course repo:
      approvals **0**, with **Require review from Code Owners**.
 
    What that gives:
-   - A **content-only** PR merges on green CI: the content folders have no code owner
-     (step 5).
+   - A **lesson-only** PR merges on green CI: a course's own lesson folders have no code
+     owner (step 5).
    - A colleague's PR **touching code** waits for the maintainer's review, as code owner.
    - The maintainer's **own** PR touching code, a template sync above all (step 9),
      could never get that review: GitHub does not count an author's approval, and the
