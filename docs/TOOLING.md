@@ -267,6 +267,13 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
 - **Not in the pre-push hook**, which stays fast. **In the verify gate**, after `build`.
 - **Needs Node** (≥ 22.12, `.nvmrc`): Playwright's runner does not run on Bun.
 - **Once per machine:** `bunx playwright install chromium firefox webkit`.
+- **macOS: Firefox fails with "Could not find profile folder"** when the Mac also has
+  Firefox installed and the app running the tests (Terminal, iTerm, Claude) cannot
+  read `~/Library/Application Support/Firefox`. Firefox opens that folder before the
+  profile Playwright hands it, and macOS privacy protection blocks it
+  (`ls` on it says "Operation not permitted"). Reinstalling the browser or moving
+  `TMPDIR` does not help. Grant that app Full Disk Access (System Settings → Privacy &
+  Security), restart it, and Firefox starts (TODO §"Browser verification").
 - **"No jsdom" still stands** (§A-h): this suite runs in real browsers, and Vitest stays
   `environment: 'node'` (one file opts in to happy-dom; see "Config" above).
 - **Rules:** navigate with relative paths (`'example.html'`, never `'/example.html'`) so
