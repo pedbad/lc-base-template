@@ -46,7 +46,9 @@ branch rules on every course repo, and nobody else can switch them off.
     owner (decided 2026-11-02). **Two Owner accounts, both the maintainer's:** `pedbad`,
     used every day, and `pedbad-uol`, a **backup for recovery only**, so losing one
     account's credentials never locks the organisation (step 1). Each has its own
-    two-factor setup and recovery codes, never the same phone alone. Neither is on any
+    two-factor setup and recovery codes, never the same phone alone, and each signs in
+    with a **passkey on the Mac** (decided 2026-11-03; `pedbad` already has one,
+    `pedbad-uol` gets one before the day). Neither is on any
     bypass list, and `pedbad-uol` is never used for everyday work. Revisit if the
     maintainer's role changes.
   - **Merge commits only** in course repos, for every pull request (step 6, item 4).
@@ -107,8 +109,9 @@ account".
 before any other setting, so the organisation never runs on one key.
 
 1. **Before the day**, on **each** of `pedbad` and `pedbad-uol`: two-factor on, recovery
-   codes saved (a password manager or on paper), and a second method such as a passkey
-   or security key, so one lost phone cannot lock both.
+   codes saved (a password manager or on paper), and a **passkey on the Mac** (decided
+   2026-11-03), tested by signing out and back in with it, so one lost phone cannot lock
+   both. A hardware security key on both accounts is an optional extra.
 2. **Invite**, as `pedbad`: **People → Invite member** → `pedbad-uol` → role **Owner**.
    Or from the terminal, after granting `gh` the organisation permission once:
 
