@@ -10,7 +10,7 @@ session, on either machine.
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 | [`../ROADMAP.md`](../ROADMAP.md)      | larger work beyond this queue, each with its trigger       |
 
-**Last updated:** 2026-11-02 · **HEAD:** see `git log` · **Suite:** 203 files · 2369 tests green
+**Last updated:** 2026-11-03 · **HEAD:** see `git log` · **Suite:** 203 files · 2369 tests green
 (Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 63 on a `DEBUG=1` build (21 × 3, `e2e/debug/`) · CI green · `main` protected since 2026-10-21 (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -146,6 +146,28 @@ left, in order:
     step 1). Then all course repos on one day, one team per course (where no author
     is named, the team starts empty; step 7), every repo's rules read back, and rules-pilot cases R1–R12 on one course with
     a named author before authors merge independently (R13 before updates, R16 before deploying).
+    **Starting commit:** `5dc843d` (PR 61), its own push CI green on 2026-11-03; if `main`
+    moves before the day, pick the new commit and check its CI again.
+
+**Handover, 2026-11-03 (work iMac → MacBook Pro at home):** `main` is at `5dc843d`,
+after PR 60 (display name **LC eLearning**; LC means Language Centre) and PR 61 (the
+macOS Firefox privacy fix), plus this handover PR. CI is green on `5dc843d`. On the
+MacBook: `git switch main && git pull --ff-only`; no dependency changed. **Decided today:**
+both Owner accounts sign in with a passkey on the Mac (ORGANIZATION step 1); `pedbad`
+has one, `pedbad-uol` does not yet. **Working documents, not in the repo:** three HTML
+guides on the work iMac's Desktop, dated 2026-11-03: the GitHub guide (organisation
+setup and the Mac developer tutorial) and two Windows companions (PowerShell, WSL). They
+replace the v0.7.2 bundle (pamphlet, overview, CHANGES, CHECKLIST), which predates PR 60
+and is superseded. The guides name the course authors, so they stay out of this public
+repo. Checked against the repo on 2026-11-03 and corrected the same day (the backup Owner
+invited first, the passkey required, R16 before the first deployment, `is_template` read
+back, one branch and commit style: `lo-NN-slug`, `feat:`). Proposed, not decided: after
+the move, bring the colleague setup into the repo as markdown, once the Windows routes
+have been tried on a real Windows machine. **Still to do before the day:** add and test
+the `pedbad-uol` passkey and save its recovery codes; collect each author's GitHub
+username (with their Cambridge email verified); ask whether anyone uses Windows; decide
+whether to delete the merged branches still on GitHub (`e41`–`e53`, `docs/firefox-macos-note`);
+choose the day. Nothing exists on GitHub yet; every rules-pilot case is pending rollout.
 
 **Handover, 2026-11-02 evening (MacBook Pro → work iMac):** `main` holds everything from
 today, E41–E51, PRs 47–58 and this one; no open PRs, nothing unpushed. On the iMac:
