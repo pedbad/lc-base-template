@@ -64,8 +64,8 @@ left, in order:
 
 1. **Firefox on the work iMac — DONE 2026-10-20** at `e136469`: `bun run test:e2e`
    ran all 108 (36 in Firefox) and, after a `DEBUG=1` build, the debug suite ran all
-   27 (9 in Firefox). Firefox is checked locally again; the MacBook Pro still cannot
-   start it ("Browser verification" below).
+   27 (9 in Firefox). Firefox is checked locally again; the MacBook Pro runs it too
+   since 2026-11-03 ("Browser verification" below).
 2. **E12d — DONE 2026-10-20** (`7295a12`): memory-match resized during "Show
    answers", sequence audio scrubbed while playing, and E19's brand board. It found
    **E23** (below), a Firefox scrubber bug, now next.
@@ -207,6 +207,13 @@ profile there and Firefox still could not find it, while `firefox --version` run
 work iMac runs Firefox fine (all 108, and the 27 debug specs, 2026-10-20) on macOS
 26.6.2, the same arm64 and the same Playwright, so macOS 27 is the likely cause (both
 versions from the maintainer's machine audit). Recheck on the next Playwright upgrade.
+**Fixed 2026-11-03 — not macOS 27, not Playwright:** macOS privacy protection
+blocks `~/Library/Application Support/Firefox` (the installed Firefox's folder;
+`ls` on it says "Operation not permitted", outside the sandbox too). Firefox opens it
+before the `-profile` folder, so every launch failed. A copy given its own folder name
+(`Profile=` in an `-app` ini) started; the same copy without it did not. Full Disk
+Access for the app that runs the tests fixed it: 36 of 36 Firefox specs pass on the
+MacBook Pro (`docs/TOOLING.md`, "Browser tests").
 
 ---
 
