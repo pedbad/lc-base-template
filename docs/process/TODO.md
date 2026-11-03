@@ -2692,7 +2692,8 @@ rather than the Language Centre's course factory; the maintainer took three smal
   availability, confirmed by read-back. New section "If `pedbad` cannot be used":
   account and organisation recovery kept apart, what the backup Owner can and cannot
   do, and a deliberate, recorded ruleset change as the only exception (untested).
-  Display name LCE Learn. **Not tested:** all of it; no organisation exists.
+  Display name **LC eLearning** (corrected 2026-11-03: LC means Language Centre;
+  the `lc-elearn` handle is unchanged). **Not tested:** all of it; no organisation exists.
 - **E16 — after the organisation move, file `ORGANIZATION.md` under `docs/process/`.**
   Once steps 1–9 are done it is a record, not a guide; course repos inherit the file,
   so moving it keeps their top-level docs to what a course needs. Fix the links that

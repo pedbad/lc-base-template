@@ -34,7 +34,7 @@ branch rules on every course repo, and nobody else can switch them off.
 
 ## Decisions already made
 
-- **Name:** `lc-elearn` (the URL), confirmed 2026-11-02. **Display name:** LCE Learn.
+- **Name:** `lc-elearn` (the URL), confirmed 2026-11-02. **Display name:** LC eLearning.
   **Base permission:** Read. Check the name is free at step 1; if taken, pick another and replace `lc-elearn`
   throughout this file.
 - **Decided 2026-11-02** (the maintainer, after E44):
@@ -98,7 +98,7 @@ branch rules on every course repo, and nobody else can switch them off.
 ## Step 1 — Create the organisation
 
 Logged in as `pedbad`: **+** (top right) → **New organization** → **Free** → name
-`lc-elearn`, display name **LCE Learn**, contact email, "belongs to: my personal
+`lc-elearn`, display name **LC eLearning**, contact email, "belongs to: my personal
 account".
 
 `pedbad` becomes the organisation's **Owner** automatically.
