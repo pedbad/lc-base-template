@@ -146,16 +146,18 @@ left, in order:
     step 1). Then all course repos on one day, one team per course (where no author
     is named, the team starts empty; step 7), every repo's rules read back, and rules-pilot cases R1–R12 on one course with
     a named author before authors merge independently (R13 before updates, R16 before deploying).
-    **Starting commit:** `5dc843d` (PR 61), its own push CI green on 2026-11-03; if `main`
-    moves before the day, pick the new commit and check its CI again.
+    **Starting commit:** `01e3827` (PR 62, docs only, after `5dc843d`, PR 61), its own
+    push CI green on 2026-11-03; if `main` moves before the day, pick the new commit and
+    check its CI again.
 
-**Handover, 2026-11-03 (work iMac → MacBook Pro at home):** `main` is at `5dc843d`,
-after PR 60 (display name **LC eLearning**; LC means Language Centre) and PR 61 (the
-macOS Firefox privacy fix), plus this handover PR. CI is green on `5dc843d`. On the
+**Handover, 2026-11-03 (work iMac → MacBook Pro at home):** `main` is at `01e3827`,
+after PR 60 (display name **LC eLearning**; LC means Language Centre), PR 61 (the
+macOS Firefox privacy fix) and this handover, PR 62. CI is green on `01e3827`. On the
 MacBook: `git switch main && git pull --ff-only`; no dependency changed. **Decided today:**
 both Owner accounts sign in with a passkey on the Mac (ORGANIZATION step 1); `pedbad`
 has one, `pedbad-uol` does not yet. **Working documents, not in the repo:** three HTML
-guides on the work iMac's Desktop, dated 2026-11-03: the GitHub guide (organisation
+guides in the maintainer's OneDrive (`projects/github-lc-elearn-guide/`, so both Macs
+see them; corrected 2026-11-03, they are not on a Desktop), dated 2026-11-03: the GitHub guide (organisation
 setup and the Mac developer tutorial) and two Windows companions (PowerShell, WSL). They
 replace the v0.7.2 bundle (pamphlet, overview, CHANGES, CHECKLIST), which predates PR 60
 and is superseded. The guides name the course authors, so they stay out of this public
@@ -166,7 +168,8 @@ the move, bring the colleague setup into the repo as markdown, once the Windows 
 have been tried on a real Windows machine. **Still to do before the day:** add and test
 the `pedbad-uol` passkey and save its recovery codes; collect each author's GitHub
 username (with their Cambridge email verified); ask whether anyone uses Windows; decide
-whether to delete the merged branches still on GitHub (`e41`–`e53`, `docs/firefox-macos-note`);
+whether to delete the merged branches still on GitHub (`e41`–`e53`, `docs/firefox-macos-note`,
+`docs/handover-2026-11-03`);
 choose the day. Nothing exists on GitHub yet; every rules-pilot case is pending rollout.
 
 **Handover, 2026-11-02 evening (MacBook Pro → work iMac):** `main` holds everything from
