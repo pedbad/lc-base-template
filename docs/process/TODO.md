@@ -10,7 +10,7 @@ session, on either machine.
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 | [`../ROADMAP.md`](../ROADMAP.md)      | larger work beyond this queue, each with its trigger       |
 
-**Last updated:** 2026-11-03 · **HEAD:** see `git log` · **Suite:** 203 files · 2369 tests green
+**Last updated:** 2026-11-04 · **HEAD:** see `git log` · **Suite:** 203 files · 2369 tests green
 (Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 63 on a `DEBUG=1` build (21 × 3, `e2e/debug/`) · CI green · `main` protected since 2026-10-21 (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -146,9 +146,22 @@ left, in order:
     step 1). Then all course repos on one day, one team per course (where no author
     is named, the team starts empty; step 7), every repo's rules read back, and rules-pilot cases R1–R12 on one course with
     a named author before authors merge independently (R13 before updates, R16 before deploying).
-    **Starting commit:** `01e3827` (PR 62, docs only, after `5dc843d`, PR 61), its own
-    push CI green on 2026-11-03; if `main` moves before the day, pick the new commit and
-    check its CI again.
+    **Starting commit:** whatever `main` is on the day, once that commit's own push CI is
+    green. Last checked: `16c565b` (PR 63), green on 2026-11-04;
+    every docs PR since moves `main` on, so check again on the day.
+
+**Update, 2026-11-04 (MacBook Pro):** `pedbad-uol` now has a passkey
+(`github-pedbad-uol`, added 2026-11-04, synced through iCloud Keychain), tested by
+signing out and back in with it, so both Owner accounts have one. "Security keys" (a
+second factor) was left unset on purpose: the passkey covers it, and a hardware key stays
+an optional extra (ORGANIZATION step 1). PR 63 merged (`16c565b`, push CI green). All 16
+merged branches were deleted from GitHub after checking each PR's merge commit is on
+`main`; only `main` remains, and each PR page can restore its branch. **Still to do
+before the day:** confirm `pedbad-uol`'s recovery codes are saved in the password manager,
+apart from `pedbad`'s (not yet confirmed); collect each author's GitHub username (with
+their Cambridge email verified); ask whether anyone uses Windows; choose the day. Nothing
+exists on GitHub yet; every rules-pilot case is pending rollout. The 2026-11-03 note below
+is kept as it was written.
 
 **Handover, 2026-11-03 (work iMac → MacBook Pro at home):** `main` is at `01e3827`,
 after PR 60 (display name **LC eLearning**; LC means Language Centre), PR 61 (the
