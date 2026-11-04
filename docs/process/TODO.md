@@ -171,6 +171,19 @@ address (the old ZIP link redirects, but only while no `pedbad/lc-base-template`
 and check they add the Feijoa fonts, which the ZIP never holds (`DEPLOY.md` step 3).
 Every rules-pilot case is still pending rollout.
 
+**Later the same day (work iMac):** PR 67 (`ce4d43c`) recorded PR 66; PR 68 (`1c2aee7`,
+push CI 41844764245 green) names `lc-elearn/<course-repo>` in `COURSE_GUIDE.md` and
+`DEPLOY.md`. Every merged branch deleted; only `main` remains. The OneDrive folder now
+holds only the three guides (handovers are emailed, not stored there). **The guides are
+stale:** a read-only review found the main GitHub guide still describes the move as future
+(steps 1–24, section O); the two Windows guides have no drift. **Decided:** the guides
+hold only current instructions, no history, since no developer has them yet. Next guide
+session: split the main guide into a maintainer guide (course repos, rulesets, teams,
+invitations, pilot, template updates; the author table) and a Mac developer guide (with a
+new tool-install part to match the Windows guides), back up the folder first. **No memory
+sync between the Macs** (claude-mem is local to each); this file and the handover prompt
+are the shared record.
+
 **Update, 2026-11-04 (MacBook Pro):** `pedbad-uol` now has a passkey
 (`github-pedbad-uol`, added 2026-11-04, synced through iCloud Keychain), tested by
 signing out and back in with it, so both Owner accounts have one, and its recovery codes
