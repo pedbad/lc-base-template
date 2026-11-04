@@ -1,7 +1,7 @@
 # LC Base Template — BUILD Session Handover
 
 **Purpose:** Start the cold BUILD session for the LC base template, baby-step by baby-step.
-**Spec (the contract):** `docs/superpowers/specs/2026-06-15-lc-base-template-design.md` — 24 decisions, 20 sections. **Read it first.**
+**Spec (the contract):** `docs/specs/2026-06-15-lc-base-template-design.md` — 24 decisions, 20 sections. **Read it first.**
 **Branch:** `docs/lc-base-template-spec` (pushed to origin). Reference impl to PORT FROM: `french-lo-1`.
 
 ---
@@ -95,6 +95,9 @@ Each is its own step + commit. Stop and test after every one.
 ---
 
 ## Per-step checks (run before each commit)
+
+Today's gate is [`AGENTS.md` → "Verify before you claim done"](../../AGENTS.md#verify-before-you-claim-done)
+(`test:coverage` and `test:e2e` included); the list below is the build-era one.
 
 ```
 bun run format        # Prettier clean
@@ -533,7 +536,7 @@ BEFORE SHARING WITH OTHER DEVELOPERS (pre-share gate — none of these block sol
 
 ## Gotchas (carry forward)
 
-- Attribution disabled — no `Co-Authored-By`.
+- AI-assisted commits may carry a `Co-Authored-By` trailer ([`CONTRIBUTING.md`](../../CONTRIBUTING.md), "Commit conventions").
 - Deploy: lcdev + lcitc both serve under a non-root base → env-driven base path up front.
 - Two relative-path-under-non-root-base bugs bit french-lo-1 (runtime fetch #35, favicon #28):
   `resolveAsset()` for runtime fetches, `%BASE_URL%` for static `<head>` assets — from day one.

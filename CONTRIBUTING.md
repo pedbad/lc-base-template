@@ -12,8 +12,9 @@ How to work in this repo: setup, everyday commands, the commit gate, and convent
 > For **how the code is written** (names, types, comments, the habits no tool checks), see
 > [`docs/STYLE.md`](docs/STYLE.md).
 >
-> Four sibling docs cover the audiences this one does not:
+> Five sibling docs cover the audiences this one does not:
 > [`COURSE_GUIDE.md`](COURSE_GUIDE.md) (colleagues writing a course in its own repo),
+> [`DEPLOY.md`](DEPLOY.md) (whoever builds and publishes a course),
 > [`DESIGNER.md`](DESIGNER.md) (change colours and fonts without touching code),
 > [`STRUCTURE.md`](STRUCTURE.md) (what every folder is for) and
 > [`AGENTS.md`](AGENTS.md) (house rules for AI coding agents).
@@ -113,7 +114,7 @@ nothing linking to it, so the browser tests keep a page to drive.
 > share. Never upload audio from a textbook CD that is not ours, or an image taken
 > from the web that is not openly licensed.**
 >
-> Everything in `lo-config/`, `public/images/` and `public/audio/` is published under
+> Everything you add to `lo-config/`, `public/images/` and `public/audio/` is published under
 > CC BY-NC 4.0 ([`LICENSE`](LICENSE)), and we can only give that permission for
 > material we own. Allowed: recordings and images made by the Language Centre or its
 > staff, and openly licensed material whose licence allows this reuse (public domain,
@@ -471,13 +472,16 @@ keeps every course consistent — **add content as data; don't quietly change th
 - **No owner review:** a course's own lessons, `lo-config/lo-NN-slug/`, and each
   lesson's media, `public/images/lo-NN-slug/` and `public/audio/lo-NN-slug/` —
   **media we made or may share only** (see
-  [Authoring a Learning Object](#authoring-a-learning-object)). `CODEOWNERS` leaves
+  [Authoring a Learning Object](#authoring-a-learning-object)) — and the course's own
+  settings, `course.json`. `CODEOWNERS` leaves
   exactly these ownerless, so a pull request touching only them merges once CI is
   green — and CI still validates every LO against the schemas. The example lesson, the
   shared media and anything loose in those three folders stay owned: the full table is
   [`COURSE_GUIDE.md` → "What you may edit"](COURSE_GUIDE.md#what-you-may-edit).
 - **Normal review:** new fixtures (copy an existing exercise fixture, change the Spanish
-  content, wire it into the showcase), docs and process notes.
+  content, wire it into the showcase), docs and process notes. They are owned like
+  every other path (`CODEOWNERS` starts with `*`), so in a course repo they wait for the
+  maintainer's approval too; the list below is what needs the closest look.
 
 **Requires maintainer review (owned in [`.github/CODEOWNERS`](.github/CODEOWNERS)):**
 

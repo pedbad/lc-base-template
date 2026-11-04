@@ -55,8 +55,8 @@ publishes (P).
 ## 6. The checks and review complete
 
 - [ ] All five checks pass. A lesson-only pull request (only the course's own
-      `lo-config/lo-NN-slug/` and its `public/images/` and `public/audio/` folders)
-      merges with no review; a change to anything else, the example lesson included,
+      `lo-config/lo-NN-slug/`, its `public/images/lo-NN-slug/` and
+      `public/audio/lo-NN-slug/` folders, and `course.json`) merges with no review; a change to anything else, the example lesson included,
       waits for M ([`docs/ORGANIZATION.md`](../ORGANIZATION.md) step 6, and its rules
       pilot for each case).
 - **Expected:** A merges their own content pull request once it is green.

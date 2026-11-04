@@ -11,8 +11,8 @@ This is the promise the template is built around:
 
 That file is **`src/styles/palette.css`**.
 
-> **Developers:** this is the canonical theming doc. `src/styles/README.md` is a
-> pointer to it, so there is one copy of these rules and nothing to drift.
+> **Developers:** this is the canonical theming doc. `src/styles/README.md` lists the
+> folder's files and points here for the rules, so there is one copy of them.
 > For the repo's everyday workflow see [`CONTRIBUTING.md`](CONTRIBUTING.md); for
 > why each tool was chosen, [`docs/TOOLING.md`](docs/TOOLING.md).
 
@@ -110,8 +110,9 @@ http://localhost:5173/debug-sandbox.html
 ```
 
 It is one page, built from the same files you edit, so it can never be out of date.
-Nothing on it is hand-written: every square, specimen and icon is generated from
-`palette.css`, `tokens.css` and `public/icons.svg` as they are **right now**.
+Every colour and value on it is read from `palette.css`, `tokens.css` and
+`public/icons.svg` as they are **right now**; which primitives, icons and type sizes it
+lists comes from `src/sandbox/sandbox-catalog.ts` (step 1 below says when to add one).
 
 | Section        | What it shows                                                                                             | Read it when…                                                       |
 | -------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
@@ -287,9 +288,10 @@ variant files — switching the `--primary` preset must never change the fonts:
 
 `src/styles/app.css` maps Tailwind's `--font-sans → --font-body` and
 `--font-heading → --font-display`, which re-types every component at once. Those
-mappings live in `@theme inline`, so they are **not** runtime variables: plain-CSS
-components (the header, the footer) read `var(--font-display)` directly, and the
-same goes for radius — `calc(var(--radius) * 0.6)`, never `var(--radius-sm)`.
+mappings live in `@theme inline`. The build does emit `--font-heading` and
+`--radius-sm` today (the home page and the debug sandbox read them), but the header and
+footer write out what they stand for, `var(--font-display)` and
+`calc(var(--radius) * 0.6)`, so they never depend on it.
 
 **To re-font a clone:** edit those two tokens, and swap the npm font package or
 the `@font-face` files. Never set `font-family` on an individual component.
@@ -298,8 +300,8 @@ the `@font-face` files. Never set `font-family` on an individual component.
 
 Feijoa is commercial (spec §12 / decision #18), so `public/fonts/feijoa/*` is
 git-ignored. On a fresh clone the files are absent and **headings fall back to
-Open Sans automatically** — `font-display: swap`, so no flash and no
-missing-glyph boxes. That is expected, not a bug. Its `@font-face` rules are added
+Open Sans automatically**, with no flash and no missing-glyph boxes: no Feijoa
+`@font-face` exists to wait for. That is expected, not a bug. Its `@font-face` rules are added
 by the `feijoaFonts()` build plugin (`src/build/feijoa-fonts.ts`) only when all three
 files are present, so a clone without them requests no font at all. To enable real
 Feijoa, see [`public/fonts/feijoa/README.md`](public/fonts/feijoa/README.md) for the

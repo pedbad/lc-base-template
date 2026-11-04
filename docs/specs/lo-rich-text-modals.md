@@ -9,8 +9,9 @@ in popups AND page prose — see §14, which amends R4 and R7.
 `<strong>` renders as visible literal markup, and there is nowhere to put a glossary
 popup link. The reference implementation (`pedbad/French-Basic-2026`) solves this with
 inline HTML plus a modal launched from `<a class="modal-link">` — but it does so via
-`dangerouslySetInnerHTML`, which this repo has deliberately never used (see the note in
-`src/exercises/lib/char-diff.ts`).
+`dangerouslySetInnerHTML`, which the course itself has deliberately never used (see the
+note in `src/exercises/lib/char-diff.ts`); only the opt-in debug pages use it, to show the
+repo's own markdown.
 
 **This spec** adds inline rich text and modal popups **without** injecting raw HTML:
 authors write HTML, the loader parses it into a typed node tree, and React renders that
@@ -311,7 +312,8 @@ battle-tested choice — brings four transitive deps (`domhandler`, `domelementt
 bundle budget.
 
 The mitigating design is R2's **closed allowlist with loud failure**: the parser's job is
-to accept six known shapes and throw on everything else. It cannot silently mis-render
+to accept a closed set of known shapes (six here; eight since the §2 amendment added
+links, hover terms and audio, `rich-text-nodes.ts`) and throw on everything else. It cannot silently mis-render
 unknown input, because unknown input is an error. That makes a small hand-rolled parser
 provable by tests in a way a general HTML parser would not need to be.
 
@@ -372,7 +374,7 @@ too and neither owns it.
 **No `ModalProvider.test.tsx`, deliberately.** The first draft of this plan promised unit
 tests for "link opens the dialog; Escape closes; focus returns to the link". The suite runs
 `environment: 'node'` with no DOM and no testing-library (see the comment in
-`vite.config.ts`), and all four of those behaviours are **Base UI's**, not ours — adding
+`vite.config.ts`; one file has since opted in to happy-dom, for a reason of its own), and all four of those behaviours are **Base UI's**, not ours — adding
 jsdom plus two dependencies to re-test a vendored primitive is not worth it. What IS ours
 (the link renders a button, the host resolves content by id, one host for N links) is
 covered statically above.
@@ -491,7 +493,7 @@ type TableCell = { header: boolean; scope?: 'col' | 'row'; children: RichTextNod
 §9 named `htmlparser2` as the swap point once block content arrived. Not taken: JS has
 ~2.3 kB of headroom against the < 100 kB budget (`docs/TOOLING.md`; amended 2026-10-13: the
 budget has since been raised; its "Bundle budget" section holds the current figure), and the block grammar is
-still closed and tiny (seven structural tags, no attributes). The entry parser reuses the
+still closed and tiny (ten structural tags today, `parse-rich-text-entry.ts`; no attributes). The entry parser reuses the
 inline tokenizer; the node types stay the stable interface, so the swap remains available.
 
 ### Examples

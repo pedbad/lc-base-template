@@ -188,12 +188,12 @@ through the new address, `main` level with `origin/main`. **MacBook Pro: still t
 One commit (`docs: template moved to lc-elearn`). As of 2026-10-21 these name the old
 address:
 
-| File                              | What to change                                                                  |
-| --------------------------------- | ------------------------------------------------------------------------------- |
-| `CONTRIBUTING.md`                 | the `git clone` line under "Getting started"                                    |
-| `docs/BRANCH_PROTECTION.md`       | the collaborators `gh api` line, the UI path, both `gh api` protection commands |
-| `src/sandbox/DebugPageHeader.tsx` | `REPO_URL`, the source link in every debug page's nav                           |
-| this file                         | the "Today" column becomes history; flip the status to ✅                       |
+| File                              | What to change                                                                                    |
+| --------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `CONTRIBUTING.md`                 | the `git clone` line under "Getting started"                                                      |
+| `docs/BRANCH_PROTECTION.md`       | the collaborators `gh api` line, the UI path, both `gh api` protection commands                   |
+| `src/sandbox/DebugPageHeader.tsx` | `REPO_URL`, the source link in every debug page's nav                                             |
+| this file                         | the "Today" column becomes history (the status flips to ✅ only once the first course repo works) |
 
 Re-check before committing — the list goes stale:
 
@@ -316,7 +316,7 @@ Right after creating it, in the new course repo:
    update merges this way (step 9). **Allow squash merging** and **Allow rebase merging**
    off, for every pull request, so a template update can never be squashed or rebased
    by mistake (decided 2026-11-02).
-   **Automatically delete head branches** on. None of this weakens step 3: pull
+   **Automatically delete head branches** on. None of this weakens item 3: pull
    requests, the five checks, code-owner review, and the bans on deletion and force
    pushes all stay.
 
@@ -479,7 +479,8 @@ When the template changes, each course repo pulls it in:
 - **Fork:** not the **Sync fork** button. It updates `main` directly, which step 6's
   ruleset A refuses for everyone. Add the template as `upstream` once
   (`git remote add upstream <template URL>`) and use the branch route below.
-- **Linked copy:** `upstream` is set already (step 6).
+- **Linked copy:** `upstream` is set already in the clone that pushed it (step 6); add
+  it once in any other clone, as for a fork.
 
 **When:** whenever the template has something to share (decided 2026-11-02): the
 maintainer merges it in the template, then tells the authors ("a new exercise is in,
@@ -498,7 +499,8 @@ go into the template. Nor the **Sync fork** button, which writes to `main` direc
    Then push the branch to the **course** repo. The commands are below.
 2. **Open the pull request** from that branch into the same course repo's `main`: GitHub
    offers **Compare & pull request** on the course repo's page once the branch is
-   pushed. **The course's author opens it** (path 1), even when the maintainer
+   pushed; the base repository must be the course, not the template GitHub may suggest
+   for a fork. **The course's author opens it** (path 1), even when the maintainer
    prepared the branch: a pull request the maintainer opens could never get a code
    owner's approval.
 3. **Accept:** the five checks pass, the maintainer approves as code owner, and the

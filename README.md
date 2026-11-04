@@ -182,7 +182,7 @@ Dual-licensed — see [`LICENSE`](LICENSE) for the full text and the file-by-fil
 breakdown. Copyright in both rests with **The Language Centre, University of Cambridge**.
 
 - **Code** (`src/`, `scripts/`, tooling config) — MIT.
-- **Learning content** (`lo-config/`, authored media, `docs/`) — CC BY-NC 4.0: reuse it
+- **Learning content** (`lo-config/`, authored media, `docs/` except `docs/culp-syllabi/`) — CC BY-NC 4.0: reuse it
   anywhere, including on your own servers, as long as you credit the Language Centre and
   the use is **non-commercial**. For commercial use, ask the Language Centre.
 

@@ -11,14 +11,16 @@ session, on either machine.
 | [`../ROADMAP.md`](../ROADMAP.md)      | larger work beyond this queue, each with its trigger       |
 
 **Last updated:** 2026-11-04 · **HEAD:** see `git log` · **Suite:** 203 files · 2369 tests green
-(Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 63 on a `DEBUG=1` build (21 × 3, `e2e/debug/`) · CI green · `main` protected since 2026-10-21 (job E1).
+(Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 99 on a `DEBUG=1` build (33 × 3, `e2e/debug/`) · CI green · `main` protected since 2026-10-21 (job E1).
 
 Non-negotiable constraints for every job below live in
-`2026-08-06-post-phase-d-handover.md` §3. Read them before touching the build. In short:
+[`AGENTS.md` → "Hard constraints"](../../AGENTS.md) (they grew out of
+`2026-08-06-post-phase-d-handover.md` §3). Read them before touching the build. In short:
 nothing reachable from `vite.config.ts` may use `@/…` imports; never import
 `load-lo-glob.ts` from a Node script; every URL goes through
-`%BASE_URL%`/`resolveAsset()`/`resolveHomeHref()` and is verified under
-`BASE_URL=/course/ bun run build`; prerendered markup must equal the first client render.
+`%BASE_URL%`/`resolveAsset()`/`resolveHomeHref()` and is verified with the default `./`
+build served from a folder (`SERVE_PATH=/any/folder/ bun run test:e2e`) and under
+`BASE_URL=/course/`; prerendered markup must equal the first client render.
 
 **Verify gate — run before every commit:**
 
@@ -30,7 +32,8 @@ bun run format && bun run lint && bun run lint:css && bun run test:coverage && b
 when you only want to know whether you broke a repo-wide invariant. It is a subset of
 `bun run test`, never a replacement for the gate above. It stayed at 211 when §B landed
 **on purpose**: the docs-freshness test lives in `src/docs/`, not `src/guards/`, because
-that glob means "the eight spec guards" and a stale-tree check is not one of them.
+that glob means "the spec guards' sweeps" (b–h; guard a runs in its colocated schema
+tests) and a stale-tree check is not one of them.
 
 **211 → 214 on 2026-09-11**, and the rise is the rule working rather than being bent.
 All three tests are guard **d**'s own (`6310dad`, `6f4dd36`): the collector only ever
@@ -150,6 +153,10 @@ left, in order:
     on one course with a named author before authors merge independently (R13 before
     updates, R16 before deploying). **Course repos' starting commit:** whatever template
     `main` is on that day, once that commit's own push CI is green.
+    **Decided 2026-11-04:** the template's two existing forks are ignored, neither is a
+    course repo (`pedbad-uol/lc-base-template` is 0 commits ahead and 218 behind, so
+    deleting it loses nothing). The authors' GitHub usernames are collected, kept outside
+    this repo; each still confirms their Cambridge email is verified.
 
 **Update, 2026-11-04 (work iMac): ORGANIZATION steps 1–5 done.** Following the GitHub
 guide (OneDrive) one step at a time: steps 1–9 on the iMac (clean `main` at `d8008f8`, a
