@@ -158,15 +158,18 @@ Finder copy and a verified bundle in `~/Sites/`, tools and `gh` account checked,
 `pedbad-uol` added as Owner and read back, member privileges Read with repository
 creation off (read back), the template transferred and read back (same SHA, 765 commits,
 public template, Actions on, old address redirects), the iMac's `origin` and `gh` default
-switched, protection read back unchanged, and the old address updated in the repo (PR
-`docs/organisation-transfer`). **Tonight, MacBook Pro:** the guide's steps 1–9, then 20–21
+switched, protection read back unchanged, and the old address updated in the repo (PR 66,
+merged as `c0855fe`, its push CI run 41823158944 green). **Tonight, MacBook Pro:** the guide's steps 1–9, then 20–21
 (the `origin` URL and `gh` default); never create a repo named `lc-base-template` under
 `pedbad`. **Found, not in any doc before:** the template has two forks,
 `pedbad-uol/lc-base-template` (created 2026-10-12, probably a test: keep or delete after
 checking it holds nothing needed) and `Bagnall/lc-acwriting` (created 2026-09-25, last
 pushed 2026-10-21: does that course belong in `lc-elearn`?). **Still to do before the
 course day:** the authors' GitHub usernames (the request went out 2026-11-04), whether
-anyone uses Windows, and the day itself. Every rules-pilot case is still pending rollout.
+anyone uses Windows, and the day itself. Tell the colleague who deploys from the template's ZIP the new
+address (the old ZIP link redirects, but only while no `pedbad/lc-base-template` exists),
+and check they add the Feijoa fonts, which the ZIP never holds (`DEPLOY.md` step 3).
+Every rules-pilot case is still pending rollout.
 
 **Update, 2026-11-04 (MacBook Pro):** `pedbad-uol` now has a passkey
 (`github-pedbad-uol`, added 2026-11-04, synced through iCloud Keychain), tested by
@@ -1897,7 +1900,8 @@ no-preference` only.
   repo per course inside the organisation, colleagues write to their own course only,
   code needs the maintainer's approval and content does not, the maintainer deploys (since 2026-10-16 a colleague builds and
   uploads, by `DEPLOY.md`: E5). The
-  move is **deferred by decision**. Plan: `docs/ORGANIZATION.md`. Context, the ordered
+  move was deferred by decision until 2026-11-04, when ORGANIZATION steps 1–5 were done
+  (PR 66, `c0855fe`). Plan: `docs/ORGANIZATION.md`. Context, the ordered
   next steps (all done but the move: E8, E4, E7, E5) :
   `2026-10-12-team-workflow-handover.md`; its open questions were decided 2026-11-02
   (ORGANIZATION, "Decisions already made"). **Decided 2026-11-02 (after E44):** P1 with

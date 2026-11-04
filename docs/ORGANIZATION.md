@@ -205,7 +205,7 @@ git grep -n "pedbad/lc-base-template"
 a second maintainer approve later, replace it with an organisation team such as
 `@lc-elearn/maintainers`.
 
-**Done 2026-11-04** in the branch `docs/organisation-transfer`: `CONTRIBUTING.md`,
+**Done 2026-11-04** in PR 66 (merged as `c0855fe`, push CI green): `CONTRIBUTING.md`,
 `docs/BRANCH_PROTECTION.md` and `src/sandbox/DebugPageHeader.tsx` name the new address. Left
 as written: dated process notes, and `pedbad/French-Basic-2026` (a different repo).
 
