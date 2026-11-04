@@ -49,7 +49,7 @@ branch rules on every course repo, and nobody else can switch them off.
     two-factor setup and recovery codes, never the same phone alone, and each signs in
     with a **passkey on the Mac** (decided 2026-11-03; both have one: `pedbad-uol`'s was
     added 2026-11-04, synced through iCloud Keychain, and tested by signing out and back
-    in with it). Neither is on any
+    in with it; its recovery codes are saved apart from `pedbad`'s). Neither is on any
     bypass list, and `pedbad-uol` is never used for everyday work. Revisit if the
     maintainer's role changes.
   - **Merge commits only** in course repos, for every pull request (step 6, item 4).
