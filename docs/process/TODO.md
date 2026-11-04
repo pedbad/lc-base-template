@@ -147,7 +147,8 @@ left, in order:
     made"); the rules pilot runs on the first course, once it exists. **Steps 1–5 DONE
     2026-11-04** (work iMac): `lc-elearn` exists with two Owners (`pedbad`, `pedbad-uol`),
     the template is `lc-elearn/lc-base-template` (moved from `d8008f8`), its protection
-    read back unchanged; the MacBook Pro's clone still needs its URL update. **Still to
+    read back unchanged; both Macs' clones point at the new address (step 3; the MacBook
+    Pro switched 2026-11-04 evening). **Still to
     do:** all course repos on one day, one team per course (where no author is named, the
     team starts empty; step 7), every repo's rules read back, and rules-pilot cases R1–R12
     on one course with a named author before authors merge independently (R13 before
@@ -157,6 +158,19 @@ left, in order:
     course repo (`pedbad-uol/lc-base-template` is 0 commits ahead and 218 behind, so
     deleting it loses nothing). The authors' GitHub usernames are collected, kept outside
     this repo; each still confirms their Cambridge email is verified.
+
+**Update, 2026-11-04 evening (MacBook Pro): MacBook Pro switched.** ORGANIZATION step 3
+done on this Mac, one step at a time: the clone at `~/Sites/lc-base-template` was clean
+(`main` at `d8008f8`, nothing unpushed, no stash, no other branch); backed up first to a
+`ditto` copy and a verified bundle in `~/Sites/` (both named
+`lc-base-template-before-org-macbook-2026-11-04`, same SHA, `fsck` clean); tools checked
+(Git 2.55.0, Bun 1.3.1, `gh` 2.101.0, Node 22.19.0) and `gh` logged in as `pedbad`;
+`main` fast-forwarded to `c954c13` (no dependency changed); `origin` set to
+`https://github.com/lc-elearn/lc-base-template.git`, fetched through it, and `gh`'s
+default set to `lc-elearn/lc-base-template`. No local branch besides `main`, so none to
+delete. **Both Macs are now switched.** The Feijoa font files are not in this clone
+(`public/fonts/feijoa/` holds only its README), so local builds here use the Open Sans
+fallback.
 
 **Update, 2026-11-04 (work iMac): ORGANIZATION steps 1–5 done.** Following the GitHub
 guide (OneDrive) one step at a time: steps 1–9 on the iMac (clean `main` at `d8008f8`, a
