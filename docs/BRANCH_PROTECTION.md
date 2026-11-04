@@ -45,8 +45,10 @@ template from rotting as many authors add Learning Objects.
 maintainer out of their own repo.** GitHub will not let you approve your own pull request,
 so the merge button stays disabled forever, waiting on an approval that cannot arrive.
 
-As of 2026-09-03 the only collaborator is `pedbad` — re-verified 2026-09-09, still one
-(`gh api repos/pedbad/lc-base-template/collaborators --jq '.[].login'`). So:
+As of 2026-09-03 the only collaborator was `pedbad` — re-verified 2026-09-09, still one.
+Since the move to `lc-elearn` (2026-11-04) the list shows `pedbad` and `pedbad-uol`, both
+`admin` as organisation Owners — two accounts, one person, so still a solo maintainer
+(`gh api repos/lc-elearn/lc-base-template/collaborators --jq '.[].login'`). So:
 
 | If the repo has…          | Enable                                                                                              |
 | ------------------------- | --------------------------------------------------------------------------------------------------- |
@@ -87,7 +89,7 @@ next to what it buys: nothing red reaches `main`.
 
 ## UI path
 
-**github.com/pedbad/lc-base-template → Settings → Branches → Add branch ruleset**
+**github.com/lc-elearn/lc-base-template → Settings → Branches → Add branch ruleset**
 (or classic "Add rule"). Target branch: **`main`**. Enable:
 
 | Toggle                                                                  | Why                                                                                                                         |
@@ -131,7 +133,7 @@ If you prefer the terminal (requires `gh auth login` with admin on the repo).
 **The solo-maintainer version** — what is set on this repo (2026-10-21):
 
 ```bash
-gh api -X PUT repos/pedbad/lc-base-template/branches/main/protection \
+gh api -X PUT repos/lc-elearn/lc-base-template/branches/main/protection \
   -H "Accept: application/vnd.github+json" --input - <<'JSON'
 {
   "required_status_checks": {
@@ -166,7 +168,7 @@ with `"required_approving_review_count": 1`, `"require_code_owner_reviews": true
 Read back what is set:
 
 ```bash
-gh api repos/pedbad/lc-base-template/branches/main/protection
+gh api repos/lc-elearn/lc-base-template/branches/main/protection
 ```
 
 (Confirm the check names match the CI jobs listed above. If you rename a job or change

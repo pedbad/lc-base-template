@@ -171,7 +171,7 @@ BASE_URL=/course/ bun run build
 | [`.claude/skills/`](.claude/skills/)                | Claude Code's recipes; the code ones start from a test          |
 | [`docs/STYLE.md`](docs/STYLE.md)                    | developers — how the code is written, and what tools check      |
 | [`docs/TOOLING.md`](docs/TOOLING.md)                | why each tool was chosen, and every build decision              |
-| [`docs/ORGANIZATION.md`](docs/ORGANIZATION.md)      | maintainer — the planned move to the team organisation          |
+| [`docs/ORGANIZATION.md`](docs/ORGANIZATION.md)      | maintainer — the move to the team organisation (steps 1–5 done) |
 | [`docs/process/TODO.md`](docs/process/TODO.md)      | what is still open — start here in a new session                |
 | [`docs/ROADMAP.md`](docs/ROADMAP.md)                | larger work beyond the queue, and what starts each              |
 | [`docs/culp-syllabi/`](docs/culp-syllabi/README.md) | course developers — the CULP syllabi, to check a lesson's level |

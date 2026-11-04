@@ -182,7 +182,7 @@ Run by `bun`, outside the Vite bundle. Two rules apply here, and equally to
 | `docs/specs/`               | The canonical designs authors build against                                    |
 | `docs/process/`             | Handovers, buildlist, and `TODO.md` — the live worklist                        |
 | `docs/BRANCH_PROTECTION.md` | How `main` is protected, and what changes for a team                           |
-| `docs/ORGANIZATION.md`      | The planned move to the team organisation (maintainer)                         |
+| `docs/ORGANIZATION.md`      | The move to the team organisation (maintainer)                                 |
 | `docs/culp-syllabi/`        | CULP syllabi: a read-only reference for checking a course's level. Do not edit |
 
 **Start at [`docs/process/TODO.md`](docs/process/TODO.md)** in a new session — it
