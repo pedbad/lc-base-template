@@ -181,7 +181,9 @@ No re-clone, no lost work. The redirect means a machine that has not been update
 pulls and pushes correctly — this step just stops relying on it.
 
 **Work iMac done 2026-11-04** (and `gh repo set-default lc-elearn/lc-base-template`); fetch
-through the new address, `main` level with `origin/main`. **MacBook Pro: still to do.**
+through the new address, `main` level with `origin/main`. **MacBook Pro done 2026-11-04**
+(evening), the same way: HTTPS `origin`, `gh` default set, fetch through the new address,
+`main` level with `origin/main` at `c954c13`. Both clones are switched.
 
 ## Step 4 — Update the old address inside the repo
 
