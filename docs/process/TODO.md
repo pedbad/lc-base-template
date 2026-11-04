@@ -1935,7 +1935,8 @@ no-preference` only.
   `ORGANIZATION.md` step 8. It opens with the media rule in bold, then setup, the three
   folders a colleague may edit, the daily loop and how a template update arrives;
   CONTRIBUTING is linked, not copied. Repo URLs are placeholders
-  (`<organisation>/<course-repo>`) until the organisation move (E2) names them. Was:
+  (`<organisation>/<course-repo>`) until the organisation move (E2) names them;
+  the organisation half became `lc-elearn` on 2026-11-04. Was:
   a short page for the course-repo colleague (handover §3 item 2).
 - **E5 — deploy route, and Feijoa. DONE 2026-10-16.** Decided by the maintainer: a
   colleague builds each course on their own machine from `main`, with their own licensed

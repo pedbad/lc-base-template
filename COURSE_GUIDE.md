@@ -22,7 +22,7 @@ You need Bun and Git; Node is optional for you. The versions are in the
 and invites you to it. Then:
 
 ```bash
-git clone https://github.com/<organisation>/<course-repo>.git
+git clone https://github.com/lc-elearn/<course-repo>.git
 cd <course-repo>
 bun install
 ```
