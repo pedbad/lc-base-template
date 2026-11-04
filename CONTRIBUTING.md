@@ -36,7 +36,7 @@ How to work in this repo: setup, everyday commands, the commit gate, and convent
 ## Getting started
 
 ```bash
-git clone https://github.com/pedbad/lc-base-template.git
+git clone https://github.com/lc-elearn/lc-base-template.git
 cd lc-base-template
 bun install     # installs deps AND self-installs the git hooks (zero-touch)
 bun run dev     # start the Vite dev server

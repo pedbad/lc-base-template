@@ -141,14 +141,32 @@ left, in order:
 31. **Next — the organisation move**: E2 (`docs/ORGANIZATION.md` steps 1–9), with E1's
     rules carried into each course repo as step 6's ruleset A (E33), and E16 after.
     The maintainer's decisions are made (2026-11-02, ORGANIZATION "Decisions already
-    made"); the rules pilot runs on the first course, once it exists. **First thing
-    after creating `lc-elearn`: invite `pedbad-uol` as the backup Owner** (ORGANIZATION
-    step 1). Then all course repos on one day, one team per course (where no author
-    is named, the team starts empty; step 7), every repo's rules read back, and rules-pilot cases R1–R12 on one course with
-    a named author before authors merge independently (R13 before updates, R16 before deploying).
-    **Starting commit:** whatever `main` is on the day, once that commit's own push CI is
-    green. Last checked: `16c565b` (PR 63), green on 2026-11-04;
-    every docs PR since moves `main` on, so check again on the day.
+    made"); the rules pilot runs on the first course, once it exists. **Steps 1–5 DONE
+    2026-11-04** (work iMac): `lc-elearn` exists with two Owners (`pedbad`, `pedbad-uol`),
+    the template is `lc-elearn/lc-base-template` (moved from `d8008f8`), its protection
+    read back unchanged; the MacBook Pro's clone still needs its URL update. **Still to
+    do:** all course repos on one day, one team per course (where no author is named, the
+    team starts empty; step 7), every repo's rules read back, and rules-pilot cases R1–R12
+    on one course with a named author before authors merge independently (R13 before
+    updates, R16 before deploying). **Course repos' starting commit:** whatever template
+    `main` is on that day, once that commit's own push CI is green.
+
+**Update, 2026-11-04 (work iMac): ORGANIZATION steps 1–5 done.** Following the GitHub
+guide (OneDrive) one step at a time: steps 1–9 on the iMac (clean `main` at `d8008f8`, a
+Finder copy and a verified bundle in `~/Sites/`, tools and `gh` account checked, CI run
+41748325782 green on all five jobs), then `lc-elearn` created (Free, **LC eLearning**),
+`pedbad-uol` added as Owner and read back, member privileges Read with repository
+creation off (read back), the template transferred and read back (same SHA, 765 commits,
+public template, Actions on, old address redirects), the iMac's `origin` and `gh` default
+switched, protection read back unchanged, and the old address updated in the repo (PR
+`docs/organisation-transfer`). **Tonight, MacBook Pro:** the guide's steps 1–9, then 20–21
+(the `origin` URL and `gh` default); never create a repo named `lc-base-template` under
+`pedbad`. **Found, not in any doc before:** the template has two forks,
+`pedbad-uol/lc-base-template` (created 2026-10-12, probably a test: keep or delete after
+checking it holds nothing needed) and `Bagnall/lc-acwriting` (created 2026-09-25, last
+pushed 2026-10-21: does that course belong in `lc-elearn`?). **Still to do before the
+course day:** the authors' GitHub usernames (the request went out 2026-11-04), whether
+anyone uses Windows, and the day itself. Every rules-pilot case is still pending rollout.
 
 **Update, 2026-11-04 (MacBook Pro):** `pedbad-uol` now has a passkey
 (`github-pedbad-uol`, added 2026-11-04, synced through iCloud Keychain), tested by

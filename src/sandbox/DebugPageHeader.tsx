@@ -68,7 +68,7 @@ const DEBUG_PAGES: readonly { page: DebugPage; href: string; label: string }[] =
  * The template's source. When the repo moves to the organisation
  * (docs/ORGANIZATION.md), its `git grep` for the old address finds this line.
  */
-const REPO_URL = 'https://github.com/pedbad/lc-base-template';
+const REPO_URL = 'https://github.com/lc-elearn/lc-base-template';
 
 interface DebugPageHeaderProps {
   title: string;

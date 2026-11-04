@@ -1,20 +1,21 @@
-# GitHub Organisation — `lc-elearn` (planned move)
+# GitHub Organisation — `lc-elearn`
 
 **The plan for moving this template into a GitHub organisation and giving each course its
-own repo.** Follow it top to bottom on the day. Only step 5's template-side work is done
-already (the `CODEOWNERS` content rule, and `main`'s protection); the move itself is not.
+own repo.** Steps 1–5 (the organisation and the template) are done; steps 6–9 (the course
+repos and the colleagues) follow, top to bottom, on the course day.
 
-> Status: ⬜ **NOT started — deferred by decision.**
+> Status: 🟡 **In progress — steps 1–5 done 2026-11-04** (work iMac, starting commit
+> `d8008f8`). Steps 6–7 wait for each author's GitHub username (with their Cambridge email
+> verified); all course repos are then set up on one day.
 >
-> **Decided 2026-10-12:** the template stays under `pedbad` until the remaining template
-> work is finished. When colleagues are ready to start courses, do the steps below in
-> order. Tick to ✅ once the move is complete and the first course repo is working.
+> **Decided 2026-10-12:** the template stayed under `pedbad` until the remaining template
+> work was finished. Tick to ✅ once the first course repo is working.
 
 ---
 
 ## What changes, and what does not
 
-|                  | Today                                | After the move                                  |
+|                  | Before (until 2026-11-04)            | After the move                                  |
 | ---------------- | ------------------------------------ | ----------------------------------------------- |
 | Template address | `github.com/pedbad/lc-base-template` | `github.com/lc-elearn/lc-base-template`         |
 | Who owns it      | the `pedbad` account                 | the `lc-elearn` organisation                    |
@@ -136,6 +137,13 @@ Then **Settings → Member privileges**:
 | Base permissions    | **Read** | members can see every repo, but write only where granted |
 | Repository creation | **off**  | only Owners create repos, so the layout stays as planned |
 
+**Done 2026-11-04** (work iMac, browser as `pedbad`): `lc-elearn` created on the Free plan,
+display name **LC eLearning**. `pedbad-uol` invited as Owner and accepted; read back, the
+Owners are `pedbad` and `pedbad-uol`, both with two-factor, no other members, no pending
+invitations. Member privileges read back: `default_repository_permission` `read`, every
+`members_can_create_*` flag `false` (the Repository creation section has its own **Save**:
+the first save left it on).
+
 ## Step 2 — Transfer the template
 
 **github.com/pedbad/lc-base-template → Settings → General → Danger Zone → Transfer** →
@@ -147,6 +155,13 @@ new one for web, `git` and API traffic.
 
 **Never create a new repo named `lc-base-template` under `pedbad` afterwards** — it would
 take over the old address and break the redirect.
+
+**Done 2026-11-04**, from `main` at `d8008f800724d0baac7b277c7a8e0a055ca3dd0e` (its push CI,
+run 41748325782, green on all five jobs; no open PRs). Read back: `lc-elearn/lc-base-template`
+is public, a template, not a fork, `main` at the same SHA with all 765 commits, Actions
+enabled; the old address answers `301` to the new one (web and API). The template's two
+existing forks, `pedbad-uol/lc-base-template` and `Bagnall/lc-acwriting`, now hang off the
+new address; neither is a course repo of this plan (TODO).
 
 ## Step 3 — Point each local clone at the new address
 
@@ -164,6 +179,9 @@ git remote -v && git fetch && git status -sb
 
 No re-clone, no lost work. The redirect means a machine that has not been updated yet still
 pulls and pushes correctly — this step just stops relying on it.
+
+**Work iMac done 2026-11-04** (and `gh repo set-default lc-elearn/lc-base-template`); fetch
+through the new address, `main` level with `origin/main`. **MacBook Pro: still to do.**
 
 ## Step 4 — Update the old address inside the repo
 
@@ -187,6 +205,10 @@ git grep -n "pedbad/lc-base-template"
 a second maintainer approve later, replace it with an organisation team such as
 `@lc-elearn/maintainers`.
 
+**Done 2026-11-04** in the branch `docs/organisation-transfer`: `CONTRIBUTING.md`,
+`docs/BRANCH_PROTECTION.md` and `src/sandbox/DebugPageHeader.tsx` name the new address. Left
+as written: dated process notes, and `pedbad/French-Basic-2026` (a different repo).
+
 ## Step 5 — Protect the template's `main`
 
 **Already protected in the personal repo since 2026-10-21**
@@ -195,6 +217,11 @@ check: read the rule back with that file's `gh api …/protection` line, with th
 changed to `lc-elearn/lc-base-template`. If it did not come across, run the doc's
 solo-maintainer command against the new path. Its warnings about single-maintainer
 lockout still apply: moving into an organisation does not add a second reviewer.
+
+**Checked 2026-11-04:** the protection came across unchanged — pull request required, the
+five checks, strict, admins included, linear history, no force push or deletion, no
+approvals, code-owner review off, no bypass lists. No rulesets (the effective rules are
+empty); the protection is the classic rule.
 
 **Done 2026-10-14, narrowed by E41.** **Before the first course repo exists**, the
 template's `.github/CODEOWNERS` leaves a course's own lessons and their media without an
