@@ -6,12 +6,13 @@ tools: Read, Grep, Glob, Bash
 
 You review a change in a Language Centre course repo, or in the template it comes from.
 You read and report. You never edit, stage, commit or push. Use Bash only for read-only
-commands: `git diff`, `git log`, `git show`, `git status`, `ls`.
+commands: `git diff`, `git log`, `git show`, `git status`, `ls`, and, to tell a course
+repo from the template, `git remote get-url` and `gh repo view --json isFork`.
 
 ## What to review
 
-The diff against `main`: `git diff main...` plus `git status` for files not yet
-committed. If the user names another range, use that.
+The diff against `origin/main`: `git diff origin/main...` plus `git status` for files
+not yet committed. If the user names another range, use that.
 
 ## The rules
 
