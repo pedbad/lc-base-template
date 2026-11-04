@@ -46,7 +46,7 @@ new terminal, `nvm use` in the repo folder switches to it.
 The first time:
 
 ```bash
-git clone https://github.com/<organisation>/<course-repo>.git
+git clone https://github.com/lc-elearn/<course-repo>.git
 cd <course-repo>
 ```
 
@@ -58,7 +58,7 @@ git pull --ff-only
 git status          # "nothing to commit, working tree clean"
 ```
 
-**Name the release.** Write down the course repository (`<organisation>/<course-repo>`)
+**Name the release.** Write down the course repository (`lc-elearn/<course-repo>`)
 and the full commit you will publish, for step 9:
 
 ```bash
@@ -73,7 +73,7 @@ green checks ran on the pull request's branch; merging made a new commit on `mai
 CI tests again on its own run. Wait for that run to finish. With the GitHub CLI:
 
 ```bash
-gh api "repos/<organisation>/<course-repo>/commits/$(git rev-parse HEAD)/check-runs" \
+gh api "repos/lc-elearn/<course-repo>/commits/$(git rev-parse HEAD)/check-runs" \
   --jq '.check_runs[] | [.name, .conclusion] | @tsv'
 ```
 
@@ -82,7 +82,7 @@ Fewer than five lines, or any `failure`, `cancelled` or blank, and you do not de
 wait for the run, or tell the maintainer. (CI cancels a run on `main` when a newer push
 arrives, so an older commit can be left with `cancelled`: publish the newer one, once it
 is green.) Without the CLI: open
-`https://github.com/<organisation>/<course-repo>/commit/<release commit>`; the mark beside
+`https://github.com/lc-elearn/<course-repo>/commit/<release commit>`; the mark beside
 it must be a green tick, with all five checks passed.
 
 **If `main` moves on** before you build, build the commit you checked, not the newer one:
@@ -279,7 +279,7 @@ public, like the repo.
 
 | Field             | What to write                                                                |
 | ----------------- | ---------------------------------------------------------------------------- |
-| Course repository | `<organisation>/<course-repo>`                                               |
+| Course repository | `lc-elearn/<course-repo>`                                                    |
 | Release commit    | the full 40 characters from step 1                                           |
 | CI on that commit | green, five of five (step 1)                                                 |
 | Address           | the live address                                                             |
