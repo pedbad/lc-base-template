@@ -13,8 +13,10 @@ committed or pushed by accident.
 ## What renders without it
 
 Until you add the files, headings fall back to **Open Sans** (declared in
-`--font-display`, see `src/styles/palette.css`). `font-display: swap` means no
-invisible-text flash and no missing-glyph boxes — a fresh clone looks correct.
+`--font-display`, see `src/styles/palette.css`). Without the files the build adds no
+Feijoa `@font-face` at all, so there is no invisible-text flash and no missing-glyph boxes
+— a fresh clone looks correct. (Once the files are in, `font-display: swap` keeps text
+visible while they load.)
 
 ## To enable real Feijoa (you must hold a valid Cambridge/Klim licence)
 

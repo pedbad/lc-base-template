@@ -95,10 +95,15 @@ in the template for every course. The full rule:
    git push -u origin lo-03-food
    ```
 
-5. **Open a pull request into your course repo's `main`.** CI runs every check, browser
+   Leave out a media folder your lesson does not have: `git add` stops on a path that
+   does not exist.
+
+5. **Open a pull request into your course repo's `main`.** Check the base repository is
+   your course, not the template, which GitHub may suggest first. CI runs every check, browser
    tests included; the checklist in the pull request form is for changes to the
    machinery, so for a content-only pull request a green CI is enough, and it can be
-   merged. Merging does not publish it: the course goes live when it is next built and
+   merged. Until the maintainer tells you your course is ready for you to merge on your
+   own, merge your pull requests together with the maintainer. Merging does not publish it: the course goes live when it is next built and
    uploaded ([`DEPLOY.md`](DEPLOY.md)).
 
 ## When the template changes
@@ -111,7 +116,9 @@ button:
 1. The maintainer (or a colleague the maintainer asks) prepares the update branch and
    pushes it to your course repo.
 2. **You open the pull request:** on your course repo's page, GitHub offers **Compare &
-   pull request** for the new branch; its base is your course's `main`.
+   pull request** for the new branch. Its base must be your course's `main`: your
+   course is a fork, so GitHub may suggest the template (`lc-elearn/lc-base-template`)
+   as the base repository first; change it to your course.
 3. The checks run and the maintainer approves; **you** merge it with **Create a merge
    commit**. A conflict is resolved on the branch by whoever prepared it, the maintainer or a
    colleague the maintainer asks.
@@ -150,8 +157,8 @@ recipe and keeps to this guide's rules.
 
 | Say something like                         | Claude follows       | It                                                                           |
 | ------------------------------------------ | -------------------- | ---------------------------------------------------------------------------- |
-| "Add a lesson about food"                  | `add-lo`             | copies the example lesson, fills it in, checks it                            |
-| "Is this ready for a pull request?"        | `before-pr`          | runs every check and walks the pull request form                             |
+| "Add a lesson about food"                  | `add-lo`             | starts a branch, copies the example lesson, fills it in, checks it           |
+| "Is this ready for a pull request?"        | `before-pr`          | checks your branch, runs every check and walks the pull request form         |
 | "Build the course for the server"          | `build-for-upload`   | goes through [`DEPLOY.md`](DEPLOY.md) step by step                           |
 | "Is this Word document right for Basic 2?" | `culp-syllabus`      | compares it with the CULP syllabus and says what is above or below the level |
 | "I need a new kind of exercise"            | see the next section | asks the maintainer for it, rather than building it                          |

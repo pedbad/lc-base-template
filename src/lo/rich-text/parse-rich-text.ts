@@ -1,7 +1,7 @@
 /**
  * parse-rich-text.ts — one authored inline-HTML string → `RichTextNode[]`.
  *
- * A CLOSED allowlist with loud failure (spec R2): six known shapes are accepted and
+ * A CLOSED allowlist with loud failure (spec R2): eight known shapes are accepted and
  * everything else throws. That inversion is the whole safety argument — this parser
  * can never silently mis-render unknown input, because unknown input is an error, so
  * no sanitiser and no `dangerouslySetInnerHTML` are involved anywhere downstream.

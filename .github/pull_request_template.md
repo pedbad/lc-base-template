@@ -16,7 +16,7 @@
 - [ ] Build / tooling / CI / config
 - [ ] Docs only
 
-## Checks (all must pass locally before review)
+## Checks (all must pass locally before review; for a content-only pull request in a course repo, a green CI is enough)
 
 - [ ] `bun run test:coverage` — green, every file above its coverage bar
 - [ ] `bun run lint` · `bun run lint:css` — clean

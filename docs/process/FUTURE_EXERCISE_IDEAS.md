@@ -18,10 +18,10 @@ ranked below the top three, not blocked.
   and blank-grading. _Strongest Tier-A candidate — likely the 4th engine._
 - **Categorization / sort into buckets** — drag items into labeled groups
   (masc/fem, tense, semantic set). Skill: grammar/vocab. Sequence-family own-model.
-- **Image–word match** — match pictures ↔ words/phrases. Skill: vocab. Uses the
-  media pipeline; blank-grading like line-match.
-- **True/False/Not-Given** — statement judged against a text. A radio-quiz config
-  with exam-standard framing (Cambridge/IELTS).
+- ~~**Image–word match**~~ — **built:** `line-match` matches each picture to its word.
+- **True/False/Not-Given** — statement judged against a text. True/False is **built**
+  (the `reading` engine's `true-false` question); what is left is a third "Not given"
+  option, with exam-standard framing (Cambridge/IELTS).
 - **Odd-one-out** — pick the item that doesn't belong. A radio-quiz config.
 - **Paragraph cloze with word bank** — a drag-fill-gaps config at passage scale.
 

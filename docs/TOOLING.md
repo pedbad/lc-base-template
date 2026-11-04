@@ -66,7 +66,8 @@ to strongest:
    whose tests fail. Bypassable with `--no-verify`.
 4. **CI** — GitHub Actions (`.github/workflows/ci.yml`) re-runs `lint` + `lint:css` +
    `format:check` + `test:coverage` (the suite plus per-file coverage bars, see
-   "Coverage") + `build` on every PR to `main` and every push to `main`.
+   "Coverage") + `build`, then `test:e2e` in four browser jobs ("Browser tests"), on
+   every PR to `main` and every push to `main`.
    The unbypassable wall: a
    `--no-verify` commit still fails here before merge. (All eight guards run inside
    `test`: b–h as the `src/guards/` sweeps, a through its colocated schema tests.)
@@ -104,7 +105,7 @@ Layer 1 is the carrot; layers 2–4 are the stick.
      works. Since this template is handed to future LO authors, a working guard that
      travels with the repo matters.
 - **Config:** `vite.config.ts` → `test` block (node env — the suite renders via
-  `renderToStaticMarkup`, and the two storage tests stub `window`/`localStorage`
+  `renderToStaticMarkup`, and the tests that use `window`/`localStorage` stub them
   themselves, so no jsdom). **One exception, per file:**
   `SequenceAudioController.test.tsx` opts in to happy-dom (a dev dependency) with a
   `// @vitest-environment happy-dom` comment, because the bug it pins is an order of
@@ -235,7 +236,10 @@ is too low`, and the guard fails closed, so every Claude edit was blocked — an
   "Sound unavailable"; the palette preview recolours another page in both themes and
   Reset restores it; the flip cue retires after three turns, stays retired after a
   reload, comes back with flashcards' Clear saved progress, and fades under reduced
-  motion; a finished flashcards deck shows its done card and Reset does not move.
+  motion; a finished flashcards deck shows its done card and Reset does not move;
+  every debug page's nav lists all six and marks the current one (`debug-nav`); and the
+  code style, CULP syllabi and Claude skills pages load cleanly and pass axe in both
+  themes.
   The clip-plays test runs in all three browsers: Firefox on the Linux CI runner skipped
   it until the job got a sound device (below; the test's comment). Helpers:
   `e2e/debug/debug-support.ts`. Also (E12d): memory-match resized during "Show
@@ -893,7 +897,7 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 - **How it's proven now:** `tsc -b` checks _shapes_ and `vite build` _bundles_ but
   neither _executes_ the runtime `.parse()`. The test suite does — importing
   `courseConfig` in `course.config.test.ts` runs the parse, so a bad value in
-  `course.json` throws, naming the file and the field, and fails the suite (and therefore pre-commit + CI). The static pre-render
+  `course.json` throws, naming the file and the field, and fails the suite (and therefore the pre-push hook + CI). The static pre-render
   executes it at build time too, so a bad config cannot reach `dist/`.
 - **Field rules of note:** required identity fields use `.min(1)` (a blank `""` is
   rejected, not silently shipped); truly optional copy (`subheading`) uses
@@ -908,15 +912,18 @@ stays on).`eslint.config.js` is locked by the config-protection hook, so it was
 
 ### LO schema — folder-per-LO contract _(Step 13a, spec §6/§9/§15)_
 
-- **What:** `src/config/lo-schema.ts` — three Zod schemas describing a Learning
+- **What:** `src/config/lo-schema.ts` — the Zod schemas describing a Learning
   Object **folder** (`lo-config/lo-NN-slug/`): `LoManifestSchema` (the `lo.json`
-  manifest — `title`, optional `description`, plus two **ordered** ref lists
-  `blocks` + `exercises`), and `BlockConfigSchema` / `ExerciseConfigSchema` (each
-  part's `block.json` / `exercise.json` — a `type`, an optional Layer-2 `labels`
-  override, and a `content` payload).
-- **Why two ref lists, not one:** render-mirror naming is **section-scoped**
-  (decision B, §15) — content blocks form one `01-…` sequence, exercises restart
-  their own — so the manifest mirrors that with separate arrays.
+  manifest — `title`, optional `description`, and an **ordered** `sections[]`),
+  `LoSectionSchema` (one section, with its own ordered `blocks` and `exercises` ref
+  lists), and `BlockConfigSchema` / `ExerciseConfigSchema` (each part's `block.json` /
+  `exercise.json` — a `type`, an optional Layer-2 `labels` override, and a `content`
+  payload).
+- **Why two ref lists per section:** blocks and exercises are numbered separately and
+  **LO-wide per kind** (`blocks/` counts once across the lesson, `exercises/` once;
+  decision B, §15), so each section lists its blocks and its exercises apart, and the
+  order within a section comes from those arrays, not the numbers
+  ([`STRUCTURE.md`](../STRUCTURE.md)).
 - **`labels` reuse:** the part envelope imports `UiStringsOverrideSchema` from Step
   12, so a typo override key (`chekc`) is rejected here exactly as in ui-strings —
   one definition of the chrome contract, no drift between config layers.

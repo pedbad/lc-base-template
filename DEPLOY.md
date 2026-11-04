@@ -29,13 +29,13 @@ Every step, and the checks before it goes live, are below.
 
 ## What you need, once
 
-| Tool                | Check                       | Why                                                                 |
-| ------------------- | --------------------------- | ------------------------------------------------------------------- |
-| **Git**             | `git --version`             | to fetch the course from GitHub                                     |
-| **Bun** 1.3         | `bun --version` → `1.3.…`   | runs every command in this guide; CI uses the latest 1.3            |
-| **Node** 22         | `node --version` → `v22.…`  | the build tools run on Node; `.nvmrc` pins 22, and CI uses the same |
-| **Feijoa** fonts    | the three files below       | the Cambridge heading font; licensed, so never in the repo          |
-| The **web address** | ask whoever runs the server | which server folder to copy into (step 4)                           |
+| Tool                | Check                                      | Why                                                                 |
+| ------------------- | ------------------------------------------ | ------------------------------------------------------------------- |
+| **Git**             | `git --version`                            | to fetch the course from GitHub                                     |
+| **Bun** 1.3         | `bun --version` → `1.3.…`                  | runs every command in this guide; CI uses the latest 1.3            |
+| **Node** 22         | `node --version` → `v22.…`, 22.12 or later | the build tools run on Node; `.nvmrc` pins 22, and CI uses the same |
+| **Feijoa** fonts    | the three files below                      | the Cambridge heading font; licensed, so never in the repo          |
+| The **web address** | ask whoever runs the server                | which server folder to copy into (step 4)                           |
 
 Install Bun from [bun.sh](https://bun.sh). For Node, [nvm](https://github.com/nvm-sh/nvm)
 is easiest: in the repo folder, `nvm install` reads `.nvmrc` and installs 22. In each
@@ -250,7 +250,7 @@ Replacing an earlier version:
    They do no harm, but they pile up.
 
 What the server needs: to serve plain files, nothing more. No rewrite rules, no server
-code. It must send fonts (`.otf`), pictures (`.svg`, `.png`, `.jpg`, `.webp`), audio
+code. It must send fonts (`.otf`, `.woff2`), pictures (`.svg`, `.png`, `.jpg`, `.webp`, `.avif`), audio
 (`.m4a`, `.wav`, `.mp3`) and video (`.mp4`) with their proper types, and allow partial
 (range) requests for audio and video, which standard web servers do by default.
 
@@ -289,14 +289,14 @@ public, like the repo.
 
 ## When something is wrong
 
-| What you see                                      | Most likely cause                                                     | Fix                                                        |
-| ------------------------------------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------- |
-| No styling, broken pictures, no sound             | address missing its final `/`, or a `BASE_URL` build copied elsewhere | step 8's slash check; or build without `BASE_URL` (step 4) |
-| Headings in a plain font                          | fonts missing or misnamed when you built                              | step 3, build again; check 1 of step 6 must print above 0  |
-| Fonts fine in preview, `404` or blocked when live | the server does not serve `.otf` files                                | ask whoever runs the server to allow `font/otf`            |
-| Audio or video plays in preview, not live         | the server's media types or range requests                            | ask whoever runs the server (step 7)                       |
-| A lesson page is "not found"                      | not every file was copied                                             | copy the whole of `dist/` again                            |
-| The old version still shows                       | your browser's saved copy                                             | Cmd+Shift+R / Ctrl+F5, or a private window                 |
+| What you see                                      | Most likely cause                                                     | Fix                                                              |
+| ------------------------------------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| No styling, broken pictures, no sound             | address missing its final `/`, or a `BASE_URL` build copied elsewhere | step 8's slash check; or build without `BASE_URL` (step 4)       |
+| Headings in a plain font                          | fonts missing or misnamed when you built                              | step 3, build again; check 1 of step 6 must print above 0        |
+| Fonts fine in preview, `404` or blocked when live | the server does not serve `.otf` or `.woff2` files                    | ask whoever runs the server to allow `font/otf` and `font/woff2` |
+| Audio or video plays in preview, not live         | the server's media types or range requests                            | ask whoever runs the server (step 7)                             |
+| A lesson page is "not found"                      | not every file was copied                                             | copy the whole of `dist/` again                                  |
+| The old version still shows                       | your browser's saved copy                                             | Cmd+Shift+R / Ctrl+F5, or a private window                       |
 
 **Going back:** put the copy you kept in step 7 back in place. It is the quickest route,
 and exactly what was live before. Or rebuild the previous release from its step 9 record:

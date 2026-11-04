@@ -248,7 +248,8 @@ lo-config/lo-01-salutations/
   page of pre-opened exercises is a wall of controls.
 - `content.instructions` → the ONE shared `<div class="instructions">` slot (§3),
   accordion-level here since it sits in this block's own file, not the manifest.
-- `content.text` → one `<p>` PER ARRAY ENTRY, the whole block wrapped
+- `content.text` → one `<p>` PER ARRAY ENTRY (or, since rich-text §14, a list, a table or
+  an audio player for an entry written as one), the whole block wrapped
   `lang={TARGET_LANG}` (§3) for `grammar` but NOT for `prose` (an introduction is UI
   language). An array, not one string the renderer splits: sentence-splitting in code
   guesses wrong on abbreviations and quotations, and the author knows where the breaks
@@ -361,11 +362,13 @@ content genuinely needs internal sub-structure).**
   section can hold many exercises/grammar items) because it pollutes
   screen-reader landmark navigation.
 - Animation: progressive enhancement over native `<details>`. Baseline (no JS):
-  instant native open/close — never broken, never inaccessible. With JS: the
-  panel content wrapper (`.details-content`) uses
-  `display: grid; grid-template-rows: 0fr` → `1fr` with a CSS transition,
-  driven by intercepting the `<summary>` click — smooth animation without
-  giving up no-JS resilience.
+  instant native open/close — never broken, never inaccessible; the panel content
+  wrapper (`.details-content`) is a one-row grid whose row goes `0fr` → `1fr`, with
+  **no** transition. With JS: intercepting the `<summary>` click, `LoAccordion`
+  animates the body's height in pixels through the Web Animations API, in both
+  directions, honouring reduced motion. (It shipped as a CSS `grid-template-rows`
+  transition; in Chrome 148 that never fired `transitionend`, so a close never
+  finished: see `LoAccordion.tsx`.)
 - One accordion implementation only — no second, similar-looking
   component with weaker semantics sitting unused in the codebase (french-lo-1
   has exactly that trap).

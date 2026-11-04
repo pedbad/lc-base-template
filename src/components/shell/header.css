@@ -10,9 +10,8 @@
  *
  * Plain CSS + semantic tokens, everything inside @layer components (guard g), no raw
  * hex or raw px outside guard f's allowlist. `--radius-sm` and `--font-heading` are
- * NOT used: they live in index.css's `@theme inline`, which inlines them into
- * utilities and never emits them as runtime variables, so `var(--radius-sm)` here
- * would resolve to nothing. The expressions they stand for are written out instead.
+ * NOT used: they are `@theme inline` mappings (app.css), so the header writes out the
+ * expressions they stand for and never depends on the build emitting them.
  *
  * SELECTORS ARE FLAT, one class each, as in footer.css — a utility can still override.
  *

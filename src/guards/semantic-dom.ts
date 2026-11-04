@@ -75,8 +75,8 @@
  *     of §17 needs. axe's WCAG rule coverage stays available as a separate later
  *     decision, not a side effect of this one.
  *   - NOT `html-validate` either, and this reverses the survey's first answer. There is
- *     ZERO `dangerouslySetInnerHTML` in the repo — all four grep hits are comments saying
- *     so, and `RichText.tsx` parses authored rich text into real React nodes — so every
+ *     ZERO `dangerouslySetInnerHTML` in the course (only the opt-in debug pages use it,
+ *     for the repo's own markdown), and `RichText.tsx` parses authored rich text into real React nodes — so every
  *     byte of markup is React-emitted, and React cannot produce the malformed-markup
  *     class a W3C validator exists to catch: no unclosed tags, no invalid nesting, no
  *     unescaped text. The "w3c" half of "w3c + a11y" is guaranteed by construction. What

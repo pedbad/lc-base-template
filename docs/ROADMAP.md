@@ -22,7 +22,8 @@ built today would show its text without a direction: punctuation, digits and Eng
 words inside a sentence land on the wrong side, and the default fonts have no Arabic
 script.
 
-**Today.** No `dir` attribute anywhere in `src/`, the HTML pages or the prerender.
+**Today.** No `dir` attribute in the course's own code, the HTML pages or the prerender
+(only the vendored shadcn sidebar, unused on course pages, passes one through).
 Engines already mark the course language: they wrap learner content in
 `lang={TARGET_LANG}` ([`src/lib/lang.ts`](../src/lib/lang.ts)). That is the hook the
 direction hangs on. The CULP syllabi for Arabic, Persian, Urdu and Hebrew are already
