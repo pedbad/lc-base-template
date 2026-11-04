@@ -152,13 +152,14 @@ left, in order:
 
 **Update, 2026-11-04 (MacBook Pro):** `pedbad-uol` now has a passkey
 (`github-pedbad-uol`, added 2026-11-04, synced through iCloud Keychain), tested by
-signing out and back in with it, so both Owner accounts have one. "Security keys" (a
+signing out and back in with it, so both Owner accounts have one, and its recovery codes
+are saved in the password manager, apart from `pedbad`'s: ORGANIZATION step 1's
+preparation is done for both accounts. "Security keys" (a
 second factor) was left unset on purpose: the passkey covers it, and a hardware key stays
 an optional extra (ORGANIZATION step 1). PR 63 merged (`16c565b`, push CI green). All 16
 merged branches were deleted from GitHub after checking each PR's merge commit is on
 `main`; only `main` remains, and each PR page can restore its branch. **Still to do
-before the day:** confirm `pedbad-uol`'s recovery codes are saved in the password manager,
-apart from `pedbad`'s (not yet confirmed); collect each author's GitHub username (with
+before the day:** collect each author's GitHub username (with
 their Cambridge email verified); ask whether anyone uses Windows; choose the day. Nothing
 exists on GitHub yet; every rules-pilot case is pending rollout. The 2026-11-03 note below
 is kept as it was written.
