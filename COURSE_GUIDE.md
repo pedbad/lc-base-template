@@ -1,7 +1,7 @@
 # COURSE_GUIDE.md — writing a course
 
 **For a colleague writing a course in its own repo** (one repo per course, such as
-`lc-french`). You write lessons; the maintainer looks after the machinery, and the
+`lc-spanish-essentials`). You write lessons; the maintainer looks after the machinery, and the
 course is published by following [`DEPLOY.md`](DEPLOY.md).
 If you are changing the template itself, this is the wrong page: see
 [`CONTRIBUTING.md`](CONTRIBUTING.md).

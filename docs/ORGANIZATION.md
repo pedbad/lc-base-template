@@ -62,8 +62,11 @@ branch rules on every course repo, and nobody else can switch them off.
     comment per release; never a password, key or sensitive server path
     ([`DEPLOY.md`](../DEPLOY.md), step 9).
   - **Course settings an author can edit** (`course.json`): done, E45 (PR 51).
-- **One repo per course** (`lc-french`, `lc-spanish`, `lc-english`, `lc-portuguese`), never one branch per
-  course in the template. Language branches would never merge back and would drift.
+- **One repo per course** (planned: `lc-spanish-essentials`, `lc-french-academic-reading`,
+  `lc-german-basic`), never one branch per course in the template. Language branches would
+  never merge back and would drift. **Names:** `lc-<language>` for a language's one course,
+  `lc-<language>-<course>` when it has, or may have, several; lower case with hyphens. The
+  course's team is the same name without `lc-` (step 7).
 - **Course content never enters the template.** Only engine changes go to the template, by
   pull request. The rule for what counts as engine is in
   [`CONTRIBUTING.md` → "Adding content vs. changing the system"](../CONTRIBUTING.md).
@@ -261,7 +264,7 @@ back each repo's effective rules** (item 5 below): identical intended settings a
 evidence of identical configuration. Authors do not merge independently until the
 required cases of "The rules pilot" have passed.
 
-On the template: **Fork** → owner **`lc-elearn`** → name **`lc-french`** (the course's
+On the template: **Fork** → owner **`lc-elearn`** → name **`lc-spanish-essentials`** (the course's
 name, not `lc-base-template`) → create.
 
 GitHub allows forking into the same organisation as the parent (since June 2022) and
@@ -356,14 +359,14 @@ Right after creating it, in the new course repo:
    they are not covered by that statement, so nothing here is assumed for one.
 
 **Fallback — a linked copy instead of a fork** (only if a second fork into `lc-elearn`
-is refused). Create an **empty** repo `lc-elearn/lc-french`
+is refused). Create an **empty** repo `lc-elearn/lc-french-academic-reading`
 on GitHub, then:
 
 ```bash
-git clone https://github.com/lc-elearn/lc-base-template.git lc-french
-cd lc-french
+git clone https://github.com/lc-elearn/lc-base-template.git lc-french-academic-reading
+cd lc-french-academic-reading
 git remote rename origin upstream
-git remote add origin https://github.com/lc-elearn/lc-french.git
+git remote add origin https://github.com/lc-elearn/lc-french-academic-reading.git
 git push -u origin main
 ```
 
@@ -417,12 +420,11 @@ maintainer their GitHub username.
 All the courses can be set up on one day (step 6 for each repo first). Then, for each
 course:
 
-| Course repo     | Team         | Members to start      |
-| --------------- | ------------ | --------------------- |
-| `lc-french`     | `french`     | none yet (see below)  |
-| `lc-spanish`    | `spanish`    | the Spanish author    |
-| `lc-english`    | `english`    | the English author    |
-| `lc-portuguese` | `portuguese` | the Portuguese author |
+| Course repo                  | Team                      | Members to start |
+| ---------------------------- | ------------------------- | ---------------- |
+| `lc-spanish-essentials`      | `spanish-essentials`      | its author       |
+| `lc-french-academic-reading` | `french-academic-reading` | its author       |
+| `lc-german-basic`            | `german-basic`            | its author       |
 
 Every course belongs to the **Language Centre, University of Cambridge**, the copyright
 holder in [`LICENSE`](../LICENSE) and every course's footer, whoever writes it. Where no
@@ -431,24 +433,24 @@ members, and add people when they are known. Courses will often have several aut
 
 **On the website**, logged in as `pedbad`:
 
-1. **Create the team:** lc-elearn → **Teams → New team** → name `spanish`, visibility
+1. **Create the team:** lc-elearn → **Teams → New team** → name `spanish-essentials`, visibility
    **Visible** → **Create team**. GitHub may add you as the team's maintainer: harmless,
    or remove yourself under the team's **Members**.
 2. **Give it its course, and only that:** the team → **Repositories → Add repository** →
-   `lc-spanish` → role **Write**.
+   `lc-spanish-essentials` → role **Write**.
 3. **Invite the colleague into the team:** lc-elearn → **People → Invite member** →
    their GitHub username (or their Cambridge email) → role **Member** → under teams,
-   tick `spanish` → **Send invitation**.
+   tick `spanish-essentials` → **Send invitation**.
 4. **They accept** the invitation from GitHub's email, then follow step 8.
 
 **Or from the terminal** (after `gh auth refresh -h github.com -s admin:org` once):
 
 ```bash
-gh api -X POST orgs/lc-elearn/teams -f name=spanish -f privacy=closed
-gh api -X PUT orgs/lc-elearn/teams/spanish/repos/lc-elearn/lc-spanish -f permission=push
+gh api -X POST orgs/lc-elearn/teams -f name=spanish-essentials -f privacy=closed
+gh api -X PUT orgs/lc-elearn/teams/spanish-essentials/repos/lc-elearn/lc-spanish-essentials -f permission=push
 gh api -X POST orgs/lc-elearn/invitations -f role=direct_member \
   -F invitee_id="$(gh api users/<their-username> --jq .id)" \
-  -F "team_ids[]=$(gh api orgs/lc-elearn/teams/spanish --jq .id)"
+  -F "team_ids[]=$(gh api orgs/lc-elearn/teams/spanish-essentials --jq .id)"
 ```
 
 (`push` is GitHub's name for Write; `direct_member` for Member.)
@@ -456,12 +458,12 @@ gh api -X POST orgs/lc-elearn/invitations -f role=direct_member \
 **Read it back**, once they have accepted:
 
 ```bash
-gh api orgs/lc-elearn/teams/spanish/members --jq '.[].login'
-gh api repos/lc-elearn/lc-spanish/teams --jq '.[] | {name, permission}'
+gh api orgs/lc-elearn/teams/spanish-essentials/members --jq '.[].login'
+gh api repos/lc-elearn/lc-spanish-essentials/teams --jq '.[] | {name, permission}'
 gh api orgs/lc-elearn/invitations --jq '.[] | {login, email, role}'   # still pending
 ```
 
-The team lists the colleague; the repo lists `spanish` with `push`, and no other team.
+The team lists the colleague; the repo lists `spanish-essentials` with `push`, and no other team.
 **Later:** a second author → step 3 with the same team; a colleague helping on another
 course → add them to that course's team as well (**Teams → that team → Members → Add a
 member**), and remove them when done.
@@ -628,7 +630,7 @@ If R9, R10 or R11 fails, stop: the rules do not protect `main` as step 6 claims.
 M-opened PR can merge, the bypass lists are not empty: stop and fix them. A bypass (path 3)
 is not part of the selected policy; if it is ever considered, test it separately, never
 inside the normal procedure. The
-French content pilot ([`process/FRENCH_PILOT_CHECKLIST.md`](process/FRENCH_PILOT_CHECKLIST.md))
+course content pilot ([`process/COURSE_PILOT_CHECKLIST.md`](process/COURSE_PILOT_CHECKLIST.md))
 runs after this one.
 
 ## What is proved, and how
