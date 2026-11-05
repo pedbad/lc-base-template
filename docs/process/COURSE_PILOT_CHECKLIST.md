@@ -1,9 +1,9 @@
-# French course pilot — checklist
+# Course content pilot — checklist
 
 **Prepared 2026-10-23 (TODO §E34). Not run yet.** The automated checks prove the code;
-this proves the people and the route: that a colleague can build a French lesson from
+this proves the people and the route: that a colleague can build a lesson from
 the guide alone, read the build's errors, and get it published. Run it once, on
-`lc-french` once it has a named author (its team starts empty until then), after the
+the first course repo with its author (for example `lc-spanish-essentials`), after the
 organisation move
 ([`docs/ORGANIZATION.md`](../ORGANIZATION.md) steps 1–8) and after that file's rules
 pilot, which proves the repository's merge rules case by case. Tick each step only when its
@@ -29,8 +29,8 @@ publishes (P).
 
 ## 3. A breaks an answer on purpose, and reads the error
 
-- [ ] A removes the `*` from one blank, so `[*suis|es|est]` becomes `[suis|es|est]`, and
-      runs `bun run build`.
+- [ ] A removes the `*` from one blank (for example `[*suis|es|est]` becomes
+      `[suis|es|est]`), and runs `bun run build`.
 - **Expected:** the build stops before writing any page. Its message names the file, the
   blank and the sentence (`… has no correct option … → at content.items[0].text`). A can
   say, without M, what is wrong and which line to change, using
@@ -49,7 +49,7 @@ publishes (P).
 
 ## 5. A pushes the branch and opens a pull request
 
-- [ ] `git push -u origin <branch>`, then a pull request into `lc-french`'s `main`.
+- [ ] `git push -u origin <branch>`, then a pull request into the course repo's `main`.
 - **Expected:** the push check passes; the pull request shows the five checks running.
 
 ## 6. The checks and review complete

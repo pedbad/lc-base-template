@@ -149,8 +149,8 @@ left, in order:
     the template is `lc-elearn/lc-base-template` (moved from `d8008f8`), its protection
     read back unchanged; both Macs' clones point at the new address (step 3; the MacBook
     Pro switched 2026-11-04 evening). **Still to
-    do:** all course repos on one day, one team per course (where no author is named, the
-    team starts empty; step 7), every repo's rules read back, and rules-pilot cases R1–R12
+    do:** all course repos on one day, one team per course (planned: `lc-spanish-essentials`,
+    `lc-french-academic-reading`, `lc-german-basic`, each with its author; step 7), every repo's rules read back, and rules-pilot cases R1–R12
     on one course with a named author before authors merge independently (R13 before
     updates, R16 before deploying). **Course repos' starting commit:** whatever template
     `main` is on that day, once that commit's own push CI is green.
@@ -158,6 +158,21 @@ left, in order:
     course repo (`pedbad-uol/lc-base-template` is 0 commits ahead and 218 behind, so
     deleting it loses nothing). The authors' GitHub usernames are collected, kept outside
     this repo; each still confirms their Cambridge email is verified.
+
+**Update, 2026-11-05 (work iMac): the planned courses.** Three course repos are planned:
+`lc-spanish-essentials`, `lc-french-academic-reading` and `lc-german-basic`, each with a
+named author (who writes which is kept outside this repo); more will follow. `lc-french`
+is no longer planned, and `lc-spanish`, `lc-english` and `lc-portuguese` were only
+examples. **Naming rule:** `lc-<language>` for a language's one course,
+`lc-<language>-<course>` when it has, or may have, several; the team is the same name
+without `lc-` (ORGANIZATION "Decisions already made" and step 7). The French pilot
+checklist is now [`COURSE_PILOT_CHECKLIST.md`](COURSE_PILOT_CHECKLIST.md), for whichever
+course comes first. Nothing created on GitHub yet. **Guides:** the 2026-11-04 split is
+done. The OneDrive folder "Projects - LANGCEN_Language Centre - Projects/github/" holds the
+Maintainer guide, the Mac GitHub guide, the two Windows guides and the people-and-courses
+register (`LC-eLearning-People-and-Courses.md`, which replaced `github-usernames.txt`);
+the old `projects/github-lc-elearn-guide/` folder is gone. PR 71 (`4209795`) recorded the
+MacBook Pro switch.
 
 **Update, 2026-11-04 evening (MacBook Pro): MacBook Pro switched.** ORGANIZATION step 3
 done on this Mac, one step at a time: the clone at `~/Sites/lc-base-template` was clean
@@ -2524,8 +2539,8 @@ rather than the Language Centre's course factory; the maintainer took three smal
   above, all fixed here. Browser
   coverage: the debug suite (sequence scrub, showcase audio) passes in Chromium and
   WebKit; Firefox runs in CI. **Not shown yet:** a colleague doing this from the guide
-  alone. [`FRENCH_PILOT_CHECKLIST.md`](FRENCH_PILOT_CHECKLIST.md) is prepared for the
-  first course, not run.
+  alone. [`COURSE_PILOT_CHECKLIST.md`](COURSE_PILOT_CHECKLIST.md) (then named
+  `FRENCH_PILOT_CHECKLIST.md`) is prepared for the first course, not run.
 - **E35 — a fifth review: answers checked as written, and a first play that could not be
   cancelled. DONE 2026-10-23** (maintainer's request, branch
   `fix/e35-decoded-answers-and-audio-cancel` from `main` at `6c084de`, the commit the

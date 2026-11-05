@@ -11,7 +11,7 @@
 
 ## 1. Why
 
-Courses copied from this template (`lc-french`, `lc-italian`, `lc-german`, …) are built
+Courses copied from this template (`lc-spanish-essentials`, `lc-german-basic`, …) are built
 by developers, not linguists. They turn a teacher's Word document into lessons, and need
 to know what the matching CULP level covers and whether the material sits at that level:
 "is this too basic, or too advanced, for French Basic 2?". The Language Centre's CULP
