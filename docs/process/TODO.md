@@ -148,9 +148,10 @@ left, in order:
     2026-11-04** (work iMac): `lc-elearn` exists with two Owners (`pedbad`, `pedbad-uol`),
     the template is `lc-elearn/lc-base-template` (moved from `d8008f8`), its protection
     read back unchanged; both Macs' clones point at the new address (step 3; the MacBook
-    Pro switched 2026-11-04 evening). **Still to
-    do:** all course repos on one day, one team per course (planned: `lc-spanish-essentials`,
-    `lc-french-academic-reading`, `lc-german-basic`, each with its author; step 7), every repo's rules read back, and rules-pilot cases R1–R12
+    Pro switched 2026-11-04 evening). **Steps 6–7 DONE 2026-11-05**: `lc-spanish-essentials`, `lc-french-academic-reading` and
+    `lc-german-basic` from `c2e6cbe`, their rules read back identical, one team each with Write
+    on its own repo, the authors invited. **Still to do:** the authors accept, and rules-pilot
+    cases R1–R12
     on one course with a named author before authors merge independently (R13 before
     updates, R16 before deploying). **Course repos' starting commit:** whatever template
     `main` is on that day, once that commit's own push CI is green.
@@ -158,6 +159,23 @@ left, in order:
     course repo (`pedbad-uol/lc-base-template` is 0 commits ahead and 218 behind, so
     deleting it loses nothing). The authors' GitHub usernames are collected, kept outside
     this repo; each still confirms their Cambridge email is verified.
+
+**Update, 2026-11-05 afternoon (work iMac): course day, ORGANIZATION steps 6–7.** One step
+at a time, each change approved before it ran and read back after. Starting commit `c2e6cbe`
+(PR 72), its push CI (run 42010809276) green on all five jobs. Created in `lc-elearn`:
+`lc-spanish-essentials`, `lc-french-academic-reading` and `lc-german-basic`, true forks of the
+template (several forks into one organisation work, so no fallback); merge commits only,
+head branches deleted, not a template, Actions enabled on the website (there is no API for
+the fork button); rulesets A and B with empty bypass lists. Step 6's read-back is identical
+across the three repos, `CODEOWNERS` errors none, the template's own settings unchanged;
+GitHub's two added ruleset defaults are recorded in step 6. Teams `spanish-essentials`,
+`french-academic-reading` and `german-basic`, each with Write on its own repo only; each
+author invited as Member into their team (pending acceptance; who is in which team is kept
+outside this repo). A colleague's old personal fork of the template was deleted by its owner.
+The author guides gained a diagram of the checks, on the computer and then in CI, before the
+checks step. ORGANIZATION step 6 no longer counts four courses. **Next:** the authors accept;
+read back members, repo teams and invitations; remove `pedbad` from the three teams; the
+author handoff; rules-pilot R1–R12 on one course before anyone merges alone.
 
 **Update, 2026-11-05 (work iMac): the planned courses.** Three course repos are planned:
 `lc-spanish-essentials`, `lc-french-academic-reading` and `lc-german-basic`, each with a
@@ -168,9 +186,10 @@ examples. **Naming rule:** `lc-<language>` for a language's one course,
 without `lc-` (ORGANIZATION "Decisions already made" and step 7). The French pilot
 checklist is now [`COURSE_PILOT_CHECKLIST.md`](COURSE_PILOT_CHECKLIST.md), for whichever
 course comes first. Nothing created on GitHub yet. **Guides:** the 2026-11-04 split is
-done. The OneDrive folder "Projects - LANGCEN_Language Centre - Projects/github/" holds the
-Maintainer guide, the Mac GitHub guide, the two Windows guides and the people-and-courses
-register (`LC-eLearning-People-and-Courses.md`, which replaced `github-usernames.txt`);
+done. The shared OneDrive folder "Projects - LANGCEN_Language Centre - Projects/github/" holds the
+author guides (the Mac GitHub guide and the two Windows guides) and the people-and-courses register (`LC-eLearning-People-and-Courses.md`, which replaced `github-usernames.txt`); the
+Maintainer guide is kept privately by the maintainer, not in the shared folder (moved
+2026-11-05);
 the old `projects/github-lc-elearn-guide/` folder is gone. PR 71 (`4209795`) recorded the
 MacBook Pro switch.
 
@@ -199,8 +218,8 @@ merged as `c0855fe`, its push CI run 41823158944 green). **Tonight, MacBook Pro:
 (the `origin` URL and `gh` default); never create a repo named `lc-base-template` under
 `pedbad`. **Found, not in any doc before:** the template has two forks,
 `pedbad-uol/lc-base-template` (created 2026-10-12, probably a test: keep or delete after
-checking it holds nothing needed) and `Bagnall/lc-acwriting` (created 2026-09-25, last
-pushed 2026-10-21: does that course belong in `lc-elearn`?). **Still to do before the
+checking it holds nothing needed) and a colleague's personal fork (created 2026-09-25, last
+pushed 2026-10-21: does that course belong in `lc-elearn`?; its owner deleted it 2026-11-05). **Still to do before the
 course day:** the authors' GitHub usernames (the request went out 2026-11-04), whether
 anyone uses Windows, and the day itself. Tell the colleague who deploys from the template's ZIP the new
 address (the old ZIP link redirects, but only while no `pedbad/lc-base-template` exists),

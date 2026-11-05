@@ -5,8 +5,9 @@ own repo.** Steps 1–5 (the organisation and the template) are done; steps 6–
 repos and the colleagues) follow, top to bottom, on the course day.
 
 > Status: 🟡 **In progress — steps 1–5 done 2026-11-04** (work iMac, starting commit
-> `d8008f8`). Steps 6–7 wait for each author's GitHub username (with their Cambridge email
-> verified); all course repos are then set up on one day.
+> `d8008f8`); **steps 6–7 done 2026-11-05** (work iMac, course repos from `c2e6cbe`): three
+> course repos, their rules read back, one team each, the authors invited. Next: the
+> authors accept, then the rules pilot.
 >
 > **Decided 2026-10-12:** the template stayed under `pedbad` until the remaining template
 > work was finished. Tick to ✅ once the first course repo is working.
@@ -163,8 +164,9 @@ take over the old address and break the redirect.
 run 41748325782, green on all five jobs; no open PRs). Read back: `lc-elearn/lc-base-template`
 is public, a template, not a fork, `main` at the same SHA with all 765 commits, Actions
 enabled; the old address answers `301` to the new one (web and API). The template's two
-existing forks, `pedbad-uol/lc-base-template` and `Bagnall/lc-acwriting`, now hang off the
-new address; neither is a course repo of this plan (TODO).
+existing forks, `pedbad-uol/lc-base-template` and a colleague's personal fork, now hang off the
+new address; neither is a course repo of this plan (TODO). The colleague deleted theirs on
+2026-11-05.
 
 ## Step 3 — Point each local clone at the new address
 
@@ -258,7 +260,7 @@ loose in the three content folders. Whole folders are never exempt: the full tab
 
 ## Step 6 — Create a course repo (once per course)
 
-All four course repos (French, Spanish, English, Portuguese) can be created on the same
+All the course repos can be created on the same
 day (decided 2026-11-02): repeat this step for each, then step 7 for each team. **Read
 back each repo's effective rules** (item 5 below): identical intended settings are not
 evidence of identical configuration. Authors do not merge independently until the
@@ -275,7 +277,8 @@ into `lc-elearn`, use the fallback below for that course.
 Right after creating it, in the new course repo:
 
 1. **Actions tab → enable workflows.** Forks start with Actions off; until this is done,
-   CI never runs on the course.
+   CI never runs on the course. GitHub's API has no call for this button (a fork's workflows
+   stay unregistered until it is clicked; seen 2026-11-05), so it is done on the website.
 2. **Settings → General:** untick "Template repository" if it was carried over — a course
    is not a template.
 3. **Two branch rulesets on `main`**, each from **Settings → Rules → Rulesets → New
@@ -357,6 +360,26 @@ Right after creating it, in the new course repo:
    (checked 2026-11-02). The read-back and the pilot verify our configuration, which
    availability does not. Private repositories are a different case: on GitHub Free
    they are not covered by that statement, so nothing here is assumed for one.
+
+**Done 2026-11-05** (work iMac, as `pedbad`), from template `main` at `c2e6cbe` (its push
+CI, run 42010809276, green on all five jobs): `lc-spanish-essentials`,
+`lc-french-academic-reading` and `lc-german-basic`, each forked into `lc-elearn` through the
+API (`POST repos/lc-elearn/lc-base-template/forks` with `organization`, `name` and
+`default_branch_only`). Several forks into one organisation were accepted, so the fallback
+below was not needed. Each fork arrived with "Template repository" ticked and all three
+merge methods on; item 4's `gh repo edit`, plus `--template=false`, set items 2 and 4.
+Rulesets A (`A: main rules`) and B (`B: code owners`) were created from JSON with
+`POST …/rulesets`: enforcement active, target `~DEFAULT_BRANCH`, bypass lists empty.
+Item 5's read-back, run on each repo and compared with the IDs removed, is **identical across
+the three**: merge commits only, head branches deleted, not a template, `ci.yml` active, both
+rulesets active with empty bypass lists, the effective rules on `main` as expected and no
+`required_linear_history`; GitHub's `CODEOWNERS` errors API reports none. **GitHub added two
+parameters** to every `pull_request` rule that the JSON did not set:
+`allowed_merge_methods` with all three methods (harmless: the repo setting already allows
+merge commits only) and `require_extra_approval_for_unattributed_changes: true` (not found in
+GitHub's public documentation on 2026-11-05). Both are left as GitHub set them, alike on all
+three repos; the rules pilot shows whether the second changes anything (the first suspect if
+R1 asks for a review). The template's own settings and protection read back unchanged.
 
 **Fallback — a linked copy instead of a fork** (only if a second fork into `lc-elearn`
 is refused). Create an **empty** repo `lc-elearn/lc-french-academic-reading`
@@ -467,6 +490,16 @@ The team lists the colleague; the repo lists `spanish-essentials` with `push`, a
 **Later:** a second author → step 3 with the same team; a colleague helping on another
 course → add them to that course's team as well (**Teams → that team → Members → Add a
 member**), and remove them when done.
+
+**Done 2026-11-05** (after `gh auth refresh -h github.com -s admin:org`): teams
+`spanish-essentials`, `french-academic-reading` and `german-basic`, Visible, each with
+**Write** (`push`; not maintain, not admin) on its own repo and no other, and each repo lists
+only its own team. GitHub added `pedbad` to each team as maintainer: harmless, and to be
+removed once the authors are in, so that each team holds its author alone. Each author's
+Cambridge email was confirmed verified, then each was invited as **Member** into their
+course's team, one invitation at a time. Read back: three pending invitations, role
+`direct_member`, one team each. **Next:** each author accepts; then read back the team
+members, the repo teams and the pending invitations (none left).
 
 ## Step 8 — The colleague's setup
 
@@ -597,7 +630,8 @@ own account (Write on the course; never the maintainer's account, whose Owner ro
 changes the result), **M** is `pedbad` (Owner), **P** is whoever publishes. Record each
 case's evidence (the PR's address, a screenshot of its merge box, the terminal output)
 in TODO.md under E2, and mark it **passed** only when the expected result was seen.
-Until then every case is **pending rollout**: no course repo exists yet.
+Until then every case is **pending rollout**: the course repos exist (2026-11-05), but no
+case has run yet.
 
 | #   | Case                               | Who        | Change                                                             | Expected                                                                                                                                                                                                                                     | Evidence                                                               | Status          |
 | --- | ---------------------------------- | ---------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | --------------- |
@@ -639,7 +673,7 @@ runs after this one.
 | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Repository files** (implemented)   | `CODEOWNERS` (E41, and `course.json` ownerless since E45), the CI workflow, these docs. `src/docs/codeowners.test.ts` proves the file matches the path policy; GitHub's `CODEOWNERS` errors API reports none. Neither proves GitHub **enforces** a merge rule: that needs the settings below and the pilot.                                                                                                                                          |
 | **GitHub settings, inspected**       | the template only, read with `gh api`: classic protection on `main` (pull request, 0 approvals, the five checks up to date, admins included, linear history, no force push or deletion; no code-owner review or stale dismissal, not needed solo); merge commit, squash and rebase all allowed; no environments, deployments, Pages site or webhooks. GitHub Apps installed on the account were not listed (the API needs an app token): unverified. |
-| **GitHub settings, proposed**        | step 6's rulesets A and B and merge settings for each course repo. Nothing is set: no course repo exists.                                                                                                                                                                                                                                                                                                                                            |
+| **GitHub settings, course repos**    | step 6's rulesets A and B and merge settings, set on the three course repos on 2026-11-05 and read back identical (step 6). A read-back proves configuration, not behaviour.                                                                                                                                                                                                                                                                         |
 | **Behaviour shown by pull requests** | on the template, a direct push to `main` was refused (2026-10-21, `BRANCH_PROTECTION.md`). On a course: nothing yet; every rules-pilot case is pending rollout.                                                                                                                                                                                                                                                                                      |
 
 ---
