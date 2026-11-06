@@ -8,8 +8,8 @@ repos and the colleagues) follow, top to bottom, on the course day.
 > `d8008f8`); **steps 6–7 done 2026-11-05** (work iMac, course repos from `c2e6cbe`): three
 > course repos, their rules read back, one team each, the authors invited; **2026-11-06**: the authors accepted, each team holds its author alone,
 > and the update to template `7bfb378` was pushed to all three courses as `sync-template`. Next:
-> the authors open those update pull requests (Spanish's is pilot R13), then the rest of the
-> rules pilot.
+> the authors open those update pull requests (Spanish's is pilot R13), then the rest of the rules pilot. A fourth course, `lc-russian-basic-vocabulary`,
+> was set up the same way on 2026-11-06 from `bfa98f5` and needs no update.
 >
 > **Decided 2026-10-12:** the template stayed under `pedbad` until the remaining template
 > work was finished. Tick to ✅ once the first course repo is working.
@@ -445,11 +445,12 @@ maintainer their GitHub username.
 All the courses can be set up on one day (step 6 for each repo first). Then, for each
 course:
 
-| Course repo                  | Team                      | Members to start |
-| ---------------------------- | ------------------------- | ---------------- |
-| `lc-spanish-essentials`      | `spanish-essentials`      | its author       |
-| `lc-french-academic-reading` | `french-academic-reading` | its author       |
-| `lc-german-basic`            | `german-basic`            | its author       |
+| Course repo                   | Team                       | Members to start                        |
+| ----------------------------- | -------------------------- | --------------------------------------- |
+| `lc-spanish-essentials`       | `spanish-essentials`       | its author                              |
+| `lc-french-academic-reading`  | `french-academic-reading`  | its author                              |
+| `lc-german-basic`             | `german-basic`             | its author                              |
+| `lc-russian-basic-vocabulary` | `russian-basic-vocabulary` | its author (the French course's author) |
 
 Every course belongs to the **Language Centre, University of Cambridge**, the copyright
 holder in [`LICENSE`](../LICENSE) and every course's footer, whoever writes it. Where no
@@ -501,6 +502,16 @@ Cambridge email was confirmed verified, then each was invited as **Member** into
 course's team, one invitation at a time. Read back: three pending invitations, role
 `direct_member`, one team each. **Next:** each author accepts; then read back the team
 members, the repo teams and the pending invitations (none left).
+
+**Done 2026-11-06** (a fourth course): `lc-russian-basic-vocabulary`, forked from template
+`main` at `bfa98f5` (its push CI, run 42234696595, green) and set up as above: merge commits
+only, head branches deleted, not a template, rulesets A and B from the same JSON, Actions
+enabled on the website. Read back identical to `lc-spanish-essentials`: repo settings, both
+rulesets, the effective rules on `main`; `CODEOWNERS` errors none. Team
+`russian-basic-vocabulary`, Visible, **Write** on that repo only. Its member is the French
+course's author, already in the organisation, so added directly with no invitation; they
+stay in `french-academic-reading`. `pedbad` was removed from the new team. It started after
+the lesson-image fix, so it needs no `sync-template` update.
 
 ## Step 8 — The colleague's setup
 
@@ -670,7 +681,7 @@ runs after this one.
 | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Repository files** (implemented)   | `CODEOWNERS` (E41, and `course.json` ownerless since E45), the CI workflow, these docs. `src/docs/codeowners.test.ts` proves the file matches the path policy; GitHub's `CODEOWNERS` errors API reports none. Neither proves GitHub **enforces** a merge rule: that needs the settings below and the pilot.                                                                                                                                          |
 | **GitHub settings, inspected**       | the template only, read with `gh api`: classic protection on `main` (pull request, 0 approvals, the five checks up to date, admins included, linear history, no force push or deletion; no code-owner review or stale dismissal, not needed solo); merge commit, squash and rebase all allowed; no environments, deployments, Pages site or webhooks. GitHub Apps installed on the account were not listed (the API needs an app token): unverified. |
-| **GitHub settings, course repos**    | step 6's rulesets A and B and merge settings, set on the three course repos on 2026-11-05 and read back identical (step 6). A read-back proves configuration, not behaviour.                                                                                                                                                                                                                                                                         |
+| **GitHub settings, course repos**    | step 6's rulesets A and B and merge settings, set on the three course repos on 2026-11-05 and on `lc-russian-basic-vocabulary` on 2026-11-06, and read back identical (step 6). A read-back proves configuration, not behaviour.                                                                                                                                                                                                                     |
 | **Behaviour shown by pull requests** | on the template, a direct push to `main` was refused (2026-10-21, `BRANCH_PROTECTION.md`). On a course: nothing yet; every rules-pilot case is pending rollout.                                                                                                                                                                                                                                                                                      |
 
 ---
