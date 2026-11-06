@@ -150,8 +150,7 @@ left, in order:
     read back unchanged; both Macs' clones point at the new address (step 3; the MacBook
     Pro switched 2026-11-04 evening). **Steps 6–7 DONE 2026-11-05**: `lc-spanish-essentials`, `lc-french-academic-reading` and
     `lc-german-basic` from `c2e6cbe`, their rules read back identical, one team each with Write
-    on its own repo, the authors invited. **Still to do:** the authors accept, and rules-pilot
-    cases R1–R12
+    on its own repo, the authors invited. The authors accepted and `pedbad` left the three teams (2026-11-06). **Still to do:** rules-pilot cases R1–R12
     on one course with a named author before authors merge independently (R13 before
     updates, R16 before deploying). **Course repos' starting commit:** whatever template
     `main` is on that day, once that commit's own push CI is green.
@@ -159,6 +158,8 @@ left, in order:
     course repo (`pedbad-uol/lc-base-template` is 0 commits ahead and 218 behind, so
     deleting it loses nothing). The authors' GitHub usernames are collected, kept outside
     this repo; each still confirms their Cambridge email is verified.
+
+**Update, 2026-11-06 (work iMac): course day, part 2.** All three authors accepted. Read back: each team holds its author alone (`pedbad` removed from the three teams, keeping admin on every repo as Owner), each author has Write on their own course and read elsewhere, and no invitation is pending. **Sync fork tested:** at 09:40 UTC the Owner pressed **Sync fork → Update branch** on `lc-french-academic-reading`. Ruleset A refused it (rule suite 4947813258: A's `pull_request` and `required_status_checks`, 5 of 5 expected, failed, as did B's `pull_request`; `non_fast_forward` and `deletion` passed; before `c2e6cbe`, after `0488f82`), and `main` stayed at `c2e6cbe`. This is evidence for step 9's "never Sync fork", beside pilot R10; no rules-pilot case has run yet. The lesson-image fix below merged as PR 74 (`7bfb378`). **Decided 2026-11-06 by the maintainer, as Owner:** the update to `7bfb378` is prepared in all three courses at once, not after R13 as ORGANIZATION's pilot gate says, so no author waits to add a lesson image; each takes step 9's route (the author opens the pull request, the maintainer approves, the author merges), and Spanish's still counts as R13. **Next:** the author handoff on the pilot course, R13, then R1–R12.
 
 **Update, 2026-11-06 (work iMac): a lesson image needed the maintainer.** Rehearsing the
 rules pilot on a local copy at `c2e6cbe`, before any case ran on GitHub, showed that any
