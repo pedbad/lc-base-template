@@ -494,8 +494,7 @@ member**), and remove them when done.
 **Done 2026-11-05** (after `gh auth refresh -h github.com -s admin:org`): teams
 `spanish-essentials`, `french-academic-reading` and `german-basic`, Visible, each with
 **Write** (`push`; not maintain, not admin) on its own repo and no other, and each repo lists
-only its own team. GitHub added `pedbad` to each team as maintainer: harmless, and to be
-removed once the authors are in, so that each team holds its author alone. Each author's
+only its own team. GitHub added `pedbad` to each team as maintainer: harmless, and removed on 2026-11-06 once all three authors were in, so that each team holds its author alone. Each author's
 Cambridge email was confirmed verified, then each was invited as **Member** into their
 course's team, one invitation at a time. Read back: three pending invitations, role
 `direct_member`, one team each. **Next:** each author accepts; then read back the team
@@ -513,8 +512,7 @@ request into the course repo's `main`, CI green before merge).
 
 When the template changes, each course repo pulls it in:
 
-- **Fork:** not the **Sync fork** button. It updates `main` directly, which step 6's
-  ruleset A refuses for everyone. Add the template as `upstream` once
+- **Fork:** not the **Sync fork** button. It updates `main` directly, which step 6's ruleset A refuses for everyone (tried on a course on 2026-11-06: refused, `main` unchanged; TODO, update of that day). Add the template as `upstream` once
   (`git remote add upstream <template URL>`) and use the branch route below.
 - **Linked copy:** `upstream` is set already in the clone that pushed it (step 6); add
   it once in any other clone, as for a fork.
@@ -636,7 +634,7 @@ case has run yet.
 | #   | Case                               | Who        | Change                                                             | Expected                                                                                                                                                                                                                                     | Evidence                                                               | Status          |
 | --- | ---------------------------------- | ---------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | --------------- |
 | R1  | Lesson JSON                        | A          | `lo-config/lo-01-test/` (a copy of the example)                    | five checks run; no review requested; A merges once green                                                                                                                                                                                    | PR, merge box before merging, merged commit                            | pending rollout |
-| R2  | Lesson images and audio            | A          | `public/images/lo-01-test/`, `public/audio/lo-01-test/`            | as R1                                                                                                                                                                                                                                        | as R1                                                                  | pending rollout |
+| R2  | Lesson images and audio            | A          | `public/images/lo-01-test/`, `public/audio/lo-01-test/`            | as R1, on a course whose template commit is `7bfb378` or later (R13 first): before it, a lesson image fails `Lint, test, build`                                                                                                              | as R1                                                                  | pending rollout |
 | R3  | The example lesson                 | A          | one line in `lo-config/lo-00-example/`                             | review requested from `@pedbad`; merge blocked: code owner review required                                                                                                                                                                   | reviewers list, merge box                                              | pending rollout |
 | R4  | Shared logos and template media    | A          | a file in `public/images/footer/` or `public/audio/showcase-demo/` | as R3                                                                                                                                                                                                                                        | as R3                                                                  | pending rollout |
 | R5  | Core code and dependencies         | A          | a comment in `src/`; separately, `package.json`                    | as R3; after M approves, A merges once green                                                                                                                                                                                                 | as R3, then the approval and merge                                     | pending rollout |
@@ -654,7 +652,7 @@ case has run yet.
 
 **Before authors merge independently**, on one course with a named author: R1 to R12 must
 pass (every content and core boundary, failed checks, direct pushes, renewed approval,
-and the maintainer's own core PR). **R13 must pass before step 9 is recommended**, and
+and the maintainer's own core PR). **R13 must pass before step 9 is recommended**, and before R2 on a course started from `c2e6cbe` (all three were; the lesson-image fix is `7bfb378`), and
 **R16 before the first real deployment**; R14 and R15 follow the first time each comes
 up. The courses share one intended setup, so step 6's read-back on **every** course
 shows each is configured the same; a case is passed only on evidence, and the others
