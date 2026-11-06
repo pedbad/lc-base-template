@@ -115,8 +115,7 @@ button:
 
 1. The maintainer (or a colleague the maintainer asks) prepares the update branch and
    pushes it to your course repo.
-2. **You open the pull request:** on your course repo's page, GitHub offers **Compare &
-   pull request** for the new branch. Its base must be your course's `main`: your
+2. **You open the pull request:** open `https://github.com/lc-elearn/<your course>/compare/main...sync-template` (or **Pull requests → New pull request**, base your course's `main`, compare `sync-template`). GitHub may also show a **Compare & pull request** button on your course's page; if it does not, use the link. Its base must be your course's `main`: your
    course is a fork, so GitHub may suggest the template (`lc-elearn/lc-base-template`)
    as the base repository first; change it to your course.
 3. The checks run and the maintainer approves; **you** merge it with **Create a merge
