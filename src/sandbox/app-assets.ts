@@ -39,6 +39,7 @@ import {
   XIcon,
   type LucideIcon,
 } from 'lucide-react';
+import { EXAMPLE_LO_FOLDER } from '@/lo/lo-index';
 
 /** Lucide icons by the name the code imports them under. */
 export const APP_ICONS: Readonly<Record<string, LucideIcon>> = {
@@ -76,7 +77,25 @@ export const APP_ICONS: Readonly<Record<string, LucideIcon>> = {
   XIcon,
 };
 
-/** Every image under public/ (paths relative to it), the sprite aside. */
+/** `images/<lesson folder>/…`, the folder captured. */
+const LESSON_IMAGE_PATTERN = /^images\/(lo-[^/]+)\//;
+
+/**
+ * Whether an image under public/ belongs to one of a course's own lessons, not to the
+ * template: anything in an `images/lo-*` folder other than the example lesson's. The
+ * same boundary as `CODEOWNERS` (`/public/images/lo-*` has no owner). A course's
+ * lesson images are its author's content, so `app-assets.test.ts` leaves them out:
+ * listing them here would turn every lesson with a picture into a change to `src/`,
+ * which waits for the maintainer's review.
+ *
+ * @param publicPath a path relative to public/, e.g. `images/lo-01-salutations/hero.svg`
+ */
+export function isCourseLessonImage(publicPath: string): boolean {
+  const folder = LESSON_IMAGE_PATTERN.exec(publicPath)?.[1];
+  return folder !== undefined && folder !== EXAMPLE_LO_FOLDER;
+}
+
+/** Every template image under public/ (paths relative to it), the sprite aside. */
 export const APP_IMAGES: readonly string[] = [
   'favicon.svg',
   'logo.svg',
