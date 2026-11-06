@@ -10,7 +10,7 @@ session, on either machine.
 | `2026-08-06-post-phase-d-handover.md` | state snapshot at end of Phase D, plus the §5 decision log |
 | [`../ROADMAP.md`](../ROADMAP.md)      | larger work beyond this queue, each with its trigger       |
 
-**Last updated:** 2026-11-04 · **HEAD:** see `git log` · **Suite:** 203 files · 2369 tests green
+**Last updated:** 2026-11-06 · **HEAD:** see `git log` · **Suite:** 203 files · 2377 tests green
 (Vitest) · 108 Playwright tests (36 × 3 browsers, `bun run test:e2e`) plus 99 on a `DEBUG=1` build (33 × 3, `e2e/debug/`) · CI green · `main` protected since 2026-10-21 (job E1).
 
 Non-negotiable constraints for every job below live in
@@ -151,15 +151,14 @@ left, in order:
     Pro switched 2026-11-04 evening). **Steps 6–7 DONE 2026-11-05**: `lc-spanish-essentials`, `lc-french-academic-reading` and
     `lc-german-basic` from `c2e6cbe`, their rules read back identical, one team each with Write
     on its own repo, the authors invited. The authors accepted and `pedbad` left the three teams (2026-11-06). **Still to do:** rules-pilot cases R1–R12
-    on one course with a named author before authors merge independently (R13 before
-    updates, R16 before deploying). **Course repos' starting commit:** whatever template
+    on one course with a named author before authors merge independently (R13 is Spanish's first update pull request, prepared 2026-11-06 with French's and German's; R16 before deploying). **Course repos' starting commit:** whatever template
     `main` is on that day, once that commit's own push CI is green.
     **Decided 2026-11-04:** the template's two existing forks are ignored, neither is a
     course repo (`pedbad-uol/lc-base-template` is 0 commits ahead and 218 behind, so
     deleting it loses nothing). The authors' GitHub usernames are collected, kept outside
     this repo; each still confirms their Cambridge email is verified.
 
-**Update, 2026-11-06 (work iMac): course day, part 2.** All three authors accepted. Read back: each team holds its author alone (`pedbad` removed from the three teams, keeping admin on every repo as Owner), each author has Write on their own course and read elsewhere, and no invitation is pending. **Sync fork tested:** at 09:40 UTC the Owner pressed **Sync fork → Update branch** on `lc-french-academic-reading`. Ruleset A refused it (rule suite 4947813258: A's `pull_request` and `required_status_checks`, 5 of 5 expected, failed, as did B's `pull_request`; `non_fast_forward` and `deletion` passed; before `c2e6cbe`, after `0488f82`), and `main` stayed at `c2e6cbe`. This is evidence for step 9's "never Sync fork", beside pilot R10; no rules-pilot case has run yet. The lesson-image fix below merged as PR 74 (`7bfb378`). **Decided 2026-11-06 by the maintainer, as Owner:** the update to `7bfb378` is prepared in all three courses at once, not after R13 as ORGANIZATION's pilot gate says, so no author waits to add a lesson image; each takes step 9's route (the author opens the pull request, the maintainer approves, the author merges), and Spanish's still counts as R13. **Next:** the author handoff on the pilot course, R13, then R1–R12.
+**Update, 2026-11-06 (work iMac): course day, part 2.** All three authors accepted. Read back: each team holds its author alone (`pedbad` removed from the three teams, keeping admin on every repo as Owner), each author has Write on their own course and read elsewhere, and no invitation is pending. **Sync fork tested:** at 09:40 UTC the Owner pressed **Sync fork → Update branch** on `lc-french-academic-reading`. Ruleset A refused it (rule suite 4947813258: A's `pull_request` and `required_status_checks`, 5 of 5 expected, failed, as did B's `pull_request`; `non_fast_forward` and `deletion` passed; before `c2e6cbe`, after `0488f82`), and `main` stayed at `c2e6cbe`. This is evidence for step 9's "never Sync fork", beside pilot R10; no rules-pilot case has run yet. The lesson-image fix below merged as PR 74 (`7bfb378`). **Decided 2026-11-06 by the maintainer, as Owner:** the update to `7bfb378` is prepared in all three courses at once, not after R13 as ORGANIZATION's pilot gate says, so no author waits to add a lesson image; each takes step 9's route (the author opens the pull request, the maintainer approves, the author merges), and Spanish's still counts as R13. **Update branches pushed 2026-11-06:** `sync-template` (merging `7bfb378`) is on `lc-spanish-essentials` (`c1e06d4`), `lc-french-academic-reading` (`7510654`) and `lc-german-basic` (`3c1806d`); each author opens their course's pull request from `https://github.com/lc-elearn/<course>/compare/main...sync-template`. **Next:** the authors open those pull requests (Spanish's is R13), the author handoff on the pilot course, then R1–R12.
 
 **Update, 2026-11-06 (work iMac): a lesson image needed the maintainer.** Rehearsing the
 rules pilot on a local copy at `c2e6cbe`, before any case ran on GitHub, showed that any
@@ -2837,8 +2836,7 @@ rather than the Language Centre's course factory; the maintainer took three smal
   course's `main`) is withdrawn: with "up to date" required, updating it would write
   course changes into the template. Step 9 is an update branch inside the course repo,
   prepared by the maintainer or an authorised colleague and opened by the author.
-  The pilot gate before authors merge independently is R1–R12 (R13 before updates,
-  R16 before deploying), with every course repo's rules read back. Step 6 gives the
+  The pilot gate before authors merge independently is R1–R12 (R13 is Spanish's first update pull request, prepared 2026-11-06 with French's and German's; R16 before deploying), with every course repo's rules read back. Step 6 gives the
   merge-settings command and the read-back; the Free plan is stated as expected
   availability, confirmed by read-back. New section "If `pedbad` cannot be used":
   account and organisation recovery kept apart, what the backup Owner can and cannot

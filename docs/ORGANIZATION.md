@@ -6,8 +6,10 @@ repos and the colleagues) follow, top to bottom, on the course day.
 
 > Status: 🟡 **In progress — steps 1–5 done 2026-11-04** (work iMac, starting commit
 > `d8008f8`); **steps 6–7 done 2026-11-05** (work iMac, course repos from `c2e6cbe`): three
-> course repos, their rules read back, one team each, the authors invited. Next: the
-> authors accept, then the rules pilot.
+> course repos, their rules read back, one team each, the authors invited; **2026-11-06**: the authors accepted, each team holds its author alone,
+> and the update to template `7bfb378` was pushed to all three courses as `sync-template`. Next:
+> the authors open those update pull requests (Spanish's is pilot R13), then the rest of the
+> rules pilot.
 >
 > **Decided 2026-10-12:** the template stayed under `pedbad` until the remaining template
 > work was finished. Tick to ✅ once the first course repo is working.
@@ -532,9 +534,7 @@ go into the template. Nor the **Sync fork** button, which writes to `main` direc
    template, merge the tested template commit with a merge commit, resolve any
    conflict deliberately, install, and run the full checks on content and behaviour.
    Then push the branch to the **course** repo. The commands are below.
-2. **Open the pull request** from that branch into the same course repo's `main`: GitHub
-   offers **Compare & pull request** on the course repo's page once the branch is
-   pushed; the base repository must be the course, not the template GitHub may suggest
+2. **Open the pull request** from that branch into the same course repo's `main`: open `https://github.com/lc-elearn/<course>/compare/main...sync-template` (or **Pull requests → New pull request**, base the course's `main`, compare the update branch). GitHub may also offer **Compare & pull request** on the course repo's page, but the author may not see it for a branch someone else pushed, so give them the link. The base repository must be the course, not the template GitHub may suggest
    for a fork. **The course's author opens it** (path 1), even when the maintainer
    prepared the branch: a pull request the maintainer opens could never get a code
    owner's approval.
@@ -545,8 +545,7 @@ go into the template. Nor the **Sync fork** button, which writes to `main` direc
 approval is enough. It reviews the maintainer's own merge work, which nobody else reads;
 GitHub accepts it because the maintainer is not the pull request's author. Revisit if a
 second code owner joins (P2).
-**Not proven on a real course:** pilot case R13 tests this procedure before it is
-recommended for use.
+**Not proven on a real course yet:** pilot case R13 tests this procedure. Decided 2026-11-06 by the Owner: the first update (`7bfb378`) is prepared in all three courses at once rather than after R13, so no author waits to add a lesson image; Spanish's pull request is R13.
 
 **The commands**, on a clone of the course repo.
 `main` takes changes only through a pull request (step 6), so the merge happens on a
@@ -652,7 +651,7 @@ case has run yet.
 
 **Before authors merge independently**, on one course with a named author: R1 to R12 must
 pass (every content and core boundary, failed checks, direct pushes, renewed approval,
-and the maintainer's own core PR). **R13 must pass before step 9 is recommended**, and before R2 on a course started from `c2e6cbe` (all three were; the lesson-image fix is `7bfb378`), and
+and the maintainer's own core PR). **R13 must pass before step 9 is used again** (the first update went to all three courses at once, by the Owner's decision of 2026-11-06), and before R2 on a course started from `c2e6cbe` (all three were; the lesson-image fix is `7bfb378`), and
 **R16 before the first real deployment**; R14 and R15 follow the first time each comes
 up. The courses share one intended setup, so step 6's read-back on **every** course
 shows each is configured the same; a case is passed only on evidence, and the others
