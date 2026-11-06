@@ -160,6 +160,19 @@ left, in order:
     deleting it loses nothing). The authors' GitHub usernames are collected, kept outside
     this repo; each still confirms their Cambridge email is verified.
 
+**Update, 2026-11-06 (work iMac): a lesson image needed the maintainer.** Rehearsing the
+rules pilot on a local copy at `c2e6cbe`, before any case ran on GitHub, showed that any
+image in a course's own lesson folder (`public/images/lo-01-test/hero.svg`) failed
+`Lint, test, build`: `src/sandbox/app-assets.test.ts` required every image under
+`public/images/` to be listed in `src/sandbox/app-assets.ts`, which `CODEOWNERS` gives the
+maintainer. Every lesson with a picture would have waited for a code-owner review, against
+the promise that a lesson-only pull request merges on green CI, and R2 would have failed.
+**Fixed:** `isCourseLessonImage()` leaves a course's own lesson images (an `images/lo-*`
+folder other than the example's, the `CODEOWNERS` boundary) out of that comparison; the
+template's images, the example's and loose files are still listed. Shown on the same local
+copy: a lesson image passes, a loose `public/images/` file still fails. The course repos
+take the fix through step 9 (pilot R13), before R2.
+
 **Update, 2026-11-05 afternoon (work iMac): course day, ORGANIZATION steps 6–7.** One step
 at a time, each change approved before it ran and read back after. Starting commit `c2e6cbe`
 (PR 72), its push CI (run 42010809276) green on all five jobs. Created in `lc-elearn`:
