@@ -2,12 +2,13 @@
  * app-assets.test.ts — the debug sandbox shows EVERY icon and image the app uses
  * (maintainer, 2026-10-08: lucide icons added for flashcards and vocabulary never
  * reached the Icons section). Both lists are scanned from the source, so a new icon or
- * image fails here until it is added to `app-assets.ts` and shows on the sandbox.
+ * image fails here until it is added to `app-assets.ts` and shows on the sandbox. A course's
+ * own lesson images are not template assets and are left out (`isCourseLessonImage`).
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, test } from 'vitest';
-import { APP_ICONS, APP_IMAGES } from './app-assets';
+import { APP_ICONS, APP_IMAGES, isCourseLessonImage } from './app-assets';
 
 const ROOT = path.resolve(import.meta.dirname, '../..');
 const SRC = path.join(ROOT, 'src');
@@ -41,13 +42,38 @@ function lucideImports(): string[] {
   return [...names].sort();
 }
 
-/** Every image under public/images, plus the two root marks; the sprite has its own section. */
+/**
+ * Every template image under public/images, plus the two root marks; the sprite has its
+ * own section. A course's own lesson images are its author's, not the template's, so
+ * they are left out (`isCourseLessonImage`).
+ */
 function publicImages(): string[] {
   const images = walk(path.join(PUBLIC, 'images'))
     .filter((file) => /\.(svg|png|webp|jpe?g|avif|gif)$/i.test(file))
-    .map((file) => path.relative(PUBLIC, file).split(path.sep).join('/'));
+    .map((file) => path.relative(PUBLIC, file).split(path.sep).join('/'))
+    .filter((image) => !isCourseLessonImage(image));
   return [...images, 'favicon.svg', 'logo.svg'].sort();
 }
+
+describe('isCourseLessonImage', () => {
+  test.each([
+    'images/lo-01-salutations/hero.svg',
+    'images/lo-12-food/03-outcomes/illustration.png',
+  ])('a course lesson folder is the author’s: %s', (image) => {
+    expect(isCourseLessonImage(image)).toBe(true);
+  });
+
+  test.each([
+    'images/lo-00-example/hero.svg',
+    'images/lo-00-example/04-tabs/chart.svg',
+    'images/lo-placeholder.svg',
+    'images/footer/lc-logo-black.svg',
+    'images/card.svg',
+    'favicon.svg',
+  ])('a template image stays listed: %s', (image) => {
+    expect(isCourseLessonImage(image)).toBe(false);
+  });
+});
 
 describe('the sandbox lists every asset the app uses', () => {
   test('every lucide icon imported in src/', () => {
